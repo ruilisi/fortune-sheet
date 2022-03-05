@@ -1,0 +1,11 @@
+{
+  "name": "@fortune-sheet/core",
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": "https://github.com/ruilisi/fortune-sheet",
+  "license": "MIT",
+  "dependencies": {
+    "immer": "^9.0.12",
+    "lodash": "^4.17.21"
+  }
+}

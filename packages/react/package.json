@@ -1,0 +1,11 @@
+{
+  "name": "@fortune-sheet/react",
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": "https://github.com/ruilisi/fortune-sheet",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}

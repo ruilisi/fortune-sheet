@@ -1,0 +1,43 @@
+{
+  "name": "fortune-sheet",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": "https://github.com/ruilisi/fortune-sheet",
+  "license": "MIT",
+  "scripts": {
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "tsc": "tsc --noEmit",
+    "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./packages"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@storybook/addon-actions": "^6.4.19",
+    "@storybook/addon-essentials": "^6.4.19",
+    "@storybook/addon-interactions": "^6.4.19",
+    "@storybook/addon-links": "^6.4.19",
+    "@storybook/react": "^6.4.19",
+    "@storybook/testing-library": "^0.0.9",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
+    "babel-loader": "^8.2.3",
+    "eslint": "^8.10.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "lerna": "^4.0.0",
+    "lint-staged": "^12.3.4",
+    "prettier": "^2.5.1",
+    "typescript": "^4.6.2",
+    "yorkie": "^2.0.0"
+  },
+  "dependencies": {},
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  }
+}
