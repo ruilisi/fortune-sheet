@@ -290,3 +290,53 @@ function defaultContext(): Context {
 }
 
 export default defaultContext;
+
+export class ContextManager {
+  ctx: Context;
+
+  constructor() {
+    this.ctx = defaultContext();
+  }
+
+  updateWithSheet(data: any[][]) {
+    const rowCount = data.length;
+    const colCount = rowCount === 0 ? 0 : data[0].length;
+
+    this.ctx = {
+      ...this.ctx,
+      flowdata: data,
+      visibledatarow: [
+        21, 42, 63, 84, 105, 126, 147, 168, 189, 210, 231, 252, 273, 294, 315,
+        336, 357, 389, 410, 431, 452, 473, 494, 515, 536, 616, 637, 658, 739,
+        776, 776, 776, 796, 816, 836, 856,
+      ],
+      visibledatacolumn: [
+        132, 206, 360, 489, 626, 749, 888, 1020, 1149, 1290, 1435, 1509, 1583,
+        1657, 1731, 1805, 1879, 1953,
+      ],
+      toolbarHeight: 41,
+      infobarHeight: 57,
+      calculatebarHeight: 29,
+      rowHeaderWidth: 46,
+      columnHeaderHeight: 20,
+      cellMainSrollBarSize: 12,
+      sheetBarHeight: 31,
+      statisticBarHeight: 23,
+    };
+  }
+
+  updateWithCanvas(canvas: HTMLCanvasElement) {
+    this.ctx.luckysheetTableContentHW = [
+      canvas.clientWidth,
+      canvas.clientHeight,
+    ];
+    canvas.style.width = `${this.ctx.luckysheetTableContentHW[0]}px`;
+    canvas.style.height = `${this.ctx.luckysheetTableContentHW[1]}px`;
+    canvas.width = Math.ceil(
+      this.ctx.luckysheetTableContentHW[0] * this.ctx.devicePixelRatio
+    );
+    canvas.height = Math.ceil(
+      this.ctx.luckysheetTableContentHW[1] * this.ctx.devicePixelRatio
+    );
+  }
+}
