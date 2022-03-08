@@ -1,3 +1,3 @@
-import Sheet from "./Sheet";
+import Workbook from "./Workbook";
 
-export { Sheet };
+export { Workbook };

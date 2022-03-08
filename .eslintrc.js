@@ -19,6 +19,15 @@ module.exports = {
   plugins: ["react", "@typescript-eslint"],
   rules: {
     quotes: 0,
+    camelcase: 0,
+    "class-methods-use-this": 0,
+    "no-continue": 0,
+    "no-param-reassign": 0,
+    "no-unused-vars": 0,
+    "no-bitwise": 0,
+    "no-underscore-dangle": 0,
+    "no-console": [1, { allow: ["warn", "error"] }],
+    "no-lonely-if": 0,
     "import/no-extraneous-dependencies": 0,
     "import/extensions": 0,
     "import/no-unresolved": 0,
@@ -32,5 +41,6 @@ module.exports = {
         unnamedComponents: "arrow-function",
       },
     ],
+    "@typescript-eslint/no-unused-vars": [2],
   },
 };
