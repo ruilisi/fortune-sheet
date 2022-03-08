@@ -7,7 +7,9 @@ export default {
 } as ComponentMeta<typeof Workbook>;
 
 const Template: ComponentStory<typeof Workbook> = (args) => (
-  <Workbook {...args} />
+  <div style={{ width: 1000, height: 800 }}>
+    <Workbook {...args} />
+  </div>
 );
 
 export const Basic = Template.bind({});

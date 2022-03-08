@@ -1,8 +1,10 @@
 import React, { useRef, useEffect } from "react";
 import { Canvas, Context } from "@fortune-sheet/core/src";
+import "./index.css";
 
 const Workbook: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
   useEffect(() => {
     let ctx = Context();
     ctx.flowdata = [];
@@ -23,8 +25,6 @@ const Workbook: React.FC = () => {
         }
       }
     }
-    ctx.visibledatarow = [100];
-    ctx.visibledatacolumn = [100];
 
     ctx = {
       ...ctx,
@@ -37,10 +37,6 @@ const Workbook: React.FC = () => {
         132, 206, 360, 489, 626, 749, 888, 1020, 1149, 1290, 1435, 1509, 1583,
         1657, 1731, 1805, 1879, 1953,
       ],
-      ch_width: 2073,
-      rh_height: 936,
-      cellmainWidth: 1157,
-      cellmainHeight: 692,
       toolbarHeight: 41,
       infobarHeight: 57,
       calculatebarHeight: 29,
@@ -49,10 +45,22 @@ const Workbook: React.FC = () => {
       cellMainSrollBarSize: 12,
       sheetBarHeight: 31,
       statisticBarHeight: 23,
-      luckysheetTableContentHW: [1191, 700],
     };
 
-    const tableCanvas = new Canvas(canvasRef.current!, ctx);
+    const canvas = canvasRef.current!;
+
+    ctx.luckysheetTableContentHW = [canvas.clientWidth, canvas.clientHeight];
+
+    canvas.style.width = `${ctx.luckysheetTableContentHW[0]}px`;
+    canvas.style.height = `${ctx.luckysheetTableContentHW[1]}px`;
+    canvas.width = Math.ceil(
+      ctx.luckysheetTableContentHW[0] * ctx.devicePixelRatio
+    );
+    canvas.height = Math.ceil(
+      ctx.luckysheetTableContentHW[1] * ctx.devicePixelRatio
+    );
+
+    const tableCanvas = new Canvas(canvas, ctx);
     tableCanvas.drawMain({
       scrollHeight: 0,
       scrollWidth: 0,
@@ -62,13 +70,18 @@ const Workbook: React.FC = () => {
   }, []);
 
   return (
-    <div>
-      <canvas
-        ref={canvasRef}
-        style={{ width: 1191, height: 700 }}
-        width={2382}
-        height={1400}
-      />
+    <div className="fortune-container">
+      <div className="fortune-workarea">
+        <div className="fortune-toolbar">toolbar</div>
+        <div className="fortune-celldetail">celldetail</div>
+      </div>
+      <div className="fortune-sheet-container">
+        <div className="fortune-row-header">rowheader</div>
+        <div className="fortune-col-body">
+          <div className="fortune-col-header">colheader</div>
+          <canvas className="fortune-sheet-canvas" ref={canvasRef} />
+        </div>
+      </div>
     </div>
   );
 };

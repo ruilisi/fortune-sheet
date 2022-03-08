@@ -1,0 +1,28 @@
+.fortune-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+}
+
+.fortune-workarea {
+  width: 100%;
+}
+
+.fortune-sheet-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.fortune-col-body {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+}
+
+.fortune-sheet-canvas {
+  flex: 1;
+}
