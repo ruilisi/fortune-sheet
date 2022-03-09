@@ -1,28 +1,37 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 import { Canvas } from "@fortune-sheet/core/src";
 import "./index.css";
-import { ContextManager } from "@fortune-sheet/core/src/context";
+import {
+  updateContextWithCanvas,
+  updateContextWithSheetData,
+} from "@fortune-sheet/core/src/context";
+import WorkbookContext from "../../context";
 
 type Props = {
-  ctxManager: ContextManager;
   data: any;
 };
 
-const Sheet: React.FC<Props> = ({ ctxManager, data }) => {
+const Sheet: React.FC<Props> = ({ data }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { context, setContext } = useContext(WorkbookContext);
 
   useEffect(() => {
-    ctxManager.updateWithSheet(data);
-    ctxManager.updateWithCanvas(canvasRef.current!);
+    setContext((ctx) => updateContextWithSheetData(ctx, data));
+  }, [data, setContext]);
 
-    const tableCanvas = new Canvas(canvasRef.current!, ctxManager.ctx);
+  useEffect(() => {
+    setContext((ctx) => updateContextWithCanvas(ctx, canvasRef.current!));
+  }, [setContext]);
+
+  useEffect(() => {
+    const tableCanvas = new Canvas(canvasRef.current!, context);
     tableCanvas.drawMain({
       scrollHeight: 0,
       scrollWidth: 0,
       offsetLeft: 0,
       offsetTop: 0,
     });
-  }, [data]);
+  }, [context]);
 
   return (
     <div className="fortune-sheet-container">

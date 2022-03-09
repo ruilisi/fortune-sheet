@@ -16,7 +16,7 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["react", "@typescript-eslint"],
+  plugins: ["react", "@typescript-eslint", "react-hooks"],
   rules: {
     quotes: 0,
     camelcase: 0,
@@ -41,6 +41,8 @@ module.exports = {
         unnamedComponents: "arrow-function",
       },
     ],
+    "react-hooks/rules-of-hooks": 2,
+    "react-hooks/exhaustive-deps": 1,
     "@typescript-eslint/no-unused-vars": [2],
   },
 };

@@ -1,7 +1,11 @@
 import _ from "lodash";
 import defaultContext from "./context";
 import { getRealCellValue, normalizedAttr } from "./modules/cell";
-import { defaultFont, getCellTextInfo } from "./modules/text";
+import {
+  clearMeasureTextCache,
+  defaultFont,
+  getCellTextInfo,
+} from "./modules/text";
 import { isInlineStringCell } from "./modules/inline-string";
 
 const defaultStyle = {
@@ -102,12 +106,17 @@ export default class Canvas {
 
   sheetCtx: ReturnType<typeof defaultContext>;
 
+  measureTextCacheTimeOut: any;
+
+  cellOverflowMapCache: any;
+
   constructor(
     canvasElement: HTMLCanvasElement,
     ctx: ReturnType<typeof defaultContext>
   ) {
     this.canvasElement = canvasElement;
     this.sheetCtx = ctx;
+    this.cellOverflowMapCache = {};
   }
 
   drawMain({
@@ -136,7 +145,7 @@ export default class Canvas {
     // const sheetFile = sheetmanage.getSheetByIndex();
 
     // console.trace();
-    clearTimeout(this.sheetCtx.measureTextCacheTimeOut);
+    clearTimeout(this.measureTextCacheTimeOut);
 
     // //参数未定义处理
     // if (scrollWidth === null) {
@@ -1092,10 +1101,9 @@ export default class Canvas {
 
     renderCtx.restore();
 
-    this.sheetCtx.measureTextCacheTimeOut = setTimeout(() => {
-      this.sheetCtx.measureTextCache = {};
-      this.sheetCtx.measureTextCellInfoCache = {};
-      this.sheetCtx.cellOverflowMapCache = {};
+    this.measureTextCacheTimeOut = setTimeout(() => {
+      clearMeasureTextCache();
+      this.cellOverflowMapCache = {};
     }, 100);
   }
 
@@ -1116,8 +1124,8 @@ export default class Canvas {
         continue;
       }
 
-      if (this.sheetCtx.cellOverflowMapCache[r] != null) {
-        map[r] = this.sheetCtx.cellOverflowMapCache[r];
+      if (this.cellOverflowMapCache[r] != null) {
+        map[r] = this.cellOverflowMapCache[r];
         continue;
       }
 
@@ -1126,8 +1134,8 @@ export default class Canvas {
       for (let c = 0; c < data[r].length; c += 1) {
         const cell = data[r][c];
 
-        // if(this.sheetCtx.cellOverflowMapCache[r + '_' + c]!=null){
-        //     map[r + '_' + c] = this.sheetCtx.cellOverflowMapCache[r + '_' + c];
+        // if(this.cellOverflowMapCache[r + '_' + c]!=null){
+        //     map[r + '_' + c] = this.cellOverflowMapCache[r + '_' + c];
         //     continue;
         // }
 
@@ -1249,7 +1257,7 @@ export default class Canvas {
 
             map[r][c] = item;
 
-            // this.sheetCtx.cellOverflowMapCache[r + '_' + c] = item;
+            // this.cellOverflowMapCache[r + '_' + c] = item;
 
             hasCellOver = true;
           }
@@ -1257,7 +1265,7 @@ export default class Canvas {
       }
 
       if (hasCellOver) {
-        this.sheetCtx.cellOverflowMapCache[r] = map[r];
+        this.cellOverflowMapCache[r] = map[r];
       }
     }
 

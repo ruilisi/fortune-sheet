@@ -1,23 +1,27 @@
-import React, { useRef } from "react";
+import React, { useMemo, useState } from "react";
 import "./index.css";
-import { ContextManager } from "@fortune-sheet/core/src/context";
+import defaultContext from "@fortune-sheet/core/src/context";
 import Sheet from "../Sheet";
+import WorkbookContext from "../../context";
 
 type Props = {
   data: any;
 };
 
 const Workbook: React.FC<Props> = ({ data }) => {
-  const ctxManagerRef = useRef(new ContextManager());
+  const [context, setContext] = useState(defaultContext());
+  const providerValue = useMemo(() => ({ context, setContext }), [context]);
 
   return (
-    <div className="fortune-container">
-      <div className="fortune-workarea">
-        <div className="fortune-toolbar">toolbar</div>
-        <div className="fortune-celldetail">celldetail</div>
+    <WorkbookContext.Provider value={providerValue}>
+      <div className="fortune-container">
+        <div className="fortune-workarea">
+          <div className="fortune-toolbar">toolbar</div>
+          <div className="fortune-celldetail">celldetail</div>
+        </div>
+        <Sheet data={data} />
       </div>
-      <Sheet ctxManager={ctxManagerRef.current} data={data} />
-    </div>
+    </WorkbookContext.Provider>
   );
 };
 

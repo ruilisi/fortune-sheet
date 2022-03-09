@@ -17,6 +17,13 @@ function hasChinaword(s: string) {
 }
 
 const textHeightCache: any = {};
+let measureTextCache: any = {};
+let measureTextCellInfoCache: any = {};
+
+export function clearMeasureTextCache() {
+  measureTextCache = {};
+  measureTextCellInfoCache = {};
+}
 
 function getTextSize(text: string, font: string) {
   if (font in textHeightCache) {
@@ -53,9 +60,9 @@ export function getMeasureText(
   sheetCtx: Context,
   fontset?: string
 ) {
-  let mtc = sheetCtx.measureTextCache[`${value}_${renderCtx.font}`];
+  let mtc = measureTextCache[`${value}_${renderCtx.font}`];
   if (fontset) {
-    mtc = sheetCtx.measureTextCache[`${value}_${fontset}`];
+    mtc = measureTextCache[`${value}_${fontset}`];
   }
 
   if (mtc != null) {
@@ -113,16 +120,14 @@ export function getMeasureText(
   if (renderCtx.textBaseline === "alphabetic") {
     const descText = "gjpqy";
     const matchText = "abcdABCD";
-    let descTextMeasure =
-      sheetCtx.measureTextCache[`${descText}_${renderCtx.font}`];
+    let descTextMeasure = measureTextCache[`${descText}_${renderCtx.font}`];
     if (fontset) {
-      descTextMeasure = sheetCtx.measureTextCache[`${descText}_${fontset}`];
+      descTextMeasure = measureTextCache[`${descText}_${fontset}`];
     }
 
-    let matchTextMeasure =
-      sheetCtx.measureTextCache[`${matchText}_${renderCtx.font}`];
+    let matchTextMeasure = measureTextCache[`${matchText}_${renderCtx.font}`];
     if (fontset) {
-      matchTextMeasure = sheetCtx.measureTextCache[`${matchText}_${fontset}`];
+      matchTextMeasure = measureTextCache[`${matchText}_${fontset}`];
     }
 
     if (!descTextMeasure) {
@@ -147,9 +152,7 @@ export function getMeasureText(
   cache.width *= sheetCtx.zoomRatio;
   cache.actualBoundingBoxDescent *= sheetCtx.zoomRatio;
   cache.actualBoundingBoxAscent *= sheetCtx.zoomRatio;
-  sheetCtx.measureTextCache[
-    `${value}_${sheetCtx.zoomRatio}_${renderCtx.font}`
-  ] = cache;
+  measureTextCache[`${value}_${sheetCtx.zoomRatio}_${renderCtx.font}`] = cache;
   // console.log(measureText, value);
   return cache;
 }
@@ -270,9 +273,7 @@ export function getCellTextInfo(
     isModeSplit = "_";
   }
   const textInfo =
-    sheetCtx.measureTextCellInfoCache[
-      `${option.r}_${option.c}${isModeSplit}${isMode}`
-    ];
+    measureTextCellInfoCache[`${option.r}_${option.c}${isModeSplit}${isMode}`];
   if (textInfo) {
     return textInfo;
   }
