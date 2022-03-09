@@ -302,18 +302,11 @@ export class ContextManager {
     const rowCount = data.length;
     const colCount = rowCount === 0 ? 0 : data[0].length;
 
+    this.calcRowColSize(rowCount, colCount);
+
     this.ctx = {
       ...this.ctx,
       flowdata: data,
-      visibledatarow: [
-        21, 42, 63, 84, 105, 126, 147, 168, 189, 210, 231, 252, 273, 294, 315,
-        336, 357, 389, 410, 431, 452, 473, 494, 515, 536, 616, 637, 658, 739,
-        776, 776, 776, 796, 816, 836, 856,
-      ],
-      visibledatacolumn: [
-        132, 206, 360, 489, 626, 749, 888, 1020, 1149, 1290, 1435, 1509, 1583,
-        1657, 1731, 1805, 1879, 1953,
-      ],
       toolbarHeight: 41,
       infobarHeight: 57,
       calculatebarHeight: 29,
@@ -338,5 +331,91 @@ export class ContextManager {
     canvas.height = Math.ceil(
       this.ctx.luckysheetTableContentHW[1] * this.ctx.devicePixelRatio
     );
+  }
+
+  calcRowColSize(rowCount: number, colCount: number) {
+    this.ctx.visibledatarow = [];
+    this.ctx.rh_height = 0;
+
+    for (let r = 0; r < rowCount; r += 1) {
+      let rowlen: number | string = this.ctx.defaultrowlen;
+
+      rowlen ||= this.ctx.config?.rowlen?.[r];
+
+      if (this.ctx.config?.rowhidden?.[r]) {
+        this.ctx.visibledatarow.push(this.ctx.rh_height);
+        continue;
+      }
+
+      // 自动行高计算
+      // if (rowlen === "auto") {
+      //   rowlen = computeRowlenByContent(this.ctx.flowdata, r);
+      // }
+      this.ctx.rh_height += Math.round(
+        ((rowlen as number) + 1) * this.ctx.zoomRatio
+      );
+
+      this.ctx.visibledatarow.push(this.ctx.rh_height); // 行的临时长度分布
+    }
+
+    // 如果增加行和回到顶部按钮隐藏，则减少底部空白区域，但是预留足够空间给单元格下拉按钮
+    // if (
+    //   !luckysheetConfigsetting.enableAddRow &&
+    //   !luckysheetConfigsetting.enableAddBackTop
+    // ) {
+    //   this.ctx.rh_height += 29;
+    // } else {
+    //   this.ctx.rh_height += 80; // 最底部增加空白
+    // }
+
+    this.ctx.visibledatacolumn = [];
+    this.ctx.ch_width = 0;
+
+    const maxColumnlen = 120;
+
+    for (let c = 0; c < colCount; c += 1) {
+      let firstcolumnlen: number | string = this.ctx.defaultcollen;
+
+      if (this.ctx.config?.columnlen?.[c]) {
+        firstcolumnlen = this.ctx.config.columnlen[c];
+      } else {
+        if (this.ctx.flowdata[0] != null && this.ctx.flowdata[0][c] != null) {
+          if (firstcolumnlen > 300) {
+            firstcolumnlen = 300;
+          } else if (firstcolumnlen < this.ctx.defaultcollen) {
+            firstcolumnlen = this.ctx.defaultcollen;
+          }
+
+          if (firstcolumnlen !== this.ctx.defaultcollen) {
+            if (!this.ctx.config?.columnlen) {
+              this.ctx.config.columnlen = {};
+            }
+
+            this.ctx.config.columnlen[c] = firstcolumnlen;
+          }
+        }
+      }
+
+      if (this.ctx.config?.colhidden?.[c]) {
+        this.ctx.visibledatacolumn.push(this.ctx.ch_width);
+        continue;
+      }
+
+      // 自动行高计算
+      // if (firstcolumnlen === "auto") {
+      //   firstcolumnlen = computeColWidthByContent(
+      //     this.ctx.flowdata,
+      //     c,
+      //     rowCount
+      //   );
+      // }
+      this.ctx.ch_width += Math.round(
+        ((firstcolumnlen as number) + 1) * this.ctx.zoomRatio
+      );
+
+      this.ctx.visibledatacolumn.push(this.ctx.ch_width); // 列的临时长度分布
+    }
+
+    this.ctx.ch_width += maxColumnlen;
   }
 }
