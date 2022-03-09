@@ -10,19 +10,3 @@
 .fortune-workarea {
   width: 100%;
 }
-
-.fortune-sheet-container {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-}
-
-.fortune-col-body {
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-}
-
-.fortune-sheet-canvas {
-  flex: 1;
-}
