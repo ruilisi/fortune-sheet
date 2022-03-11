@@ -3,12 +3,13 @@ import "./index.css";
 import _ from "lodash";
 import {
   colLocation,
-  mousePosition,
   rowLocation,
 } from "@fortune-sheet/core/src/modules/location";
 import { mergeBorder } from "@fortune-sheet/core/src/modules/cell";
 import { normalizeSelection } from "@fortune-sheet/core/src/modules/selection";
 import WorkbookContext from "../../context";
+import ColumnHeader from "./ColumnHeader";
+import RowHeader from "./RowHeader";
 
 type Props = {
   data: any;
@@ -1005,25 +1006,19 @@ const Sheet: React.FC<Props> = ({ data }) => {
   );
 
   return (
-    <div
-      className="fortune-sheet-overlay"
-      ref={containerRef}
-    >
-      <div
-        className="fortune-col-header"
-        style={{
-          width: "100%",
-          height: context.columnHeaderHeight - 1.5,
-        }}
-      />
-      <div className="fortune-row-body">
+    <div className="fortune-sheet-overlay" ref={containerRef}>
+      <div className="fortune-col-header-wrap">
         <div
-          className="fortune-row-header"
+          className="fortune-left-top"
           style={{
             width: context.rowHeaderWidth - 1.5,
-            height: context.cellmainHeight,
+            height: context.columnHeaderHeight - 1.5,
           }}
         />
+        <ColumnHeader />
+      </div>
+      <div className="fortune-row-body">
+        <RowHeader />
         <div
           ref={cellAreaRef}
           onMouseDown={cellAreaOnMouseDown}

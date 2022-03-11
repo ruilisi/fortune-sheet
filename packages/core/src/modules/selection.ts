@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { Context } from "../context";
 import { mergeBorder } from "./cell";
 
@@ -10,13 +11,13 @@ export function normalizeSelection(ctx: Context, selection: any[]) {
 
     let rf;
     let cf;
-    if (selection[i].row_focus == null) {
+    if (_.isNil(selection[i].row_focus)) {
       rf = r1;
     } else {
       rf = selection[i].row_focus;
     }
 
-    if (selection[i].column_focus == null) {
+    if (_.isNil(selection[i].column_focus)) {
       cf = c1;
     } else {
       cf = selection[i].column_focus;
@@ -55,4 +56,65 @@ export function normalizeSelection(ctx: Context, selection: any[]) {
     selection[i].height_move = row - row_pre - 1;
   }
   return selection;
+}
+
+export function selectTitlesMap(rangeMap: any, range1: number, range2: number) {
+  const map = rangeMap || {};
+  for (let i = range1; i <= range2; i += 1) {
+    if (i in map) {
+      continue;
+    }
+    map[i] = 0;
+  }
+  return map;
+}
+
+export function selectTitlesRange(map: any) {
+  const mapArr = [];
+
+  for (const i in map) {
+    mapArr.push(i);
+  }
+
+  mapArr.sort((a, b) => {
+    return a - b;
+  });
+
+  const rangeArr = [];
+  let item = [];
+
+  if (mapArr.length > 1) {
+    for (let j = 1; j < mapArr.length; j += 1) {
+      if (mapArr[j] - mapArr[j - 1] === 1) {
+        item.push(mapArr[j - 1]);
+
+        if (j === mapArr.length - 1) {
+          item.push(mapArr[j]);
+          rangeArr.push(item);
+        }
+      } else {
+        if (j === 1) {
+          if (j === mapArr.length - 1) {
+            item.push(mapArr[j - 1]);
+            rangeArr.push(item);
+            rangeArr.push([mapArr[j]]);
+          } else {
+            rangeArr.push(mapArr[0]);
+          }
+        } else if (j === mapArr.length - 1) {
+          item.push(mapArr[j - 1]);
+          rangeArr.push(item);
+          rangeArr.push([mapArr[j]]);
+        } else {
+          item.push(mapArr[j - 1]);
+          rangeArr.push(item);
+          item = [];
+        }
+      }
+    }
+  } else {
+    rangeArr.push([mapArr[0]]);
+  }
+
+  return rangeArr;
 }
