@@ -6,6 +6,7 @@ import {
   updateContextWithSheetData,
 } from "@fortune-sheet/core/src/context";
 import WorkbookContext from "../../context";
+import SheetOverlay from "../SheetOverlay";
 
 type Props = {
   data: any;
@@ -40,6 +41,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
         <div className="fortune-col-header">colheader</div>
         <div className="fortune-sheet-area">
           <canvas className="fortune-sheet-canvas" ref={canvasRef} />
+          <SheetOverlay data={data} />
         </div>
       </div>
     </div>

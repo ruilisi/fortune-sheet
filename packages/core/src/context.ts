@@ -38,7 +38,10 @@ export type Context = {
   jfautoscrollTimeout: any;
 
   luckysheet_select_status: boolean;
-  luckysheet_select_save: { row: any[]; column: any[] }[];
+  luckysheet_select_save: ({ row: any[]; column: any[] } & Record<
+    string,
+    any
+  >)[];
   luckysheet_selection_range: any[];
 
   luckysheet_copy_save: any; // 复制粘贴

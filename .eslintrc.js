@@ -28,12 +28,14 @@ module.exports = {
     "no-underscore-dangle": 0,
     "no-console": [1, { allow: ["warn", "error"] }],
     "no-lonely-if": 0,
+    "jsx-a11y/no-static-element-interactions": 0,
     "import/no-extraneous-dependencies": 0,
     "import/extensions": 0,
     "import/no-unresolved": 0,
     "import/prefer-default-export": 0,
     "react/jsx-filename-extension": 0,
     "react/jsx-props-no-spreading": 0,
+    "react/no-array-index-key": 0,
     "react/function-component-definition": [
       2,
       {

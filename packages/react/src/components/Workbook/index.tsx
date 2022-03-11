@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import "./index.css";
-import defaultContext from "@fortune-sheet/core/src/context";
+import defaultContext, { Context } from "@fortune-sheet/core/src/context";
+import produce from "immer";
 import Sheet from "../Sheet";
 import WorkbookContext from "../../context";
 
@@ -10,7 +11,20 @@ type Props = {
 
 const Workbook: React.FC<Props> = ({ data }) => {
   const [context, setContext] = useState(defaultContext());
-  const providerValue = useMemo(() => ({ context, setContext }), [context]);
+  const setContextValue = useCallback(
+    <K extends keyof Context>(key: K, value: Context[K]) => {
+      setContext(
+        produce((draftCtx) => {
+          draftCtx[key] = value;
+        })
+      );
+    },
+    []
+  );
+  const providerValue = useMemo(
+    () => ({ context, setContext, setContextValue }),
+    [context, setContextValue]
+  );
 
   return (
     <WorkbookContext.Provider value={providerValue}>

@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { Context } from "../context";
 import { rgbToHex } from "../utils";
 import { isInlineStringCell, isInlineStringCT } from "./inline-string";
 
@@ -107,4 +108,85 @@ export function getRealCellValue(
   }
 
   return value;
+}
+
+export function mergeBorder(
+  ctx: Context,
+  d: any[][],
+  row_index: number,
+  col_index: number
+) {
+  if (d == null || d[row_index] == null) {
+    console.warn("Merge info is null", row_index, col_index);
+    return null;
+  }
+  const value = d[row_index][col_index];
+
+  if (_.isPlainObject(value) && "mc" in value) {
+    const margeMaindata = value.mc;
+    if (margeMaindata == null) {
+      console.warn("Merge info is null", row_index, col_index);
+      return null;
+    }
+    col_index = margeMaindata.c;
+    row_index = margeMaindata.r;
+
+    if (d[row_index][col_index] == null) {
+      console.warn("Main merge Cell info is null", row_index, col_index);
+      return null;
+    }
+    const col_rs = d[row_index][col_index].mc.cs;
+    const row_rs = d[row_index][col_index].mc.rs;
+
+    const margeMain = d[row_index][col_index].mc;
+
+    let start_r: number;
+    let end_r: number;
+    let row: number | undefined;
+    let row_pre: number | undefined;
+    for (let r = row_index; r < margeMain.rs + row_index; r += 1) {
+      if (r === 0) {
+        start_r = -1;
+      } else {
+        start_r = ctx.visibledatarow[r - 1] - 1;
+      }
+
+      end_r = ctx.visibledatarow[r];
+
+      if (row_pre === undefined) {
+        row_pre = start_r;
+        row = end_r;
+      } else if (row !== undefined) {
+        row += end_r - start_r - 1;
+      }
+    }
+
+    let start_c: number;
+    let end_c: number;
+    let col: number | undefined;
+    let col_pre: number | undefined;
+
+    for (let c = col_index; c < margeMain.cs + col_index; c += 1) {
+      if (c === 0) {
+        start_c = 0;
+      } else {
+        start_c = ctx.visibledatacolumn[c - 1];
+      }
+
+      end_c = ctx.visibledatacolumn[c];
+
+      if (col_pre === undefined) {
+        col_pre = start_c;
+        col = end_c;
+      } else if (col !== undefined) {
+        col += end_c - start_c;
+      }
+    }
+
+    return {
+      row: [row_pre, row, row_index, row_index + row_rs - 1],
+      column: [col_pre, col, col_index, col_index + col_rs - 1],
+    };
+  }
+  return null;
 }

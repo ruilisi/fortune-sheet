@@ -1,0 +1,81 @@
+.fortune-sheet-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.luckysheet-cell-selected-focus {
+  position: absolute;
+  pointer-events: none;
+  z-index: 14;
+  /*border:1px solid #fff;*/
+  margin: 0px 0 0 0px;
+  background: rgba(0, 80, 208, 0.15);
+  display: none;
+  /*transition: all 0.1s;*/
+}
+
+.luckysheet-selection-copy {
+  position: absolute;
+  pointer-events: none;
+  z-index: 18;
+  border: none;
+  margin: 0px 0 0 0px;
+  display: none;
+}
+
+.luckysheet-selection-copy .luckysheet-copy {
+  position: absolute;
+  z-index: 18;
+  background-color: transparent;
+}
+
+.luckysheet-selection-copy-hc {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 2px dashed #12a5ff;
+  z-index: 8;
+}
+
+.luckysheet-selection-highlight {
+  position: absolute;
+  /*pointer-events: none;*/
+  z-index: 14;
+  border: none;
+  margin: 0px 0 0 0px;
+  display: none;
+}
+
+.luckysheet-cell-selected-extend {
+  position: absolute;
+  pointer-events: none;
+  z-index: 16;
+  border: 1px dashed #0188fb;
+  margin: -1px 0 0 -1px;
+  display: none;
+  /*transition: all 0.1s;*/
+}
+
+.luckysheet-cell-selected-move {
+  position: absolute;
+  pointer-events: none;
+  z-index: 16;
+  border: 2px solid #0188fb;
+  margin: -1px 0 0 -1px;
+  display: none;
+  /*transition: all 0.1s;*/
+}
+
+.luckysheet-cell-selected {
+  position: absolute;
+  pointer-events: none;
+  z-index: 15;
+  border: 1px solid #0188fb;
+  margin: -1px 0 0 -1px;
+  background: rgba(1, 136, 251, 0.15);
+  display: none;
+  /*transition: all 0.1s;*/
+}
