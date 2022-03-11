@@ -398,6 +398,9 @@ export function updateContextWithCanvas(
       canvas.clientWidth,
       canvas.clientHeight,
     ];
+    draftCtx.cellmainHeight = canvas.clientHeight - draftCtx.columnHeaderHeight;
+    draftCtx.cellmainWidth = canvas.clientWidth - draftCtx.rowHeaderWidth;
+
     canvas.style.width = `${draftCtx.luckysheetTableContentHW[0]}px`;
     canvas.style.height = `${draftCtx.luckysheetTableContentHW[1]}px`;
     canvas.width = Math.ceil(

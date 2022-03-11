@@ -4,6 +4,19 @@
   height: 100%;
 }
 
+.fortune-cell-area {
+  border-collapse: collapse;
+  position: relative;
+  overflow: hidden;
+  outline-style: none;
+  cursor: default;
+}
+
+.fortune-row-body {
+  display: flex;
+  flex-direction: row;
+}
+
 .luckysheet-cell-selected-focus {
   position: absolute;
   pointer-events: none;

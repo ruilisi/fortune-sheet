@@ -29,21 +29,15 @@ const Sheet: React.FC<Props> = ({ data }) => {
     tableCanvas.drawMain({
       scrollHeight: 0,
       scrollWidth: 0,
-      offsetLeft: 0,
-      offsetTop: 0,
     });
+    tableCanvas.drawColumnHeader(0);
+    tableCanvas.drawRowHeader(0);
   }, [context]);
 
   return (
     <div className="fortune-sheet-container">
-      <div className="fortune-row-header">rowheader</div>
-      <div className="fortune-col-body">
-        <div className="fortune-col-header">colheader</div>
-        <div className="fortune-sheet-area">
-          <canvas className="fortune-sheet-canvas" ref={canvasRef} />
-          <SheetOverlay data={data} />
-        </div>
-      </div>
+      <canvas className="fortune-sheet-canvas" ref={canvasRef} />
+      <SheetOverlay data={data} />
     </div>
   );
 };

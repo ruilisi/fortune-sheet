@@ -17,12 +17,21 @@ type Props = {
 const Sheet: React.FC<Props> = ({ data }) => {
   const { context, setContextValue } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
+  const cellAreaRef = useRef<HTMLDivElement>(null);
 
-  const onMouseDown = useCallback(
+  const cellAreaOnMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       // TODO set MouseDown state to context
-      const x = e.nativeEvent.offsetX;
-      const y = e.nativeEvent.offsetY;
+      // const mouse = mousePosition(
+      //   e.nativeEvent.offsetX,
+      //   e.nativeEvent.offsetY,
+      //   context
+      // );
+      // if (mouse[0] >= Store.cellmainWidth - Store.cellMainSrollBarSize || mouse[1] >= Store.cellmainHeight - Store.cellMainSrollBarSize) {
+      //   return;
+      // }
+      const x = e.nativeEvent.offsetX + cellAreaRef.current!.scrollLeft;
+      const y = e.nativeEvent.offsetY + cellAreaRef.current!.scrollTop;
 
       // if (
       //   luckysheetFreezen.freezenverticaldata != null &&
@@ -999,237 +1008,262 @@ const Sheet: React.FC<Props> = ({ data }) => {
     <div
       className="fortune-sheet-overlay"
       ref={containerRef}
-      onMouseDown={onMouseDown}
     >
-      <div id="luckysheet-formula-functionrange" />
       <div
-        id="luckysheet-formula-functionrange-select"
-        className="luckysheet-selection-copy luckysheet-formula-functionrange-select"
-      >
-        <div className="luckysheet-selection-copy-top luckysheet-copy" />
-        <div className="luckysheet-selection-copy-right luckysheet-copy" />
-        <div className="luckysheet-selection-copy-bottom luckysheet-copy" />
-        <div className="luckysheet-selection-copy-left luckysheet-copy" />
-        <div className="luckysheet-selection-copy-hc" />
-      </div>
-      <div
-        className="luckysheet-row-count-show luckysheet-count-show"
-        id="luckysheet-row-count-show"
+        className="fortune-col-header"
+        style={{
+          width: "100%",
+          height: context.columnHeaderHeight - 1.5,
+        }}
       />
-      <div
-        className="luckysheet-column-count-show luckysheet-count-show"
-        id="luckysheet-column-count-show"
-      />
-      <div
-        className="luckysheet-change-size-line"
-        id="luckysheet-change-size-line"
-      />
-      <div
-        className="luckysheet-cell-selected-focus"
-        id="luckysheet-cell-selected-focus"
-      />
-      <div id="luckysheet-selection-copy" />
-      <div id="luckysheet-chart-rangeShow" />
-      <div
-        className="luckysheet-cell-selected-extend"
-        id="luckysheet-cell-selected-extend"
-      />
-      <div
-        className="luckysheet-cell-selected-move"
-        id="luckysheet-cell-selected-move"
-      />
-      {context.luckysheet_select_save.length > 0 && (
-        <div id="luckysheet-cell-selected-boxs">
-          {context.luckysheet_select_save.map((selection, index) => (
+      <div className="fortune-row-body">
+        <div
+          className="fortune-row-header"
+          style={{
+            width: context.rowHeaderWidth - 1.5,
+            height: context.cellmainHeight,
+          }}
+        />
+        <div
+          ref={cellAreaRef}
+          onMouseDown={cellAreaOnMouseDown}
+          className="fortune-cell-area"
+          style={{
+            width: context.cellmainWidth,
+            height: context.cellmainHeight,
+          }}
+        >
+          <div id="luckysheet-formula-functionrange" />
+          <div
+            id="luckysheet-formula-functionrange-select"
+            className="luckysheet-selection-copy luckysheet-formula-functionrange-select"
+          >
+            <div className="luckysheet-selection-copy-top luckysheet-copy" />
+            <div className="luckysheet-selection-copy-right luckysheet-copy" />
+            <div className="luckysheet-selection-copy-bottom luckysheet-copy" />
+            <div className="luckysheet-selection-copy-left luckysheet-copy" />
+            <div className="luckysheet-selection-copy-hc" />
+          </div>
+          <div
+            className="luckysheet-row-count-show luckysheet-count-show"
+            id="luckysheet-row-count-show"
+          />
+          <div
+            className="luckysheet-column-count-show luckysheet-count-show"
+            id="luckysheet-column-count-show"
+          />
+          <div
+            className="luckysheet-change-size-line"
+            id="luckysheet-change-size-line"
+          />
+          <div
+            className="luckysheet-cell-selected-focus"
+            id="luckysheet-cell-selected-focus"
+          />
+          <div id="luckysheet-selection-copy" />
+          <div id="luckysheet-chart-rangeShow" />
+          <div
+            className="luckysheet-cell-selected-extend"
+            id="luckysheet-cell-selected-extend"
+          />
+          <div
+            className="luckysheet-cell-selected-move"
+            id="luckysheet-cell-selected-move"
+          />
+          {context.luckysheet_select_save.length > 0 && (
+            <div id="luckysheet-cell-selected-boxs">
+              {context.luckysheet_select_save.map((selection, index) => (
+                <div
+                  key={index}
+                  id="luckysheet-cell-selected"
+                  className="luckysheet-cell-selected"
+                  style={{
+                    left: selection.left_move,
+                    width: selection.width_move,
+                    top: selection.top_move,
+                    height: selection.height_move,
+                    display: "block",
+                    border: "1px solid #0188fb",
+                  }}
+                >
+                  <div className="luckysheet-cs-inner-border" />
+                  <div className="luckysheet-cs-fillhandle" />
+                  <div className="luckysheet-cs-inner-border" />
+                  <div className="luckysheet-cs-draghandle-top luckysheet-cs-draghandle" />
+                  <div className="luckysheet-cs-draghandle-bottom luckysheet-cs-draghandle" />
+                  <div className="luckysheet-cs-draghandle-left luckysheet-cs-draghandle" />
+                  <div className="luckysheet-cs-draghandle-right luckysheet-cs-draghandle" />
+                  <div className="luckysheet-cs-touchhandle luckysheet-cs-touchhandle-lt">
+                    <div className="luckysheet-cs-touchhandle-btn" />
+                  </div>
+                  <div className="luckysheet-cs-touchhandle luckysheet-cs-touchhandle-rb">
+                    <div className="luckysheet-cs-touchhandle-btn" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div id="luckysheet-postil-showBoxs" />
+          <div id="luckysheet-multipleRange-show" />
+          <div id="luckysheet-dynamicArray-hightShow" />
+          <div id="luckysheet-image-showBoxs">
             <div
-              key={index}
-              id="luckysheet-cell-selected"
-              className="luckysheet-cell-selected"
+              id="luckysheet-modal-dialog-activeImage"
+              className="luckysheet-modal-dialog"
               style={{
-                left: selection.left_move,
-                width: selection.width_move,
-                top: selection.top_move,
-                height: selection.height_move,
-                display: "block",
-                border: "1px solid #0188fb",
+                display: "none",
+                padding: 0,
+                position: "absolute",
+                zIndex: 300,
               }}
             >
-              <div className="luckysheet-cs-inner-border" />
-              <div className="luckysheet-cs-fillhandle" />
-              <div className="luckysheet-cs-inner-border" />
-              <div className="luckysheet-cs-draghandle-top luckysheet-cs-draghandle" />
-              <div className="luckysheet-cs-draghandle-bottom luckysheet-cs-draghandle" />
-              <div className="luckysheet-cs-draghandle-left luckysheet-cs-draghandle" />
-              <div className="luckysheet-cs-draghandle-right luckysheet-cs-draghandle" />
-              <div className="luckysheet-cs-touchhandle luckysheet-cs-touchhandle-lt">
-                <div className="luckysheet-cs-touchhandle-btn" />
+              <div
+                className="luckysheet-modal-dialog-border"
+                style={{ position: "absolute" }}
+              />
+              <div className="luckysheet-modal-dialog-content" />
+              <div className="luckysheet-modal-dialog-resize">
+                <div
+                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lt"
+                  data-type="lt"
+                />
+                <div
+                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-mt"
+                  data-type="mt"
+                />
+                <div
+                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lm"
+                  data-type="lm"
+                />
+                <div
+                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rm"
+                  data-type="rm"
+                />
+                <div
+                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rt"
+                  data-type="rt"
+                />
+                <div
+                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lb"
+                  data-type="lb"
+                />
+                <div
+                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-mb"
+                  data-type="mb"
+                />
+                <div
+                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rb"
+                  data-type="rb"
+                />
               </div>
-              <div className="luckysheet-cs-touchhandle luckysheet-cs-touchhandle-rb">
-                <div className="luckysheet-cs-touchhandle-btn" />
+              <div className="luckysheet-modal-dialog-controll">
+                <span
+                  className="luckysheet-modal-controll-btn luckysheet-modal-controll-crop"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="裁剪"
+                  title="裁剪"
+                >
+                  <i className="fa fa-pencil" aria-hidden="true" />
+                </span>
+                <span
+                  className="luckysheet-modal-controll-btn luckysheet-modal-controll-restore"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="恢复原图"
+                  title="恢复原图"
+                >
+                  <i className="fa fa-window-maximize" aria-hidden="true" />
+                </span>
+                <span
+                  className="luckysheet-modal-controll-btn luckysheet-modal-controll-del"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="删除"
+                  title="删除"
+                >
+                  <i className="fa fa-trash" aria-hidden="true" />
+                </span>
               </div>
             </div>
-          ))}
-        </div>
-      )}
-      <div id="luckysheet-postil-showBoxs" />
-      <div id="luckysheet-multipleRange-show" />
-      <div id="luckysheet-dynamicArray-hightShow" />
-      <div id="luckysheet-image-showBoxs">
-        <div
-          id="luckysheet-modal-dialog-activeImage"
-          className="luckysheet-modal-dialog"
-          style={{
-            display: "none",
-            padding: 0,
-            position: "absolute",
-            zIndex: 300,
-          }}
-        >
-          <div
-            className="luckysheet-modal-dialog-border"
-            style={{ position: "absolute" }}
-          />
-          <div className="luckysheet-modal-dialog-content" />
-          <div className="luckysheet-modal-dialog-resize">
             <div
-              className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lt"
-              data-type="lt"
-            />
-            <div
-              className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-mt"
-              data-type="mt"
-            />
-            <div
-              className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lm"
-              data-type="lm"
-            />
-            <div
-              className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rm"
-              data-type="rm"
-            />
-            <div
-              className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rt"
-              data-type="rt"
-            />
-            <div
-              className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lb"
-              data-type="lb"
-            />
-            <div
-              className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-mb"
-              data-type="mb"
-            />
-            <div
-              className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rb"
-              data-type="rb"
-            />
-          </div>
-          <div className="luckysheet-modal-dialog-controll">
-            <span
-              className="luckysheet-modal-controll-btn luckysheet-modal-controll-crop"
-              role="button"
-              tabIndex={0}
-              aria-label="裁剪"
-              title="裁剪"
+              id="luckysheet-modal-dialog-cropping"
+              className="luckysheet-modal-dialog"
+              style={{
+                display: "none",
+                padding: 0,
+                position: "absolute",
+                zIndex: 300,
+              }}
             >
-              <i className="fa fa-pencil" aria-hidden="true" />
-            </span>
-            <span
-              className="luckysheet-modal-controll-btn luckysheet-modal-controll-restore"
-              role="button"
-              tabIndex={0}
-              aria-label="恢复原图"
-              title="恢复原图"
-            >
-              <i className="fa fa-window-maximize" aria-hidden="true" />
-            </span>
-            <span
-              className="luckysheet-modal-controll-btn luckysheet-modal-controll-del"
-              role="button"
-              tabIndex={0}
-              aria-label="删除"
-              title="删除"
-            >
-              <i className="fa fa-trash" aria-hidden="true" />
-            </span>
-          </div>
-        </div>
-        <div
-          id="luckysheet-modal-dialog-cropping"
-          className="luckysheet-modal-dialog"
-          style={{
-            display: "none",
-            padding: 0,
-            position: "absolute",
-            zIndex: 300,
-          }}
-        >
-          <div className="cropping-mask" />
-          <div className="cropping-content" />
-          <div
-            className="luckysheet-modal-dialog-border"
-            style={{ position: "absolute" }}
-          />
-          <div className="luckysheet-modal-dialog-resize">
-            <div className="resize-item lt" data-type="lt" />
-            <div className="resize-item mt" data-type="mt" />
-            <div className="resize-item lm" data-type="lm" />
-            <div className="resize-item rm" data-type="rm" />
-            <div className="resize-item rt" data-type="rt" />
-            <div className="resize-item lb" data-type="lb" />
-            <div className="resize-item mb" data-type="mb" />
-            <div className="resize-item rb" data-type="rb" />
-          </div>
-          <div className="luckysheet-modal-dialog-controll">
-            <span
-              className="luckysheet-modal-controll-btn luckysheet-modal-controll-crop"
-              role="button"
-              tabIndex={0}
-              aria-label="裁剪"
-              title="裁剪"
-            >
-              <i className="fa fa-pencil" aria-hidden="true" />
-            </span>
-            <span
-              className="luckysheet-modal-controll-btn luckysheet-modal-controll-restore"
-              role="button"
-              tabIndex={0}
-              aria-label="恢复原图"
-              title="恢复原图"
-            >
-              <i className="fa fa-window-maximize" aria-hidden="true" />
-            </span>
-            <span
-              className="luckysheet-modal-controll-btn luckysheet-modal-controll-del"
-              role="button"
-              tabIndex={0}
-              aria-label="删除"
-              title="删除"
-            >
-              <i className="fa fa-trash" aria-hidden="true" />
-            </span>
-          </div>
-        </div>
-        <div className="img-list" />
-        <div className="cell-date-picker">
-          {/* <input
+              <div className="cropping-mask" />
+              <div className="cropping-content" />
+              <div
+                className="luckysheet-modal-dialog-border"
+                style={{ position: "absolute" }}
+              />
+              <div className="luckysheet-modal-dialog-resize">
+                <div className="resize-item lt" data-type="lt" />
+                <div className="resize-item mt" data-type="mt" />
+                <div className="resize-item lm" data-type="lm" />
+                <div className="resize-item rm" data-type="rm" />
+                <div className="resize-item rt" data-type="rt" />
+                <div className="resize-item lb" data-type="lb" />
+                <div className="resize-item mb" data-type="mb" />
+                <div className="resize-item rb" data-type="rb" />
+              </div>
+              <div className="luckysheet-modal-dialog-controll">
+                <span
+                  className="luckysheet-modal-controll-btn luckysheet-modal-controll-crop"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="裁剪"
+                  title="裁剪"
+                >
+                  <i className="fa fa-pencil" aria-hidden="true" />
+                </span>
+                <span
+                  className="luckysheet-modal-controll-btn luckysheet-modal-controll-restore"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="恢复原图"
+                  title="恢复原图"
+                >
+                  <i className="fa fa-window-maximize" aria-hidden="true" />
+                </span>
+                <span
+                  className="luckysheet-modal-controll-btn luckysheet-modal-controll-del"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="删除"
+                  title="删除"
+                >
+                  <i className="fa fa-trash" aria-hidden="true" />
+                </span>
+              </div>
+            </div>
+            <div className="img-list" />
+            <div className="cell-date-picker">
+              {/* <input
             id="cellDatePickerBtn"
             className="formulaInputFocus"
             readOnly
           /> */}
+            </div>
+          </div>
+          <div id="luckysheet-dataVerification-dropdown-btn" />
+          <div
+            id="luckysheet-dataVerification-dropdown-List"
+            className="luckysheet-mousedown-cancel"
+          />
+          <div
+            id="luckysheet-dataVerification-showHintBox"
+            className="luckysheet-mousedown-cancel"
+          />
+          <div className="luckysheet-cell-copy" />
+          <div className="luckysheet-grdblkflowpush" />
         </div>
       </div>
-      <div id="luckysheet-dataVerification-dropdown-btn" />
-      <div
-        id="luckysheet-dataVerification-dropdown-List"
-        className="luckysheet-mousedown-cancel"
-      />
-      <div
-        id="luckysheet-dataVerification-showHintBox"
-        className="luckysheet-mousedown-cancel"
-      />
-      <div className="luckysheet-cell-copy" />
-      <div className="luckysheet-grdblkflowpush" />
     </div>
   );
 };

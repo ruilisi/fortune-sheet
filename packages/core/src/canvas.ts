@@ -5,8 +5,10 @@ import {
   clearMeasureTextCache,
   defaultFont,
   getCellTextInfo,
+  getMeasureText,
 } from "./modules/text";
 import { isInlineStringCell } from "./modules/inline-string";
+import { indexToColumnChar } from "./utils";
 
 const defaultStyle = {
   fillStyle: "#000000",
@@ -117,6 +119,416 @@ export default class Canvas {
     this.canvasElement = canvasElement;
     this.sheetCtx = ctx;
     this.cellOverflowMapCache = {};
+  }
+
+  drawRowHeader(scrollHeight: number, drawHeight?: number, offsetTop?: number) {
+    if (drawHeight == null) {
+      [, drawHeight] = this.sheetCtx.luckysheetTableContentHW;
+    }
+
+    if (offsetTop == null) {
+      offsetTop = this.sheetCtx.columnHeaderHeight;
+    }
+
+    const renderCtx = this.canvasElement.getContext("2d");
+    if (!renderCtx) return;
+
+    renderCtx.save();
+    renderCtx.scale(
+      this.sheetCtx.devicePixelRatio,
+      this.sheetCtx.devicePixelRatio
+    );
+
+    renderCtx.clearRect(
+      0,
+      offsetTop,
+      this.sheetCtx.rowHeaderWidth - 1,
+      drawHeight
+    );
+
+    renderCtx.font = defaultFont(this.sheetCtx.defaultFontSize);
+    // @ts-ignore
+    renderCtx.textBaseline = defaultStyle.textBaseline; // 基准线 垂直居中
+    renderCtx.fillStyle = defaultStyle.fillStyle;
+
+    let dataset_row_st;
+    let dataset_row_ed;
+    dataset_row_st = _.sortedIndex(this.sheetCtx.visibledatarow, scrollHeight);
+    dataset_row_ed = _.sortedIndex(
+      this.sheetCtx.visibledatarow,
+      scrollHeight + drawHeight
+    );
+
+    if (dataset_row_st === -1) {
+      dataset_row_st = 0;
+    }
+    if (dataset_row_ed === -1) {
+      dataset_row_ed = this.sheetCtx.visibledatarow.length - 1;
+    }
+
+    renderCtx.save();
+    renderCtx.beginPath();
+    renderCtx.rect(
+      0,
+      offsetTop - 1,
+      this.sheetCtx.rowHeaderWidth - 1,
+      drawHeight - 2
+    );
+    renderCtx.clip();
+
+    let end_r;
+    let start_r;
+    const bodrder05 = 0.5; // Default 0.5
+    let preEndR;
+    for (let r = dataset_row_st; r <= dataset_row_ed; r += 1) {
+      if (r === 0) {
+        start_r = -scrollHeight - 1;
+      } else {
+        start_r = this.sheetCtx.visibledatarow[r - 1] - scrollHeight - 1;
+      }
+      end_r = this.sheetCtx.visibledatarow[r] - scrollHeight;
+
+      // 若超出绘制区域终止
+      // if(end_r > scrollHeight + drawHeight){
+      //     break;
+      // }
+      const firstOffset = dataset_row_st === r ? -2 : 0;
+      const lastOffset = dataset_row_ed === r ? -2 : 0;
+      // 列标题单元格渲染前触发，return false 则不渲染该单元格
+      // if (
+      //   !method.createHookFunction(
+      //     "rowTitleCellRenderBefore",
+      //     r + 1,
+      //     {
+      //       r,
+      //       top: start_r + offsetTop + firstOffset,
+      //       width: this.sheetCtx.rowHeaderWidth - 1,
+      //       height: end_r - start_r + 1 + lastOffset - firstOffset,
+      //     },
+      //     renderCtx
+      //   )
+      // ) {
+      //   continue;
+      // }
+
+      if (!this.sheetCtx.config?.rowhidden?.[r]) {
+        renderCtx.fillStyle = "#ffffff";
+        renderCtx.fillRect(
+          0,
+          start_r + offsetTop + firstOffset,
+          this.sheetCtx.rowHeaderWidth - 1,
+          end_r - start_r + 1 + lastOffset - firstOffset
+        );
+        renderCtx.fillStyle = "#000000";
+
+        // 行标题栏序列号
+        renderCtx.save(); // save scale before draw text
+        renderCtx.scale(this.sheetCtx.zoomRatio, this.sheetCtx.zoomRatio);
+        const textMetrics = getMeasureText(r + 1, renderCtx, this.sheetCtx);
+        // luckysheetTableContent.measureText(r + 1);
+
+        const horizonAlignPos =
+          (this.sheetCtx.rowHeaderWidth - textMetrics.width) / 2;
+        const verticalAlignPos = start_r + (end_r - start_r) / 2 + offsetTop;
+
+        renderCtx.fillText(
+          `${r + 1}`,
+          horizonAlignPos / this.sheetCtx.zoomRatio,
+          verticalAlignPos / this.sheetCtx.zoomRatio
+        );
+        renderCtx.restore(); // restore scale after draw text
+      }
+
+      // vertical
+      renderCtx.beginPath();
+      renderCtx.moveTo(
+        this.sheetCtx.rowHeaderWidth - 2 + bodrder05,
+        start_r + offsetTop - 2
+      );
+      renderCtx.lineTo(
+        this.sheetCtx.rowHeaderWidth - 2 + bodrder05,
+        end_r + offsetTop - 2
+      );
+      renderCtx.lineWidth = 1;
+
+      renderCtx.strokeStyle = defaultStyle.strokeStyle;
+      renderCtx.stroke();
+      renderCtx.closePath();
+
+      // 行标题栏横线,horizen
+      if (
+        this.sheetCtx.config.rowhidden &&
+        _.isNil(this.sheetCtx.config.rowhidden[r]) &&
+        this.sheetCtx.config.rowhidden[r + 1]
+      ) {
+        renderCtx.beginPath();
+        renderCtx.moveTo(-1, end_r + offsetTop - 4 + bodrder05);
+        renderCtx.lineTo(
+          this.sheetCtx.rowHeaderWidth - 1,
+          end_r + offsetTop - 4 + bodrder05
+        );
+        // luckysheetTableContent.lineWidth = 1;
+        // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+        renderCtx.closePath();
+        renderCtx.stroke();
+      } else if (
+        _.isNil(this.sheetCtx.config.rowhidden) ||
+        _.isNil(this.sheetCtx.config.rowhidden[r])
+      ) {
+        renderCtx.beginPath();
+        renderCtx.moveTo(-1, end_r + offsetTop - 2 + bodrder05);
+        renderCtx.lineTo(
+          this.sheetCtx.rowHeaderWidth - 1,
+          end_r + offsetTop - 2 + bodrder05
+        );
+
+        // luckysheetTableContent.lineWidth = 1;
+        // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+        renderCtx.closePath();
+        renderCtx.stroke();
+      }
+
+      if (this.sheetCtx.config?.rowhidden?.[r - 1] && preEndR !== undefined) {
+        renderCtx.beginPath();
+        renderCtx.moveTo(-1, preEndR + offsetTop + bodrder05);
+        renderCtx.lineTo(
+          this.sheetCtx.rowHeaderWidth - 1,
+          preEndR + offsetTop + bodrder05
+        );
+        renderCtx.closePath();
+        renderCtx.stroke();
+      }
+
+      preEndR = end_r;
+
+      // 列标题单元格渲染前触发，return false 则不渲染该单元格
+      // method.createHookFunction(
+      //   "rowTitleCellRenderAfter",
+      //   r + 1,
+      //   {
+      //     r,
+      //     top: start_r + offsetTop + firstOffset,
+      //     width: this.sheetCtx.rowHeaderWidth - 1,
+      //     height: end_r - start_r + 1 + lastOffset - firstOffset,
+      //   },
+      //   renderCtx
+      // );
+    }
+
+    // Must be restored twice, otherwise it will be enlarged under window.devicePixelRatio = 1.5
+    renderCtx.restore();
+    renderCtx.restore();
+  }
+
+  drawColumnHeader(
+    scrollWidth: number,
+    drawWidth?: number,
+    offsetLeft?: number
+  ) {
+    if (drawWidth === undefined) {
+      [drawWidth] = this.sheetCtx.luckysheetTableContentHW;
+    }
+
+    if (offsetLeft === undefined) {
+      offsetLeft = this.sheetCtx.rowHeaderWidth;
+    }
+
+    const renderCtx = this.canvasElement.getContext("2d");
+    if (!renderCtx) return;
+
+    renderCtx.save();
+    renderCtx.scale(
+      this.sheetCtx.devicePixelRatio,
+      this.sheetCtx.devicePixelRatio
+    );
+    renderCtx.clearRect(
+      offsetLeft,
+      0,
+      drawWidth,
+      this.sheetCtx.columnHeaderHeight - 1
+    );
+
+    renderCtx.font = defaultFont(this.sheetCtx.defaultFontSize);
+    // @ts-ignore
+    renderCtx.textBaseline = defaultStyle.textBaseline; // 基准线 垂直居中
+    renderCtx.fillStyle = defaultStyle.fillStyle;
+
+    let dataset_col_st;
+    let dataset_col_ed;
+    dataset_col_st = _.sortedIndex(
+      this.sheetCtx.visibledatacolumn,
+      scrollWidth
+    );
+    dataset_col_ed = _.sortedIndex(
+      this.sheetCtx.visibledatacolumn,
+      scrollWidth + drawWidth
+    );
+
+    if (dataset_col_st === -1) {
+      dataset_col_st = 0;
+    }
+    if (dataset_col_ed === -1) {
+      dataset_col_ed = this.sheetCtx.visibledatacolumn.length - 1;
+    }
+
+    renderCtx.save();
+    renderCtx.beginPath();
+    renderCtx.rect(
+      offsetLeft - 1,
+      0,
+      drawWidth,
+      this.sheetCtx.columnHeaderHeight - 1
+    );
+    renderCtx.clip();
+
+    // console.log(offsetLeft, 0, drawWidth, this.sheetCtx.columnHeaderHeight -1);
+
+    let end_c;
+    let start_c;
+    const bodrder05 = 0.5; // Default 0.5
+    let preEndC;
+    for (let c = dataset_col_st; c <= dataset_col_ed; c += 1) {
+      if (c === 0) {
+        start_c = -scrollWidth;
+      } else {
+        start_c = this.sheetCtx.visibledatacolumn[c - 1] - scrollWidth;
+      }
+      end_c = this.sheetCtx.visibledatacolumn[c] - scrollWidth;
+
+      // 若超出绘制区域终止
+      // if(end_c > scrollWidth + drawWidth+1){
+      //     break;
+      // }
+      const abc = indexToColumnChar(c);
+      // 列标题单元格渲染前触发，return false 则不渲染该单元格
+      // if (
+      //   !method.createHookFunction(
+      //     "columnTitleCellRenderBefore",
+      //     abc,
+      //     {
+      //       c,
+      //       left: start_c + offsetLeft - 1,
+      //       width: end_c - start_c,
+      //       height: this.sheetCtx.columnHeaderHeight - 1,
+      //     },
+      //     renderCtx
+      //   )
+      // ) {
+      //   continue;
+      // }
+
+      if (!this.sheetCtx.config?.colhidden?.[c]) {
+        renderCtx.fillStyle = "#ffffff";
+        renderCtx.fillRect(
+          start_c + offsetLeft - 1,
+          0,
+          end_c - start_c,
+          this.sheetCtx.columnHeaderHeight - 1
+        );
+        renderCtx.fillStyle = "#000000";
+
+        // 列标题栏序列号
+        renderCtx.save(); // save scale before draw text
+        renderCtx.scale(this.sheetCtx.zoomRatio, this.sheetCtx.zoomRatio);
+
+        const textMetrics = getMeasureText(abc, renderCtx, this.sheetCtx);
+        // luckysheetTableContent.measureText(abc);
+
+        const horizonAlignPos = Math.round(
+          start_c + (end_c - start_c) / 2 + offsetLeft - textMetrics.width / 2
+        );
+        const verticalAlignPos = Math.round(
+          this.sheetCtx.columnHeaderHeight / 2
+        );
+
+        renderCtx.fillText(
+          abc,
+          horizonAlignPos / this.sheetCtx.zoomRatio,
+          verticalAlignPos / this.sheetCtx.zoomRatio
+        );
+        renderCtx.restore(); // restore scale after draw text
+      }
+
+      // 列标题栏竖线 vertical
+      if (
+        this.sheetCtx.config.colhidden &&
+        this.sheetCtx.config.colhidden[c] &&
+        this.sheetCtx.config.colhidden[c + 1]
+      ) {
+        renderCtx.beginPath();
+        renderCtx.moveTo(end_c + offsetLeft - 4 + bodrder05, 0);
+        renderCtx.lineTo(
+          end_c + offsetLeft - 4 + bodrder05,
+          this.sheetCtx.columnHeaderHeight - 2
+        );
+        renderCtx.lineWidth = 1;
+        renderCtx.strokeStyle = defaultStyle.strokeStyle;
+        renderCtx.closePath();
+        renderCtx.stroke();
+      } else if (
+        _.isNil(this.sheetCtx.config.colhidden) ||
+        _.isNil(this.sheetCtx.config.colhidden[c])
+      ) {
+        renderCtx.beginPath();
+        renderCtx.moveTo(end_c + offsetLeft - 2 + bodrder05, 0);
+        renderCtx.lineTo(
+          end_c + offsetLeft - 2 + bodrder05,
+          this.sheetCtx.columnHeaderHeight - 2
+        );
+
+        renderCtx.lineWidth = 1;
+        renderCtx.strokeStyle = defaultStyle.strokeStyle;
+        renderCtx.closePath();
+        renderCtx.stroke();
+      }
+
+      if (this.sheetCtx.config?.colhidden?.[c - 1] && preEndC !== undefined) {
+        renderCtx.beginPath();
+        renderCtx.moveTo(preEndC + offsetLeft + bodrder05, 0);
+        renderCtx.lineTo(
+          preEndC + offsetLeft + bodrder05,
+          this.sheetCtx.columnHeaderHeight - 2
+        );
+        // luckysheetTableContent.lineWidth = 1;
+        // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+        renderCtx.closePath();
+        renderCtx.stroke();
+      }
+
+      // horizen
+      renderCtx.beginPath();
+      renderCtx.moveTo(
+        start_c + offsetLeft - 1,
+        this.sheetCtx.columnHeaderHeight - 2 + bodrder05
+      );
+      renderCtx.lineTo(
+        end_c + offsetLeft - 1,
+        this.sheetCtx.columnHeaderHeight - 2 + bodrder05
+      );
+      // luckysheetTableContent.lineWidth = 1;
+
+      // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+      renderCtx.stroke();
+      renderCtx.closePath();
+
+      preEndC = end_c;
+
+      // method.createHookFunction(
+      //   "columnTitleCellRenderAfter",
+      //   abc,
+      //   {
+      //     c,
+      //     left: start_c + offsetLeft - 1,
+      //     width: end_c - start_c,
+      //     height: this.sheetCtx.columnHeaderHeight - 1,
+      //   },
+      //   renderCtx
+      // );
+    }
+
+    // Must be restored twice, otherwise it will be enlarged under window.devicePixelRatio = 1.5
+    renderCtx.restore();
+    renderCtx.restore();
   }
 
   drawMain({
