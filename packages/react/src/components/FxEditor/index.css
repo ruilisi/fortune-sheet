@@ -1,0 +1,178 @@
+.luckysheet-wa-calculate {
+  height: 28px;
+  /*padding: 10px 8px;*/
+  background: #fff;
+  position: relative;
+  padding-right: 44px;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.luckysheet-wa-calculate-help {
+  height: 100%;
+  width: 99px;
+  border-right: 1px solid #d4d4d4;
+}
+
+.luckysheet-wa-calculate-help-box {
+  height: 100%;
+  width: 85px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+#luckysheet-helpbox {
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  resize: none;
+  /* border: 1px #b9b9b9 solid; */
+  font-family: arial, sans, sans-serif;
+  font-size: 14px;
+  line-height: 14px;
+  background-color: #ffffff;
+  padding: 2px 5px;
+}
+
+.luckysheet-helpbox-cell-input {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  outline: none;
+  cursor: text;
+  -webkit-user-modify: read-write-plaintext-only;
+  white-space: nowrap;
+  overflow: hidden;
+  -webkit-transform: translateZ(0);
+  background-color: white;
+  word-wrap: break-word;
+  -webkit-nbsp-mode: space;
+  -webkit-line-break: after-white-space;
+}
+
+.luckysheet-wa-calculate-help-tool {
+  position: absolute;
+  left: 85px;
+  text-align: center;
+  height: 100%;
+  width: 13px;
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+}
+.luckysheet-wa-calculate-help-tool .fa-caret-down {
+  position: absolute;
+  top: 50%;
+  left: 3px;
+  transform: translateY(-50%);
+}
+
+.luckysheet-wa-calculate-help-tool:hover {
+  background: #efefef;
+  cursor: pointer;
+  border-left: 1px solid #e5e5e5;
+  border-right: 1px solid #e5e5e5;
+}
+
+.luckysheet-wa-calculate-size {
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  left: 0px;
+  bottom: 0px;
+  z-index: 1000;
+}
+
+.luckysheet-wa-calculate-size:hover {
+  background: #5e5e5e;
+  cursor: ns-resize;
+}
+
+#luckysheet-wa-functionbox-cancel {
+  left: 104px;
+}
+
+#luckysheet-wa-functionbox-confirm {
+  left: 130px;
+}
+
+.luckysheet-wa-functionbox {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  left: 156px;
+  color: #d6d6d6;
+}
+
+.luckysheet-wa-functionbox span {
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+}
+
+.luckysheet-wa-functionbox i {
+  font-size: 24px;
+}
+
+.luckysheet-wa-calculate-active {
+  color: #585858;
+  cursor: pointer;
+}
+
+.luckysheet-wa-calculate-active:hover {
+  color: #0188fb;
+}
+
+#luckysheet-functionbox-container {
+  height: 100%;
+  padding-left: 10px;
+  overflow: hidden;
+  position: absolute;
+  padding: 0;
+  top: 0px;
+  left: 185px;
+  right: 10px;
+  border-left: 1px solid #e5e5e5;
+}
+
+#luckysheet-functionbox-container > div {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+}
+
+#luckysheet-functionbox {
+  bottom: 6px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 6px;
+  resize: none;
+  /*border: 1px #b9b9b9 solid;*/
+  font-family: arial, sans, sans-serif;
+  font-size: 14px;
+  line-height: 14px;
+  background-color: #ffffff;
+  padding: 0px 5px;
+}
+
+#luckysheet-functionbox .luckysheet-functionbox-cell-input {
+  word-wrap: break-word;
+  -webkit-nbsp-mode: space;
+  -webkit-line-break: after-white-space;
+}
+
+.luckysheet-functionbox-cell-input {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  outline: none;
+  cursor: text;
+  -webkit-user-modify: read-write-plaintext-only;
+  white-space: pre-wrap;
+  -webkit-transform: translateZ(0);
+  background-color: white;
+}

@@ -4,6 +4,8 @@ import defaultContext, { Context } from "@fortune-sheet/core/src/context";
 import produce from "immer";
 import Sheet from "../Sheet";
 import WorkbookContext from "../../context";
+import Toolbar from "../Toolbar";
+import FxEditor from "../FxEditor";
 
 type Props = {
   data: any;
@@ -30,8 +32,8 @@ const Workbook: React.FC<Props> = ({ data }) => {
     <WorkbookContext.Provider value={providerValue}>
       <div className="fortune-container">
         <div className="fortune-workarea">
-          <div className="fortune-toolbar">toolbar</div>
-          <div className="fortune-celldetail">celldetail</div>
+          <Toolbar />
+          <FxEditor />
         </div>
         <Sheet data={data} />
       </div>

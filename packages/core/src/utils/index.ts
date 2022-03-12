@@ -27,3 +27,10 @@ export function indexToColumnChar(n: number) {
   }
   return s.toUpperCase();
 }
+
+export function escapeScriptTag(str: string) {
+  if (typeof str !== "string") return str;
+  return str
+    .replace(/<script>/g, "&lt;script&gt;")
+    .replace(/<\/script>/, "&lt;/script&gt;");
+}
