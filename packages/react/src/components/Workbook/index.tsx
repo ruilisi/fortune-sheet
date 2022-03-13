@@ -31,30 +31,93 @@ const Workbook: React.FC<Settings> = (props) => {
     [context, mergedSettings, setContextValue]
   );
   useEffect(() => {
-    const cellData = mergedSettings.data?.[context.currentSheetIndex]?.celldata;
-    const data = mergedSettings.data?.[context.currentSheetIndex]?.data;
-    if (_.isEmpty(data) && !_.isEmpty(cellData)) {
-      const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
-      const lastCol = _.maxBy(cellData, "c");
-      if (lastRow && lastCol) {
-        const expandedData: SheetType["data"] = _.times(lastRow.r + 1, () =>
-          _.times(lastCol.c + 1, () => null)
-        );
-        cellData?.forEach((d) => {
-          // TODO setCellValue(expandedData, d.r, d.c, d.v);
-          expandedData[d.r][d.c] = d.v;
-        });
-        setContextValue(
-          "luckysheetfile",
-          produce(mergedSettings.data, (draftData) => {
-            draftData[context.currentSheetIndex].data = expandedData;
-          })
-        );
-      }
-    } else {
-      setContextValue("luckysheetfile", mergedSettings.data);
-    }
-  }, [mergedSettings.data, context.currentSheetIndex, setContextValue]);
+    setContext(
+      produce((draftCtx) => {
+        const sheet = mergedSettings.data?.[context.currentSheetIndex];
+        if (!sheet) return;
+        const cellData = sheet.celldata;
+        let { data } = sheet;
+        if (_.isEmpty(data) && !_.isEmpty(cellData)) {
+          const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
+          const lastCol = _.maxBy(cellData, "c");
+          if (lastRow && lastCol) {
+            const expandedData: SheetType["data"] = _.times(lastRow.r + 1, () =>
+              _.times(lastCol.c + 1, () => null)
+            );
+            cellData?.forEach((d) => {
+              // TODO setCellValue(expandedData, d.r, d.c, d.v);
+              expandedData[d.r][d.c] = d.v;
+            });
+            draftCtx.luckysheetfile = produce(
+              mergedSettings.data,
+              (draftData) => {
+                draftData[context.currentSheetIndex].data = expandedData;
+              }
+            );
+            data = expandedData;
+          }
+        } else {
+          draftCtx.luckysheetfile = mergedSettings.data;
+        }
+
+        draftCtx.luckysheet_select_save = sheet.luckysheet_select_save;
+        if (draftCtx.luckysheet_select_save?.length === 0) {
+          if (data?.[0]?.[0]?.mc) {
+            draftCtx.luckysheet_select_save = [
+              {
+                row: [0, data[0][0].mc.rs - 1],
+                column: [0, data[0][0].mc.cs - 1],
+              },
+            ];
+          } else {
+            draftCtx.luckysheet_select_save = [
+              {
+                row: [0, 0],
+                column: [0, 0],
+              },
+            ];
+          }
+        }
+
+        draftCtx.luckysheet_selection_range = _.isNil(
+          sheet.luckysheet_selection_range
+        )
+          ? []
+          : sheet.luckysheet_selection_range;
+        draftCtx.config = _.isNil(sheet.config) ? {} : sheet.config;
+
+        draftCtx.zoomRatio = _.isNil(sheet.zoomRatio) ? 1 : sheet.zoomRatio;
+
+        if (!_.isNil(sheet.defaultRowHeight)) {
+          draftCtx.defaultrowlen = parseFloat(sheet.defaultRowHeight);
+        } else {
+          draftCtx.defaultrowlen = mergedSettings.defaultRowHeight;
+        }
+
+        if (!_.isNil(sheet.defaultColWidth)) {
+          draftCtx.defaultcollen = parseFloat(sheet.defaultColWidth);
+        } else {
+          draftCtx.defaultcollen = mergedSettings.defaultColWidth;
+        }
+
+        if (!_.isNil(sheet.showGridLines)) {
+          const { showGridLines } = sheet;
+          if (showGridLines === 0 || showGridLines === false) {
+            draftCtx.showGridLines = false;
+          } else {
+            draftCtx.showGridLines = true;
+          }
+        } else {
+          draftCtx.showGridLines = true;
+        }
+      })
+    );
+  }, [
+    mergedSettings.data,
+    context.currentSheetIndex,
+    mergedSettings.defaultRowHeight,
+    mergedSettings.defaultColWidth,
+  ]);
 
   if (!context.luckysheetfile) {
     return null;
