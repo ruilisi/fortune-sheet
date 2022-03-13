@@ -1,9 +1,10 @@
 import produce from "immer";
+import { Sheet } from "./types";
 
 export type Context = {
   container: any;
   loadingObj: any;
-  luckysheetfile: any;
+  luckysheetfile: Sheet[];
   defaultcolumnNum: number;
   defaultrowNum: number;
   fullscreenmode: boolean;

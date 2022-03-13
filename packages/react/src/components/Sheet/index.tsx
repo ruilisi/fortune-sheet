@@ -5,11 +5,12 @@ import {
   updateContextWithCanvas,
   updateContextWithSheetData,
 } from "@fortune-sheet/core/src/context";
+import type { Sheet as SheetType } from "@fortune-sheet/core/src/types";
 import WorkbookContext from "../../context";
 import SheetOverlay from "../SheetOverlay";
 
 type Props = {
-  data: any;
+  data: SheetType["data"];
 };
 
 const Sheet: React.FC<Props> = ({ data }) => {
