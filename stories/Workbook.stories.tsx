@@ -8,7 +8,7 @@ export default {
 } as ComponentMeta<typeof Workbook>;
 
 const Template: ComponentStory<typeof Workbook> = (args) => (
-  <div style={{ width: 1000, height: 800 }}>
+  <div style={{ width: "100%", height: "100%" }}>
     <Workbook {...args} data={[data]} />
   </div>
 );
