@@ -52,6 +52,75 @@ export function defaultFont(defaultFontSize: number) {
   return `normal normal normal ${defaultFontSize}pt "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC",  "WenQuanYi Micro Hei", sans-serif`;
 }
 
+export function getFontSet(format: any, defaultFontSize: number) {
+  if (_.isPlainObject(format)) {
+    const fontAttr: string[] = [];
+
+    // font-style
+    if (format.it === "0" || format.it === 0 || _.isNil(format.it)) {
+      fontAttr.push("normal");
+    } else {
+      fontAttr.push("italic");
+    }
+
+    // font-variant
+    fontAttr.push("normal");
+
+    // font-weight
+    if (format.bl === "0" || format.bl === 0 || _.isNil(format.bl)) {
+      fontAttr.push("normal");
+    } else {
+      fontAttr.push("bold");
+    }
+
+    // font-size/line-height
+    if (!format.fs) {
+      fontAttr.push(`${defaultFontSize}pt`);
+    } else {
+      fontAttr.push(`${Math.ceil(format.fs)}pt`);
+    }
+
+    let fontSet = "";
+    if (!format.ff) {
+      fontSet = `"Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif`;
+    } else {
+      /*
+      let fontfamily = null;
+      const { fontjson } = locale();
+      if (isdatatypemulti(format.ff).num) {
+        fontfamily = fontarray[parseInt(format.ff)];
+      } else {
+        // fontfamily = fontarray[fontjson[format.ff]];
+        fontfamily = format.ff;
+
+        fontfamily = fontfamily.replace(/"/g, "").replace(/'/g, "");
+
+        if (fontfamily.indexOf(" ") > -1) {
+          fontfamily = `"${fontfamily}"`;
+        }
+
+        if (
+          fontfamily != null &&
+          document.fonts &&
+          !document.fonts.check(`12px ${fontfamily}`)
+        ) {
+          menuButton.addFontTolist(fontfamily);
+        }
+      }
+
+      if (fontfamily == null) {
+        fontfamily = fontarray[0];
+      }
+      */
+
+      fontSet = `"Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif`;
+    }
+
+    return `${fontAttr.join(" ")} ${fontSet}`;
+  }
+  return defaultFont(defaultFontSize);
+}
+
 // 获取有值单元格文本大小
 // let measureTextCache = {}, measureTextCacheTimeOut = null;
 export function getMeasureText(
@@ -346,8 +415,7 @@ export function getCellTextInfo(
     let similarIndex = 0;
     for (let i = 0; i < sharedStrings.length; i += 1) {
       const shareCell = sharedStrings[i];
-      // const scfontset = luckysheetfontformat(shareCell);
-      const scfontset = defaultFont(sheetCtx.defaultFontSize);
+      const scfontset = getFontSet(shareCell, sheetCtx.defaultFontSize);
       const { fc } = shareCell;
       const { cl } = shareCell;
       const { un } = shareCell;
@@ -406,8 +474,7 @@ export function getCellTextInfo(
     }
     isInline = true;
   } else {
-    // fontset = luckysheetfontformat(cell);
-    fontset = defaultFont(sheetCtx.defaultFontSize);
+    fontset = getFontSet(cell, sheetCtx.defaultFontSize);
     renderCtx.font = fontset;
 
     cancelLine = normalizedCellAttr(cell, "cl"); // cancelLine

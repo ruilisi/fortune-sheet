@@ -5,6 +5,7 @@ import {
   clearMeasureTextCache,
   defaultFont,
   getCellTextInfo,
+  getFontSet,
   getMeasureText,
 } from "./modules/text";
 import { isInlineStringCell } from "./modules/inline-string";
@@ -748,9 +749,7 @@ export default class Canvas {
 
       const endY = this.sheetCtx.visibledatarow[r] - scrollHeight;
 
-      if (
-        this.sheetCtx.config?.rowhidden?.[r]
-      ) {
+      if (this.sheetCtx.config?.rowhidden?.[r]) {
         continue;
       }
 
@@ -764,22 +763,16 @@ export default class Canvas {
 
         const endX = this.sheetCtx.visibledatacolumn[c] - scrollWidth;
 
-        if (
-          this.sheetCtx.config?.colhidden?.[c]
-        ) {
+        if (this.sheetCtx.config?.colhidden?.[c]) {
           continue;
         }
 
         let firstcolumnlen = this.sheetCtx.defaultcollen;
-        if (
-          this.sheetCtx.config?.columnlen?.[c]
-        ) {
+        if (this.sheetCtx.config?.columnlen?.[c]) {
           firstcolumnlen = this.sheetCtx.config.columnlen[c];
         }
 
-        if (
-          this.sheetCtx.flowdata?.[r]?.[c]
-        ) {
+        if (this.sheetCtx.flowdata?.[r]?.[c]) {
           const value = this.sheetCtx.flowdata[r][c];
 
           if (_.isPlainObject(value) && "mc" in value) {
@@ -2483,8 +2476,8 @@ export default class Canvas {
     const pos_x = startX + offsetLeft;
     const pos_y = startY + offsetTop + 1;
 
-    // const fontset = luckysheetfontformat(cell);
-    // renderCtx.font = fontset;
+    const fontset = getFontSet(cell, this.sheetCtx.defaultFontSize);
+    renderCtx.font = fontset;
 
     renderCtx.save();
     renderCtx.beginPath();
