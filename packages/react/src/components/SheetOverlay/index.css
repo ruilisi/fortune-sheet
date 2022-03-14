@@ -181,3 +181,154 @@
   display: none;
   /*transition: all 0.1s;*/
 }
+
+.luckysheet-cs-inner-border {
+  pointer-events: none;
+  border: 1px solid #fff;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.luckysheet-cs-fillhandle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  bottom: -5px;
+  cursor: crosshair;
+  background-color: #0188fb;
+  border: solid 1px #fff;
+  z-index: 16;
+  pointer-events: auto;
+  right: -5px;
+}
+
+.luckysheet-cs-draghandle {
+  position: absolute;
+  cursor: move;
+  background-color: #fff;
+  opacity: 0.01;
+  z-index: 15;
+  pointer-events: auto;
+  border: 2px solid #fff;
+}
+
+.luckysheet-cs-draghandle-top {
+  top: -4px;
+  left: -2px;
+  right: -2px;
+  height: 2px;
+}
+
+.luckysheet-cs-draghandle-bottom {
+  right: 0;
+  left: -2px;
+  bottom: -4px;
+  height: 2px;
+}
+
+.luckysheet-cs-draghandle-left {
+  top: 0;
+  left: -4px;
+  bottom: 0;
+  width: 2px;
+}
+
+.luckysheet-cs-draghandle-right {
+  top: 0;
+  right: -4px;
+  bottom: 0;
+  width: 2px;
+}
+
+.luckysheet-cs-touchhandle {
+  display: none;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  padding: 5px;
+  z-index: 100;
+  pointer-events: auto;
+  touch-action: auto;
+}
+
+.luckysheet-cs-touchhandle:before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  background-color: #ffffff;
+  box-sizing: border-box;
+  border-radius: 50%;
+}
+
+.luckysheet-cs-touchhandle-lt {
+  left: -13px;
+  top: -13px;
+}
+
+.luckysheet-cs-touchhandle-lb {
+  left: -13px;
+  bottom: -13px;
+}
+
+.luckysheet-cs-touchhandle-rt {
+  right: -13px;
+  top: -13px;
+}
+
+.luckysheet-cs-touchhandle-rb {
+  right: -13px;
+  bottom: -13px;
+}
+
+.luckysheet-cs-touchhandle .luckysheet-cs-touchhandle-btn {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  left: 8px;
+  top: 8px;
+  background-color: #018ffb;
+  background-position: center;
+  box-sizing: border-box;
+  border-radius: 50%;
+  z-index: 11;
+}
+
+.luckysheet-input-box {
+  position: absolute;
+  font: normal normal 400 13px arial, sans, sans-serif;
+  text-align: left;
+  top: -10000px;
+  max-height: 9900px;
+  max-width: 9900px;
+  border: 2px #5292f7 solid;
+  padding: 0 2px;
+  margin: 0;
+  z-index: 15;
+  resize: none;
+  overflow: auto;
+  overflow: initial;
+  white-space: pre-wrap;
+  outline: none;
+  -webkit-box-shadow: 0 2px 5px rgb(0 0 0 / 40%);
+  -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 5px rgb(0 0 0 / 40%);
+  word-wrap: break-word;
+  background-color: rgb(255, 255, 255);
+  font-size: 13px;
+  right: auto;
+  overflow-y: auto;
+  display: flex;
+}
+
+.luckysheet-cell-input {
+  width: 100%;
+  margin: 0;
+  outline: none;
+  cursor: text;
+  white-space: pre-wrap;
+}

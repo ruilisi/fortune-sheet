@@ -10,13 +10,14 @@ import { normalizeSelection } from "@fortune-sheet/core/src/modules/selection";
 import WorkbookContext from "../../context";
 import ColumnHeader from "./ColumnHeader";
 import RowHeader from "./RowHeader";
+import InputBox from "./InputBox";
 
 type Props = {
   data: any;
 };
 
 const Sheet: React.FC<Props> = ({ data }) => {
-  const { context, setContextValue } = useContext(WorkbookContext);
+  const { context, setContextValue, settings } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const cellAreaRef = useRef<HTMLDivElement>(null);
 
@@ -1005,6 +1006,182 @@ const Sheet: React.FC<Props> = ({ data }) => {
     [context, setContextValue]
   );
 
+  const cellAreaDoubleClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      // if ($(event.target).hasClass("luckysheet-mousedown-cancel")) {
+      //   return;
+      // }
+
+      // 禁止前台编辑(只可 框选单元格、滚动查看表格)
+      if (!settings.allowEdit || settings.editMode) {
+        return;
+      }
+
+      // if (parseInt($("#luckysheet-input-box").css("top")) > 0) {
+      //   return;
+      // }
+
+      // const mouse = mouseposition(event.pageX, event.pageY);
+      // if (
+      //   mouse[0] >= context.cellmainWidth - Store.cellMainSrollBarSize ||
+      //   mouse[1] >= Store.cellmainHeight - Store.cellMainSrollBarSize
+      // ) {
+      //   return;
+      // }
+
+      // const scrollLeft = $("#luckysheet-cell-main").scrollLeft();
+      // const scrollTop = $("#luckysheet-cell-main").scrollTop();
+      // let x = mouse[0] + scrollLeft;
+      // let y = mouse[1] + scrollTop;
+
+      const x = e.nativeEvent.offsetX + cellAreaRef.current!.scrollLeft;
+      const y = e.nativeEvent.offsetY + cellAreaRef.current!.scrollTop;
+
+      /*
+      if (
+        luckysheetFreezen.freezenverticaldata != null &&
+        mouse[0] <
+          luckysheetFreezen.freezenverticaldata[0] -
+            luckysheetFreezen.freezenverticaldata[2]
+      ) {
+        x = mouse[0] + luckysheetFreezen.freezenverticaldata[2];
+      }
+
+      if (
+        luckysheetFreezen.freezenhorizontaldata != null &&
+        mouse[1] <
+          luckysheetFreezen.freezenhorizontaldata[0] -
+            luckysheetFreezen.freezenhorizontaldata[2]
+      ) {
+        y = mouse[1] + luckysheetFreezen.freezenhorizontaldata[2];
+      }
+      */
+
+      const row_location = rowLocation(y, context.visibledatarow);
+      let row_index = row_location[2];
+
+      const col_location = colLocation(x, context.visibledatacolumn);
+      let col_index = col_location[2];
+
+      const margeset = mergeBorder(
+        context,
+        context.flowdata,
+        row_index,
+        col_index
+      );
+      if (margeset) {
+        row_index = margeset.row[2];
+        col_index = margeset.column[2];
+      }
+
+      /*
+      if (pivotTable.isPivotRange(row_index, col_index)) {
+        // 数据透视表没有 任何数据
+        if (
+          (pivotTable.filter == null || pivotTable.filter.length == 0) &&
+          (pivotTable.row == null || pivotTable.row.length == 0) &&
+          (pivotTable.column == null || pivotTable.column.length == 0) &&
+          (pivotTable.values == null || pivotTable.values.length == 0)
+        ) {
+          return;
+        }
+
+        // 数据透视表没有 数值数据
+        if (pivotTable.values == null || pivotTable.values.length == 0) {
+          return;
+        }
+
+        // 点击位置不是 数值数据 所在区域
+        if (row_index == 0 || col_index == 0) {
+          return;
+        }
+
+        if (pivotTable.column != null && pivotTable.column.length > 0) {
+          if (
+            pivotTable.values.length >= 2 &&
+            pivotTable.showType == "column"
+          ) {
+            if (
+              row_index <= pivotTable.column.length ||
+              col_index >=
+                pivotTable.pivotDatas[0].length - pivotTable.values.length
+            ) {
+              return;
+            }
+          } else {
+            if (
+              row_index <= pivotTable.column.length - 1 ||
+              col_index >= pivotTable.pivotDatas[0].length - 1
+            ) {
+              return;
+            }
+          }
+        }
+
+        if (pivotTable.row != null && pivotTable.row.length > 0) {
+          if (pivotTable.values.length >= 2 && pivotTable.showType == "row") {
+            if (
+              col_index <= pivotTable.row.length ||
+              row_index >=
+                pivotTable.pivotDatas.length - pivotTable.values.length
+            ) {
+              return;
+            }
+          } else {
+            if (
+              col_index <= pivotTable.row.length - 1 ||
+              row_index >= pivotTable.pivotDatas.length - 1
+            ) {
+              return;
+            }
+          }
+        }
+
+        sheetmanage.addNewSheet(event);
+
+        pivotTable.drillDown(row_index, col_index);
+        return;
+      }
+      */
+
+      // if (
+      //   $("#luckysheet-search-formula-parm").is(":visible") ||
+      //   $("#luckysheet-search-formula-parm-select").is(":visible")
+      // ) {
+      //   // 公式参数栏显示
+      //   $("#luckysheet-cell-selected").hide();
+      // } else if (
+      //   $("#luckysheet-conditionformat-dialog").is(":visible") ||
+      //   $("#luckysheet-administerRule-dialog").is(":visible") ||
+      //   $("#luckysheet-newConditionRule-dialog").is(":visible") ||
+      //   $("#luckysheet-editorConditionRule-dialog").is(":visible") ||
+      //   $("#luckysheet-singleRange-dialog").is(":visible") ||
+      //   $("#luckysheet-multiRange-dialog").is(":visible")
+      // ) {
+      //   // 条件格式
+      // } else if (
+      //   $("#luckysheet-modal-dialog-slider-alternateformat").is(":visible") ||
+      //   $("#luckysheet-alternateformat-rangeDialog").is(":visible")
+      // ) {
+      //   // 交替颜色
+      // } else {
+      //   if (menuButton.luckysheetPaintModelOn) {
+      //     menuButton.cancelPaintModel();
+      //   }
+
+      // 检查当前坐标和焦点坐标是否一致，如果不一致那么进行修正
+      const { column_focus, row_focus } = context.luckysheet_select_save[0];
+      if (column_focus !== col_index || row_focus !== row_index) {
+        row_index = row_focus;
+        col_index = column_focus;
+      }
+
+      setContextValue("cellUpdating", true);
+      // }
+    },
+    [context, setContextValue, settings.allowEdit, settings.editMode]
+  );
+
   return (
     <div className="fortune-sheet-overlay" ref={containerRef}>
       <div className="fortune-col-header-wrap">
@@ -1022,6 +1199,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
         <div
           ref={cellAreaRef}
           onMouseDown={cellAreaOnMouseDown}
+          onDoubleClick={cellAreaDoubleClick}
           className="fortune-cell-area"
           style={{
             width: context.cellmainWidth,
@@ -1098,6 +1276,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
               ))}
             </div>
           )}
+          <InputBox />
           <div id="luckysheet-postil-showBoxs" />
           <div id="luckysheet-multipleRange-show" />
           <div id="luckysheet-dynamicArray-hightShow" />
