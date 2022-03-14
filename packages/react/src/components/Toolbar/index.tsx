@@ -300,19 +300,20 @@ const Toolbar: React.FC = () => {
             style={{ userSelect: "none" }}
           >
             <div
-              ariaPosinset="4"
-              ariaSetsize="7"
+              aria-posinset={4}
+              aria-setsize={7}
               className="luckysheet-inline-block luckysheet-toolbar-combo-button-caption"
               style={{ userSelect: "none" }}
             >
               <input
-                ariaLabel="字号大小"
+                aria-label="字号大小"
                 className="luckysheet-toolbar-combo-button-input luckysheet-toolbar-textinput"
                 role="combobox"
                 style={{ userSelect: "none" }}
                 tabIndex="-1"
                 type="text"
                 value="10"
+                onChange={() => {}}
               />
             </div>
             <div

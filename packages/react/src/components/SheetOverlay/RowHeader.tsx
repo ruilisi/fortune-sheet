@@ -6,6 +6,7 @@ import {
   selectTitlesMap,
   selectTitlesRange,
 } from "@fortune-sheet/core/src/modules/selection";
+import _ from "lodash";
 import React, {
   useContext,
   useState,
@@ -54,7 +55,9 @@ const RowHeader: React.FC = () => {
       const r2 = rowTitleRange[i][rowTitleRange[i].length - 1];
       const row = rowLocationByIndex(r2, context.visibledatarow)[1];
       const row_pre = rowLocationByIndex(r1, context.visibledatarow)[0];
-      selects.push({ row, row_pre });
+      if (_.isNumber(row_pre) && _.isNumber(row)) {
+        selects.push({ row, row_pre });
+      }
     }
     setSelectedLocation(selects);
   }, [context.luckysheet_select_save, context.visibledatarow]);
