@@ -294,7 +294,9 @@ function calcRowColSize(ctx: Context, rowCount: number, colCount: number) {
   for (let r = 0; r < rowCount; r += 1) {
     let rowlen: number | string = ctx.defaultrowlen;
 
-    rowlen ||= ctx.config?.rowlen?.[r];
+    if (ctx.config.rowlen?.[r]) {
+      rowlen = ctx.config?.rowlen?.[r];
+    }
 
     if (ctx.config?.rowhidden?.[r]) {
       ctx.visibledatarow.push(ctx.rh_height);
@@ -331,7 +333,7 @@ function calcRowColSize(ctx: Context, rowCount: number, colCount: number) {
     if (ctx.config?.columnlen?.[c]) {
       firstcolumnlen = ctx.config.columnlen[c];
     } else {
-      if (ctx.flowdata[0] != null && ctx.flowdata[0][c] != null) {
+      if (ctx.flowdata?.[0]?.[c]) {
         if (firstcolumnlen > 300) {
           firstcolumnlen = 300;
         } else if (firstcolumnlen < ctx.defaultcollen) {
