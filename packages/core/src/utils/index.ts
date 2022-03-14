@@ -1,3 +1,5 @@
+import { Context } from "../context";
+
 // 颜色 rgb转16进制
 export function rgbToHex(color: string): string {
   let rgb;
@@ -33,4 +35,13 @@ export function escapeScriptTag(str: string) {
   return str
     .replace(/<script>/g, "&lt;script&gt;")
     .replace(/<\/script>/, "&lt;/script&gt;");
+}
+
+export function getSheetIndex(ctx: Context, index: string) {
+  for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
+    if (ctx.luckysheetfile[i].index === index) {
+      return i;
+    }
+  }
+  return null;
 }

@@ -25,6 +25,7 @@ module.exports = {
     "no-param-reassign": 0,
     "no-unused-vars": 0,
     "no-bitwise": 0,
+    "no-empty": 0,
     "no-underscore-dangle": 0,
     "no-console": [1, { allow: ["warn", "error"] }],
     "no-lonely-if": 0,

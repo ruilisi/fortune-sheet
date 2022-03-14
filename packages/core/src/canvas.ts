@@ -9,6 +9,7 @@ import {
 } from "./modules/text";
 import { isInlineStringCell } from "./modules/inline-string";
 import { indexToColumnChar } from "./utils";
+import { getBorderInfoComputeRange } from "./modules/border";
 
 const defaultStyle = {
   fillStyle: "#000000",
@@ -1392,13 +1393,13 @@ export default class Canvas {
         canvas.restore();
       };
 
-      // const borderInfoCompute = getBorderInfoComputeRange(
-      //   rowStart,
-      //   rowEnd,
-      //   colStart,
-      //   colEnd
-      // );
-      const borderInfoCompute: any = {};
+      const borderInfoCompute = getBorderInfoComputeRange(
+        this.sheetCtx,
+        rowStart,
+        rowEnd,
+        colStart,
+        colEnd
+      );
 
       Object.keys(borderInfoCompute).forEach((x) => {
         // let bd_r = x.split("_")[0], bd_c = x.split("_")[1];
