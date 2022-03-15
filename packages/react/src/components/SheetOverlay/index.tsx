@@ -17,12 +17,16 @@ type Props = {
 };
 
 const Sheet: React.FC<Props> = ({ data }) => {
-  const { context, setContextValue, settings } = useContext(WorkbookContext);
+  const { context, setContextValue, settings, refs } =
+    useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const cellAreaRef = useRef<HTMLDivElement>(null);
 
   const cellAreaOnMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      if (e.target !== e.currentTarget) {
+        return;
+      }
       // TODO set MouseDown state to context
       // const mouse = mousePosition(
       //   e.nativeEvent.offsetX,
@@ -169,9 +173,10 @@ const Sheet: React.FC<Props> = ({ data }) => {
 
       // Store.luckysheet_scroll_status = true;
 
-      // //公式相关
-      // let $input = $("#luckysheet-input-box");
-      // if (parseInt($input.css("top")) > 0) {
+      // 公式相关
+      if (context.cellUpdating) {
+        console.info(refs.cellInputValue.current);
+          setContextValue("cellUpdating", false);
       //   if (
       //     formula.rangestart ||
       //     formula.rangedrag_column_start ||
@@ -418,17 +423,17 @@ const Sheet: React.FC<Props> = ({ data }) => {
       //       Store.luckysheet_select_status = false;
       //     }
       //   }
-      // } else {
-      //   if (
-      //     checkProtectionSelectLockedOrUnLockedCells(
-      //       row_index,
-      //       col_index,
-      //       Store.currentSheetIndex
-      //     )
-      //   ) {
-      //     Store.luckysheet_select_status = true;
-      //   }
-      // }
+      } else {
+        // if (
+        //   checkProtectionSelectLockedOrUnLockedCells(
+        //     row_index,
+        //     col_index,
+        //     Store.currentSheetIndex
+        //   )
+        // ) {
+        //   Store.luckysheet_select_status = true;
+        // }
+      }
 
       // //条件格式 应用范围可选择多个单元格
       // if ($("#luckysheet-multiRange-dialog").is(":visible")) {
@@ -1011,6 +1016,9 @@ const Sheet: React.FC<Props> = ({ data }) => {
       // if ($(event.target).hasClass("luckysheet-mousedown-cancel")) {
       //   return;
       // }
+      if (e.target !== e.currentTarget) {
+        return;
+      }
 
       // 禁止前台编辑(只可 框选单元格、滚动查看表格)
       if (!settings.allowEdit || settings.editMode) {

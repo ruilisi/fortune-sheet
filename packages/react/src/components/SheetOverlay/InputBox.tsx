@@ -1,13 +1,18 @@
 import { getCellValue } from "@fortune-sheet/core/src/modules/cell";
 import { isInlineStringCell } from "@fortune-sheet/core/src/modules/inline-string";
+import { moveToEnd } from "@fortune-sheet/core/src/modules/cursor";
 import { escapeScriptTag } from "@fortune-sheet/core/src/utils";
-import React, { useContext, useState, useEffect, useMemo } from "react";
+import React, { useContext, useState, useEffect, useMemo, useRef } from "react";
 import WorkbookContext from "../../context";
 import { getInlineStringHTML, getStyleByCell } from "./util";
+import ContentEditable from "./ContentEditable";
 
 const InputBox: React.FC = () => {
-  const { context } = useContext(WorkbookContext);
+  const { context, refs } = useContext(WorkbookContext);
+  const inputRef = useRef<HTMLDivElement>(null);
   const [inputHTML, setInputHTML] = useState<string>("");
+
+  refs.cellInputValue.current = inputRef.current?.innerHTML || "";
 
   const inputBoxStyle = useMemo(() => {
     if (context.luckysheet_select_save.length > 0 && context.cellUpdating) {
@@ -42,8 +47,17 @@ const InputBox: React.FC = () => {
         // }
       }
       setInputHTML(escapeScriptTag(value));
+      setTimeout(() => {
+        moveToEnd(inputRef.current!);
+      });
     }
   }, [context.cellUpdating, context.flowdata, context.luckysheet_select_save]);
+
+  useEffect(() => {
+    if (!context.cellUpdating) {
+      setInputHTML("");
+    }
+  }, [context.cellUpdating]);
 
   if (!(context.luckysheet_select_save.length > 0 && context.cellUpdating)) {
     return null;
@@ -60,13 +74,13 @@ const InputBox: React.FC = () => {
         ...inputBoxStyle,
       }}
     >
-      <div
+      <ContentEditable
+        innerRef={inputRef}
         className="luckysheet-cell-input"
-        contentEditable="true"
         id="luckysheet-rich-text-editor"
-        dir="ltr"
         aria-autocomplete="list"
-        dangerouslySetInnerHTML={{ __html: inputHTML }}
+        html={inputHTML}
+        onChange={setInputHTML}
       />
     </div>
   );

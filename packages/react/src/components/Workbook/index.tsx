@@ -27,7 +27,15 @@ const Workbook: React.FC<Settings> = (props) => {
     []
   );
   const providerValue = useMemo(
-    () => ({ context, setContext, setContextValue, settings: mergedSettings }),
+    () => ({
+      context,
+      setContext,
+      setContextValue,
+      settings: mergedSettings,
+      refs: {
+        cellInputValue: React.createRef() as React.MutableRefObject<string>,
+      },
+    }),
     [context, mergedSettings, setContextValue]
   );
   useEffect(() => {
