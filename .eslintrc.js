@@ -29,6 +29,7 @@ module.exports = {
     "no-underscore-dangle": 0,
     "no-console": [1, { allow: ["warn", "error"] }],
     "no-lonely-if": 0,
+    "no-new-func": 0,
     "jsx-a11y/no-static-element-interactions": 0,
     "import/no-extraneous-dependencies": 0,
     "import/extensions": 0,

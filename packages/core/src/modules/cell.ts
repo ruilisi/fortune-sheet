@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { Context } from "../context";
-import { getSheetIndex, rgbToHex } from "../utils";
+import { getSheetByIndex, getSheetIndex, rgbToHex } from "../utils";
+import { delFunctionGroup, execfunction, execFunctionGroup } from "./formula";
 import {
   convertSpanToShareString,
   isInlineStringCell,
@@ -370,7 +371,7 @@ export function updateCell(
   if (_.isPlainObject(curv)) {
     if (!isCurInline) {
       if (_.isString(value) && value.slice(0, 1) === "=" && value.length > 1) {
-        const v = _this.execfunction(value, r, c, undefined, true);
+        const v = execfunction(ctx, value, r, c, undefined, true);
         isRunExecFunction = false;
         curv = d?.[r]?.[c] || {};
         [, curv.v, curv.f] = v;
@@ -400,7 +401,7 @@ export function updateCell(
           valueFunction.slice(0, 1) === "=" &&
           valueFunction.length > 1
         ) {
-          const v = _this.execfunction(valueFunction, r, c, undefined, true);
+          const v = execfunction(ctx, valueFunction, r, c, undefined, true);
           isRunExecFunction = false;
           // get v/m/ct
 
@@ -430,8 +431,8 @@ export function updateCell(
           });
         }
       } else {
-        // TODO _this.delFunctionGroup(r, c);
-        // TODO _this.execFunctionGroup(r, c, value);
+        delFunctionGroup(ctx, r, c);
+        execFunctionGroup(ctx, r, c, value);
         isRunExecFunction = false;
 
         curv = d?.[r]?.[c] || {};
@@ -453,7 +454,7 @@ export function updateCell(
     value = curv;
   } else {
     if (_.isString(value) && value.slice(0, 1) === "=" && value.length > 1) {
-      const v = _this.execfunction(value, r, c, undefined, true);
+      const v = execfunction(ctx, value, r, c, undefined, true);
       isRunExecFunction = false;
       value = {
         v: v[1],
@@ -482,7 +483,7 @@ export function updateCell(
         valueFunction.slice(0, 1) === "=" &&
         valueFunction.length > 1
       ) {
-        const v = _this.execfunction(valueFunction, r, c, undefined, true);
+        const v = execfunction(ctx, valueFunction, r, c, undefined, true);
         isRunExecFunction = false;
         // value = {
         //     "v": v[1],
@@ -511,8 +512,8 @@ export function updateCell(
         }
       }
     } else {
-      _this.delFunctionGroup(r, c);
-      _this.execFunctionGroup(r, c, value);
+      delFunctionGroup(ctx, r, c);
+      execFunctionGroup(ctx, r, c, value);
       isRunExecFunction = false;
     }
   }
@@ -627,4 +628,48 @@ export function updateCell(
     };
   }
   */
+}
+
+export function getOrigincell(
+  ctx: Context,
+  r: number,
+  c: number,
+  i: number | string
+) {
+  if (_.isNil(r) || _.isNil(c)) {
+    return null;
+  }
+  let data;
+  if (i == null) {
+    data = ctx.flowdata;
+  } else {
+    const sheet = getSheetByIndex(ctx, i);
+    data = sheet?.data;
+  }
+
+  if (!data || !data[r] || !data[r][c]) {
+    return null;
+  }
+  return data[r][c];
+}
+
+export function getcellFormula(
+  ctx: Context,
+  r: number,
+  c: number,
+  i: string | number,
+  data?: any
+) {
+  let cell;
+  if (!_.isNil(data)) {
+    cell = data[r][c];
+  } else {
+    cell = getOrigincell(ctx, r, c, i);
+  }
+
+  if (cell == null) {
+    return null;
+  }
+
+  return cell.f;
 }

@@ -1,7 +1,10 @@
 import { defaultSettings, Settings } from "@fortune-sheet/core/src/settings";
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import "./index.css";
-import defaultContext, { Context } from "@fortune-sheet/core/src/context";
+import defaultContext, {
+  Context,
+  initSheetIndex,
+} from "@fortune-sheet/core/src/context";
 import produce from "immer";
 import _, { assign } from "lodash";
 import {
@@ -41,10 +44,13 @@ const Workbook: React.FC<Settings> = (props) => {
   useEffect(() => {
     setContext(
       produce((draftCtx) => {
-        const sheet = mergedSettings.data?.[context.currentSheetIndex];
+        draftCtx.luckysheetfile = mergedSettings.data;
+        initSheetIndex(draftCtx);
+        const sheet = mergedSettings.data?.[draftCtx.currentSheetIndex];
         if (!sheet) return;
         const cellData = sheet.celldata;
         let { data } = sheet;
+        // expand cell data
         if (_.isEmpty(data) && !_.isEmpty(cellData)) {
           const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
           const lastCol = _.maxBy(cellData, "c");
