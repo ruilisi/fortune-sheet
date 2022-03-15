@@ -3,6 +3,7 @@ import { isInlineStringCell } from "@fortune-sheet/core/src/modules/inline-strin
 import { moveToEnd } from "@fortune-sheet/core/src/modules/cursor";
 import { escapeScriptTag } from "@fortune-sheet/core/src/utils";
 import React, { useContext, useState, useEffect, useMemo, useRef } from "react";
+import _ from "lodash";
 import WorkbookContext from "../../context";
 import { getInlineStringHTML, getStyleByCell } from "./util";
 import ContentEditable from "./ContentEditable";
@@ -12,10 +13,15 @@ const InputBox: React.FC = () => {
   const inputRef = useRef<HTMLDivElement>(null);
   const [inputHTML, setInputHTML] = useState<string>("");
 
-  refs.cellInputValue.current = inputRef.current?.innerHTML || "";
+  if (inputRef.current) {
+    refs.cellInput.current = inputRef.current;
+  }
 
   const inputBoxStyle = useMemo(() => {
-    if (context.luckysheet_select_save.length > 0 && context.cellUpdating) {
+    if (
+      context.luckysheet_select_save.length > 0 &&
+      context.luckysheetCellUpdate.length > 0
+    ) {
       return getStyleByCell(
         context.flowdata,
         context.luckysheet_select_save[0].row_focus,
@@ -23,10 +29,17 @@ const InputBox: React.FC = () => {
       );
     }
     return {};
-  }, [context.cellUpdating, context.flowdata, context.luckysheet_select_save]);
+  }, [
+    context.luckysheetCellUpdate,
+    context.flowdata,
+    context.luckysheet_select_save,
+  ]);
 
   useEffect(() => {
-    if (context.luckysheet_select_save.length > 0 && context.cellUpdating) {
+    if (
+      context.luckysheet_select_save.length > 0 &&
+      context.luckysheetCellUpdate.length > 0
+    ) {
       const row_index = context.luckysheet_select_save[0].row_focus;
       const col_index = context.luckysheet_select_save[0].column_focus;
       const cell = context.flowdata?.[row_index]?.[col_index];
@@ -51,15 +64,24 @@ const InputBox: React.FC = () => {
         moveToEnd(inputRef.current!);
       });
     }
-  }, [context.cellUpdating, context.flowdata, context.luckysheet_select_save]);
+  }, [
+    context.luckysheetCellUpdate,
+    context.flowdata,
+    context.luckysheet_select_save,
+  ]);
 
   useEffect(() => {
-    if (!context.cellUpdating) {
+    if (_.isEmpty(context.luckysheetCellUpdate)) {
       setInputHTML("");
     }
-  }, [context.cellUpdating]);
+  }, [context.luckysheetCellUpdate]);
 
-  if (!(context.luckysheet_select_save.length > 0 && context.cellUpdating)) {
+  if (
+    !(
+      context.luckysheet_select_save.length > 0 &&
+      context.luckysheetCellUpdate.length > 0
+    )
+  ) {
     return null;
   }
 

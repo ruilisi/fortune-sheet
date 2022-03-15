@@ -1,11 +1,12 @@
 import React, { useContext, useCallback, useRef } from "react";
 import "./index.css";
 import _ from "lodash";
+import produce from "immer";
 import {
   colLocation,
   rowLocation,
 } from "@fortune-sheet/core/src/modules/location";
-import { mergeBorder } from "@fortune-sheet/core/src/modules/cell";
+import { mergeBorder, updateCell } from "@fortune-sheet/core/src/modules/cell";
 import { normalizeSelection } from "@fortune-sheet/core/src/modules/selection";
 import WorkbookContext from "../../context";
 import ColumnHeader from "./ColumnHeader";
@@ -17,7 +18,7 @@ type Props = {
 };
 
 const Sheet: React.FC<Props> = ({ data }) => {
-  const { context, setContextValue, settings, refs } =
+  const { context, setContext, setContextValue, settings, refs } =
     useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const cellAreaRef = useRef<HTMLDivElement>(null);
@@ -174,9 +175,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
       // Store.luckysheet_scroll_status = true;
 
       // 公式相关
-      if (context.cellUpdating) {
-        console.info(refs.cellInputValue.current);
-          setContextValue("cellUpdating", false);
+      if (context.luckysheetCellUpdate.length > 0) {
       //   if (
       //     formula.rangestart ||
       //     formula.rangedrag_column_start ||
@@ -413,6 +412,17 @@ const Sheet: React.FC<Props> = ({ data }) => {
       //     }, 1);
       //     return;
       //   } else {
+        setContext(
+          produce((draftCtx) => {
+            updateCell(
+              draftCtx,
+              context.luckysheetCellUpdate[0],
+              context.luckysheetCellUpdate[1],
+              refs.cellInput.current
+            );
+            draftCtx.luckysheet_select_status = true;
+          })
+        );
       //     formula.updatecell(
       //       Store.luckysheetCellUpdate[0],
       //       Store.luckysheetCellUpdate[1]
@@ -1008,7 +1018,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
         normalizeSelection(context, select_save)
       );
     },
-    [context, setContextValue]
+    [context, refs.cellInput, setContext, setContextValue]
   );
 
   const cellAreaDoubleClick = useCallback(
@@ -1184,7 +1194,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
         col_index = column_focus;
       }
 
-      setContextValue("cellUpdating", true);
+      setContextValue("luckysheetCellUpdate", [row_index, col_index]);
       // }
     },
     [context, setContextValue, settings.allowEdit, settings.editMode]

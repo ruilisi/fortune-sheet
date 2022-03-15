@@ -1,4 +1,5 @@
 import React from "react";
+import _ from "lodash";
 
 type ContentEditableProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -31,8 +32,7 @@ class ContentEditable extends React.Component<ContentEditableProps> {
     const { html, innerRef } = this.props;
     return (
       <div
-        {...this.props}
-        onChange={() => {}}
+        {..._.omit(this.props, "innerRef", "onChange", "html")}
         ref={(e) => {
           this.root = e;
           innerRef.current = e;

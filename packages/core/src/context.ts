@@ -69,7 +69,6 @@ export type Context = {
   luckysheet_cols_dbclick_times: number;
 
   luckysheetCellUpdate: any[];
-  cellUpdating: boolean;
 
   luckysheet_shiftpositon: any;
 
@@ -211,7 +210,6 @@ function defaultContext(): Context {
     luckysheet_cols_dbclick_times: 0,
 
     luckysheetCellUpdate: [],
-    cellUpdating: false,
 
     luckysheet_shiftpositon: null,
 

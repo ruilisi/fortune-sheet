@@ -33,7 +33,7 @@ const Workbook: React.FC<Settings> = (props) => {
       setContextValue,
       settings: mergedSettings,
       refs: {
-        cellInputValue: React.createRef() as React.MutableRefObject<string>,
+        cellInput: React.createRef() as React.MutableRefObject<HTMLDivElement>,
       },
     }),
     [context, mergedSettings, setContextValue]
