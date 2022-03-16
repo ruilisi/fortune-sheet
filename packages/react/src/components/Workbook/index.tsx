@@ -11,11 +11,11 @@ import {
   CellWithRowAndCol,
   Sheet as SheetType,
 } from "@fortune-sheet/core/src/types";
+import { getSheetIndex } from "@fortune-sheet/core/src/utils";
 import Sheet from "../Sheet";
 import WorkbookContext from "../../context";
 import Toolbar from "../Toolbar";
 import FxEditor from "../FxEditor";
-import { setCellValue } from "@fortune-sheet/core/src/modules/cell";
 
 const Workbook: React.FC<Settings> = (props) => {
   const [context, setContext] = useState(defaultContext());
@@ -47,7 +47,8 @@ const Workbook: React.FC<Settings> = (props) => {
       produce((draftCtx) => {
         draftCtx.luckysheetfile = mergedSettings.data;
         initSheetIndex(draftCtx);
-        const sheet = mergedSettings.data?.[draftCtx.currentSheetIndex];
+        const sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
+        const sheet = mergedSettings.data?.[sheetIdx];
         if (!sheet) return;
         const cellData = sheet.celldata;
         let { data } = sheet;
@@ -66,7 +67,7 @@ const Workbook: React.FC<Settings> = (props) => {
             draftCtx.luckysheetfile = produce(
               mergedSettings.data,
               (draftData) => {
-                draftData[context.currentSheetIndex].data = expandedData;
+                draftData[sheetIdx].data = expandedData;
               }
             );
             data = expandedData;
@@ -138,6 +139,13 @@ const Workbook: React.FC<Settings> = (props) => {
     return null;
   }
 
+  const sheetData =
+    context.luckysheetfile[getSheetIndex(context, context.currentSheetIndex)]
+      ?.data;
+  if (!sheetData) {
+    return null;
+  }
+
   return (
     <WorkbookContext.Provider value={providerValue}>
       <div className="fortune-container">
@@ -145,9 +153,7 @@ const Workbook: React.FC<Settings> = (props) => {
           <Toolbar />
           <FxEditor />
         </div>
-        <Sheet
-          data={context.luckysheetfile[context.calculateSheetIndex]?.data}
-        />
+        <Sheet data={sheetData} />
       </div>
     </WorkbookContext.Provider>
   );
