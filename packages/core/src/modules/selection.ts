@@ -1,8 +1,9 @@
 import _ from "lodash";
-import { Context } from "../context";
+import { Context, getFlowdata } from "../context";
 import { mergeBorder } from "./cell";
 
 export function normalizeSelection(ctx: Context, selection: any[]) {
+  const flowdata = getFlowdata(ctx);
   for (let i = 0; i < selection.length; i += 1) {
     const r1 = selection[i].row[0];
     const r2 = selection[i].row[1];
@@ -33,7 +34,7 @@ export function normalizeSelection(ctx: Context, selection: any[]) {
     let col_f = ctx.visibledatacolumn[cf];
     let col_pre_f = cf - 1 === -1 ? 0 : ctx.visibledatacolumn[cf - 1];
 
-    const margeset = mergeBorder(ctx, ctx.flowdata, rf, cf);
+    const margeset = mergeBorder(ctx, flowdata, rf, cf);
     if (margeset) {
       [row_pre_f, row_f] = margeset.row;
       [col_pre_f, col_f] = margeset.column;

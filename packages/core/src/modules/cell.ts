@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Context } from "../context";
+import { Context, getFlowdata } from "../context";
 import { getSheetByIndex, getSheetIndex, rgbToHex } from "../utils";
 import { genarate, update } from "./format";
 import { delFunctionGroup, execfunction, execFunctionGroup } from "./formula";
@@ -113,7 +113,7 @@ export function setCellValue(
   v: any
 ) {
   if (_.isNil(d)) {
-    d = ctx.flowdata;
+    d = getFlowdata(ctx);
   }
   // 若采用深拷贝，初始化时的单元格属性丢失
   // let cell = $.extend(true, {}, d[r][c]);
@@ -461,6 +461,8 @@ export function updateCell(
 ) {
   let inputText = $input.innerText;
   const inputHtml = $input.innerHTML;
+  const flowdata = getFlowdata(ctx);
+  if (!flowdata) return;
 
   // if (!_.isNil(rangetosheet) && rangetosheet !== ctx.currentSheetIndex) {
   //   sheetmanage.changeSheetExec(rangetosheet);
@@ -488,7 +490,7 @@ export function updateCell(
   }
   */
 
-  let curv = ctx.flowdata[r][c];
+  let curv = flowdata[r][c];
 
   // ctx.old value for hook function
   const oldValue = JSON.stringify(curv);
@@ -591,7 +593,7 @@ export function updateCell(
 
   let isRunExecFunction = true;
 
-  const d = ctx.flowdata; // TODO const d = editor.deepCopyFlowData(ctx.flowdata);
+  const d = flowdata; // TODO const d = editor.deepCopyFlowData(flowdata);
   let dynamicArrayItem = null; // 动态数组
 
   if (_.isPlainObject(curv)) {
@@ -832,7 +834,7 @@ export function updateCell(
   //     r,
   //     c,
   //     JSON.parse(oldValue),
-  //     ctx.flowdata[r][c],
+  //     flowdata[r][c],
   //     isRefresh
   //   );
   // }, 0);
@@ -862,12 +864,13 @@ export function getOrigincell(
   c: number,
   i: number | string
 ) {
+  const flowdata = getFlowdata(ctx);
   if (_.isNil(r) || _.isNil(c)) {
     return null;
   }
   let data;
   if (_.isNil(i)) {
-    data = ctx.flowdata;
+    data = flowdata;
   } else {
     const sheet = getSheetByIndex(ctx, i);
     data = sheet?.data;
@@ -883,7 +886,7 @@ export function getcellFormula(
   ctx: Context,
   r: number,
   c: number,
-  i: string | number,
+  i: string,
   data?: any
 ) {
   let cell;

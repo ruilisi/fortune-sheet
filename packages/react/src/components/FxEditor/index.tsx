@@ -1,3 +1,4 @@
+import { getFlowdata } from "@fortune-sheet/core/src/context";
 import { getCellValue } from "@fortune-sheet/core/src/modules/cell";
 import {
   getInlineStringNoStyle,
@@ -18,7 +19,7 @@ const FxEditor: React.FC = () => {
   const [fxInputHTML, setFxInputHTML] = useState<string>("");
   const { context } = useContext(WorkbookContext);
   useEffect(() => {
-    const d = context.flowdata;
+    const d = getFlowdata(context);
     let value = "";
     if (context.luckysheet_select_save?.length > 0) {
       const [firstSelection] = context.luckysheet_select_save;
@@ -27,7 +28,7 @@ const FxEditor: React.FC = () => {
       const cell = d?.[r]?.[c];
       if (cell) {
         if (isInlineStringCell(cell)) {
-          value = getInlineStringNoStyle(r, c, context.flowdata);
+          value = getInlineStringNoStyle(r, c, d);
         } else if (cell.f) {
           value = getCellValue(r, c, d, "f");
         } else {
@@ -38,7 +39,12 @@ const FxEditor: React.FC = () => {
     } else {
       setFxInputHTML("");
     }
-  }, [context.flowdata, context.luckysheet_select_save]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    context.luckysheetfile,
+    context.currentSheetIndex,
+    context.luckysheet_select_save,
+  ]);
 
   return (
     <div id="luckysheet-wa-calculate" className="luckysheet-wa-calculate">

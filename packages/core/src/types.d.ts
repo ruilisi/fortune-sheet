@@ -13,7 +13,7 @@ export type Sheet = {
   config?: any;
   data?: (Cell | null)[][];
   celldata?: CellWithRowAndCol[];
-  index: number | string;
+  index: string;
   zoomRatio: number;
   column?: number;
   row?: number;

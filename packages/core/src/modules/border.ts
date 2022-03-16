@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Context } from "../context";
+import { Context, getFlowdata } from "../context";
 import { getSheetIndex } from "../utils";
 
 // 获取表格边框数据计算值
@@ -12,12 +12,13 @@ export function getBorderInfoComputeRange(
   sheetIndex?: string
 ) {
   const borderInfoCompute: any = {};
+  const flowdata = getFlowdata(ctx);
 
   let cfg;
   let data: any = {};
   if (!sheetIndex) {
     cfg = ctx.config;
-    data = ctx.flowdata;
+    data = flowdata;
   } else {
     const index = getSheetIndex(ctx, sheetIndex);
     if (!_.isNil(index)) {
@@ -1607,10 +1608,11 @@ export function getBorderInfoComputeRange(
 
 export function getBorderInfoCompute(ctx: Context, sheetIndex?: string) {
   let borderInfoCompute = {};
+  const flowdata = getFlowdata(ctx);
 
   let data: any = {};
   if (sheetIndex === undefined) {
-    data = ctx.flowdata;
+    data = flowdata;
   } else {
     const index = getSheetIndex(ctx, sheetIndex);
     if (!_.isNil(index)) {

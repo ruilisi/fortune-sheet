@@ -12,6 +12,7 @@ import WorkbookContext from "../../context";
 import ColumnHeader from "./ColumnHeader";
 import RowHeader from "./RowHeader";
 import InputBox from "./InputBox";
+import { getFlowdata } from "@fortune-sheet/core/src/context";
 
 type Props = {
   data: any;
@@ -28,6 +29,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
       if (e.target !== e.currentTarget) {
         return;
       }
+      const flowdata = getFlowdata(context);
       // TODO set MouseDown state to context
       // const mouse = mousePosition(
       //   e.nativeEvent.offsetX,
@@ -69,12 +71,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
 
       let row_index_ed = row_index;
       let col_index_ed = col_index;
-      const margeset = mergeBorder(
-        context,
-        context.flowdata,
-        row_index,
-        col_index
-      );
+      const margeset = mergeBorder(context, flowdata, row_index, col_index);
       if (margeset) {
         row = margeset.row[1];
         row_pre = margeset.row[0];
@@ -1029,6 +1026,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
       if (e.target !== e.currentTarget) {
         return;
       }
+      const flowdata = getFlowdata(context);
 
       // 禁止前台编辑(只可 框选单元格、滚动查看表格)
       if (!settings.allowEdit || settings.editMode) {
@@ -1081,12 +1079,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
       const col_location = colLocation(x, context.visibledatacolumn);
       let col_index = col_location[2];
 
-      const margeset = mergeBorder(
-        context,
-        context.flowdata,
-        row_index,
-        col_index
-      );
+      const margeset = mergeBorder(context, flowdata, row_index, col_index);
       if (margeset) {
         row_index = margeset.row[2];
         col_index = margeset.column[2];

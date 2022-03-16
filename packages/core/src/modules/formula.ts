@@ -1,7 +1,7 @@
 import _ from "lodash";
 // @ts-ignore
 import { Parser } from "hot-formula-parser";
-import { Context } from "../context";
+import { Context, getFlowdata } from "../context";
 import { columnCharToIndex, getSheetIndex } from "../utils";
 import { getcellFormula, setCellValue } from "./cell";
 import { error, valueIsError } from "./validation";
@@ -31,18 +31,19 @@ let currentContext: Context | undefined;
 const parser = new Parser();
 
 parser.on("callCellValue", (cellCoord: any, done: any) => {
+  const flowdata = getFlowdata(currentContext);
   const index = currentContext?.currentSheetIndex;
   const cell =
     execFunctionGlobalData[
       `${cellCoord.row.index}_${cellCoord.column.index}_${index}`
-    ] ||
-    currentContext?.flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
+    ] || flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
   done(Number(cell.v));
 });
 
 parser.on(
   "callRangeValue",
   (startCellCoord: any, endCellCoord: any, done: any) => {
+    const flowdata = getFlowdata(currentContext);
     const index = currentContext?.currentSheetIndex;
     const fragment = [];
 
@@ -60,7 +61,7 @@ parser.on(
       ) {
         const cell =
           execFunctionGlobalData[`${row}_${col}_${index}`] ||
-          currentContext?.flowdata?.[row]?.[col];
+          flowdata?.[row]?.[col];
         colFragment.push(Number(cell?.v));
       }
       fragment.push(colFragment);
@@ -156,8 +157,8 @@ function addToCellIndexList(txt: string, infoObj: any) {
 function addToSheetIndexList(
   ctx: Context,
   formulaTxt: string,
-  sheetIndex: string | number,
-  obIndex: string | number
+  sheetIndex: string,
+  obIndex: string
 ) {
   if (_.isEmpty(formulaTxt)) {
     return;
@@ -190,6 +191,7 @@ function getcellrange(
   if (_.isNil(txt) || txt.length === 0) {
     return null;
   }
+  const flowdata = getFlowdata(ctx);
 
   let sheettxt = "";
   let rangetxt = "";
@@ -234,7 +236,7 @@ function getcellrange(
     }
     sheettxt = luckysheetfile[index].name;
     sheetIndex = luckysheetfile[index].index;
-    sheetdata = ctx.flowdata;
+    sheetdata = flowdata;
     rangetxt = txt;
   }
 
@@ -297,7 +299,7 @@ function isFunctionRangeSaveChange(
   str: string,
   r: number,
   c: number,
-  index: string | number,
+  index: string,
   dynamicArray_compute?: any
 ) {
   if (!_.isNil(r) && _.isNil(c)) {
@@ -379,7 +381,7 @@ function checkSpecialFunctionRange(
   function_str: string,
   r: number,
   c: number,
-  index: string | number,
+  index: string,
   dynamicArray_compute?: any,
   cellRangeFunction?: any
 ) {
@@ -425,7 +427,7 @@ function isFunctionRange(
   txt: string,
   r: number,
   c: number,
-  index: string | number,
+  index: string,
   dynamicArray_compute: any,
   cellRangeFunction: any
 ) {
@@ -829,7 +831,7 @@ export function delFunctionGroup(
   ctx: Context,
   r: number,
   c: number,
-  index?: string | number
+  index?: string
 ) {
   if (_.isNil(index)) {
     index = ctx.currentSheetIndex;
@@ -1261,7 +1263,7 @@ function insertUpdateFunctionGroup(
   ctx: Context,
   r: number,
   c: number,
-  index?: string | number
+  index?: string
 ) {
   if (_.isNil(index)) {
     index = ctx.currentSheetIndex;
@@ -1316,7 +1318,7 @@ export function execfunction(
   txt: string,
   r: number,
   c: number,
-  index?: string | number,
+  index?: string,
   isrefresh?: boolean,
   notInsertFunc?: boolean
 ) {
@@ -1529,7 +1531,6 @@ function insertUpdateDynamicArray(ctx: Context, dynamicArrayItem: any) {
 
 export function groupValuesRefresh(ctx: Context) {
   const { luckysheetfile } = ctx;
-  console.info(luckysheetfile[0].data === ctx.flowdata);
   if (groupValuesRefreshData.length > 0) {
     for (let i = 0; i < groupValuesRefreshData.length; i += 1) {
       const item = groupValuesRefreshData[i];
@@ -1554,7 +1555,6 @@ export function groupValuesRefresh(ctx: Context) {
       }
       updateValue.v = item.v;
       updateValue.f = item.f;
-      console.info('setV', item.r, item.c, updateValue)
       setCellValue(ctx, item.r, item.c, data, updateValue);
       // server.saveParam("v", item.index, data[item.r][item.c], {
       //     "r": item.r,
@@ -1576,12 +1576,12 @@ export function execFunctionGroup(
   origin_r: number,
   origin_c: number,
   value: any,
-  index?: string | number,
+  index?: string,
   data?: any,
   isForce = false
 ) {
   if (_.isNil(data)) {
-    data = ctx.flowdata;
+    data = getFlowdata(ctx);
   }
 
   // if (!window.luckysheet_compareWith) {

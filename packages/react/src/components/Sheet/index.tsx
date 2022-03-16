@@ -38,7 +38,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
         })
       );
     }
-  }, [context.luckysheetfile, context.flowdata, setContext]);
+  }, [context.luckysheetfile, context.currentSheetIndex, setContext]);
 
   useEffect(() => {
     const tableCanvas = new Canvas(canvasRef.current!, context);

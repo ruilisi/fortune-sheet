@@ -4,6 +4,7 @@ import { moveToEnd } from "@fortune-sheet/core/src/modules/cursor";
 import { escapeScriptTag } from "@fortune-sheet/core/src/utils";
 import React, { useContext, useState, useEffect, useMemo, useRef } from "react";
 import _ from "lodash";
+import { getFlowdata } from "@fortune-sheet/core/src/context";
 import WorkbookContext from "../../context";
 import { getInlineStringHTML, getStyleByCell } from "./util";
 import ContentEditable from "./ContentEditable";
@@ -23,15 +24,17 @@ const InputBox: React.FC = () => {
       context.luckysheetCellUpdate.length > 0
     ) {
       return getStyleByCell(
-        context.flowdata,
+        getFlowdata(context),
         context.luckysheet_select_save[0].row_focus,
         context.luckysheet_select_save[0].column_focus
       );
     }
     return {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    context.luckysheetfile,
+    context.currentSheetIndex,
     context.luckysheetCellUpdate,
-    context.flowdata,
     context.luckysheet_select_save,
   ]);
 
@@ -40,21 +43,22 @@ const InputBox: React.FC = () => {
       context.luckysheet_select_save.length > 0 &&
       context.luckysheetCellUpdate.length > 0
     ) {
+      const flowdata = getFlowdata(context);
       const row_index = context.luckysheet_select_save[0].row_focus;
       const col_index = context.luckysheet_select_save[0].column_focus;
-      const cell = context.flowdata?.[row_index]?.[col_index];
+      const cell = flowdata?.[row_index]?.[col_index];
       if (!cell) {
         return;
       }
       let value = "";
       if (isInlineStringCell(cell)) {
-        value = getInlineStringHTML(row_index, col_index, context.flowdata);
+        value = getInlineStringHTML(row_index, col_index, flowdata);
       } else if (cell.f) {
-        value = getCellValue(row_index, col_index, context.flowdata, "f");
+        value = getCellValue(row_index, col_index, flowdata, "f");
       } else {
         value =
-          getCellValue(row_index, col_index, context.flowdata, "m") ||
-          getCellValue(row_index, col_index, context.flowdata, "v");
+          getCellValue(row_index, col_index, flowdata, "m") ||
+          getCellValue(row_index, col_index, flowdata, "v");
         // if (Number(cell.qp) === "1") {
         //   value = value ? "" + value : value;
         // }
@@ -64,9 +68,11 @@ const InputBox: React.FC = () => {
         moveToEnd(inputRef.current!);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     context.luckysheetCellUpdate,
-    context.flowdata,
+    context.luckysheetfile,
+    context.currentSheetIndex,
     context.luckysheet_select_save,
   ]);
 

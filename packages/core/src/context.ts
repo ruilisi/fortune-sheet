@@ -1,7 +1,7 @@
 import produce from "immer";
 import _ from "lodash";
 import { Sheet } from "./types";
-import { generateRandomSheetIndex } from "./utils";
+import { generateRandomSheetIndex, getSheetIndex } from "./utils";
 
 export type Context = {
   container: any;
@@ -12,9 +12,8 @@ export type Context = {
   fullscreenmode: boolean;
   devicePixelRatio: number;
 
-  currentSheetIndex: number | string;
-  calculateSheetIndex: number | string;
-  flowdata: any[][];
+  currentSheetIndex: string;
+  calculateSheetIndex: string;
   config: any;
 
   visibledatarow: number[];
@@ -150,15 +149,14 @@ function defaultContext(): Context {
   return {
     container: null,
     loadingObj: {},
-    luckysheetfile: null,
+    luckysheetfile: [],
     defaultcolumnNum: 60,
     defaultrowNum: 84,
     fullscreenmode: true,
     devicePixelRatio: window.devicePixelRatio,
 
-    currentSheetIndex: 0,
-    calculateSheetIndex: 0,
-    flowdata: [],
+    currentSheetIndex: "0",
+    calculateSheetIndex: "0",
     config: {},
 
     visibledatarow: [],
@@ -289,6 +287,15 @@ function defaultContext(): Context {
 
 export default defaultContext;
 
+export function getFlowdata(ctx?: Context) {
+  if (!ctx) return null;
+  const i = getSheetIndex(ctx, ctx.currentSheetIndex);
+  if (_.isNil(i)) {
+    return null;
+  }
+  return ctx.luckysheetfile?.[i]?.data;
+}
+
 function calcRowColSize(ctx: Context, rowCount: number, colCount: number) {
   ctx.visibledatarow = [];
   ctx.rh_height = 0;
@@ -329,13 +336,14 @@ function calcRowColSize(ctx: Context, rowCount: number, colCount: number) {
 
   const maxColumnlen = 120;
 
+  const flowdata = getFlowdata(ctx);
   for (let c = 0; c < colCount; c += 1) {
     let firstcolumnlen: number | string = ctx.defaultcollen;
 
     if (ctx.config?.columnlen?.[c]) {
       firstcolumnlen = ctx.config.columnlen[c];
     } else {
-      if (ctx.flowdata?.[0]?.[c]) {
+      if (flowdata?.[0]?.[c]) {
         if (firstcolumnlen > 300) {
           firstcolumnlen = 300;
         } else if (firstcolumnlen < ctx.defaultcollen) {
@@ -422,7 +430,6 @@ export function updateContextWithSheetData(ctx: Context, data: any[][]) {
   return produce(ctx, (draftCtx) => {
     calcRowColSize(draftCtx, rowCount, colCount);
 
-    draftCtx.flowdata = data;
     draftCtx.toolbarHeight = 41;
     draftCtx.infobarHeight = 57;
     draftCtx.calculatebarHeight = 29;

@@ -66,7 +66,7 @@ export function escapeScriptTag(str: string) {
     .replace(/<\/script>/, "&lt;/script&gt;");
 }
 
-export function getSheetIndex(ctx: Context, index: string | number) {
+export function getSheetIndex(ctx: Context, index: string) {
   for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
     if (ctx.luckysheetfile[i].index?.toString() === index.toString()) {
       return i;
@@ -75,7 +75,7 @@ export function getSheetIndex(ctx: Context, index: string | number) {
   return null;
 }
 
-export function getSheetByIndex(ctx: Context, index: string | number) {
+export function getSheetByIndex(ctx: Context, index: string) {
   if (_.isNil(index)) {
     index = ctx.currentSheetIndex;
   }

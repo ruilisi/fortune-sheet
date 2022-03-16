@@ -1,5 +1,5 @@
-import _ from "lodash";
-import defaultContext from "./context";
+import _, { flow } from "lodash";
+import defaultContext, { getFlowdata } from "./context";
 import { getRealCellValue, normalizedAttr } from "./modules/cell";
 import {
   clearMeasureTextCache,
@@ -552,7 +552,8 @@ export default class Canvas {
     columnOffsetCell?: number;
     rowOffsetCell?: number;
   }) {
-    if (_.isNil(this.sheetCtx.flowdata)) {
+    const flowdata = getFlowdata(this.sheetCtx);
+    if (_.isNil(flowdata)) {
       return;
     }
 
@@ -734,7 +735,7 @@ export default class Canvas {
     // 钩子函数
     // method.createHookFunction(
     //   "cellAllRenderBefore",
-    //   this.sheetCtx.flowdata,
+    //   flowdata,
     //   sheetFile,
     //   renderCtx
     // );
@@ -772,8 +773,8 @@ export default class Canvas {
           firstcolumnlen = this.sheetCtx.config.columnlen[c];
         }
 
-        if (this.sheetCtx.flowdata?.[r]?.[c]) {
-          const value = this.sheetCtx.flowdata[r][c];
+        if (flowdata?.[r]?.[c]) {
+          const value = flowdata[r][c];
 
           if (_.isPlainObject(value) && "mc" in value) {
             borderOffset[`${r}_${c}`] = {
@@ -817,7 +818,7 @@ export default class Canvas {
           }
         } else {
           // 空单元格渲染前
-          // if(!method.createHookFunction("cellRenderBefore", this.sheetCtx.flowdata[r][c], {
+          // if(!method.createHookFunction("cellRenderBefore", flowdata[r][c], {
           //     r:r,
           //     c:c,
           //     "startY": cellsize[1],
@@ -881,12 +882,12 @@ export default class Canvas {
       const { endY } = item;
       const { endX } = item;
 
-      if (_.isNil(this.sheetCtx.flowdata[r])) {
+      if (_.isNil(flowdata[r])) {
         continue;
       }
 
       // //有值单元格渲染前
-      // if(!method.createHookFunction("cellRenderBefore", this.sheetCtx.flowdata[r][c], {
+      // if(!method.createHookFunction("cellRenderBefore", flowdata[r][c], {
       //     r:r,
       //     c:c,
       //     "startY": cellsize[1],
@@ -895,7 +896,7 @@ export default class Canvas {
       //     "endX": cellsize[2]
       // }, sheetFile,renderCtx)){ continue; }
 
-      if (_.isNil(this.sheetCtx.flowdata[r][c])) {
+      if (_.isNil(flowdata[r][c])) {
         // 空单元格
         this.nullCellRender(
           r,
@@ -918,14 +919,14 @@ export default class Canvas {
           bodrder05
         );
       } else {
-        const cell = this.sheetCtx.flowdata[r][c];
+        const cell = flowdata[r][c];
         let value = null;
 
         if (_.isPlainObject(cell) && "mc" in cell) {
           mcArr.push(cellupdate[cud]);
           // continue;
         } else {
-          value = getRealCellValue(r, c, this.sheetCtx.flowdata);
+          value = getRealCellValue(r, c, flowdata);
         }
 
         if (_.isNil(value) || value.toString().length === 0) {
@@ -951,7 +952,7 @@ export default class Canvas {
           );
 
           // sparklines渲染
-          const borderfix = getBorderFix(this.sheetCtx.flowdata, r, c);
+          const borderfix = getBorderFix(flowdata, r, c);
           const cellsize = [
             startX + offsetLeft + borderfix[0],
             startY + offsetTop + borderfix[1],
@@ -996,7 +997,7 @@ export default class Canvas {
         }
       }
 
-      // method.createHookFunction("cellRenderAfter", this.sheetCtx.flowdata[r][c], {
+      // method.createHookFunction("cellRenderAfter", flowdata[r][c], {
       //     r:r,
       //     c:c,
       //     "startY": startY,
@@ -1016,7 +1017,7 @@ export default class Canvas {
       let endY = item.endY - 1;
       let endX = item.endX - 1;
 
-      const cell = this.sheetCtx.flowdata[r][c];
+      const cell = flowdata[r][c];
       let value = null;
 
       const margeMaindata = cell.mc;
@@ -1024,13 +1025,13 @@ export default class Canvas {
       value = getRealCellValue(
         margeMaindata.r,
         margeMaindata.c,
-        this.sheetCtx.flowdata
+        flowdata
       );
 
       r = margeMaindata.r;
       c = margeMaindata.c;
 
-      const mainCell = this.sheetCtx.flowdata[r][c];
+      const mainCell = flowdata[r][c];
 
       if (!(mainCell.mc && mainCell.mc.rs)) {
         continue;
@@ -1077,7 +1078,7 @@ export default class Canvas {
         );
 
         // sparklines渲染
-        const borderfix = getBorderFix(this.sheetCtx.flowdata, r, c);
+        const borderfix = getBorderFix(flowdata, r, c);
         const cellsize = [
           startX + offsetLeft + borderfix[0],
           startY + offsetTop + borderfix[1],
@@ -1514,9 +1515,12 @@ export default class Canvas {
     rowStart: number,
     rowEnd: number
   ) {
+    const flowdata = getFlowdata(this.sheetCtx);
     const map: any = {};
-
-    const data = this.sheetCtx.flowdata;
+    const data = flowdata;
+    if (!data) {
+      return map;
+    }
 
     for (let r = rowStart; r <= rowEnd; r += 1) {
       if (_.isNil(data[r])) {
@@ -1692,11 +1696,12 @@ export default class Canvas {
   ) {
     // const checksAF = alternateformat.checksAF(r, c, afCompute); // 交替颜色
     // const checksCF = conditionformat.checksCF(r, c, cfCompute); // 条件格式
+    const flowdata = getFlowdata(this.sheetCtx);
 
-    const borderfix = getBorderFix(this.sheetCtx.flowdata, r, c);
+    const borderfix = getBorderFix(flowdata, r, c);
 
     // // 背景色
-    const fillStyle = normalizedAttr(this.sheetCtx.flowdata, r, c, "bg");
+    const fillStyle = normalizedAttr(flowdata, r, c, "bg");
 
     // if (checksAF?.[1] {
     //   // 交替颜色
@@ -1708,9 +1713,9 @@ export default class Canvas {
     //   fillStyle = checksCF.cellColor;
     // }
 
-    // if (this.sheetCtx.flowdata?.[r]?.[c]?.tc) {
+    // if (flowdata?.[r]?.[c]?.tc) {
     //   // 标题色
-    //   fillStyle = this.sheetCtx.flowdata[r][c].tc;
+    //   fillStyle = flowdata[r][c].tc;
     // }
 
     if (!fillStyle) {
@@ -1730,7 +1735,7 @@ export default class Canvas {
     // if (
     //   !method.createHookFunction(
     //     "cellRenderBefore",
-    //     this.sheetCtx.flowdata[r][c],
+    //     flowdata[r][c],
     //     {
     //       r,
     //       c,
@@ -1771,7 +1776,7 @@ export default class Canvas {
     }
 
     // 若单元格有批注
-    if (this.sheetCtx.flowdata?.[r]?.[c]?.ps) {
+    if (flowdata?.[r]?.[c]?.ps) {
       const ps_w = 8 * this.sheetCtx.zoomRatio;
       const ps_h = 8 * this.sheetCtx.zoomRatio;
       renderCtx.beginPath();
@@ -1849,7 +1854,7 @@ export default class Canvas {
     // 单元格渲染后
     // method.createHookFunction(
     //   "cellRenderAfter",
-    //   this.sheetCtx.flowdata[r][c],
+    //   flowdata[r][c],
     //   {
     //     r,
     //     c,
@@ -1873,11 +1878,11 @@ export default class Canvas {
     ctx: CanvasRenderingContext2D
   ) {
     /*
-    if (this.sheetCtx.flowdata[r]_.isNil() || this.sheetCtx.flowdata[r][c]_.isNil()) {
+    if (flowdata[r]_.isNil() || flowdata[r][c]_.isNil()) {
       return;
     }
 
-    let sparklines = this.sheetCtx.flowdata[r][c].spl;
+    let sparklines = flowdata[r][c].spl;
     if (sparklines) {
       if (typeof sparklines === "string") {
         sparklines = new Function(`return ${sparklines}`)();
@@ -1944,16 +1949,20 @@ export default class Canvas {
     bodrder05: number,
     isMerge = false
   ) {
-    const cell = this.sheetCtx.flowdata[r][c];
+    const flowdata = getFlowdata(this.sheetCtx);
+    if (!flowdata) {
+      return;
+    }
+    const cell = flowdata[r][c];
     const cellWidth = endX - startX - 2;
     const cellHeight = endY - startY - 2;
     const space_width = 2;
     const space_height = 2; // 宽高方向 间隙
 
     // 水平对齐
-    const horizonAlign = normalizedAttr(this.sheetCtx.flowdata, r, c, "ht");
+    const horizonAlign = normalizedAttr(flowdata, r, c, "ht");
     // 垂直对齐
-    const verticalAlign = normalizedAttr(this.sheetCtx.flowdata, r, c, "vt");
+    const verticalAlign = normalizedAttr(flowdata, r, c, "vt");
 
     // 交替颜色
     // const checksAF = alternateformat.checksAF(r, c, afCompute);
@@ -1963,7 +1972,7 @@ export default class Canvas {
     const checksCF: any = {};
 
     // 单元格 背景颜色
-    const fillStyle = normalizedAttr(this.sheetCtx.flowdata, r, c, "bg");
+    const fillStyle = normalizedAttr(flowdata, r, c, "bg");
     // if (checksAF?.[1]) {
     //   // 若单元格有交替颜色 背景颜色
     //   fillStyle = checksAF[1];
@@ -1978,7 +1987,7 @@ export default class Canvas {
       renderCtx.fillStyle = fillStyle;
     }
 
-    const borderfix = getBorderFix(this.sheetCtx.flowdata, r, c);
+    const borderfix = getBorderFix(flowdata, r, c);
     // console.log(value, fillStyle,borderfix);
     const cellsize = [
       startX + offsetLeft + borderfix[0],
@@ -1991,7 +2000,7 @@ export default class Canvas {
     // if (
     //   !method.createHookFunction(
     //     "cellRenderBefore",
-    //     this.sheetCtx.flowdata[r][c],
+    //     flowdata[r][c],
     //     {
     //       r,
     //       c,
@@ -2160,7 +2169,7 @@ export default class Canvas {
       }
 
       // 文本
-      renderCtx.fillStyle = normalizedAttr(this.sheetCtx.flowdata, r, c, "fc");
+      renderCtx.fillStyle = normalizedAttr(flowdata, r, c, "fc");
       renderCtx.fillText(
         _.isNil(value) ? "" : value,
         horizonAlignPos + 14,
@@ -2353,7 +2362,7 @@ export default class Canvas {
       }
 
       // 单元格 文本颜色
-      renderCtx.fillStyle = normalizedAttr(this.sheetCtx.flowdata, r, c, "fc");
+      renderCtx.fillStyle = normalizedAttr(flowdata, r, c, "fc");
 
       // 若单元格有交替颜色 文本颜色
       if (checksAF?.[0]) {
@@ -2419,7 +2428,7 @@ export default class Canvas {
     // 单元格渲染后
     // method.createHookFunction(
     //   "cellRenderAfter",
-    //   this.sheetCtx.flowdata[r][c],
+    //   flowdata[r][c],
     //   {
     //     r,
     //     c,
@@ -2467,7 +2476,11 @@ export default class Canvas {
     const endX = this.sheetCtx.visibledatacolumn[edc] - scrollWidth;
 
     //
-    const cell = this.sheetCtx.flowdata[r][c];
+    const flowdata = getFlowdata(this.sheetCtx);
+    if (!flowdata) {
+      return;
+    }
+    const cell = flowdata[r][c];
     const cellWidth = endX - startX - 2;
     const cellHeight = endY - startY - 2;
     const space_width = 2;
@@ -2502,7 +2515,7 @@ export default class Canvas {
     const checksCF: any = {};
 
     // 单元格 文本颜色
-    renderCtx.fillStyle = normalizedAttr(this.sheetCtx.flowdata, r, c, "fc");
+    renderCtx.fillStyle = normalizedAttr(flowdata, r, c, "fc");
 
     // 若单元格有交替颜色 文本颜色
     if (checksAF?.[0]) {
@@ -2529,7 +2542,9 @@ export default class Canvas {
     horizonAlign: string,
     textMetrics: number
   ): any {
-    const data = this.sheetCtx.flowdata;
+    const flowdata = getFlowdata(this.sheetCtx);
+    if (!flowdata) return {};
+    const data = flowdata;
 
     // 追溯单元格列超出数组范围 则追溯终止
     if (traceDir === "forward" && traceC < 0) {
