@@ -3,7 +3,7 @@ import defaultContext, { Context } from "@fortune-sheet/core/src/context";
 import { defaultSettings, Settings } from "@fortune-sheet/core/src/settings";
 
 type RefValues = {
-  cellInput: React.MutableRefObject<HTMLDivElement>;
+  cellInput: React.MutableRefObject<HTMLDivElement | undefined>;
 };
 
 const WorkbookContext = React.createContext<{
@@ -19,7 +19,9 @@ const WorkbookContext = React.createContext<{
   setContextValue: () => {},
   settings: defaultSettings,
   refs: {
-    cellInput: React.createRef() as React.MutableRefObject<HTMLDivElement>,
+    cellInput: React.createRef() as React.MutableRefObject<
+      HTMLDivElement | undefined
+    >,
   },
 });
 
