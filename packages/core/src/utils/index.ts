@@ -68,7 +68,7 @@ export function escapeScriptTag(str: string) {
 
 export function getSheetIndex(ctx: Context, index: string | number) {
   for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
-    if (ctx.luckysheetfile[i].index === index) {
+    if (ctx.luckysheetfile[i].index?.toString() === index.toString()) {
       return i;
     }
   }

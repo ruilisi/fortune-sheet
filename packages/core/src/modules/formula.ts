@@ -3,14 +3,14 @@ import _ from "lodash";
 import { Parser } from "hot-formula-parser";
 import { Context } from "../context";
 import { columnCharToIndex, getSheetIndex } from "../utils";
-import { getcellFormula } from "./cell";
+import { getcellFormula, setCellValue } from "./cell";
 import { error, valueIsError } from "./validation";
 
 let execFunctionGlobalData: any = {};
 let execFunctionExist: any = null;
 let formulaContainSheetList: any = {};
 const formulaContainCellList: any = {};
-let groupValuesRefreshData: any[];
+let groupValuesRefreshData: any[] = [];
 let cellTextToIndexList: any = {};
 let operatorjson: any = null;
 const operator = "==|!=|<>|<=|>=|=|+|-|>|<|/|*|%|&|^";
@@ -23,7 +23,7 @@ const operatorPriority: any = {
   "-": 2,
 };
 let isFunctionRangeSave = false;
-let functionHTMLIndex = 0;
+const functionHTMLIndex = 0;
 const functionRangeIndex: number | null = null;
 
 let currentContext: Context | undefined;
@@ -31,13 +31,44 @@ let currentContext: Context | undefined;
 const parser = new Parser();
 
 parser.on("callCellValue", (cellCoord: any, done: any) => {
-  console.info("call cell value", cellCoord);
+  const index = currentContext?.currentSheetIndex;
+  const cell =
+    execFunctionGlobalData[
+      `${cellCoord.row.index}_${cellCoord.column.index}_${index}`
+    ] ||
+    currentContext?.flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
+  done(Number(cell.v));
 });
 
 parser.on(
   "callRangeValue",
   (startCellCoord: any, endCellCoord: any, done: any) => {
-    console.info("call range value", startCellCoord, endCellCoord);
+    const index = currentContext?.currentSheetIndex;
+    const fragment = [];
+
+    for (
+      let row = startCellCoord.row.index;
+      row <= endCellCoord.row.index;
+      row += 1
+    ) {
+      const colFragment = [];
+
+      for (
+        let col = startCellCoord.column.index;
+        col <= endCellCoord.column.index;
+        col += 1
+      ) {
+        const cell =
+          execFunctionGlobalData[`${row}_${col}_${index}`] ||
+          currentContext?.flowdata?.[row]?.[col];
+        colFragment.push(Number(cell?.v));
+      }
+      fragment.push(colFragment);
+    }
+
+    if (fragment) {
+      done(fragment);
+    }
   }
 );
 
@@ -1468,6 +1499,78 @@ export function execfunction(
   return [true, _.isNil(formulaError) ? result : formulaError, txt];
 }
 
+function insertUpdateDynamicArray(ctx: Context, dynamicArrayItem: any) {
+  const { r, c } = dynamicArrayItem;
+  let { index } = dynamicArrayItem;
+  if (_.isNil(index)) {
+    index = ctx.currentSheetIndex;
+  }
+
+  const { luckysheetfile } = ctx;
+  const file = luckysheetfile[getSheetIndex(ctx, index)];
+
+  let { dynamicArray } = file;
+  if (_.isNil(dynamicArray)) {
+    dynamicArray = [];
+  }
+
+  for (let i = 0; i < dynamicArray.length; i += 1) {
+    const calc = dynamicArray[i];
+    if (calc.r === r && calc.c === c && calc.index === index) {
+      calc.data = dynamicArrayItem.data;
+      calc.f = dynamicArrayItem.f;
+      return dynamicArray;
+    }
+  }
+
+  dynamicArray.push(dynamicArrayItem);
+  return dynamicArray;
+}
+
+export function groupValuesRefresh(ctx: Context) {
+  const { luckysheetfile } = ctx;
+  console.info(luckysheetfile[0].data === ctx.flowdata);
+  if (groupValuesRefreshData.length > 0) {
+    for (let i = 0; i < groupValuesRefreshData.length; i += 1) {
+      const item = groupValuesRefreshData[i];
+
+      // if(item.i != Store.currentSheetIndex){
+      //     continue;
+      // }
+
+      const file = luckysheetfile[getSheetIndex(ctx, item.index)];
+      const { data } = file;
+      if (_.isNil(data)) {
+        continue;
+      }
+
+      const updateValue: any = {};
+      if (!_.isNil(item.spe)) {
+        if (item.spe.type === "sparklines") {
+          updateValue.spl = item.spe.data;
+        } else if (item.spe.type === "dynamicArrayItem") {
+          file.dynamicArray = insertUpdateDynamicArray(ctx, item.spe.data);
+        }
+      }
+      updateValue.v = item.v;
+      updateValue.f = item.f;
+      console.info('setV', item.r, item.c, updateValue)
+      setCellValue(ctx, item.r, item.c, data, updateValue);
+      // server.saveParam("v", item.index, data[item.r][item.c], {
+      //     "r": item.r,
+      //     "c": item.c
+      // });
+    }
+
+    // editor.webWorkerFlowDataCache(Store.flowdata); // worker存数据
+    groupValuesRefreshData = [];
+  }
+}
+
+export function hasGroupValuesRefreshData() {
+  return groupValuesRefreshData.length > 0;
+}
+
 export function execFunctionGroup(
   ctx: Context,
   origin_r: number,
@@ -1508,7 +1611,7 @@ export function execFunctionGroup(
     // 此处setcellvalue 中this.execFunctionGroupData会保存想要更新的值，本函数结尾不要设为null,以备后续函数使用
     // setcellvalue(origin_r, origin_c, _this.execFunctionGroupData, value);
     const cellCache = [[{ v: null }]];
-    // TODO setcellvalue(0, 0, cellCache, value);
+    setCellValue(ctx, 0, 0, cellCache, value);
     [[execFunctionGlobalData[`${origin_r}_${origin_c}_${index}`]]] = cellCache;
   }
 

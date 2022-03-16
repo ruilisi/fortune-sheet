@@ -6,6 +6,11 @@ import {
   updateContextWithSheetData,
 } from "@fortune-sheet/core/src/context";
 import type { Sheet as SheetType } from "@fortune-sheet/core/src/types";
+import {
+  groupValuesRefresh,
+  hasGroupValuesRefreshData,
+} from "@fortune-sheet/core/src/modules/formula";
+import produce from "immer";
 import WorkbookContext from "../../context";
 import SheetOverlay from "../SheetOverlay";
 
@@ -24,6 +29,16 @@ const Sheet: React.FC<Props> = ({ data }) => {
   useEffect(() => {
     setContext((ctx) => updateContextWithCanvas(ctx, canvasRef.current!));
   }, [setContext]);
+
+  useEffect(() => {
+    if (hasGroupValuesRefreshData()) {
+      setContext(
+        produce((draftCtx) => {
+          groupValuesRefresh(draftCtx);
+        })
+      );
+    }
+  }, [context.luckysheetfile, context.flowdata, setContext]);
 
   useEffect(() => {
     const tableCanvas = new Canvas(canvasRef.current!, context);
