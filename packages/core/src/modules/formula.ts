@@ -6,6 +6,10 @@ import { columnCharToIndex, getSheetIndex } from "../utils";
 import { getcellFormula, setCellValue } from "./cell";
 import { error, valueIsError } from "./validation";
 
+export const formulaCache = {
+  func_selectedrange: {},
+};
+
 let execFunctionGlobalData: any = {};
 let execFunctionExist: any = null;
 let formulaContainSheetList: any = {};

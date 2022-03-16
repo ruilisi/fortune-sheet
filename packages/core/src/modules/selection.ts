@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { mergeBorder } from "./cell";
+import { formulaCache } from "./formula";
 
 export function normalizeSelection(ctx: Context, selection: any[]) {
   const flowdata = getFlowdata(ctx);
@@ -118,4 +119,287 @@ export function selectTitlesRange(map: any) {
   }
 
   return rangeArr;
+}
+
+export function moveHighlightCell(
+  ctx: Context,
+  postion: "down" | "right",
+  index: number,
+  type: "rangeOfSelect" | "rangeOfFormula",
+  isScroll = true
+) {
+  const flowdata = getFlowdata(ctx);
+  if (!flowdata) return;
+  const datarowlen = flowdata.length;
+  const datacolumnlen = flowdata[0].length;
+
+  let row;
+  let row_pre;
+  let row_index;
+  let row_index_ed;
+  let col;
+  let col_pre;
+  let col_index;
+  let col_index_ed;
+
+  if (type === "rangeOfSelect") {
+    const last =
+      ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
+
+    let curR;
+    if (_.isNil(last.row_focus)) {
+      [curR] = last.row;
+    } else {
+      curR = last.row_focus;
+    }
+
+    let curC;
+    if (_.isNil(last.column_focus)) {
+      [curC] = last.column;
+    } else {
+      curC = last.column_focus;
+    }
+
+    // focus单元格 是否是合并单元格
+    const margeset = mergeBorder(ctx, flowdata, curR, curC);
+    if (margeset) {
+      const str_r = margeset.row[2];
+      const end_r = margeset.row[3];
+
+      const str_c = margeset.column[2];
+      const end_c = margeset.column[3];
+
+      if (index > 0) {
+        if (postion === "down") {
+          curR = end_r;
+          curC = str_c;
+        } else if (postion === "right") {
+          curR = str_r;
+          curC = end_c;
+        }
+      } else {
+        curR = str_r;
+        curC = str_c;
+      }
+    }
+
+    let moveX = _.isNil(last.moveXY) ? curR : last.moveXY.x;
+    let moveY = _.isNil(last.moveXY) ? curC : last.moveXY.y;
+
+    if (postion === "down") {
+      curR += index;
+      moveX = curR;
+    } else if (postion === "right") {
+      curC += index;
+      moveY = curC;
+    }
+
+    if (curR >= datarowlen) {
+      curR = datarowlen - 1;
+      moveX = curR;
+    }
+
+    if (curR < 0) {
+      curR = 0;
+      moveX = curR;
+    }
+
+    if (curC >= datacolumnlen) {
+      curC = datacolumnlen - 1;
+      moveY = curC;
+    }
+
+    if (curC < 0) {
+      curC = 0;
+      moveY = curC;
+    }
+
+    // 移动的下一个单元格是否是合并的单元格
+    const margeset2 = mergeBorder(ctx, flowdata, curR, curC);
+    if (margeset2) {
+      [row_pre, row, row_index, row_index_ed] = margeset2.row;
+      [col_pre, col, col_index, col_index_ed] = margeset2.column;
+    } else {
+      row = ctx.visibledatarow[moveX];
+      row_pre = moveX - 1 === -1 ? 0 : ctx.visibledatarow[moveX - 1];
+      // row_index = moveX;
+      // row_index_ed = moveX;
+
+      col = ctx.visibledatacolumn[moveY];
+      col_pre = moveY - 1 === -1 ? 0 : ctx.visibledatacolumn[moveY - 1];
+      // col_index = moveY;
+      // col_index_ed = moveY;
+
+      row_index = curR;
+      row_index_ed = curR;
+      col_index = curC;
+      col_index_ed = curC;
+    }
+
+    last.row = [row_index, row_index_ed];
+    last.column = [col_index, col_index_ed];
+    last.row_focus = row_index;
+    last.column_focus = col_index;
+    last.moveXY = { x: moveX, y: moveY };
+
+    normalizeSelection(ctx, ctx.luckysheet_select_save);
+    // TODO pivotTable.pivotclick(row_index, col_index);
+    // TODO formula.fucntionboxshow(row_index, col_index);
+  } else if (type === "rangeOfFormula") {
+    const last = formulaCache.func_selectedrange;
+
+    let curR;
+    if (_.isNil(last.row_focus)) {
+      [curR] = last.row;
+    } else {
+      curR = last.row_focus;
+    }
+
+    let curC;
+    if (_.isNil(last.column_focus)) {
+      [curC] = last.column;
+    } else {
+      curC = last.column_focus;
+    }
+
+    // focus单元格 是否是合并单元格
+    const margeset = mergeBorder(ctx, flowdata, curR, curC);
+    if (margeset) {
+      const str_r = margeset.row[2];
+      const end_r = margeset.row[3];
+
+      const str_c = margeset.column[2];
+      const end_c = margeset.column[3];
+
+      if (index > 0) {
+        if (postion === "down") {
+          curR = end_r;
+          curC = str_c;
+        } else if (postion === "right") {
+          curR = str_r;
+          curC = end_c;
+        }
+      } else {
+        curR = str_r;
+        curC = str_c;
+      }
+    }
+
+    let moveX = _.isNil(last.moveXY) ? curR : last.moveXY.x;
+    let moveY = _.isNil(last.moveXY) ? curC : last.moveXY.y;
+
+    if (postion === "down") {
+      curR += index;
+      moveX = curR;
+    } else if (postion === "right") {
+      curC += index;
+      moveY = curC;
+    }
+
+    if (curR >= datarowlen) {
+      curR = datarowlen - 1;
+      moveX = curR;
+    }
+
+    if (curR < 0) {
+      curR = 0;
+      moveX = curR;
+    }
+
+    if (curC >= datacolumnlen) {
+      curC = datacolumnlen - 1;
+      moveY = curC;
+    }
+
+    if (curC < 0) {
+      curC = 0;
+      moveY = curC;
+    }
+
+    // 移动的下一个单元格是否是合并的单元格
+    const margeset2 = mergeBorder(ctx, flowdata, curR, curC);
+    if (margeset2) {
+      [row_pre, row, row_index, row_index_ed] = margeset2.row;
+      [col_pre, col, col_index, col_index_ed] = margeset2.column;
+    } else {
+      row = ctx.visibledatarow[moveX];
+      row_pre = moveX - 1 === -1 ? 0 : ctx.visibledatarow[moveX - 1];
+      row_index = moveX;
+      row_index_ed = moveX;
+
+      col = ctx.visibledatacolumn[moveY];
+      col_pre = moveY - 1 === -1 ? 0 : ctx.visibledatacolumn[moveY - 1];
+      col_index = moveY;
+      col_index_ed = moveY;
+    }
+
+    formulaCache.func_selectedrange = {
+      left: col_pre,
+      width: col - col_pre - 1,
+      top: row_pre,
+      height: row - row_pre - 1,
+      left_move: col_pre,
+      width_move: col - col_pre - 1,
+      top_move: row_pre,
+      height_move: row - row_pre - 1,
+      row: [row_index, row_index_ed],
+      column: [col_index, col_index_ed],
+      row_focus: row_index,
+      column_focus: col_index,
+      moveXY: { x: moveX, y: moveY },
+    };
+
+    // $("#luckysheet-formula-functionrange-select")
+    //   .css({
+    //     left: col_pre,
+    //     width: col - col_pre - 1,
+    //     top: row_pre,
+    //     height: row - row_pre - 1,
+    //   })
+    //   .show();
+
+    // formula.rangeSetValue({
+    //   row: [row_index, row_index_ed],
+    //   column: [col_index, col_index_ed],
+    // });
+  }
+
+  /*
+  const scrollLeft = $("#luckysheet-cell-main").scrollLeft();
+  const scrollTop = $("#luckysheet-cell-main").scrollTop();
+  const winH = $("#luckysheet-cell-main").height();
+  const winW = $("#luckysheet-cell-main").width();
+
+  let sleft = 0;
+  let stop = 0;
+  if (col - scrollLeft - winW + 20 > 0) {
+    sleft = col - winW + 20;
+    if (isScroll) {
+      $("#luckysheet-scrollbar-x").scrollLeft(sleft);
+    }
+  } else if (col_pre - scrollLeft - 20 < 0) {
+    sleft = col_pre - 20;
+    if (isScroll) {
+      $("#luckysheet-scrollbar-x").scrollLeft(sleft);
+    }
+  }
+
+  if (row - scrollTop - winH + 20 > 0) {
+    stop = row - winH + 20;
+    if (isScroll) {
+      $("#luckysheet-scrollbar-y").scrollTop(stop);
+    }
+  } else if (row_pre - scrollTop - 20 < 0) {
+    stop = row_pre - 20;
+    if (isScroll) {
+      $("#luckysheet-scrollbar-y").scrollTop(stop);
+    }
+  }
+
+  clearTimeout(ctx.countfuncTimeout);
+  countfunc();
+  */
+
+  // 移动单元格通知后台
+  // server.saveParam("mv", ctx.currentSheetIndex, ctx.luckysheet_select_save);
 }
