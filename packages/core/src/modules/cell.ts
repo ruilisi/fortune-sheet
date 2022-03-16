@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { Context } from "../context";
 import { getSheetByIndex, getSheetIndex, rgbToHex } from "../utils";
+import { genarate, update } from "./format";
 import { delFunctionGroup, execfunction, execFunctionGroup } from "./formula";
 import {
   convertSpanToShareString,
@@ -9,12 +10,13 @@ import {
 } from "./inline-string";
 import { colLocationByIndex } from "./location";
 import { getCellTextInfo } from "./text";
+import { isRealNull, isRealNum, valueIsError } from "./validation";
 
 // TODO put these in context ref
 let rangestart = false;
 let rangedrag_column_start = false;
 let rangedrag_row_start = false;
-let rangetosheet: number | undefined = undefined;
+const rangetosheet: number | undefined = undefined;
 
 export function normalizedCellAttr(cell: any, attr: string): any {
   const tf = { bl: 1, it: 1, ff: 1, cl: 1, un: 1 };
@@ -101,6 +103,230 @@ export function getCellValue(r: number, c: number, data: any, attr?: string) {
   }
 
   return retv;
+}
+
+export function setCellValue(
+  ctx: Context,
+  r: number,
+  c: number,
+  d: any,
+  v: any
+) {
+  if (_.isNil(d)) {
+    d = ctx.flowdata;
+  }
+  // 若采用深拷贝，初始化时的单元格属性丢失
+  // let cell = $.extend(true, {}, d[r][c]);
+  let cell = d[r][c];
+
+  let vupdate;
+
+  if (_.isPlainObject(v)) {
+    if (_.isNil(cell)) {
+      cell = v;
+    } else {
+      if (!_.isNil(v.f)) {
+        cell.f = v.f;
+      } else if ("f" in cell) {
+        delete cell.f;
+      }
+
+      if (!_.isNil(v.spl)) {
+        cell.spl = v.spl;
+      }
+
+      if (!_.isNil(v.ct)) {
+        cell.ct = v.ct;
+      }
+    }
+
+    if (_.isPlainObject(v.v)) {
+      vupdate = v.v.v;
+    } else {
+      vupdate = v.v;
+    }
+  } else {
+    vupdate = v;
+  }
+
+  if (isRealNull(vupdate)) {
+    if (_.isPlainObject(cell)) {
+      delete cell.m;
+      delete cell.v;
+    } else {
+      cell = null;
+    }
+
+    d[r][c] = cell;
+
+    return;
+  }
+
+  // 1.为null
+  // 2.数据透视表的数据，flowdata的每个数据可能为字符串，结果就是cell === v === 一个字符串或者数字数据
+  if (
+    isRealNull(cell) ||
+    ((_.isString(cell) || _.isNumber(cell)) && cell === v)
+  ) {
+    cell = {};
+  }
+
+  const vupdateStr = vupdate.toString();
+
+  if (vupdateStr.substr(0, 1) === "'") {
+    cell.m = vupdateStr.substr(1);
+    cell.ct = { fa: "@", t: "s" };
+    cell.v = vupdateStr.substr(1);
+    cell.qp = 1;
+  } else if (cell.qp === 1) {
+    cell.m = vupdateStr;
+    cell.ct = { fa: "@", t: "s" };
+    cell.v = vupdateStr;
+  } else if (vupdateStr.toUpperCase() === "TRUE") {
+    cell.m = "TRUE";
+    cell.ct = { fa: "General", t: "b" };
+    cell.v = true;
+  } else if (vupdateStr.toUpperCase() === "FALSE") {
+    cell.m = "FALSE";
+    cell.ct = { fa: "General", t: "b" };
+    cell.v = false;
+  } else if (
+    vupdateStr.substr(-1) === "%" &&
+    isRealNum(vupdateStr.substring(0, vupdateStr.length - 1))
+  ) {
+    cell.ct = { fa: "0%", t: "n" };
+    cell.v = vupdateStr.substring(0, vupdateStr.length - 1) / 100;
+    cell.m = vupdate;
+  } else if (valueIsError(vupdate)) {
+    cell.m = vupdateStr;
+    // cell.ct = { "fa": "General", "t": "e" };
+    if (!_.isNil(cell.ct)) {
+      cell.ct.t = "e";
+    } else {
+      cell.ct = { fa: "General", t: "e" };
+    }
+    cell.v = vupdate;
+  } else {
+    if (
+      !_.isNil(cell.f) &&
+      isRealNum(vupdate) &&
+      !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(
+        vupdate
+      )
+    ) {
+      cell.v = parseFloat(vupdate);
+      if (_.isNil(cell.ct)) {
+        cell.ct = { fa: "General", t: "n" };
+      }
+
+      if (cell.v === Infinity || cell.v === -Infinity) {
+        cell.m = cell.v.toString();
+      } else {
+        if (cell.v.toString().indexOf("e") > -1) {
+          let len;
+          if (cell.v.toString().split(".").length === 1) {
+            len = 0;
+          } else {
+            len = cell.v.toString().split(".")[1].split("e")[0].length;
+          }
+          if (len > 5) {
+            len = 5;
+          }
+
+          cell.m = cell.v.toExponential(len).toString();
+        } else {
+          const v_p = Math.round(cell.v * 1000000000) / 1000000000;
+          if (_.isNil(cell.ct)) {
+            const mask = genarate(v_p);
+            cell.m = mask[0].toString();
+          } else {
+            const mask = update(cell.ct.fa, v_p);
+            cell.m = mask.toString();
+          }
+
+          // cell.m = mask[0].toString();
+        }
+      }
+    } else if (!_.isNil(cell.ct) && cell.ct.fa === "@") {
+      cell.m = vupdateStr;
+      cell.v = vupdate;
+    } else if (
+      !_.isNil(cell.ct) &&
+      !_.isNil(cell.ct.fa) &&
+      cell.ct.fa !== "General"
+    ) {
+      if (isRealNum(vupdate)) {
+        vupdate = parseFloat(vupdate);
+      }
+
+      let mask = update(cell.ct.fa, vupdate);
+
+      if (mask === vupdate) {
+        // 若原来单元格格式 应用不了 要更新的值，则获取更新值的 格式
+        mask = genarate(vupdate);
+
+        cell.m = mask[0].toString();
+        [, cell.ct, cell.v] = mask;
+      } else {
+        cell.m = mask.toString();
+        cell.v = vupdate;
+      }
+    } else {
+      if (
+        isRealNum(vupdate) &&
+        !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(
+          vupdate
+        )
+      ) {
+        if (typeof vupdate === "string") {
+          const flag = vupdate
+            .split("")
+            .every((ele) => ele === "0" || ele === ".");
+          if (flag) {
+            vupdate = parseFloat(vupdate);
+          }
+        }
+        cell.v =
+          vupdate; /* 备注：如果使用parseFloat，1.1111111111111111会转换为1.1111111111111112 ? */
+        cell.ct = { fa: "General", t: "n" };
+        if (cell.v === Infinity || cell.v === -Infinity) {
+          cell.m = cell.v.toString();
+        } else {
+          const mask = genarate(cell.v);
+          cell.m = mask[0].toString();
+        }
+      } else {
+        const mask = genarate(vupdate);
+
+        cell.m = mask[0].toString();
+        [, cell.ct, cell.v] = mask;
+      }
+    }
+  }
+
+  // if (!server.allowUpdate && !luckysheetConfigsetting.pointEdit) {
+  //   if (
+  //     !_.isNil(cell.ct) &&
+  //     /^(w|W)((0?)|(0\.0+))$/.test(cell.ct.fa) === false &&
+  //     cell.ct.t === "n" &&
+  //     !_.isNil(cell.v) &&
+  //     parseInt(cell.v, 10).toString().length > 4
+  //   ) {
+  //     const autoFormatw = luckysheetConfigsetting.autoFormatw
+  //       .toString()
+  //       .toUpperCase();
+  //     const { accuracy } = luckysheetConfigsetting;
+
+  //     const sfmt = setAccuracy(autoFormatw, accuracy);
+
+  //     if (sfmt !== "General") {
+  //       cell.ct.fa = sfmt;
+  //       cell.m = update(sfmt, cell.v);
+  //     }
+  //   }
+  // }
+
+  d[r][c] = cell;
 }
 
 export function getRealCellValue(
@@ -246,11 +472,11 @@ export function updateCell(
 
   // 数据验证 输入数据无效时禁止输入
   /*
-  if (dataVerificationCtrl.dataVerification !== null) {
+  if (!_.isNil(dataVerificationCtrl.dataVerification)) {
     const dvItem = dataVerificationCtrl.dataVerification[`${r}_${c}`];
 
     if (
-      dvItem !== null &&
+      !_.isNil(dvItem) &&
       dvItem.prohibitInput &&
       !dataVerificationCtrl.validateCellData(inputText, dvItem)
     ) {
@@ -325,8 +551,8 @@ export function updateCell(
   // }
 
   if (!isCurInline) {
-    if (_.isEmpty(value) && !isPrevInline) {
-      if (!curv || (_.isEmpty(curv.v) && !curv.spl && !curv.f)) {
+    if (isRealNull(value) && !isPrevInline) {
+      if (!curv || (isRealNull(curv.v) && !curv.spl && !curv.f)) {
         cancelNormalSelected(ctx);
         return;
       }
@@ -350,7 +576,7 @@ export function updateCell(
       curv.ct &&
       curv.ct.fa &&
       curv.ct.fa !== "@" &&
-      !_.isEmpty(value)
+      !isRealNull(value)
     ) {
       delete curv.m; // 更新时间m处理 ， 会实际删除单元格数据的参数（flowdata时已删除）
       if (curv.f) {
@@ -373,7 +599,7 @@ export function updateCell(
       if (_.isString(value) && value.slice(0, 1) === "=" && value.length > 1) {
         const v = execfunction(ctx, value, r, c, undefined, true);
         isRunExecFunction = false;
-        curv = d?.[r]?.[c] || {};
+        curv = _.cloneDeep(d?.[r]?.[c] || {});
         [, curv.v, curv.f] = v;
 
         // 打进单元格的sparklines的配置串， 报错需要单独处理。
@@ -405,7 +631,7 @@ export function updateCell(
           isRunExecFunction = false;
           // get v/m/ct
 
-          curv = d?.[r]?.[c] || {};
+          curv = _.cloneDeep(d?.[r]?.[c] || {});
           [, curv.v, curv.f] = v;
 
           // 打进单元格的sparklines的配置串， 报错需要单独处理。
@@ -435,7 +661,7 @@ export function updateCell(
         execFunctionGroup(ctx, r, c, value);
         isRunExecFunction = false;
 
-        curv = d?.[r]?.[c] || {};
+        curv = _.cloneDeep(d?.[r]?.[c] || {});
         curv.v = value;
 
         delete curv.f;
@@ -519,7 +745,7 @@ export function updateCell(
   }
 
   // value maybe an object
-  // TODO setcellvalue(r, c, d, value);
+  setCellValue(ctx, r, c, d, value);
   cancelNormalSelected(ctx);
 
   /*
@@ -546,7 +772,7 @@ export function updateCell(
     if (cfg.customHeight && cfg.customHeight[r] === 1) {
     } else {
       // let currentRowLen = defaultrowlen;
-      // if(cfg["rowlen"][r] !== null){
+      // if(!_.isNil(cfg["rowlen"][r])){
       //     currentRowLen = cfg["rowlen"][r];
       // }
 
@@ -640,7 +866,7 @@ export function getOrigincell(
     return null;
   }
   let data;
-  if (i == null) {
+  if (_.isNil(i)) {
     data = ctx.flowdata;
   } else {
     const sheet = getSheetByIndex(ctx, i);
@@ -667,7 +893,7 @@ export function getcellFormula(
     cell = getOrigincell(ctx, r, c, i);
   }
 
-  if (cell == null) {
+  if (_.isNil(cell)) {
     return null;
   }
 

@@ -5,12 +5,16 @@
   "repository": "https://github.com/ruilisi/fortune-sheet",
   "license": "MIT",
   "dependencies": {
+    "dayjs": "^1.11.0",
+    "hot-formula-parser": "^4.0.0",
     "immer": "^9.0.12",
     "lodash": "^4.17.21",
+    "numeral": "^2.0.6",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.179",
+    "@types/numeral": "^2.0.2",
     "@types/uuid": "^8.3.4"
   }
 }

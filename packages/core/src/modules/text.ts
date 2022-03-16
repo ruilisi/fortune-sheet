@@ -7,7 +7,7 @@ function checkWordByteLength(value: string) {
   return Math.ceil(value.charCodeAt(0).toString(2).length / 8);
 }
 
-function hasChinaword(s: string) {
+export function hasChinaword(s: string) {
   const patrn = /[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/gi;
 
   if (!patrn.exec(s)) {

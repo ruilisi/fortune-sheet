@@ -1,4 +1,6 @@
 import _ from "lodash";
+// @ts-ignore
+import { Parser } from "hot-formula-parser";
 import { Context } from "../context";
 import { columnCharToIndex, getSheetIndex } from "../utils";
 import { getcellFormula } from "./cell";
@@ -23,6 +25,21 @@ const operatorPriority: any = {
 let isFunctionRangeSave = false;
 let functionHTMLIndex = 0;
 const functionRangeIndex: number | null = null;
+
+let currentContext: Context | undefined;
+
+const parser = new Parser();
+
+parser.on("callCellValue", (cellCoord: any, done: any) => {
+  console.info("call cell value", cellCoord);
+});
+
+parser.on(
+  "callRangeValue",
+  (startCellCoord: any, endCellCoord: any, done: any) => {
+    console.info("call range value", startCellCoord, endCellCoord);
+  }
+);
 
 export function iscelldata(txt: string) {
   // 判断是否为单元格格式
@@ -302,7 +319,7 @@ function isFunctionRangeSaveChange(
   }
 }
 
-export function calPostfixExpression(cal: any[]) {
+function calPostfixExpression(cal: any[]) {
   if (cal.length === 0) {
     return "";
   }
@@ -372,7 +389,7 @@ function checkSpecialFunctionRange(
   }
 }
 
-export function isFunctionRange(
+function isFunctionRange(
   ctx: Context,
   txt: string,
   r: number,
@@ -872,6 +889,7 @@ function checkBracketNum(fp: string) {
   return true;
 }
 
+/*
 function functionParser(txt: string, cellRangeFunction?: any) {
   if (operatorjson === null) {
     const arr = operator.split("|");
@@ -1196,7 +1214,9 @@ function functionParser(txt: string, cellRangeFunction?: any) {
   // console.log(function_str);
   return function_str;
 }
+*/
 
+/*
 function functionParserExe(txt: string) {
   return functionParser(txt);
 }
@@ -1204,6 +1224,7 @@ function functionParserExe(txt: string) {
 function testFunction(txt: string) {
   return txt.substring(0, 1) === "=";
 }
+*/
 
 function insertUpdateFunctionGroup(
   ctx: Context,
@@ -1268,6 +1289,7 @@ export function execfunction(
   isrefresh?: boolean,
   notInsertFunc?: boolean
 ) {
+  currentContext = ctx;
   // const _locale = locale();
   // const locale_formulaMore = _locale.formulaMore;
   // console.log(txt,r,c)
@@ -1285,6 +1307,7 @@ export function execfunction(
 
   ctx.calculateSheetIndex = index;
 
+  /*
   const fp = _.trim(functionParserExe(txt));
   if (
     fp.substring(0, 20) === "luckysheet_function." ||
@@ -1405,11 +1428,20 @@ export function execfunction(
   window.luckysheetCurrentColumn = null;
   window.luckysheetCurrentIndex = null;
   window.luckysheetCurrentFunction = null;
+  */
+
+  const { result, error: formulaError } = parser.parse(txt.substring(1));
 
   if (!_.isNil(r) && !_.isNil(c)) {
     if (isrefresh) {
       // eslint-disable-next-line no-use-before-define
-      execFunctionGroup(ctx, r, c, result, index);
+      execFunctionGroup(
+        ctx,
+        r,
+        c,
+        _.isNil(formulaError) ? result : formulaError,
+        index
+      );
     }
 
     if (!notInsertFunc) {
@@ -1417,6 +1449,7 @@ export function execfunction(
     }
   }
 
+  /*
   if (sparklines) {
     return [true, result, txt, { type: "sparklines", data: sparklines }];
   }
@@ -1429,10 +1462,10 @@ export function execfunction(
       { type: "dynamicArrayItem", data: dynamicArrayItem },
     ];
   }
+  */
 
   // console.log(result, txt);
-
-  return [true, result, txt];
+  return [true, _.isNil(formulaError) ? result : formulaError, txt];
 }
 
 export function execFunctionGroup(
@@ -1448,18 +1481,18 @@ export function execFunctionGroup(
     data = ctx.flowdata;
   }
 
-  if (!window.luckysheet_compareWith) {
-    window.luckysheet_compareWith = luckysheet_compareWith;
-    window.luckysheet_getarraydata = luckysheet_getarraydata;
-    window.luckysheet_getcelldata = luckysheet_getcelldata;
-    window.luckysheet_parseData = luckysheet_parseData;
-    window.luckysheet_getValue = luckysheet_getValue;
-    window.luckysheet_indirect_check = luckysheet_indirect_check;
-    window.luckysheet_indirect_check_return = luckysheet_indirect_check_return;
-    window.luckysheet_offset_check = luckysheet_offset_check;
-    window.luckysheet_calcADPMM = luckysheet_calcADPMM;
-    window.luckysheet_getSpecialReference = luckysheet_getSpecialReference;
-  }
+  // if (!window.luckysheet_compareWith) {
+  //   window.luckysheet_compareWith = luckysheet_compareWith;
+  //   window.luckysheet_getarraydata = luckysheet_getarraydata;
+  //   window.luckysheet_getcelldata = luckysheet_getcelldata;
+  //   window.luckysheet_parseData = luckysheet_parseData;
+  //   window.luckysheet_getValue = luckysheet_getValue;
+  //   window.luckysheet_indirect_check = luckysheet_indirect_check;
+  //   window.luckysheet_indirect_check_return = luckysheet_indirect_check_return;
+  //   window.luckysheet_offset_check = luckysheet_offset_check;
+  //   window.luckysheet_calcADPMM = luckysheet_calcADPMM;
+  //   window.luckysheet_getSpecialReference = luckysheet_getSpecialReference;
+  // }
 
   if (_.isNil(execFunctionGlobalData)) {
     execFunctionGlobalData = {};

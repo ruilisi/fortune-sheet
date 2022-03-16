@@ -15,6 +15,7 @@ import Sheet from "../Sheet";
 import WorkbookContext from "../../context";
 import Toolbar from "../Toolbar";
 import FxEditor from "../FxEditor";
+import { setCellValue } from "@fortune-sheet/core/src/modules/cell";
 
 const Workbook: React.FC<Settings> = (props) => {
   const [context, setContext] = useState(defaultContext());
@@ -59,7 +60,7 @@ const Workbook: React.FC<Settings> = (props) => {
               _.times(lastCol.c + 1, () => null)
             );
             cellData?.forEach((d) => {
-              // TODO setCellValue(expandedData, d.r, d.c, d.v);
+              // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
               expandedData[d.r][d.c] = d.v;
             });
             draftCtx.luckysheetfile = produce(

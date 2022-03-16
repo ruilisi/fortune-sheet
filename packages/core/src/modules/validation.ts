@@ -1,3 +1,7 @@
+import dayjs from "dayjs";
+import _ from "lodash";
+import { hasChinaword } from "./text";
+
 export const error = {
   v: "#VALUE!", // 错误的参数或运算符
   n: "#NAME?", // 公式名称错误
@@ -16,4 +20,99 @@ export function valueIsError(value: string) {
     }
   }
   return false;
+}
+
+// 是否是空值
+export function isRealNull(val: any) {
+  return _.isNil(val) || val.toString().replace(/\s/g, "") === "";
+}
+
+// 是否是纯数字
+export function isRealNum(val: any) {
+  if (val == null || val.toString().replace(/\s/g, "") === "") {
+    return false;
+  }
+
+  if (typeof val === "boolean") {
+    return false;
+  }
+
+  return !Number.isNaN(val);
+}
+
+function checkDateTime(str: string) {
+  const reg1 =
+    /^(\d{4})-(\d{1,2})-(\d{1,2})(\s(\d{1,2}):(\d{1,2})(:(\d{1,2}))?)?$/;
+  const reg2 =
+    /^(\d{4})\/(\d{1,2})\/(\d{1,2})(\s(\d{1,2}):(\d{1,2})(:(\d{1,2}))?)?$/;
+
+  if (!reg1.test(str) && !reg2.test(str)) {
+    return false;
+  }
+
+  const year = RegExp.$1;
+  const month = RegExp.$2;
+  const day = RegExp.$3;
+
+  if (year < 1900) {
+    return false;
+  }
+
+  if (month > 12) {
+    return false;
+  }
+
+  if (day > 31) {
+    return false;
+  }
+
+  if (month == 2) {
+    if (new Date(year, 1, 29).getDate() == 29 && day > 29) {
+      return false;
+    }
+    if (new Date(year, 1, 29).getDate() != 29 && day > 28) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function isdatetime(s: any) {
+  if (s == null || s.toString().length < 5) {
+    return false;
+  }
+  if (checkDateTime(s)) {
+    return true;
+  }
+  return false;
+}
+
+export function diff(now: any, then: any) {
+  return dayjs(now).diff(dayjs(then));
+}
+
+export function isdatatypemulti(s: any) {
+  const type: any = {};
+
+  if (isdatetime(s)) {
+    type.date = true;
+  }
+
+  if (!Number.isNaN(parseFloat(s)) && !hasChinaword(s)) {
+    type.num = true;
+  }
+
+  return type;
+}
+
+export function isdatatype(s: any) {
+  let type = "string";
+
+  if (isdatetime(s)) {
+    type = "date";
+  } else if (!Number.isNaN(parseFloat(s)) && !hasChinaword(s)) {
+    type = "num";
+  }
+
+  return type;
 }
