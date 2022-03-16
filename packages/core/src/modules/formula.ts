@@ -37,7 +37,8 @@ parser.on("callCellValue", (cellCoord: any, done: any) => {
     execFunctionGlobalData[
       `${cellCoord.row.index}_${cellCoord.column.index}_${index}`
     ] || flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
-  done(Number(cell.v));
+  const v = cell?.ct?.t === "n" ? Number(cell?.v) : cell?.v;
+  done(v);
 });
 
 parser.on(
@@ -62,7 +63,8 @@ parser.on(
         const cell =
           execFunctionGlobalData[`${row}_${col}_${index}`] ||
           flowdata?.[row]?.[col];
-        colFragment.push(Number(cell?.v));
+        const v = cell?.ct?.t === "n" ? Number(cell?.v) : cell?.v;
+        colFragment.push(v);
       }
       fragment.push(colFragment);
     }

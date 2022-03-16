@@ -96,7 +96,7 @@ const InputBox: React.FC = () => {
       className="luckysheet-input-box"
       style={{
         left: context.luckysheet_select_save[0].left_move,
-        width: context.luckysheet_select_save[0].width_move,
+        minWidth: context.luckysheet_select_save[0].width_move,
         top: context.luckysheet_select_save[0].top_move,
         height: context.luckysheet_select_save[0].height_move,
         ...inputBoxStyle,

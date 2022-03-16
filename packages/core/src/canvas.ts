@@ -1,4 +1,4 @@
-import _, { flow } from "lodash";
+import _ from "lodash";
 import defaultContext, { getFlowdata } from "./context";
 import { getRealCellValue, normalizedAttr } from "./modules/cell";
 import {

@@ -8,11 +8,11 @@ import {
 } from "@fortune-sheet/core/src/modules/location";
 import { mergeBorder, updateCell } from "@fortune-sheet/core/src/modules/cell";
 import { normalizeSelection } from "@fortune-sheet/core/src/modules/selection";
+import { getFlowdata } from "@fortune-sheet/core/src/context";
 import WorkbookContext from "../../context";
 import ColumnHeader from "./ColumnHeader";
 import RowHeader from "./RowHeader";
 import InputBox from "./InputBox";
-import { getFlowdata } from "@fortune-sheet/core/src/context";
 
 type Props = {
   data: any;
