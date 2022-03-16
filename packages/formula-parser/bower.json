@@ -1,0 +1,27 @@
+{
+  "name": "hot-formula-parser",
+  "description": "Formula parser",
+  "main": "dist/formula-parser.js",
+  "homepage": "https://github.com/handsontable/formula-parser",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/handsontable/formula-parser.git"
+  },
+  "authors": [
+    "Handsoncode", "Handsoncode <hello@handsontable.com>"
+  ],
+  "keywords": [
+    "formula",
+    "formulas",
+    "parser",
+    "formula-parser",
+    "excel",
+    "spreadsheet"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "src",
+    "test"
+  ]
+}

@@ -1,0 +1,22 @@
+language: node_js
+
+sudo: false
+
+node_js:
+  - '10'
+
+install:
+  - npm ci
+  - npm install -g codeclimate-test-reporter
+
+before_script:
+  - export TZ=Europe/Warsaw
+
+after_success:
+  - npm run coverage
+  - codeclimate-test-reporter < coverage/lcov.info
+
+notifications:
+  email: false
+  slack:
+    secure: NfC4fkY0ArSdIK0cR1i6x+GBPWviKltO6Qa1dtxCjJc3bxsiRdyfW8LpixaUC2s189VSREl+AobxruwFSkfcy/JZK2E44cMBysMmbh7QM5vyc8OBPx0ZkG519oBpRJ+br8rPoHrWzcbAGkLmWoA8BCc7zRB4NrDZJG0ltZvrFaU6f5pOVVR2M+AH3u4taafTBYFokRIt9Z6Y4ieEtPR5t2sKCba2MjPIyWOSu4Ve3qeh2GXQvczsIA8Ll/5rP5NrAZ44oBu37RcjRpADtGj9rkknnTP5T6wGgSgk+cRzM/YgMOmP7M4DDu4njcm9A4hfCbFyPQmTVGAay2r9hJLJFMaIMgOiYkkoS/Vnt78kCaQjgkxdG2KfibRaV4FOUMum5f5VvRas5ae2S9dwRJGFPgov9gLH+bV5ChuUjNOHC3t8Dw7CaDhpsEppvE8RuKNbfwVdYE2VWJgrgS9r/PzT4X/gbqsPBrA/z+4kVZ+m4Hb99Fdex3JHRCLVNCI911AWOe9kCn52wAuNd5CxW+L21Rg72zzSC+eTzb0ZyNr+368/ShNB0ly9g060SiuokzwErInR3gE3YTwtv1yt8i/JHK8/Vtrb306uH2jkBAYvv/kRRTMXYb0MpuReQD1UQn9xAT59gHahq0wdMF1UdP/k11qFYCzSEVCXcn1S5SfrTnk=

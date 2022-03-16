@@ -1,0 +1,87 @@
+{
+  "name": "hot-formula-parser",
+  "version": "4.0.0",
+  "description": "Formula parser",
+  "main": "./index",
+  "module": "./index.mjs",
+  "jsnext:main": "./index.mjs",
+  "jsdelivr": "dist/formula-parser.min.js",
+  "unpkg": "dist/formula-parser.min.js",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf tmp coverage",
+    "lint": "eslint src test",
+    "check": "npm run lint && npm run test",
+    "test": "cross-env BABEL_ENV=commonjs jest",
+    "coverage": "cross-env BABEL_ENV=commonjs jest --coverage",
+    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir tmp",
+    "build:es": "cross-env BABEL_ENV=es babel src --out-file-extension .mjs --out-dir tmp",
+    "build:umd:min": "cross-env BABEL_ENV=commonjs NODE_ENV=production webpack",
+    "build:umd": "cross-env BABEL_ENV=commonjs NODE_ENV=development webpack",
+    "generate-parser": "cd src/grammar-parser && jison grammar-parser.jison",
+    "release": "generate-release",
+    "postbuild": "node ./scripts/prepare-package"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/handsontable/formula-parser.git"
+  },
+  "keywords": [
+    "formula",
+    "formulas",
+    "parser",
+    "formula-parser",
+    "excel",
+    "spreadsheet"
+  ],
+  "author": "Handsoncode <hello@handsontable.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/handsontable/formula-parser/issues"
+  },
+  "homepage": "https://github.com/handsontable/formula-parser",
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.10",
+    "babel-loader": "^8.2.2",
+    "cross-env": "^5.2.0",
+    "eslint": "^4.2.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.14.0",
+    "fs-extra": "^9.0.1",
+    "generate-release": "^1.1.1",
+    "jest": "^26.6.3",
+    "jest-cli": "^26.6.3",
+    "jison": "^0.4.17",
+    "rimraf": "^3.0.2",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^4.2.0"
+  },
+  "dependencies": {
+    "@handsontable/formulajs": "^2.0.2",
+    "tiny-emitter": "^2.1.0"
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "./test/index.js"
+    ],
+    "testPathIgnorePatterns": [
+      "./test/index.js"
+    ],
+    "roots": [
+      "./test"
+    ],
+    "testRegex": "(test\\/index\\.js|/test/.*.js)$",
+    "collectCoverageFrom": [
+      "**/*.{js}",
+      "!src/grammar-parser/**"
+    ]
+  }
+}

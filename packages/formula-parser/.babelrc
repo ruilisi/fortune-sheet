@@ -1,0 +1,19 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      modules: false,
+    }]
+  ],
+  "env": {
+    "commonjs": {
+      "plugins": [
+        ["@babel/plugin-transform-modules-commonjs", { loose: true }]
+      ]
+    },
+    "es": {
+      "plugins": [
+        ["./.config/plugin/babel/add-import-extension.js", { extension: "mjs" }]
+      ]
+    },
+  }
+}
