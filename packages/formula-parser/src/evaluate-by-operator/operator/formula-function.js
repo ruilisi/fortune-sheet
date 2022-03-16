@@ -1,4 +1,4 @@
-import formulajs from '@handsontable/formulajs';
+import * as formulajs from '@formulajs/formulajs';
 import SUPPORTED_FORMULAS from './../../supported-formulas';
 import {ERROR_NAME} from './../../error';
 

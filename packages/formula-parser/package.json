@@ -2,17 +2,9 @@
   "name": "hot-formula-parser",
   "version": "4.0.0",
   "description": "Formula parser",
-  "main": "./index",
-  "module": "./index.mjs",
-  "jsnext:main": "./index.mjs",
+  "main": "./src/index.js",
   "jsdelivr": "dist/formula-parser.min.js",
   "unpkg": "dist/formula-parser.min.js",
-  "exports": {
-    ".": {
-      "import": "./index.mjs",
-      "require": "./index.js"
-    }
-  },
   "scripts": {
     "clean": "rimraf tmp coverage",
     "lint": "eslint src test",
@@ -65,7 +57,7 @@
     "webpack-cli": "^4.2.0"
   },
   "dependencies": {
-    "@handsontable/formulajs": "^2.0.2",
+    "@formulajs/formulajs": "^3.1.1",
     "tiny-emitter": "^2.1.0"
   },
   "jest": {
