@@ -1194,7 +1194,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
   );
 
   return (
-    <div className="fortune-sheet-overlay" ref={containerRef}>
+    <div className="fortune-sheet-overlay" ref={containerRef} tabIndex={-1}>
       <div className="fortune-col-header-wrap">
         <div
           className="fortune-left-top"

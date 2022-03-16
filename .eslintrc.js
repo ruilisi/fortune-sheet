@@ -31,6 +31,7 @@ module.exports = {
     "no-lonely-if": 0,
     "no-new-func": 0,
     "jsx-a11y/no-static-element-interactions": 0,
+    "jsx-a11y/no-noninteractive-tabindex": 0,
     "import/no-extraneous-dependencies": 0,
     "import/extensions": 0,
     "import/no-unresolved": 0,
