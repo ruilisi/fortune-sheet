@@ -36,7 +36,7 @@ export type Settings = {
   limitSheetNameLength: boolean;
   defaultSheetNameMaxLength: number;
   sheetFormulaBar: boolean;
-  showtoolbarConfig: any;
+  showtoolbarConfig: string[];
   showsheetbarConfig: any;
   showstatisticBarConfig: any;
   cellRightClickConfig: any;
@@ -80,7 +80,7 @@ export const defaultSettings: Settings = {
   limitSheetNameLength: true, // 是否限制工作表名的长度
   defaultSheetNameMaxLength: 31, // 默认工作表名称的最大长度
   sheetFormulaBar: true, // 是否显示公式栏
-  showtoolbarConfig: {}, // 自定义工具栏
+  showtoolbarConfig: ["bold", "italic", "strike-through", "underline"], // 自定义工具栏
   showsheetbarConfig: {}, // 自定义底部sheet页
   showstatisticBarConfig: {}, // 自定义计数栏
   cellRightClickConfig: {}, // 自定义单元格右键菜单

@@ -8,6 +8,11 @@ import {
 } from "./inline-string";
 import { isRealNum } from "./validation";
 
+type ToolbarItemClickHandler = (
+  ctx: Context,
+  cellInput: HTMLDivElement
+) => void;
+
 function updateFormatCell(
   ctx: Context,
   d: any,
@@ -208,7 +213,7 @@ function updateFormat(
   //   jfrefreshgrid(d, ctx.luckysheet_select_save, allParam, false);
 }
 
-export function handleToggleAttr(
+function handleToggleAttr(
   ctx: Context,
   cellInput: HTMLDivElement,
   attr: string
@@ -220,18 +225,29 @@ export function handleToggleAttr(
   updateFormat(ctx, cellInput, flowdata, attr, foucsStatus);
 }
 
-export function handleBold(ctx: Context, cellInput: HTMLDivElement) {
+function handleBold(ctx: Context, cellInput: HTMLDivElement) {
   handleToggleAttr(ctx, cellInput, "bl");
 }
 
-export function handleItalic(ctx: Context, cellInput: HTMLDivElement) {
+function handleItalic(ctx: Context, cellInput: HTMLDivElement) {
   handleToggleAttr(ctx, cellInput, "it");
 }
 
-export function handleStrikeThrough(ctx: Context, cellInput: HTMLDivElement) {
+function handleStrikeThrough(ctx: Context, cellInput: HTMLDivElement) {
   handleToggleAttr(ctx, cellInput, "cl");
 }
 
-export function handleUnderline(ctx: Context, cellInput: HTMLDivElement) {
+function handleUnderline(ctx: Context, cellInput: HTMLDivElement) {
   handleToggleAttr(ctx, cellInput, "un");
+}
+
+const handlerMap: Record<string, ToolbarItemClickHandler> = {
+  bold: handleBold,
+  italic: handleItalic,
+  "strike-though": handleStrikeThrough,
+  underline: handleUnderline,
+};
+
+export function getToolbarItemClickHandler(name: string) {
+  return handlerMap[name];
 }
