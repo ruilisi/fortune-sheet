@@ -1,6 +1,25 @@
 import _ from "lodash";
 import { getCellValue } from "./cell";
 
+export const inlineStyleAffectAttribute = {
+  bl: 1,
+  it: 1,
+  ff: 1,
+  cl: 1,
+  un: 1,
+  fs: 1,
+  fc: 1,
+};
+export const inlineStyleAffectCssName = {
+  "font-weight": 1,
+  "font-style": 1,
+  "font-family": 1,
+  "text-decoration": 1,
+  "border-bottom": 1,
+  "font-size": 1,
+  color: 1,
+};
+
 export function isInlineStringCell(cell: any): boolean {
   return cell?.ct?.t === "inlineStr" && (cell?.ct?.s?.length ?? 0) > 0;
 }
@@ -122,4 +141,22 @@ export function convertSpanToShareString($dom: NodeListOf<HTMLSpanElement>) {
     }
   }
   return styles;
+}
+
+export function updateInlineStringFormatOutside(
+  cell: any,
+  key: string,
+  value: any
+) {
+  if (cell.ct == null) {
+    return;
+  }
+  const { s } = cell.ct;
+  if (s == null) {
+    return;
+  }
+  for (let i = 0; i < s.length; i += 1) {
+    const item = s[i];
+    item[key] = value;
+  }
 }

@@ -56,6 +56,16 @@ const Workbook: React.FC<Settings> = (props) => {
     setContext(
       produce((draftCtx) => {
         draftCtx.luckysheetfile = mergedSettings.data;
+        draftCtx.defaultcolumnNum = mergedSettings.column;
+        draftCtx.defaultrowNum = mergedSettings.row;
+        draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
+        draftCtx.fullscreenmode = mergedSettings.fullscreenmode;
+        draftCtx.lang = mergedSettings.lang;
+        draftCtx.allowEdit = mergedSettings.allowEdit;
+        draftCtx.limitSheetNameLength = mergedSettings.limitSheetNameLength;
+        draftCtx.defaultSheetNameMaxLength =
+          mergedSettings.defaultSheetNameMaxLength;
+        // draftCtx.fontList = mergedSettings.fontList;
         initSheetIndex(draftCtx);
         const sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
         if (_.isNil(sheetIdx)) return;
@@ -146,6 +156,14 @@ const Workbook: React.FC<Settings> = (props) => {
     context.currentSheetIndex,
     mergedSettings.defaultRowHeight,
     mergedSettings.defaultColWidth,
+    mergedSettings.column,
+    mergedSettings.row,
+    mergedSettings.defaultFontSize,
+    mergedSettings.fullscreenmode,
+    mergedSettings.lang,
+    mergedSettings.allowEdit,
+    mergedSettings.limitSheetNameLength,
+    mergedSettings.defaultSheetNameMaxLength,
   ]);
 
   const onKeyDown = useCallback(

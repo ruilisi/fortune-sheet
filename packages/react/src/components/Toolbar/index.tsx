@@ -6,10 +6,12 @@ import React, {
   useEffect,
 } from "react";
 import WorkbookContext from "../../context";
+import produce from "immer";
+import { handleBold } from "@fortune-sheet/core/src/modules/toolbar";
 import "./index.css";
 
 const Toolbar: React.FC = () => {
-  const { context } = useContext(WorkbookContext);
+  const { context, setContext, refs } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -332,6 +334,13 @@ const Toolbar: React.FC = () => {
         className="luckysheet-toolbar-button luckysheet-inline-block"
         data-tips="粗体 (Ctrl+B)"
         id="luckysheet-icon-bold"
+        onClick={() => {
+          setContext(
+            produce((draftCtx) => {
+              handleBold(draftCtx, refs.cellInput.current!);
+            })
+          );
+        }}
         role="button"
         style={{ userSelect: "none" }}
       >

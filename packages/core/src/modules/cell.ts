@@ -902,3 +902,54 @@ export function getcellFormula(
 
   return cell.f;
 }
+
+export function getRange(ctx: Context) {
+  const rangeArr = _.cloneDeep(ctx.luckysheet_select_save);
+  const result = [];
+  for (let i = 0; i < rangeArr.length; i += 1) {
+    const rangeItem = rangeArr[i];
+    const temp = {
+      row: rangeItem.row,
+      column: rangeItem.column,
+    };
+    result.push(temp);
+  }
+  return result;
+}
+
+export function getFlattenedRange(ctx: Context, range?: any[]) {
+  range = range || getRange(ctx);
+
+  const result: any[] = [];
+
+  range.forEach((ele) => {
+    // 这个data可能是个范围或者是单个cell
+    const rs = ele.row;
+    const cs = ele.column;
+    for (let r = rs[0]; r <= rs[1]; r += 1) {
+      for (let c = cs[0]; c <= cs[1]; c += 1) {
+        // r c 当前的r和当前的c
+        result.push({ r, c });
+      }
+    }
+  });
+  return result;
+}
+
+export function isAllSelectedCellsInStatus(
+  ctx: Context,
+  type: string,
+  status: any
+) {
+  /* 获取选区内所有的单元格-扁平后的处理 */
+  const cells = getFlattenedRange(ctx);
+  const flowdata = getFlowdata(ctx);
+
+  return cells.every(({ r, c }) => {
+    const cell = flowdata?.[r]?.[c];
+    if (_.isNil(cell)) {
+      return false;
+    }
+    return cell[type] === status;
+  });
+}

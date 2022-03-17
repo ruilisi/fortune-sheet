@@ -32,6 +32,8 @@ module.exports = {
     "no-new-func": 0,
     "jsx-a11y/no-static-element-interactions": 0,
     "jsx-a11y/no-noninteractive-tabindex": 0,
+    "jsx-a11y/click-events-have-key-events": 0,
+    "jsx-a11y/interactive-supports-focus": 0,
     "import/no-extraneous-dependencies": 0,
     "import/extensions": 0,
     "import/no-unresolved": 0,

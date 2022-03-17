@@ -369,6 +369,6 @@ export function update(fmt: string, v: any) {
   return SSF.format(fmt, v);
 }
 
-export function is_date(fmt: string, v: any) {
+export function is_date(fmt: string, v?: any) {
   return SSF.is_date(fmt, v);
 }

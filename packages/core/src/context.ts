@@ -11,6 +11,8 @@ export type Context = {
   defaultrowNum: number;
   fullscreenmode: boolean;
   devicePixelRatio: number;
+  limitSheetNameLength: boolean;
+  defaultSheetNameMaxLength?: number;
 
   currentSheetIndex: string;
   calculateSheetIndex: string;
@@ -108,6 +110,7 @@ export type Context = {
   visibledatarow_unique: any;
 
   showGridLines: boolean;
+  allowEdit: boolean;
 
   toobarObject: any; // toolbar constant
   inlineStringEditCache: any;
@@ -154,6 +157,7 @@ function defaultContext(): Context {
     defaultrowNum: 84,
     fullscreenmode: true,
     devicePixelRatio: window.devicePixelRatio,
+    limitSheetNameLength: false,
 
     currentSheetIndex: "0",
     calculateSheetIndex: "0",
@@ -247,6 +251,7 @@ function defaultContext(): Context {
     visibledatarow_unique: null,
 
     showGridLines: true,
+    allowEdit: true,
 
     toobarObject: {}, // toolbar constant
     inlineStringEditCache: null,
