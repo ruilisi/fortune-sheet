@@ -64,9 +64,12 @@ const InputBox: React.FC = () => {
         // }
       }
       setInputHTML(escapeScriptTag(value));
-      setTimeout(() => {
-        moveToEnd(inputRef.current!);
-      });
+      if (!refs.globalCache.doNotFocus) {
+        setTimeout(() => {
+          moveToEnd(inputRef.current!);
+        });
+      }
+      delete refs.globalCache.doNotFocus;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

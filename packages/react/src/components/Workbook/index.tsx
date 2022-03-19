@@ -28,6 +28,8 @@ import FxEditor from "../FxEditor";
 const Workbook: React.FC<Settings> = (props) => {
   const [context, setContext] = useState(defaultContext());
   const cellInput = useRef<HTMLDivElement>();
+  const fxInput = useRef<HTMLDivElement>();
+  const globalCache = useRef<any>({});
   const mergedSettings = useMemo(() => assign(defaultSettings, props), [props]);
   const setContextValue = useCallback(
     <K extends keyof Context>(key: K, value: Context[K]) => {
@@ -46,7 +48,9 @@ const Workbook: React.FC<Settings> = (props) => {
       setContextValue,
       settings: mergedSettings,
       refs: {
+        globalCache: globalCache.current,
         cellInput,
+        fxInput,
       },
     }),
     [context, mergedSettings, setContextValue]
