@@ -5,8 +5,7 @@ type ContentEditableProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
   "onChange"
 > & {
-  html: string;
-  innerRef: React.MutableRefObject<HTMLDivElement | null>;
+  innerRef: (e: HTMLDivElement | null) => void;
   onChange: (html: string) => void;
 };
 
@@ -14,10 +13,6 @@ class ContentEditable extends React.Component<ContentEditableProps> {
   lastHtml?: string = undefined;
 
   root: HTMLDivElement | null = null;
-
-  shouldComponentUpdate(nextProps: ContentEditableProps) {
-    return nextProps.html !== this.root?.innerHTML;
-  }
 
   emitChange() {
     const { onChange } = this.props;
@@ -29,19 +24,18 @@ class ContentEditable extends React.Component<ContentEditableProps> {
   }
 
   render() {
-    const { html, innerRef } = this.props;
+    const { innerRef } = this.props;
     return (
       <div
         {..._.omit(this.props, "innerRef", "onChange", "html")}
         ref={(e) => {
           this.root = e;
-          innerRef.current = e;
+          innerRef?.(e);
         }}
         tabIndex={0}
         onInput={this.emitChange.bind(this)}
         onBlur={this.emitChange.bind(this)}
         contentEditable
-        dangerouslySetInnerHTML={{ __html: html }}
       />
     );
   }

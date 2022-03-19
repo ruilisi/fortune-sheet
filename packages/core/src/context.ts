@@ -47,6 +47,9 @@ export type Context = {
     any
   >)[];
   luckysheet_selection_range: any[];
+  formulaRangeHighlight: any[];
+  functionCandidates: any[];
+  functionHint: string | null | undefined;
 
   luckysheet_copy_save: any; // 复制粘贴
   luckysheet_paste_iscut: boolean;
@@ -189,6 +192,9 @@ function defaultContext(): Context {
     luckysheet_select_status: false,
     luckysheet_select_save: [{ row: [0, 0], column: [0, 0] }],
     luckysheet_selection_range: [],
+    formulaRangeHighlight: [],
+    functionCandidates: [],
+    functionHint: null,
 
     luckysheet_copy_save: {}, // 复制粘贴
     luckysheet_paste_iscut: false,

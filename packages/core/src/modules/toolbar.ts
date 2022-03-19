@@ -141,7 +141,6 @@ function updateFormatCell(
           d[r][c][attr] = foucsStatus;
           // }
         } else {
-          console.info(123123)
           d[r][c] = { v: value };
           d[r][c][attr] = foucsStatus;
         }

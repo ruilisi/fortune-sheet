@@ -303,14 +303,19 @@
 .luckysheet-input-box {
   position: absolute;
   font: normal normal 400 13px arial, sans, sans-serif;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+}
+
+.luckysheet-input-box-inner {
+  font: normal normal 400 13px arial, sans, sans-serif;
   text-align: left;
-  top: -10000px;
   max-height: 9900px;
   max-width: 9900px;
   border: 2px #5292f7 solid;
   padding: 0 2px;
   margin: 0;
-  z-index: 15;
   resize: none;
   overflow: auto;
   overflow: initial;
@@ -324,7 +329,6 @@
   font-size: 13px;
   right: auto;
   overflow-y: auto;
-  display: flex;
 }
 
 .luckysheet-cell-input {
@@ -333,4 +337,12 @@
   outline: none;
   cursor: text;
   white-space: pre-wrap;
+}
+
+.luckysheet-formula-text-color {
+  color: black;
+}
+
+.luckysheet-formula-text-string {
+  color: forestgreen;
 }

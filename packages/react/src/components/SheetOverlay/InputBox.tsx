@@ -2,21 +2,28 @@ import { getCellValue } from "@fortune-sheet/core/src/modules/cell";
 import { isInlineStringCell } from "@fortune-sheet/core/src/modules/inline-string";
 import { moveToEnd } from "@fortune-sheet/core/src/modules/cursor";
 import { escapeScriptTag } from "@fortune-sheet/core/src/utils";
-import React, { useContext, useState, useEffect, useMemo, useRef } from "react";
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  useCallback,
+} from "react";
 import _ from "lodash";
+import produce from "immer";
 import { getFlowdata } from "@fortune-sheet/core/src/context";
+import { handleFormulaInput } from "@fortune-sheet/core/src/modules/formula";
 import WorkbookContext from "../../context";
 import { getInlineStringHTML, getStyleByCell } from "./util";
 import ContentEditable from "./ContentEditable";
+import FormulaSearch from "./FormulaSearch";
+import FormulaHint from "./FormulaHint";
 
 const InputBox: React.FC = () => {
-  const { context, refs } = useContext(WorkbookContext);
+  const { context, setContext, refs } = useContext(WorkbookContext);
   const inputRef = useRef<HTMLDivElement>(null);
-  const [inputHTML, setInputHTML] = useState<string>("");
-
-  if (inputRef.current) {
-    refs.cellInput.current = inputRef.current;
-  }
+  const lastKeyDownEventRef = useRef<React.KeyboardEvent<HTMLDivElement>>();
 
   const inputBoxStyle = useMemo(() => {
     if (
@@ -63,7 +70,8 @@ const InputBox: React.FC = () => {
         //   value = value ? "" + value : value;
         // }
       }
-      setInputHTML(escapeScriptTag(value));
+      inputRef.current!.innerHTML = escapeScriptTag(value);
+      // setInputHTML();
       if (!refs.globalCache.doNotFocus) {
         setTimeout(() => {
           moveToEnd(inputRef.current!);
@@ -81,9 +89,157 @@ const InputBox: React.FC = () => {
 
   useEffect(() => {
     if (_.isEmpty(context.luckysheetCellUpdate)) {
-      setInputHTML("");
+      if (inputRef.current) {
+        inputRef.current.innerHTML = "";
+      }
+      // setInputHTML("");
     }
   }, [context.luckysheetCellUpdate]);
+
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      lastKeyDownEventRef.current = e;
+      // if (
+      //   $("#luckysheet-modal-dialog-mask").is(":visible") ||
+      //   $(event.target).hasClass("luckysheet-mousedown-cancel") ||
+      //   $(event.target).hasClass("formulaInputFocus")
+      // ) {
+      //   return;
+      // }
+
+      const { ctrlKey, shiftKey } = e;
+
+      setContext(
+        produce((draftCtx) => {
+          if (e.key === "Escape" && draftCtx.luckysheetCellUpdate.length > 0) {
+            formula.dontupdate();
+            luckysheetMoveHighlightCell("down", 0, "rangeOfSelect");
+            event.preventDefault();
+          } else if (
+            e.key === "Enter" &&
+            draftCtx.luckysheetCellUpdate.length > 0
+          ) {
+            if (
+              $("#luckysheet-formula-search-c").is(":visible") &&
+              formula.searchFunctionCell != null
+            ) {
+              formula.searchFunctionEnter(
+                $("#luckysheet-formula-search-c").find(
+                  ".luckysheet-formula-search-item-active"
+                )
+              );
+              event.preventDefault();
+            }
+          } else if (
+            e.key === "Tab" &&
+            draftCtx.luckysheetCellUpdate.length > 0
+          ) {
+            if (
+              $("#luckysheet-formula-search-c").is(":visible") &&
+              formula.searchFunctionCell != null
+            ) {
+              formula.searchFunctionEnter(
+                $("#luckysheet-formula-search-c").find(
+                  ".luckysheet-formula-search-item-active"
+                )
+              );
+            } else {
+              formula.updatecell(
+                draftCtx.luckysheetCellUpdate[0],
+                draftCtx.luckysheetCellUpdate[1]
+              );
+              luckysheetMoveHighlightCell("right", 1, "rangeOfSelect");
+            }
+
+            event.preventDefault();
+          } else if (
+            e.key === "F4" &&
+            draftCtx.luckysheetCellUpdate.length > 0
+          ) {
+            formula.setfreezonFuc(event);
+            event.preventDefault();
+          } else if (
+            e.key === "ArrowUp" &&
+            draftCtx.luckysheetCellUpdate.length > 0
+          ) {
+            formulaMoveEvent("up", ctrlKey, shiftKey, event);
+          } else if (
+            e.key === "ArrowDown" &&
+            draftCtx.luckysheetCellUpdate.length > 0
+          ) {
+            formulaMoveEvent("down", ctrlKey, shiftKey, event);
+          } else if (
+            e.key === "ArrowLeft" &&
+            draftCtx.luckysheetCellUpdate.length > 0
+          ) {
+            formulaMoveEvent("left", ctrlKey, shiftKey, event);
+          } else if (
+            e.key === "ArrowRight" &&
+            draftCtx.luckysheetCellUpdate.length > 0
+          ) {
+            formulaMoveEvent("right", ctrlKey, shiftKey, event);
+          }
+        })
+      );
+    },
+    [setContext]
+  );
+
+  const onChange = useCallback(
+    (html: string) => {
+      // setInputHTML(html);
+      const e = lastKeyDownEventRef.current;
+      if (!e) return;
+      const kcode = e.keyCode;
+      if (!kcode) return;
+
+      if (
+        !(
+          (
+            (kcode >= 112 && kcode <= 123) ||
+            kcode <= 46 ||
+            kcode === 144 ||
+            kcode === 108 ||
+            e.ctrlKey ||
+            e.altKey ||
+            (e.shiftKey &&
+              (kcode === 37 || kcode === 38 || kcode === 39 || kcode === 40))
+          )
+          // kcode === keycode.WIN ||
+          // kcode === keycode.WIN_R ||
+          // kcode === keycode.MENU))
+        ) ||
+        kcode === 8 ||
+        kcode === 32 ||
+        kcode === 46 ||
+        (e.ctrlKey && kcode === 86)
+      ) {
+        setContext(
+          produce((draftCtx) => {
+            // if(event.target.id!="luckysheet-input-box" && event.target.id!="luckysheet-rich-text-editor"){
+            handleFormulaInput(
+              draftCtx,
+              refs.fxInput.current!,
+              refs.cellInput.current!,
+              kcode
+            );
+            // formula.functionInputHanddler(
+            //   $("#luckysheet-functionbox-cell"),
+            //   $("#luckysheet-rich-text-editor"),
+            //   kcode
+            // );
+            // setCenterInputPosition(
+            //   draftCtx.luckysheetCellUpdate[0],
+            //   draftCtx.luckysheetCellUpdate[1],
+            //   draftCtx.flowdata
+            // );
+            // }
+          })
+        );
+      }
+    },
+    [refs.cellInput, refs.fxInput, setContext]
+  );
 
   if (
     !(
@@ -99,19 +255,34 @@ const InputBox: React.FC = () => {
       className="luckysheet-input-box"
       style={{
         left: context.luckysheet_select_save[0].left_move,
-        minWidth: context.luckysheet_select_save[0].width_move,
         top: context.luckysheet_select_save[0].top_move,
-        height: context.luckysheet_select_save[0].height_move,
-        ...inputBoxStyle,
       }}
     >
-      <ContentEditable
-        innerRef={inputRef}
-        className="luckysheet-cell-input"
-        id="luckysheet-rich-text-editor"
-        aria-autocomplete="list"
-        html={inputHTML}
-        onChange={setInputHTML}
+      <div
+        className="luckysheet-input-box-inner"
+        style={{
+          minWidth: context.luckysheet_select_save[0].width_move,
+          height: context.luckysheet_select_save[0].height_move,
+          ...inputBoxStyle,
+        }}
+      >
+        <ContentEditable
+          innerRef={(e) => {
+            inputRef.current = e;
+            refs.cellInput.current = e;
+          }}
+          className="luckysheet-cell-input"
+          id="luckysheet-rich-text-editor"
+          aria-autocomplete="list"
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+        />
+      </div>
+      <FormulaSearch
+        style={{ top: context.luckysheet_select_save[0].height_move + 4 }}
+      />
+      <FormulaHint
+        style={{ top: context.luckysheet_select_save[0].height_move + 4 }}
       />
     </div>
   );

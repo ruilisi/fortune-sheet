@@ -177,6 +177,7 @@ const Workbook: React.FC<Settings> = (props) => {
           handleGlobalKeyDown(
             draftCtx,
             providerValue.refs.cellInput.current!,
+            providerValue.refs.fxInput.current!,
             e.nativeEvent
           );
         })

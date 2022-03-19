@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { updateCell, cancelNormalSelected } from "./cell";
+import { handleFormulaInput } from "./formula";
 import { moveHighlightCell } from "./selection";
 
 function handleGlobalEnter(
@@ -531,6 +532,7 @@ function handleArrowKey(ctx: Context, e: KeyboardEvent) {
 export function handleGlobalKeyDown(
   ctx: Context,
   cellInput: HTMLDivElement,
+  fxInput: HTMLDivElement,
   e: KeyboardEvent
 ) {
   const kcode = e.keyCode;
@@ -718,6 +720,7 @@ export function handleGlobalKeyDown(
         // if (kstr === "Backspace") {
         //   $("#luckysheet-rich-text-editor").html("<br/>");
         // }
+        handleFormulaInput(ctx, fxInput, cellInput, kcode);
         // formula.functionInputHanddler(
         //   $("#luckysheet-functionbox-cell"),
         //   $("#luckysheet-rich-text-editor"),
