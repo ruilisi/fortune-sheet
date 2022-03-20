@@ -1,11 +1,6 @@
 .luckysheet-sheet-area {
   width: 100%;
   box-sizing: border-box;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  /* background-color: #f6f6f6; */
   background-color: #fafafc;
   color: #444;
   height: 31px;
