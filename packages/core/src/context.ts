@@ -38,6 +38,9 @@ export type Context = {
   defaultcollen: number;
   defaultrowlen: number;
 
+  scrollLeft: number;
+  scrollTop: number;
+
   jfcountfuncTimeout: any;
   jfautoscrollTimeout: any;
 
@@ -185,6 +188,9 @@ function defaultContext(): Context {
 
     defaultcollen: 73,
     defaultrowlen: 19,
+
+    scrollLeft: 0,
+    scrollTop: 0,
 
     jfcountfuncTimeout: null,
     jfautoscrollTimeout: null,

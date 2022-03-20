@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useContext } from "react";
+import React, { useRef, useEffect, useContext, useCallback } from "react";
 import { Canvas } from "@fortune-sheet/core/src";
 import "./index.css";
 import {
@@ -11,6 +11,7 @@ import {
   hasGroupValuesRefreshData,
 } from "@fortune-sheet/core/src/modules/formula";
 import produce from "immer";
+import { handleGlobalWheel } from "@fortune-sheet/core/src/canvas";
 import WorkbookContext from "../../context";
 import SheetOverlay from "../SheetOverlay";
 
@@ -20,7 +21,7 @@ type Props = {
 
 const Sheet: React.FC<Props> = ({ data }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { context, setContext } = useContext(WorkbookContext);
+  const { context, setContext, refs } = useContext(WorkbookContext);
 
   useEffect(() => {
     setContext((ctx) => updateContextWithSheetData(ctx, data));
@@ -43,15 +44,26 @@ const Sheet: React.FC<Props> = ({ data }) => {
   useEffect(() => {
     const tableCanvas = new Canvas(canvasRef.current!, context);
     tableCanvas.drawMain({
-      scrollHeight: 0,
-      scrollWidth: 0,
+      scrollHeight: context.scrollTop,
+      scrollWidth: context.scrollLeft,
     });
-    tableCanvas.drawColumnHeader(0);
-    tableCanvas.drawRowHeader(0);
+    tableCanvas.drawColumnHeader(context.scrollLeft);
+    tableCanvas.drawRowHeader(context.scrollTop);
   }, [context]);
 
+  const onWheel = useCallback(
+    (e: React.WheelEvent<HTMLDivElement>) => {
+      setContext(
+        produce((draftCtx) => {
+          handleGlobalWheel(draftCtx, e.nativeEvent);
+        })
+      );
+    },
+    [setContext]
+  );
+
   return (
-    <div className="fortune-sheet-container">
+    <div className="fortune-sheet-container" onWheel={onWheel}>
       <canvas className="fortune-sheet-canvas" ref={canvasRef} />
       <SheetOverlay data={data} />
     </div>

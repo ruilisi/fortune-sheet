@@ -62,6 +62,10 @@ const ColumnHeader: React.FC = () => {
     setSelectedLocation(selects);
   }, [context.luckysheet_select_save, context.visibledatacolumn]);
 
+  useEffect(() => {
+    containerRef.current!.scrollLeft = context.scrollLeft;
+  }, [context.scrollLeft]);
+
   return (
     <div
       ref={containerRef}
@@ -93,6 +97,16 @@ const ColumnHeader: React.FC = () => {
           }}
         />
       ))}
+      {/* placeholder to overflow the container, making the container scrollable */}
+      <div
+        className="luckysheet-cols-h-cells luckysheetsheetchange"
+        id="luckysheet-cols-h-cells_0"
+        style={{ width: context.ch_width, height: 1 }}
+      >
+        <div className="luckysheet-cols-h-cells-c">
+          <div className="luckysheet-grdblkpush" />
+        </div>
+      </div>
     </div>
   );
 };

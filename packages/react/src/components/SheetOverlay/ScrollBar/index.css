@@ -1,0 +1,95 @@
+.luckysheet-scrollbars,
+.luckysheet-menu {
+  scrollbar-base-color: #ffffff;
+  scrollbar-track-color: #e7e7e7;
+  scrollbar-darkshadow-color: #ffffff;
+  scrollbar-3dlight-color: #ffffff;
+  scrollbar-arrow-color: #757778;
+  scrollbar-shadow-color: #bec1c4;
+  scrollbar-highlight-color: #bec1c4;
+  -ms-scroll-chaining: none;
+  overflow: auto;
+}
+
+.luckysheet-scrollbar-ltr {
+  position: absolute;
+  overflow: hidden;
+  z-index: 1003;
+}
+
+.luckysheet-scrollbar-ltr div {
+  height: 1px;
+  width: 1px;
+}
+
+.luckysheet-scrollbar-ltr::-webkit-scrollbar-button {
+  height: 0;
+  width: 0;
+}
+
+.luckysheet-scrollbar-ltr::-webkit-scrollbar-button:start {
+  display: none;
+}
+
+.luckysheet-scrollbar-ltr::-webkit-scrollbar-button:end {
+  display: block;
+}
+
+.luckysheet-scrollbar-ltr::-webkit-scrollbar-button {
+  border: 1px solid #d9d9d9;
+}
+
+.luckysheet-scrollbar-ltr::-webkit-scrollbar-button:horizontal {
+  border-width: 1px 0 0 0;
+}
+
+.luckysheet-scrollbar-ltr::-webkit-scrollbar-button:vertical {
+  border-width: 0 0 0 1px;
+}
+
+.luckysheet-scrollbar-ltr::-webkit-scrollbar-button:vertical {
+  border-width: 0 1px 0 0;
+}
+
+.luckysheet-scrollbar-ltr::-webkit-scrollbar-button:horizontal:increment {
+  width: 15px;
+  padding-left: 1px;
+  background-clip: border-box;
+  border: 1px solid #d9d9d9;
+  border-width: 1px 0 0 0;
+  box-shadow: none;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.luckysheet-scrollbar-ltr::-webkit-scrollbar-button:horizontal:decrement {
+  border-left: 1px solid #d9d9d9;
+  border-right: 1px solid #d9d9d9;
+  width: 17px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.luckysheet-scrollbar-ltr::-webkit-scrollbar-button:vertical:increment {
+  padding-top: 1px;
+  border-left: 1px solid #d9d9d9;
+  height: 15px;
+}
+
+.luckysheet-scrollbar-ltr::-webkit-scrollbar-button:vertical:decrement {
+  border-top: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+  border-left: 1px solid #d9d9d9;
+  height: 17px;
+}
+
+.luckysheet-scrollbar-x {
+  bottom: 0px;
+  left: 44px;
+  overflow-x: scroll;
+}
+
+.luckysheet-scrollbar-y {
+  right: 0px;
+  top: 0px;
+  overflow-y: scroll;
+}

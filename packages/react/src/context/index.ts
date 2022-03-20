@@ -6,6 +6,8 @@ type RefValues = {
   globalCache: Record<string, any>;
   cellInput: React.MutableRefObject<HTMLDivElement | undefined>;
   fxInput: React.MutableRefObject<HTMLDivElement | undefined>;
+  scrollbarX: React.MutableRefObject<HTMLDivElement | undefined>;
+  scrollbarY: React.MutableRefObject<HTMLDivElement | undefined>;
 };
 
 const WorkbookContext = React.createContext<{
@@ -26,6 +28,12 @@ const WorkbookContext = React.createContext<{
       HTMLDivElement | undefined
     >,
     fxInput: React.createRef() as React.MutableRefObject<
+      HTMLDivElement | undefined
+    >,
+    scrollbarX: React.createRef() as React.MutableRefObject<
+      HTMLDivElement | undefined
+    >,
+    scrollbarY: React.createRef() as React.MutableRefObject<
       HTMLDivElement | undefined
     >,
   },

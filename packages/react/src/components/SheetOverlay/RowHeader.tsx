@@ -62,6 +62,10 @@ const RowHeader: React.FC = () => {
     setSelectedLocation(selects);
   }, [context.luckysheet_select_save, context.visibledatarow]);
 
+  useEffect(() => {
+    containerRef.current!.scrollTop = context.scrollTop;
+  }, [context.scrollTop]);
+
   return (
     <div
       ref={containerRef}
@@ -94,6 +98,12 @@ const RowHeader: React.FC = () => {
           }}
         />
       ))}
+      {/* placeholder to overflow the container, making the container scrollable */}
+      <div
+        style={{ height: context.rh_height, width: 1 }}
+        id="luckysheetrowHeader_0"
+        className="luckysheetsheetchange"
+      />
     </div>
   );
 };

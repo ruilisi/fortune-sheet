@@ -1,5 +1,5 @@
 import _ from "lodash";
-import defaultContext, { getFlowdata } from "./context";
+import defaultContext, { Context, getFlowdata } from "./context";
 import { getRealCellValue, normalizedAttr } from "./modules/cell";
 import {
   clearMeasureTextCache,
@@ -1022,11 +1022,7 @@ export default class Canvas {
 
       const margeMaindata = cell.mc;
 
-      value = getRealCellValue(
-        margeMaindata.r,
-        margeMaindata.c,
-        flowdata
-      );
+      value = getRealCellValue(margeMaindata.r, margeMaindata.c, flowdata);
 
       r = margeMaindata.r;
       c = margeMaindata.c;
@@ -2790,4 +2786,98 @@ export default class Canvas {
       ctx.restore();
     }
   }
+}
+
+export function handleGlobalWheel(ctx: Context, e: WheelEvent) {
+  let { scrollLeft } = ctx;
+  const { scrollTop } = ctx;
+  let visibledatacolumn_c = ctx.visibledatacolumn;
+  let visibledatarow_c = ctx.visibledatarow;
+
+  // if (luckysheetFreezen.freezenhorizontaldata != null) {
+  //   visibledatarow_c = luckysheetFreezen.freezenhorizontaldata[3];
+  // }
+
+  // if (luckysheetFreezen.freezenverticaldata != null) {
+  //   visibledatacolumn_c = luckysheetFreezen.freezenverticaldata[3];
+  // }
+
+  // clearTimeout(mousewheelArrayUniqueTimeout);
+
+  // if(ctx.visibledatacolumn.length!=visibledatacolumn_c.length){
+  if (ctx.visibledatacolumn_unique != null) {
+    visibledatacolumn_c = ctx.visibledatacolumn_unique;
+  } else {
+    visibledatacolumn_c = _.uniq(visibledatacolumn_c);
+    ctx.visibledatacolumn_unique = visibledatacolumn_c;
+  }
+  // }
+
+  // if(ctx.visibledatarow.length!=visibledatarow_c.length){
+  if (ctx.visibledatarow_unique != null) {
+    visibledatarow_c = ctx.visibledatarow_unique;
+  } else {
+    visibledatarow_c = _.uniq(visibledatarow_c);
+    ctx.visibledatarow_unique = visibledatarow_c;
+  }
+  // }
+
+  // visibledatacolumn_c = ArrayUnique(visibledatacolumn_c);
+  // visibledatarow_c = ArrayUnique(visibledatarow_c);
+
+  const row_st = _.sortedIndex(visibledatarow_c, scrollTop) + 1;
+
+  // if (luckysheetFreezen.freezenhorizontaldata != null) {
+  //   row_st = luckysheet_searcharray(
+  //     visibledatarow_c,
+  //     scrollTop + luckysheetFreezen.freezenhorizontaldata[0]
+  //   );
+  // }
+
+  let rowscroll = 0;
+
+  // TODO const scrollNum = e.deltaFactor < 40 ? 1 : e.deltaFactor < 80 ? 2 : 3;
+  const scrollNum = 1;
+
+  // 一次滚动三行或三列
+  if (e.deltaY !== 0) {
+    let row_ed;
+    let step = Math.round(scrollNum / ctx.zoomRatio);
+    step = step < 1 ? 1 : step;
+    if (e.deltaY > 0) {
+      row_ed = row_st + step;
+
+      if (row_ed >= visibledatarow_c.length) {
+        row_ed = visibledatarow_c.length - 1;
+      }
+    } else {
+      row_ed = row_st - step;
+
+      if (row_ed < 0) {
+        row_ed = 0;
+      }
+    }
+
+    rowscroll = row_ed === 0 ? 0 : visibledatarow_c[row_ed - 1];
+
+    // if (luckysheetFreezen.freezenhorizontaldata != null) {
+    //   rowscroll -= luckysheetFreezen.freezenhorizontaldata[0];
+    // }
+
+    ctx.scrollTop = rowscroll;
+    // scrollbarY.scrollTop = rowscroll;
+  } else if (e.deltaX !== 0) {
+    if (e.deltaX > 0) {
+      scrollLeft += 20 * ctx.zoomRatio;
+    } else {
+      scrollLeft -= 20 * ctx.zoomRatio;
+    }
+    ctx.scrollLeft = scrollLeft;
+    // scrollbarY.scrollLeft = scrollLeft;
+  }
+
+  // mousewheelArrayUniqueTimeout = setTimeout(() => {
+  //   ctx.visibledatacolumn_unique = null;
+  //   ctx.visibledatarow_unique = null;
+  // }, 500);
 }

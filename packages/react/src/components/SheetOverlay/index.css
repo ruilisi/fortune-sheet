@@ -346,3 +346,100 @@
 .luckysheet-formula-text-string {
   color: forestgreen;
 }
+
+.luckysheet-cell-flow {
+  z-index: -100;
+  margin: 0;
+  padding: 0;
+  border: none 0;
+  position: relative;
+  touch-action: manipulation;
+}
+
+.luckysheet-cell-flow-clip {
+  border-collapse: collapse;
+  cursor: default;
+  width: 5000000px;
+  touch-action: manipulation;
+  overflow: hidden;
+}
+
+.luckysheet-cell-flow-col {
+  margin: 0;
+  padding: 0;
+  border: none 0;
+  position: relative;
+  touch-action: manipulation;
+  overflow: hidden;
+  float: left;
+  direction: ltr;
+}
+
+.luckysheet-cell-sheettable {
+  position: relative;
+  /*background-color: #fff;*/
+  text-align: left;
+  font-size: 11pt;
+  color: #000000;
+  text-decoration: none;
+}
+
+.luckysheet-bottom-controll-row {
+  position: absolute;
+  height: 30px;
+  /*width: 400px;*/
+  /* background: #000; */
+  bottom: 38px;
+  left: 0px;
+  z-index: 1000;
+}
+
+#luckysheet-bottom-add-row {
+  padding: 5px 20px;
+  margin-right: 5px;
+  margin-top: -2px;
+}
+
+#luckysheet-bottom-add-row-input {
+  width: 40px;
+  min-width: 40px;
+}
+
+#luckysheet-bottom-return-top {
+  padding: 5px 6px;
+  margin-left: 10px;
+  margin-top: -2px;
+}
+
+.luckysheet-cell-flow-column {
+  position: absolute;
+  height: inherit;
+  width: inherit;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  touch-action: manipulation;
+}
+
+.luckysheet-cell-flow-column-line {
+  position: absolute;
+  border-right: 1px solid #d4d4d4;
+  height: inherit;
+}
+
+.luckysheet-cell-flow-row {
+  text-align: left;
+  position: absolute;
+  height: inherit;
+  width: inherit;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  touch-action: manipulation;
+}
+
+.luckysheet-cell-flow-row-line {
+  position: absolute;
+  border-bottom: 1px solid #d4d4d4;
+  width: inherit;
+}
