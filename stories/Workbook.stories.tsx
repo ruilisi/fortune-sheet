@@ -19,3 +19,6 @@ Basic.args = { data: [cell] };
 
 export const Formula = Template.bind({});
 Formula.args = { data: [formula] };
+
+export const All = Template.bind({});
+All.args = { data: [cell, formula] };

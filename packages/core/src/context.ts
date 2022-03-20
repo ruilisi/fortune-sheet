@@ -162,8 +162,8 @@ function defaultContext(): Context {
     devicePixelRatio: window.devicePixelRatio,
     limitSheetNameLength: false,
 
-    currentSheetIndex: "0",
-    calculateSheetIndex: "0",
+    currentSheetIndex: "",
+    calculateSheetIndex: "",
     config: {},
 
     visibledatarow: [],

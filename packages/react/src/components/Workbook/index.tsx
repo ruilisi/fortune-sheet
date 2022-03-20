@@ -24,6 +24,7 @@ import Sheet from "../Sheet";
 import WorkbookContext from "../../context";
 import Toolbar from "../Toolbar";
 import FxEditor from "../FxEditor";
+import SheetTab from "../SheetTab";
 
 const Workbook: React.FC<Settings> = (props) => {
   const [context, setContext] = useState(defaultContext());
@@ -70,7 +71,9 @@ const Workbook: React.FC<Settings> = (props) => {
         draftCtx.defaultSheetNameMaxLength =
           mergedSettings.defaultSheetNameMaxLength;
         // draftCtx.fontList = mergedSettings.fontList;
-        initSheetIndex(draftCtx);
+        if (_.isEmpty(draftCtx.currentSheetIndex)) {
+          initSheetIndex(draftCtx);
+        }
         const sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
         if (_.isNil(sheetIdx)) return;
 
@@ -183,7 +186,7 @@ const Workbook: React.FC<Settings> = (props) => {
         })
       );
     },
-    [providerValue.refs.cellInput]
+    [providerValue.refs.cellInput, providerValue.refs.fxInput]
   );
 
   if (!context.luckysheetfile) {
@@ -203,6 +206,7 @@ const Workbook: React.FC<Settings> = (props) => {
           <FxEditor />
         </div>
         <Sheet data={sheetData} />
+        <SheetTab />
       </div>
     </WorkbookContext.Provider>
   );
