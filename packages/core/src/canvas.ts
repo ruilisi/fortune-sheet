@@ -2864,7 +2864,7 @@ export function handleGlobalWheel(ctx: Context, e: WheelEvent) {
     //   rowscroll -= luckysheetFreezen.freezenhorizontaldata[0];
     // }
 
-    ctx.scrollTop = rowscroll;
+    ctx.scrollTop = Math.max(rowscroll, 0);
     // scrollbarY.scrollTop = rowscroll;
   } else if (e.deltaX !== 0) {
     if (e.deltaX > 0) {
@@ -2872,7 +2872,7 @@ export function handleGlobalWheel(ctx: Context, e: WheelEvent) {
     } else {
       scrollLeft -= 20 * ctx.zoomRatio;
     }
-    ctx.scrollLeft = scrollLeft;
+    ctx.scrollLeft = Math.max(scrollLeft, 0);
     // scrollbarY.scrollLeft = scrollLeft;
   }
 
@@ -2880,4 +2880,5 @@ export function handleGlobalWheel(ctx: Context, e: WheelEvent) {
   //   ctx.visibledatacolumn_unique = null;
   //   ctx.visibledatarow_unique = null;
   // }, 500);
+  e.preventDefault();
 }

@@ -21,6 +21,7 @@ type Props = {
 
 const Sheet: React.FC<Props> = ({ data }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { context, setContext, refs } = useContext(WorkbookContext);
 
   useEffect(() => {
@@ -52,18 +53,26 @@ const Sheet: React.FC<Props> = ({ data }) => {
   }, [context]);
 
   const onWheel = useCallback(
-    (e: React.WheelEvent<HTMLDivElement>) => {
+    (e: WheelEvent) => {
       setContext(
         produce((draftCtx) => {
-          handleGlobalWheel(draftCtx, e.nativeEvent);
+          handleGlobalWheel(draftCtx, e);
         })
       );
     },
     [setContext]
   );
 
+  useEffect(() => {
+    const container = containerRef.current;
+    container?.addEventListener("wheel", onWheel);
+    return () => {
+      container?.removeEventListener("wheel", onWheel);
+    };
+  }, [onWheel]);
+
   return (
-    <div className="fortune-sheet-container" onWheel={onWheel}>
+    <div ref={containerRef} className="fortune-sheet-container">
       <canvas className="fortune-sheet-canvas" ref={canvasRef} />
       <SheetOverlay data={data} />
     </div>
