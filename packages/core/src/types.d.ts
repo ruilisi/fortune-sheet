@@ -54,6 +54,8 @@ export type Selection = {
   row_focus?: number;
   column_focus?: number;
   moveXY?: { x: number; y: number };
+  row_select?: boolean;
+  column_select?: boolean;
 };
 
 export type Sheet = {

@@ -14,10 +14,12 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
+import produce from "immer";
+import { handleColumnHeaderMouseDown } from "@fortune-sheet/core/src/events/mouse";
 import WorkbookContext from "../../context";
 
 const ColumnHeader: React.FC = () => {
-  const { context } = useContext(WorkbookContext);
+  const { context, setContext } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoverLocation, setHoverLocation] = useState({
     col: -1,
@@ -38,6 +40,17 @@ const ColumnHeader: React.FC = () => {
       setHoverLocation({ col_pre, col });
     },
     [context]
+  );
+
+  const onMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      setContext(
+        produce((draftCtx) => {
+          handleColumnHeaderMouseDown(draftCtx, e.nativeEvent, e.currentTarget);
+        })
+      );
+    },
+    [setContext]
   );
 
   useEffect(() => {
@@ -76,6 +89,7 @@ const ColumnHeader: React.FC = () => {
         height: context.columnHeaderHeight - 1.5,
       }}
       onMouseMove={onMouseMove}
+      onMouseDown={onMouseDown}
     >
       {hoverLocation.col >= 0 && hoverLocation.col_pre >= 0 ? (
         <div
