@@ -13,13 +13,10 @@ export const error = {
   sp: "#SPILL!", // 数组范围有其它值
 };
 
+const errorValues = Object.values(error);
+
 export function valueIsError(value: string) {
-  for (const x in error) {
-    if (value == error[x]) {
-      return true;
-    }
-  }
-  return false;
+  return errorValues.includes(value);
 }
 
 // 是否是空值
@@ -29,7 +26,7 @@ export function isRealNull(val: any) {
 
 // 是否是纯数字
 export function isRealNum(val: any) {
-  if (val == null || val.toString().replace(/\s/g, "") === "") {
+  if (_.isNil(val) || val.toString().replace(/\s/g, "") === "") {
     return false;
   }
 

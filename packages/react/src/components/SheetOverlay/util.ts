@@ -8,9 +8,10 @@ import {
   normalizedCellAttr,
 } from "@fortune-sheet/core/src/modules/cell";
 import _ from "lodash";
+import { Cell, CellMatrix } from "@fortune-sheet/core/src/types";
 
 export function getFontStyleByCell(
-  cell: any,
+  cell: Cell | null | undefined,
   checksAF?: any[],
   checksCF?: any,
   isCheck = true
@@ -19,7 +20,8 @@ export function getFontStyleByCell(
   if (!cell) {
     return style;
   }
-  Object.keys(cell).forEach((key) => {
+  // @ts-ignore
+  _.forEach(cell, (v, key: keyof Cell) => {
     let value = cell[key];
     if (isCheck) {
       value = normalizedCellAttr(cell, key);
@@ -66,7 +68,9 @@ export function getFontStyleByCell(
     }
 
     if (key === "un" && (valueNum === 1 || valueNum === 3)) {
+      // @ts-ignore
       const color = cell._color ?? cell.fc;
+      // @ts-ignore
       const fs = cell._fontSize ?? cell.fs;
       style.borderBottom = `${Math.floor(fs / 9)}px solid ${color}`;
     }
@@ -74,7 +78,7 @@ export function getFontStyleByCell(
   return style;
 }
 
-export function getStyleByCell(d: any, r: number, c: number) {
+export function getStyleByCell(d: CellMatrix, r: number, c: number) {
   let style: React.CSSProperties = {};
 
   // 交替颜色
@@ -88,6 +92,8 @@ export function getStyleByCell(d: any, r: number, c: number) {
   const checksCF: any = {};
 
   const cell = d[r][c];
+  if (!cell) return {};
+
   const isInline = isInlineStringCell(cell);
   if ("bg" in cell) {
     const value = normalizedCellAttr(cell, "bg");

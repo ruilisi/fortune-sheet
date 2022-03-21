@@ -1,10 +1,18 @@
 import _ from "lodash";
+import type { Sheet as SheetType } from "@fortune-sheet/core/src/types";
 import { Context, getFlowdata } from "../context";
 import { mergeBorder } from "./cell";
 import { formulaCache } from "./formula";
 
-export function normalizeSelection(ctx: Context, selection: any[]) {
+export function normalizeSelection(
+  ctx: Context,
+  selection: SheetType["luckysheet_select_save"]
+) {
+  if (!selection) return selection;
+
   const flowdata = getFlowdata(ctx);
+  if (!flowdata) return selection;
+
   for (let i = 0; i < selection.length; i += 1) {
     const r1 = selection[i].row[0];
     const r2 = selection[i].row[1];
@@ -23,6 +31,11 @@ export function normalizeSelection(ctx: Context, selection: any[]) {
       cf = c1;
     } else {
       cf = selection[i].column_focus;
+    }
+
+    if (_.isNil(rf) || _.isNil(cf)) {
+      console.error("normalizeSelection: rf and cf is nil");
+      return selection;
     }
 
     const row = ctx.visibledatarow[r2];
@@ -60,8 +73,12 @@ export function normalizeSelection(ctx: Context, selection: any[]) {
   return selection;
 }
 
-export function selectTitlesMap(rangeMap: any, range1: number, range2: number) {
-  const map = rangeMap || {};
+export function selectTitlesMap(
+  rangeMap: Record<string, number>,
+  range1: number,
+  range2: number
+) {
+  const map: Record<string, number> = rangeMap || {};
   for (let i = range1; i <= range2; i += 1) {
     if (i in map) {
       continue;
@@ -71,21 +88,18 @@ export function selectTitlesMap(rangeMap: any, range1: number, range2: number) {
   return map;
 }
 
-export function selectTitlesRange(map: any) {
-  const mapArr = [];
-
-  for (const i in map) {
-    mapArr.push(i);
-  }
+export function selectTitlesRange(map: Record<string, number>) {
+  const mapArr = Object.keys(map).map(Number);
 
   mapArr.sort((a, b) => {
     return a - b;
   });
 
-  const rangeArr = [];
+  let rangeArr: number[][] | undefined;
   let item = [];
 
   if (mapArr.length > 1) {
+    rangeArr = [];
     for (let j = 1; j < mapArr.length; j += 1) {
       if (mapArr[j] - mapArr[j - 1] === 1) {
         item.push(mapArr[j - 1]);
@@ -101,7 +115,7 @@ export function selectTitlesRange(map: any) {
             rangeArr.push(item);
             rangeArr.push([mapArr[j]]);
           } else {
-            rangeArr.push(mapArr[0]);
+            rangeArr.push([mapArr[0]]);
           }
         } else if (j === mapArr.length - 1) {
           item.push(mapArr[j - 1]);
@@ -115,6 +129,7 @@ export function selectTitlesRange(map: any) {
       }
     }
   } else {
+    rangeArr = [];
     rangeArr.push([mapArr[0]]);
   }
 
@@ -125,8 +140,7 @@ export function moveHighlightCell(
   ctx: Context,
   postion: "down" | "right",
   index: number,
-  type: "rangeOfSelect" | "rangeOfFormula",
-  isScroll = true
+  type: "rangeOfSelect" | "rangeOfFormula"
 ) {
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
@@ -144,7 +158,11 @@ export function moveHighlightCell(
 
   if (type === "rangeOfSelect") {
     const last =
-      ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
+      ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1];
+    if (!last) {
+      console.error("moveHighlightCell: no selection found");
+      return;
+    }
 
     let curR;
     if (_.isNil(last.row_focus)) {
@@ -181,6 +199,11 @@ export function moveHighlightCell(
         curR = str_r;
         curC = str_c;
       }
+    }
+
+    if (_.isNil(curR) || _.isNil(curC)) {
+      console.error("moveHighlightCell: curR or curC is nil");
+      return;
     }
 
     let moveX = _.isNil(last.moveXY) ? curR : last.moveXY.x;
@@ -236,6 +259,18 @@ export function moveHighlightCell(
       col_index_ed = curC;
     }
 
+    if (
+      _.isNil(row_index) ||
+      _.isNil(row_index_ed) ||
+      _.isNil(col_index) ||
+      _.isNil(col_index_ed)
+    ) {
+      console.error(
+        "moveHighlightCell: row_index or row_index_ed or col_index or col_index_ed is nil"
+      );
+      return;
+    }
+
     last.row = [row_index, row_index_ed];
     last.column = [col_index, col_index_ed];
     last.row_focus = row_index;
@@ -285,6 +320,11 @@ export function moveHighlightCell(
       }
     }
 
+    if (_.isNil(curR) || _.isNil(curC)) {
+      console.error("moveHighlightCell: curR or curC is nil");
+      return;
+    }
+
     let moveX = _.isNil(last.moveXY) ? curR : last.moveXY.x;
     let moveY = _.isNil(last.moveXY) ? curC : last.moveXY.y;
 
@@ -331,6 +371,22 @@ export function moveHighlightCell(
       col_pre = moveY - 1 === -1 ? 0 : ctx.visibledatacolumn[moveY - 1];
       col_index = moveY;
       col_index_ed = moveY;
+    }
+
+    if (
+      _.isNil(col) ||
+      _.isNil(col_pre) ||
+      _.isNil(row) ||
+      _.isNil(row_pre) ||
+      _.isNil(row_index) ||
+      _.isNil(row_index_ed) ||
+      _.isNil(col_index) ||
+      _.isNil(col_index_ed)
+    ) {
+      console.error(
+        "moveHighlightCell: some values of func_selectedrange is nil"
+      );
+      return;
     }
 
     formulaCache.func_selectedrange = {

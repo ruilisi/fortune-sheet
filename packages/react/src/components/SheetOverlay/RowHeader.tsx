@@ -32,7 +32,7 @@ const RowHeader: React.FC = () => {
       if (e.target !== e.currentTarget) {
         return;
       }
-      const y = e.nativeEvent.offsetY - containerRef.current!.scrollTop;
+      const y = e.nativeEvent.offsetY + containerRef.current!.scrollTop;
       const row_location = rowLocation(y, context.visibledatarow);
       const [row_pre, row] = row_location;
       setHoverLocation({ row_pre, row });
@@ -41,8 +41,8 @@ const RowHeader: React.FC = () => {
   );
 
   useEffect(() => {
-    const s = context.luckysheet_select_save;
-    let rowTitleMap = {};
+    const s = context.luckysheet_select_save || [];
+    let rowTitleMap: Record<number, number> = {};
     for (let i = 0; i < s.length; i += 1) {
       const r1 = s[i].row[0];
       const r2 = s[i].row[1];

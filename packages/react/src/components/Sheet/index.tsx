@@ -5,7 +5,7 @@ import {
   updateContextWithCanvas,
   updateContextWithSheetData,
 } from "@fortune-sheet/core/src/context";
-import type { Sheet as SheetType } from "@fortune-sheet/core/src/types";
+import type { CellMatrix } from "@fortune-sheet/core/src/types";
 import {
   groupValuesRefresh,
   hasGroupValuesRefreshData,
@@ -16,13 +16,13 @@ import WorkbookContext from "../../context";
 import SheetOverlay from "../SheetOverlay";
 
 type Props = {
-  data: SheetType["data"];
+  data: CellMatrix;
 };
 
 const Sheet: React.FC<Props> = ({ data }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { context, setContext, refs } = useContext(WorkbookContext);
+  const { context, setContext } = useContext(WorkbookContext);
 
   useEffect(() => {
     setContext((ctx) => updateContextWithSheetData(ctx, data));
@@ -74,7 +74,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
   return (
     <div ref={containerRef} className="fortune-sheet-container">
       <canvas className="fortune-sheet-canvas" ref={canvasRef} />
-      <SheetOverlay data={data} />
+      <SheetOverlay />
     </div>
   );
 };

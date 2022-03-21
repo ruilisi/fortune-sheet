@@ -45,11 +45,8 @@ export type Context = {
   jfautoscrollTimeout: any;
 
   luckysheet_select_status: boolean;
-  luckysheet_select_save: ({ row: any[]; column: any[] } & Record<
-    string,
-    any
-  >)[];
-  luckysheet_selection_range: any[];
+  luckysheet_select_save: Sheet["luckysheet_select_save"];
+  luckysheet_selection_range: Sheet["luckysheet_selection_range"];
   formulaRangeHighlight: any[];
   functionCandidates: any[];
   functionHint: string | null | undefined;

@@ -6,7 +6,7 @@ import "./index.css";
 import ToolbarButton from "./ToolbarButton";
 
 const Toolbar: React.FC = () => {
-  const { context, setContext, refs, settings } = useContext(WorkbookContext);
+  const { setContext, refs, settings } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const getToolbarItem = useCallback(

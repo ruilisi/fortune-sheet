@@ -32,7 +32,7 @@ const ColumnHeader: React.FC = () => {
       if (e.target !== e.currentTarget) {
         return;
       }
-      const x = e.nativeEvent.offsetX - containerRef.current!.scrollLeft;
+      const x = e.nativeEvent.offsetX + containerRef.current!.scrollLeft;
       const col_location = colLocation(x, context.visibledatacolumn);
       const [col_pre, col] = col_location;
       setHoverLocation({ col_pre, col });
@@ -42,6 +42,8 @@ const ColumnHeader: React.FC = () => {
 
   useEffect(() => {
     const s = context.luckysheet_select_save;
+    if (_.isNil(s)) return;
+
     let columnTitleMap = {};
     for (let i = 0; i < s.length; i += 1) {
       const c1 = s[i].column[0];

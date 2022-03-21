@@ -1,6 +1,5 @@
 import React, { useContext, useCallback, useRef, useEffect } from "react";
 import "./index.css";
-import _ from "lodash";
 import produce from "immer";
 import {
   colLocation,
@@ -9,17 +8,15 @@ import {
 import { mergeBorder, updateCell } from "@fortune-sheet/core/src/modules/cell";
 import { normalizeSelection } from "@fortune-sheet/core/src/modules/selection";
 import { getFlowdata } from "@fortune-sheet/core/src/context";
+import type { Sheet as SheetType } from "@fortune-sheet/core/src/types";
 import WorkbookContext from "../../context";
 import ColumnHeader from "./ColumnHeader";
 import RowHeader from "./RowHeader";
 import InputBox from "./InputBox";
 import ScrollBar from "./ScrollBar";
+import _ from "lodash";
 
-type Props = {
-  data: any;
-};
-
-const Sheet: React.FC<Props> = ({ data }) => {
+const SheetOverlay: React.FC = () => {
   const { context, setContext, setContextValue, settings, refs } =
     useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -31,6 +28,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
         return;
       }
       const flowdata = getFlowdata(context);
+      if (!flowdata) return;
       // TODO set MouseDown state to context
       // const mouse = mousePosition(
       //   e.nativeEvent.offsetX,
@@ -74,18 +72,11 @@ const Sheet: React.FC<Props> = ({ data }) => {
       let col_index_ed = col_index;
       const margeset = mergeBorder(context, flowdata, row_index, col_index);
       if (margeset) {
-        row = margeset.row[1];
-        row_pre = margeset.row[0];
-        row_index = margeset.row[2];
-        row_index_ed = margeset.row[3];
-
-        col = margeset.column[1];
-        col_pre = margeset.column[0];
-        col_index = margeset.column[2];
-        col_index_ed = margeset.column[3];
+        [row_pre, row, row_index, row_index_ed] = margeset.row;
+        [col_pre, col, col_index, col_index_ed] = margeset.column;
       }
 
-      let select_save: any;
+      let selection: SheetType["luckysheet_select_save"];
 
       // //单元格单击之前
       // if (
@@ -416,7 +407,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
               draftCtx,
               context.luckysheetCellUpdate[0],
               context.luckysheetCellUpdate[1],
-              refs.cellInput.current
+              refs.cellInput.current!
             );
             draftCtx.luckysheet_select_status = true;
           })
@@ -932,7 +923,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
       //     column_focus: col_index,
       //   });
       // } else {
-      select_save = [
+      selection = [
         {
           left: col_pre,
           width: col - col_pre - 1,
@@ -1013,7 +1004,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
       // );
       setContextValue(
         "luckysheet_select_save",
-        normalizeSelection(context, select_save)
+        normalizeSelection(context, selection)
       );
     },
     [context, refs.cellInput, setContext, setContextValue]
@@ -1028,6 +1019,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
         return;
       }
       const flowdata = getFlowdata(context);
+      if (!flowdata) return;
 
       // 禁止前台编辑(只可 框选单元格、滚动查看表格)
       if (!settings.allowEdit || settings.editMode) {
@@ -1082,8 +1074,8 @@ const Sheet: React.FC<Props> = ({ data }) => {
 
       const margeset = mergeBorder(context, flowdata, row_index, col_index);
       if (margeset) {
-        row_index = margeset.row[2];
-        col_index = margeset.column[2];
+        [, , row_index] = margeset.row;
+        [, , col_index] = margeset.column;
       }
 
       /*
@@ -1182,8 +1174,12 @@ const Sheet: React.FC<Props> = ({ data }) => {
       //   }
 
       // 检查当前坐标和焦点坐标是否一致，如果不一致那么进行修正
-      const { column_focus, row_focus } = context.luckysheet_select_save[0];
-      if (column_focus !== col_index || row_focus !== row_index) {
+      const { column_focus, row_focus } = context.luckysheet_select_save![0];
+      if (
+        !_.isNil(column_focus) &&
+        !_.isNil(row_focus) &&
+        (column_focus !== col_index || row_focus !== row_index)
+      ) {
         row_index = row_focus;
         col_index = column_focus;
       }
@@ -1270,9 +1266,9 @@ const Sheet: React.FC<Props> = ({ data }) => {
             className="luckysheet-cell-selected-move"
             id="luckysheet-cell-selected-move"
           />
-          {context.luckysheet_select_save.length > 0 && (
+          {(context.luckysheet_select_save?.length ?? 0) > 0 && (
             <div id="luckysheet-cell-selected-boxs">
-              {context.luckysheet_select_save.map((selection, index) => (
+              {context.luckysheet_select_save!.map((selection, index) => (
                 <div
                   key={index}
                   id="luckysheet-cell-selected"
@@ -1515,4 +1511,4 @@ const Sheet: React.FC<Props> = ({ data }) => {
   );
 };
 
-export default Sheet;
+export default SheetOverlay;

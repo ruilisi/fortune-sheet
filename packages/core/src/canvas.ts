@@ -776,7 +776,7 @@ export default class Canvas {
         if (flowdata?.[r]?.[c]) {
           const value = flowdata[r][c];
 
-          if (_.isPlainObject(value) && "mc" in value) {
+          if (value?.mc) {
             borderOffset[`${r}_${c}`] = {
               startY,
               startX,
@@ -922,7 +922,7 @@ export default class Canvas {
         const cell = flowdata[r][c];
         let value = null;
 
-        if (_.isPlainObject(cell) && "mc" in cell) {
+        if (cell?.mc) {
           mcArr.push(cellupdate[cud]);
           // continue;
         } else {
@@ -952,21 +952,21 @@ export default class Canvas {
           );
 
           // sparklines渲染
-          const borderfix = getBorderFix(flowdata, r, c);
-          const cellsize = [
-            startX + offsetLeft + borderfix[0],
-            startY + offsetTop + borderfix[1],
-            endX - startX - 3 + borderfix[2],
-            endY - startY - 3 - 1 + borderfix[3],
-          ];
-          this.sparklinesRender(
-            r,
-            c,
-            cellsize[0],
-            cellsize[1],
-            "renderCtx",
-            renderCtx
-          );
+          // const borderfix = getBorderFix(flowdata, r, c);
+          // const cellsize = [
+          //   startX + offsetLeft + borderfix[0],
+          //   startY + offsetTop + borderfix[1],
+          //   endX - startX - 3 + borderfix[2],
+          //   endY - startY - 3 - 1 + borderfix[3],
+          // ];
+          // this.sparklinesRender(
+          //   r,
+          //   c,
+          //   cellsize[0],
+          //   cellsize[1],
+          //   "renderCtx",
+          //   renderCtx
+          // );
         } else {
           if (`${r}_${c}` in dynamicArrayCompute) {
             // 动态数组公式
@@ -1018,18 +1018,21 @@ export default class Canvas {
       let endX = item.endX - 1;
 
       const cell = flowdata[r][c];
+      if (!cell) continue;
+
       let value = null;
 
-      const margeMaindata = cell.mc;
+      const mergeMaindata = cell.mc;
+      if (!mergeMaindata) continue;
 
-      value = getRealCellValue(margeMaindata.r, margeMaindata.c, flowdata);
+      value = getRealCellValue(mergeMaindata.r, mergeMaindata.c, flowdata);
 
-      r = margeMaindata.r;
-      c = margeMaindata.c;
+      r = mergeMaindata.r;
+      c = mergeMaindata.c;
 
       const mainCell = flowdata[r][c];
 
-      if (!(mainCell.mc && mainCell.mc.rs)) {
+      if (!mainCell?.mc?.rs || !mainCell.mc?.cs) {
         continue;
       }
 
@@ -1074,21 +1077,21 @@ export default class Canvas {
         );
 
         // sparklines渲染
-        const borderfix = getBorderFix(flowdata, r, c);
-        const cellsize = [
-          startX + offsetLeft + borderfix[0],
-          startY + offsetTop + borderfix[1],
-          endX - startX - 3 + borderfix[2],
-          endY - startY - 3 - 1 + borderfix[3],
-        ];
-        this.sparklinesRender(
-          r,
-          c,
-          cellsize[0],
-          cellsize[1],
-          "renderCtx",
-          renderCtx
-        );
+        // const borderfix = getBorderFix(flowdata, r, c);
+        // const cellsize = [
+        //   startX + offsetLeft + borderfix[0],
+        //   startY + offsetTop + borderfix[1],
+        //   endX - startX - 3 + borderfix[2],
+        //   endY - startY - 3 - 1 + borderfix[3],
+        // ];
+        // this.sparklinesRender(
+        //   r,
+        //   c,
+        //   cellsize[0],
+        //   cellsize[1],
+        //   "renderCtx",
+        //   renderCtx
+        // );
       } else {
         if (`${r}_${c}` in dynamicArrayCompute) {
           // 动态数组公式
@@ -1394,8 +1397,8 @@ export default class Canvas {
       Object.keys(borderInfoCompute).forEach((x) => {
         // let bd_r = x.split("_")[0], bd_c = x.split("_")[1];
 
-        const bdRow = x.substring(0, x.indexOf("_"));
-        const bdCol = x.substring(x.indexOf("_") + 1);
+        const bdRow = Number(x.substring(0, x.indexOf("_")));
+        const bdCol = Number(x.substring(x.indexOf("_") + 1));
 
         // if(bd_r < rowStart || bd_r > rowEnd || bd_c < colStart || bd_c > colEnd){
         //     continue;
@@ -1428,8 +1431,8 @@ export default class Canvas {
               startX,
               endY,
               endX,
-              offsetLeft,
-              offsetTop,
+              offsetLeft!,
+              offsetTop!,
               renderCtx
             );
           }
@@ -1446,8 +1449,8 @@ export default class Canvas {
               startX,
               endY,
               endX,
-              offsetLeft,
-              offsetTop,
+              offsetLeft!,
+              offsetTop!,
               renderCtx
             );
           }
@@ -1461,8 +1464,8 @@ export default class Canvas {
               startX,
               endY,
               endX,
-              offsetLeft,
-              offsetTop,
+              offsetLeft!,
+              offsetTop!,
               renderCtx
             );
           }
@@ -1476,8 +1479,8 @@ export default class Canvas {
               startX,
               endY,
               endX,
-              offsetLeft,
-              offsetTop,
+              offsetLeft!,
+              offsetTop!,
               renderCtx
             );
           }
@@ -1794,7 +1797,13 @@ export default class Canvas {
     );
 
     // 此单元格 为 溢出单元格渲染范围最后一列，绘制溢出单元格内容
-    if (cellOverflow_colInObj.colLast) {
+    if (
+      cellOverflow_colInObj.colLast &&
+      !_.isNil(cellOverflow_colInObj.rowIndex) &&
+      !_.isNil(cellOverflow_colInObj.colIndex) &&
+      !_.isNil(cellOverflow_colInObj.stc) &&
+      !_.isNil(cellOverflow_colInObj.edc)
+    ) {
       this.cellOverflowRender(
         cellOverflow_colInObj.rowIndex,
         cellOverflow_colInObj.colIndex,
@@ -1862,65 +1871,6 @@ export default class Canvas {
     //   sheetmanage.getSheetByIndex(),
     //   renderCtx
     // );
-  }
-
-  // sparklines渲染
-  sparklinesRender(
-    r: number,
-    c: number,
-    offsetX: number,
-    offsetY: number,
-    canvasid: string,
-    ctx: CanvasRenderingContext2D
-  ) {
-    /*
-    if (flowdata[r]_.isNil() || flowdata[r][c]_.isNil()) {
-      return;
-    }
-
-    let sparklines = flowdata[r][c].spl;
-    if (sparklines) {
-      if (typeof sparklines === "string") {
-        sparklines = new Function(`return ${sparklines}`)();
-      }
-
-      if (_.isPlainObject(sparklines)) {
-        const temp1 = sparklines;
-        let x = temp1.offsetX;
-        let y = temp1.offsetY;
-        x = _.isNil(x) ? 0 : x;
-        y = _.isNil(y) ? 0 : y;
-        luckysheetSparkline.render(
-          temp1.shapeseq,
-          temp1.shapes,
-          offsetX + x,
-          offsetY + y,
-          temp1.pixelWidth,
-          temp1.pixelHeight,
-          canvasid,
-          ctx
-        );
-      } else if (_.isArray(sparklines) && _.isPlainObject(sparklines[0])) {
-        for (let i = 0; i < sparklines.length; i++) {
-          const temp1 = sparklines[i];
-          let x = temp1.offsetX;
-          let y = temp1.offsetY;
-          x = _.isNil(x) ? 0 : x;
-          y = _.isNil(y) ? 0 : y;
-          luckysheetSparkline.render(
-            temp1.shapeseq,
-            temp1.shapes,
-            offsetX + x,
-            offsetY + y,
-            temp1.pixelWidth,
-            temp1.pixelHeight,
-            canvasid,
-            ctx
-          );
-        }
-      }
-    }
-    */
   }
 
   cellRender(
@@ -2079,7 +2029,13 @@ export default class Canvas {
 
     if (cell?.tb === "1" && cellOverflow_colInObj.colIn) {
       // 此单元格 为 溢出单元格渲染范围最后一列，绘制溢出单元格内容
-      if (cellOverflow_colInObj.colLast) {
+      if (
+        cellOverflow_colInObj.colLast &&
+        !_.isNil(cellOverflow_colInObj.rowIndex) &&
+        !_.isNil(cellOverflow_colInObj.colIndex) &&
+        !_.isNil(cellOverflow_colInObj.stc) &&
+        !_.isNil(cellOverflow_colInObj.edc)
+      ) {
         this.cellOverflowRender(
           cellOverflow_colInObj.rowIndex,
           cellOverflow_colInObj.colIndex,
@@ -2321,7 +2277,6 @@ export default class Canvas {
         const t = checksCF.icons.top;
 
         const _value = textInfo.values[0];
-        let horizonAlignPos = pos_x + _value.left;
         let verticalAlignPos = pos_y + _value.top - textInfo.textHeightAll;
 
         if (verticalAlign === "0") {
@@ -2337,7 +2292,6 @@ export default class Canvas {
         }
 
         verticalAlignPos /= this.sheetCtx.zoomRatio;
-        horizonAlignPos /= this.sheetCtx.zoomRatio;
 
         renderCtx.drawImage(
           cfIconsImg,
@@ -2350,11 +2304,6 @@ export default class Canvas {
           textInfo.textHeightAll / this.sheetCtx.zoomRatio,
           textInfo.textHeightAll / this.sheetCtx.zoomRatio
         );
-
-        if (horizonAlign !== "0" && horizonAlign !== "2") {
-          // 左对齐时 文本渲染空出一个图标的距离
-          horizonAlignPos += textInfo.textHeightAll / this.sheetCtx.zoomRatio;
-        }
       }
 
       // 单元格 文本颜色
@@ -2371,7 +2320,7 @@ export default class Canvas {
 
       // 若单元格格式为自定义数字格式（[red]） 文本颜色为红色
       if (
-        cell?.ct?.fa?.indexOf("[Red]") > -1 &&
+        (cell?.ct?.fa?.indexOf("[Red]") ?? -1) > -1 &&
         cell?.ct?.t === "n" &&
         cell?.v < 0
       ) {
@@ -2652,37 +2601,32 @@ export default class Canvas {
   ) {
     let colIn = false; // 此单元格 是否在 某个溢出单元格的渲染范围
     let colLast = false; // 此单元格 是否是 某个溢出单元格的渲染范围的最后一列
-    let rowIndex; // 溢出单元格 行下标
-    let colIndex; // 溢出单元格 列下标
-    let stc;
-    let edc;
+    let rowIndex: number | undefined; // 溢出单元格 行下标
+    let colIndex: number | undefined; // 溢出单元格 列下标
+    let stc: number | undefined;
+    let edc: number | undefined;
 
-    for (const rkey in map) {
-      for (const ckey in map[rkey]) {
-        rowIndex = rkey;
-        colIndex = ckey;
-        // rowIndex = key.substr(0, key.indexOf('_'));
-        // colIndex = key.substr(key.indexOf('_') + 1);
-        const mapItem = map[rkey][ckey];
+    _.forEach(map, (row, rkey) => {
+      _.forEach(row, (mapItem, ckey) => {
+        rowIndex = Number(rkey);
+        colIndex = Number(ckey);
         stc = mapItem.stc;
         edc = mapItem.edc;
 
         if (rowIndex === r) {
-          if (c >= stc && c <= edc) {
+          if (c >= (stc as number) && c <= (edc as number)) {
             colIn = true;
 
             if (c === edc || c === col_ed) {
               colLast = true;
-              break;
+              return false;
             }
           }
         }
-      }
-
-      if (colLast) {
-        break;
-      }
-    }
+        return true;
+      });
+      return !colLast;
+    });
 
     return {
       colIn,

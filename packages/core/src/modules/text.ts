@@ -409,7 +409,17 @@ export function getCellTextInfo(
   let fontSize = 11;
   let isInline = false;
   let value;
-  const inlineStringArr = [];
+  const inlineStringArr: {
+    fontset: string;
+    fc: string;
+    cl: number;
+    un: number;
+    wrap?: boolean;
+    fs: number;
+    v?: any;
+    si?: number;
+    measureText?: any;
+  }[] = [];
   if (isInlineStringCell(cell)) {
     const sharedStrings = cell.ct.s;
     let similarIndex = 0;
@@ -1248,8 +1258,8 @@ export function getCellTextInfo(
       let oneLinemaxWordCount = 0;
       // console.log("split",splitIndex, text_all_split);
       const splitLen = Object.keys(text_all_split).length;
-      for (let i = 0; i < splitLen; i += 1) {
-        const splitLists = text_all_split[i];
+      for (let j = 0; j < splitLen; j += 1) {
+        const splitLists = text_all_split[j];
         if (_.isNil(splitLists)) {
           continue;
         }
@@ -1337,14 +1347,14 @@ export function getCellTextInfo(
         return textContent;
       }
 
-      if (rt !== 0 && isRotateUp === "1") {
+      if (rt !== 0 && Number(isRotateUp) === 1) {
         renderCtx.textAlign = "end";
-        for (let i = 0; i < splitLen; i += 1) {
-          const splitLists = text_all_split[i];
+        for (let j = 0; j < splitLen; j += 1) {
+          const splitLists = text_all_split[j];
           if (_.isNil(splitLists)) {
             continue;
           }
-          const size = split_all_size[i];
+          const size = split_all_size[j];
 
           cumColumnWidth = 0;
 
@@ -1354,16 +1364,13 @@ export function getCellTextInfo(
             let top;
             if (rt !== 0) {
               // rotate
-              let x;
               const y = cumWordHeight + size.asc;
-
-              x =
+              const x =
                 cumWordHeight / Math.tan(rtPI) -
                 cumColumnWidth +
                 textW_all_inner;
               if (horizonAlign === "0") {
                 // center
-                const sh = textH_all / Math.sin(rtPI);
                 if (verticalAlign === "0") {
                   // mid
 
@@ -1460,7 +1467,7 @@ export function getCellTextInfo(
             drawLineInfo(wordGroup, cancelLine, underLine, {
               width: wordGroup.width,
               height: wordGroup.height,
-              left: left - wordGroup.width,
+              left: (left || 0) - wordGroup.width,
               top,
               asc: size.asc,
               desc: size.desc,
@@ -1475,12 +1482,12 @@ export function getCellTextInfo(
           cumWordHeight += size.height;
         }
       } else {
-        for (let i = 0; i < splitLen; i += 1) {
-          const splitLists = text_all_split[i];
+        for (let j = 0; j < splitLen; j += 1) {
+          const splitLists = text_all_split[j];
           if (_.isNil(splitLists)) {
             continue;
           }
-          const size = split_all_size[i];
+          const size = split_all_size[j];
 
           cumColumnWidth = 0;
 
@@ -1490,14 +1497,12 @@ export function getCellTextInfo(
             let top;
             if (rt !== 0) {
               // rotate
-              let x;
               const y = cumWordHeight + size.asc;
-
-              x = (textH_all - cumWordHeight) / Math.tan(rtPI) + cumColumnWidth;
+              const x =
+                (textH_all - cumWordHeight) / Math.tan(rtPI) + cumColumnWidth;
 
               if (horizonAlign === "0") {
                 // center
-                const sh = textH_all / Math.sin(rtPI);
                 if (verticalAlign === "0") {
                   // mid
 

@@ -1,15 +1,19 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
-import { getSheetByIndex, getSheetIndex, rgbToHex } from "../utils";
+import { Cell, CellMatrix, Range } from "../types";
+import { getSheetByIndex, rgbToHex } from "../utils";
 import { genarate, update } from "./format";
-import { delFunctionGroup, execfunction, execFunctionGroup } from "./formula";
+import {
+  delFunctionGroup,
+  execfunction,
+  execFunctionGroup,
+  functionHTMLGenerate,
+} from "./formula";
 import {
   convertSpanToShareString,
   isInlineStringCell,
   isInlineStringCT,
 } from "./inline-string";
-import { colLocationByIndex } from "./location";
-import { getCellTextInfo } from "./text";
 import { isRealNull, isRealNum, valueIsError } from "./validation";
 
 // TODO put these in context ref
@@ -18,7 +22,7 @@ let rangedrag_column_start = false;
 let rangedrag_row_start = false;
 const rangetosheet: number | undefined = undefined;
 
-export function normalizedCellAttr(cell: any, attr: string): any {
+export function normalizedCellAttr(cell: Cell, attr: keyof Cell): any {
   const tf = { bl: 1, it: 1, ff: 1, cl: 1, un: 1 };
   let value: any = cell?.[attr];
 
@@ -49,20 +53,26 @@ export function normalizedCellAttr(cell: any, attr: string): any {
 }
 
 export function normalizedAttr(
-  data: any,
+  data: CellMatrix,
   r: number,
   c: number,
-  attr: string
+  attr: keyof Cell
 ): any {
   if (!data || !data[r]) {
     console.warn("cell (%d, %d) is null", r, c);
     return null;
   }
   const cell = data[r][c];
+  if (!cell) return undefined;
   return normalizedCellAttr(cell, attr);
 }
 
-export function getCellValue(r: number, c: number, data: any, attr?: string) {
+export function getCellValue(
+  r: number,
+  c: number,
+  data: CellMatrix,
+  attr?: keyof Cell
+) {
   if (!attr) {
     attr = "v";
   }
@@ -74,8 +84,8 @@ export function getCellValue(r: number, c: number, data: any, attr?: string) {
   } else if (!_.isNil(r)) {
     d_value = data[r];
   } else if (!_.isNil(c)) {
-    const newData = data[0].map((col: any, i: number) => {
-      return data.map((row: any) => {
+    const newData = data[0].map((col, i) => {
+      return data.map((row) => {
         return row[i];
       });
     });
@@ -84,17 +94,18 @@ export function getCellValue(r: number, c: number, data: any, attr?: string) {
     return data;
   }
 
-  let retv = d_value;
+  let retv: any = d_value;
 
   if (_.isPlainObject(d_value)) {
-    retv = d_value[attr];
+    const d = d_value as Cell;
+    retv = d[attr];
 
     if (attr === "f" && !_.isNil(retv)) {
-      // retv = formula.functionHTMLGenerate(retv);
+      retv = functionHTMLGenerate(retv);
     } else if (attr === "f") {
-      retv = d_value.v;
-    } else if (d_value && d_value.ct && d_value.ct.t === "d") {
-      retv = d_value.m;
+      retv = (d as Cell).v;
+    } else if (d && d.ct && d.ct.t === "d") {
+      retv = d.m;
     }
   }
 
@@ -109,12 +120,14 @@ export function setCellValue(
   ctx: Context,
   r: number,
   c: number,
-  d: any,
+  d: CellMatrix | null | undefined,
   v: any
 ) {
   if (_.isNil(d)) {
     d = getFlowdata(ctx);
   }
+  if (!d) return;
+
   // 若采用深拷贝，初始化时的单元格属性丢失
   // let cell = $.extend(true, {}, d[r][c]);
   let cell = d[r][c];
@@ -131,9 +144,9 @@ export function setCellValue(
         delete cell.f;
       }
 
-      if (!_.isNil(v.spl)) {
-        cell.spl = v.spl;
-      }
+      // if (!_.isNil(v.spl)) {
+      //   cell.spl = v.spl;
+      // }
 
       if (!_.isNil(v.ct)) {
         cell.ct = v.ct;
@@ -151,7 +164,8 @@ export function setCellValue(
 
   if (isRealNull(vupdate)) {
     if (_.isPlainObject(cell)) {
-      delete cell.m;
+      delete cell!.m;
+      // @ts-ignore
       delete cell.v;
     } else {
       cell = null;
@@ -170,6 +184,8 @@ export function setCellValue(
   ) {
     cell = {};
   }
+
+  if (!cell) return;
 
   const vupdateStr = vupdate.toString();
 
@@ -240,7 +256,7 @@ export function setCellValue(
             const mask = genarate(v_p);
             cell.m = mask[0].toString();
           } else {
-            const mask = update(cell.ct.fa, v_p);
+            const mask = update(cell.ct.fa!, v_p);
             cell.m = mask.toString();
           }
 
@@ -332,8 +348,8 @@ export function setCellValue(
 export function getRealCellValue(
   r: number,
   c: number,
-  data: any,
-  attr?: string
+  data: CellMatrix,
+  attr?: keyof Cell
 ) {
   let value = getCellValue(r, c, data, "m");
   if (_.isNil(value)) {
@@ -351,7 +367,7 @@ export function getRealCellValue(
 
 export function mergeBorder(
   ctx: Context,
-  d: any[][],
+  d: CellMatrix,
   row_index: number,
   col_index: number
 ) {
@@ -360,8 +376,9 @@ export function mergeBorder(
     return null;
   }
   const value = d[row_index][col_index];
+  if (!value) return null;
 
-  if (_.isPlainObject(value) && "mc" in value) {
+  if ("mc" in value) {
     const margeMaindata = value.mc;
     if (!margeMaindata) {
       console.warn("Merge info is null", row_index, col_index);
@@ -374,16 +391,26 @@ export function mergeBorder(
       console.warn("Main merge Cell info is null", row_index, col_index);
       return null;
     }
-    const col_rs = d[row_index][col_index].mc.cs;
-    const row_rs = d[row_index][col_index].mc.rs;
+    const col_rs = d[row_index]?.[col_index]?.mc?.cs;
+    const row_rs = d[row_index]?.[col_index]?.mc?.rs;
+    const mergeMain = d[row_index]?.[col_index]?.mc;
 
-    const margeMain = d[row_index][col_index].mc;
+    if (
+      !mergeMain ||
+      _.isNil(mergeMain?.rs) ||
+      _.isNil(mergeMain?.cs) ||
+      _.isNil(col_rs) ||
+      _.isNil(row_rs)
+    ) {
+      console.warn("Main merge info is null", mergeMain);
+      return null;
+    }
 
     let start_r: number;
     let end_r: number;
     let row: number | undefined;
     let row_pre: number | undefined;
-    for (let r = row_index; r < margeMain.rs + row_index; r += 1) {
+    for (let r = row_index; r < mergeMain.rs + row_index; r += 1) {
       if (r === 0) {
         start_r = -1;
       } else {
@@ -405,7 +432,7 @@ export function mergeBorder(
     let col: number | undefined;
     let col_pre: number | undefined;
 
-    for (let c = col_index; c < margeMain.cs + col_index; c += 1) {
+    for (let c = col_index; c < mergeMain.cs + col_index; c += 1) {
       if (c === 0) {
         start_c = 0;
       } else {
@@ -420,6 +447,14 @@ export function mergeBorder(
       } else if (col !== undefined) {
         col += end_c - start_c;
       }
+    }
+
+    if (_.isNil(row_pre) || _.isNil(col_pre) || _.isNil(row) || _.isNil(col)) {
+      console.warn(
+        "Main merge info row_pre or col_pre or row or col is null",
+        mergeMain
+      );
+      return null;
     }
 
     return {
@@ -514,7 +549,7 @@ export function updateCell(
     }
   }
 
-  if (!value && !isCurInline && isPrevInline) {
+  if (curv?.ct && !value && !isCurInline && isPrevInline) {
     delete curv.ct.s;
     curv.ct.t = "g";
     curv.ct.fa = "General";
@@ -523,6 +558,7 @@ export function updateCell(
     if (!_.isPlainObject(curv)) {
       curv = {};
     }
+    curv ||= {};
     delete curv.f;
     delete curv.v;
     delete curv.m;
@@ -575,6 +611,7 @@ export function updateCell(
     if (_.isString(value) && value.slice(0, 1) === "=" && value.length > 1) {
     } else if (
       _.isPlainObject(curv) &&
+      curv &&
       curv.ct &&
       curv.ct.fa &&
       curv.ct.fa !== "@" &&
@@ -858,12 +895,7 @@ export function updateCell(
   */
 }
 
-export function getOrigincell(
-  ctx: Context,
-  r: number,
-  c: number,
-  i: number | string
-) {
+export function getOrigincell(ctx: Context, r: number, c: number, i: string) {
   const flowdata = getFlowdata(ctx);
   if (_.isNil(r) || _.isNil(c)) {
     return null;
@@ -905,7 +937,9 @@ export function getcellFormula(
 
 export function getRange(ctx: Context) {
   const rangeArr = _.cloneDeep(ctx.luckysheet_select_save);
-  const result = [];
+  const result: Range = [];
+  if (!rangeArr) return result;
+
   for (let i = 0; i < rangeArr.length; i += 1) {
     const rangeItem = rangeArr[i];
     const temp = {
@@ -917,10 +951,10 @@ export function getRange(ctx: Context) {
   return result;
 }
 
-export function getFlattenedRange(ctx: Context, range?: any[]) {
+export function getFlattenedRange(ctx: Context, range?: Range) {
   range = range || getRange(ctx);
 
-  const result: any[] = [];
+  const result: { r: number; c: number }[] = [];
 
   range.forEach((ele) => {
     // 这个data可能是个范围或者是单个cell
@@ -938,7 +972,7 @@ export function getFlattenedRange(ctx: Context, range?: any[]) {
 
 export function isAllSelectedCellsInStatus(
   ctx: Context,
-  type: string,
+  type: keyof Cell,
   status: any
 ) {
   /* 获取选区内所有的单元格-扁平后的处理 */

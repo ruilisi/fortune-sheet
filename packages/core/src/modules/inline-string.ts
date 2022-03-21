@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { Cell, CellMatrix, CellStyle } from "../types";
 import { getCellValue } from "./cell";
 
 export const inlineStyleAffectAttribute = {
@@ -28,7 +29,7 @@ export function isInlineStringCT(ct: any): boolean {
   return ct?.t === "inlineStr" && (ct?.s?.length ?? 0) > 0;
 }
 
-export function getInlineStringNoStyle(r: number, c: number, data: any) {
+export function getInlineStringNoStyle(r: number, c: number, data: CellMatrix) {
   const ct = getCellValue(r, c, data, "ct");
   if (isInlineStringCT(ct)) {
     const strings = ct.s;
@@ -50,7 +51,7 @@ export function convertCssToStyleList(cssText: string) {
   }
   const cssTextArray = cssText.split(";");
 
-  const styleList = {
+  const styleList: CellStyle = {
     // ff: locale_fontarray[0], // font family
     fc: "#000000", // font color
     fs: 10, // font size
@@ -105,11 +106,11 @@ export function convertCssToStyleList(cssText: string) {
     }
 
     if (key === "lucky-strike") {
-      styleList.cl = value;
+      styleList.cl = Number(value);
     }
 
     if (key === "lucky-underline") {
-      styleList.un = value;
+      styleList.un = Number(value);
     }
   });
 
@@ -118,12 +119,12 @@ export function convertCssToStyleList(cssText: string) {
 
 // eslint-disable-next-line no-undef
 export function convertSpanToShareString($dom: NodeListOf<HTMLSpanElement>) {
-  const styles = [];
-  let preStyleList;
+  const styles: CellStyle[] = [];
+  let preStyleList: Cell;
   let preStyleListString = null;
   for (let i = 0; i < $dom.length; i += 1) {
     const span = $dom[i];
-    const styleList = convertCssToStyleList(span.style.cssText);
+    const styleList = convertCssToStyleList(span.style.cssText) as Cell;
 
     const curStyleListString = JSON.stringify(styleList);
     // let v = span.innerHTML;
@@ -131,7 +132,7 @@ export function convertSpanToShareString($dom: NodeListOf<HTMLSpanElement>) {
     v = v.replace(/\n/g, "\r\n");
 
     if (curStyleListString === preStyleListString) {
-      preStyleList.v += v;
+      preStyleList!.v += v;
     } else {
       styleList.v = v;
       styles.push(styleList);
@@ -144,15 +145,15 @@ export function convertSpanToShareString($dom: NodeListOf<HTMLSpanElement>) {
 }
 
 export function updateInlineStringFormatOutside(
-  cell: any,
+  cell: Cell,
   key: string,
   value: any
 ) {
-  if (cell.ct == null) {
+  if (_.isNil(cell.ct)) {
     return;
   }
   const { s } = cell.ct;
-  if (s == null) {
+  if (_.isNil(s)) {
     return;
   }
   for (let i = 0; i < s.length; i += 1) {

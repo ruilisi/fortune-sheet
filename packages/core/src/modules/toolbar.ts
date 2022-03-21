@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
+import { Cell, CellMatrix } from "../types";
 import { isAllSelectedCellsInStatus } from "./cell";
 import { is_date, update } from "./format";
 import {
@@ -15,8 +16,8 @@ type ToolbarItemClickHandler = (
 
 function updateFormatCell(
   ctx: Context,
-  d: any,
-  attr: string,
+  d: CellMatrix,
+  attr: keyof Cell,
   foucsStatus: any,
   row_st: number,
   row_ed: number,
@@ -34,16 +35,16 @@ function updateFormatCell(
 
       for (let c = col_st; c <= col_ed; c += 1) {
         const cell = d[r][c];
-        let value = null;
+        let value;
 
         if (_.isPlainObject(cell)) {
-          value = d[r][c].v;
+          value = cell?.v;
         } else {
-          value = d[r][c];
+          value = cell;
         }
 
         if (foucsStatus !== "@" && isRealNum(value)) {
-          value = parseFloat(value);
+          value = Number(value!);
         }
 
         const mask = update(foucsStatus, value);
@@ -72,15 +73,19 @@ function updateFormatCell(
           type = isRealNum(value) ? "n" : "g";
         }
 
-        if (_.isPlainObject(cell)) {
-          d[r][c].m = mask;
-          if (_.isNil(d[r][c].ct)) {
-            d[r][c].ct = {};
+        if (cell && _.isPlainObject(cell)) {
+          cell.m = mask;
+          if (_.isNil(cell.ct)) {
+            cell.ct = {};
           }
-          d[r][c].ct.fa = foucsStatus;
-          d[r][c].ct.t = type;
+          cell.ct.fa = foucsStatus;
+          cell.ct.t = type;
         } else {
-          d[r][c] = { ct: { fa: foucsStatus, t: type }, v: value, m: mask };
+          d[r][c] = {
+            ct: { fa: foucsStatus, t: type },
+            v: value as string,
+            m: mask,
+          };
         }
       }
     }
@@ -133,15 +138,18 @@ function updateFormatCell(
       for (let c = col_st; c <= col_ed; c += 1) {
         const value = d[r][c];
 
-        if (_.isPlainObject(value)) {
+        if (value && _.isPlainObject(value)) {
           // if(attr in inlineStyleAffectAttribute && isInlineStringCell(value)){
-          updateInlineStringFormatOutside(value, attr, foucsStatus);
+          updateInlineStringFormatOutside(value!, attr, foucsStatus);
           // }
           // else{
-          d[r][c][attr] = foucsStatus;
+          // @ts-ignore
+          value[attr] = foucsStatus;
           // }
         } else {
+          // @ts-ignore
           d[r][c] = { v: value };
+          // @ts-ignore
           d[r][c][attr] = foucsStatus;
         }
 
@@ -156,8 +164,8 @@ function updateFormatCell(
 function updateFormat(
   ctx: Context,
   $input: HTMLDivElement,
-  d: any,
-  attr: string,
+  d: CellMatrix,
+  attr: keyof Cell,
   foucsStatus: any
 ) {
   //   if (!checkProtectionFormatCells(ctx.currentSheetIndex)) {
@@ -190,16 +198,16 @@ function updateFormat(
     cfg.rowlen = {};
   }
 
-  for (let s = 0; s < ctx.luckysheet_select_save.length; s += 1) {
-    const [row_st, row_ed] = ctx.luckysheet_select_save[s].row;
-    const [col_st, col_ed] = ctx.luckysheet_select_save[s].column;
+  _.forEach(ctx.luckysheet_select_save, (selection) => {
+    const [row_st, row_ed] = selection.row;
+    const [col_st, col_ed] = selection.column;
 
     updateFormatCell(ctx, d, attr, foucsStatus, row_st, row_ed, col_st, col_ed);
 
     if (attr === "tb" || attr === "tr" || attr === "fs") {
       cfg = rowlenByRange(d, row_st, row_ed, cfg);
     }
-  }
+  });
 
   //   let allParam = {};
   //   if (attr === "tb" || attr === "tr" || attr === "fs") {
@@ -215,9 +223,11 @@ function updateFormat(
 function handleToggleAttr(
   ctx: Context,
   cellInput: HTMLDivElement,
-  attr: string
+  attr: keyof Cell
 ) {
   const flowdata = getFlowdata(ctx);
+  if (!flowdata) return;
+
   const flag = isAllSelectedCellsInStatus(ctx, attr, 1);
   const foucsStatus = flag ? 0 : 1;
 

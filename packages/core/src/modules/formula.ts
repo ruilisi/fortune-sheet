@@ -1,15 +1,18 @@
 import _ from "lodash";
 // @ts-ignore
 import { Parser } from "hot-formula-parser";
+import type { Selection } from "@fortune-sheet/core/src/types";
 import { Context, getFlowdata } from "../context";
 import { columnCharToIndex, escapeScriptTag, getSheetIndex } from "../utils";
 import { getcellFormula, setCellValue } from "./cell";
-import { error, valueIsError } from "./validation";
+import { error } from "./validation";
 import { moveToEnd } from "./cursor";
 import locale from "../locale";
 import { colors } from "./color";
 
-export const formulaCache = {
+export const formulaCache: {
+  func_selectedrange: Selection;
+} & Record<string, any> = {
   func_selectedrange: {},
   rangedragged: () => {},
   rangeResizeObj: null,
@@ -2807,7 +2810,7 @@ function functionHTML(txt: string) {
   return function_str;
 }
 
-function functionHTMLGenerate(txt: string) {
+export function functionHTMLGenerate(txt: string) {
   if (txt.length === 0 || txt.substring(0, 1) !== "=") {
     return txt;
   }

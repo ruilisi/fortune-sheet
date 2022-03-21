@@ -9,18 +9,13 @@ import {
   isInlineStringCell,
 } from "@fortune-sheet/core/src/modules/inline-string";
 import { escapeScriptTag } from "@fortune-sheet/core/src/utils";
-import React, {
-  useContext,
-  useState,
-  useRef,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { useContext, useState, useCallback, useEffect } from "react";
 import produce from "immer";
-import WorkbookContext from "../../context";
 import "./index.css";
 import { moveHighlightCell } from "@fortune-sheet/core/src/modules/selection";
 import _ from "lodash";
+import { rangeHightlightselected } from "@fortune-sheet/core/src/modules/formula";
+import WorkbookContext from "../../context";
 
 const FxEditor: React.FC = () => {
   const [fxInputHTML, setFxInputHTML] = useState<string>("");
@@ -29,10 +24,12 @@ const FxEditor: React.FC = () => {
   useEffect(() => {
     const d = getFlowdata(context);
     let value = "";
-    if (context.luckysheet_select_save?.length > 0) {
-      const [firstSelection] = context.luckysheet_select_save;
+    if ((context.luckysheet_select_save?.length ?? 0) > 0) {
+      const [firstSelection] = context.luckysheet_select_save!;
       const r = firstSelection.row_focus;
       const c = firstSelection.column_focus;
+      if (_.isNil(r) || _.isNil(c)) return;
+
       const cell = d?.[r]?.[c];
       if (cell) {
         if (isInlineStringCell(cell)) {
@@ -55,12 +52,12 @@ const FxEditor: React.FC = () => {
   ]);
 
   const onFocus = useCallback(() => {
-    if (context.luckysheet_select_save.length > 0) {
+    if ((context.luckysheet_select_save?.length ?? 0) > 0) {
       setContext(
         produce((draftCtx) => {
           const last =
-            draftCtx.luckysheet_select_save[
-              draftCtx.luckysheet_select_save.length - 1
+            draftCtx.luckysheet_select_save![
+              draftCtx.luckysheet_select_save!.length - 1
             ];
 
           const row_index = last.row_focus;
@@ -173,15 +170,11 @@ const FxEditor: React.FC = () => {
                 break;
               }
               case "ArrowLeft": {
-                formula.rangeHightlightselected(
-                  $("#luckysheet-functionbox-cell")
-                );
+                rangeHightlightselected(draftCtx, refs.fxInput.current!);
                 break;
               }
               case "ArrowRight": {
-                formula.rangeHightlightselected(
-                  $("#luckysheet-functionbox-cell")
-                );
+                rangeHightlightselected(draftCtx, refs.fxInput.current!);
                 break;
               }
               default:

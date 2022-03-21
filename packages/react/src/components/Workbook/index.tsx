@@ -28,10 +28,10 @@ import SheetTab from "../SheetTab";
 
 const Workbook: React.FC<Settings> = (props) => {
   const [context, setContext] = useState(defaultContext());
-  const cellInput = useRef<HTMLDivElement>();
-  const fxInput = useRef<HTMLDivElement>();
-  const scrollbarX = useRef<HTMLDivElement>();
-  const scrollbarY = useRef<HTMLDivElement>();
+  const cellInput = useRef<HTMLDivElement>(null);
+  const fxInput = useRef<HTMLDivElement>(null);
+  const scrollbarX = useRef<HTMLDivElement>(null);
+  const scrollbarY = useRef<HTMLDivElement>(null);
   const globalCache = useRef<any>({});
   const mergedSettings = useMemo(() => assign(defaultSettings, props), [props]);
   const setContextValue = useCallback(
@@ -112,7 +112,11 @@ const Workbook: React.FC<Settings> = (props) => {
 
         draftCtx.luckysheet_select_save = sheet.luckysheet_select_save;
         if (draftCtx.luckysheet_select_save?.length === 0) {
-          if (data?.[0]?.[0]?.mc) {
+          if (
+            data?.[0]?.[0]?.mc &&
+            !_.isNil(data?.[0]?.[0]?.mc?.rs) &&
+            !_.isNil(data?.[0]?.[0]?.mc?.cs)
+          ) {
             draftCtx.luckysheet_select_save = [
               {
                 row: [0, data[0][0].mc.rs - 1],
@@ -139,13 +143,13 @@ const Workbook: React.FC<Settings> = (props) => {
         draftCtx.zoomRatio = _.isNil(sheet.zoomRatio) ? 1 : sheet.zoomRatio;
 
         if (!_.isNil(sheet.defaultRowHeight)) {
-          draftCtx.defaultrowlen = parseFloat(sheet.defaultRowHeight);
+          draftCtx.defaultrowlen = Number(sheet.defaultRowHeight);
         } else {
           draftCtx.defaultrowlen = mergedSettings.defaultRowHeight;
         }
 
         if (!_.isNil(sheet.defaultColWidth)) {
-          draftCtx.defaultcollen = parseFloat(sheet.defaultColWidth);
+          draftCtx.defaultcollen = Number(sheet.defaultColWidth);
         } else {
           draftCtx.defaultcollen = mergedSettings.defaultColWidth;
         }
