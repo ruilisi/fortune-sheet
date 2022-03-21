@@ -21,6 +21,7 @@ export type Cell = {
   qp?: number;
   spl?: any;
   bg?: string;
+  lo?: number;
   ps?: {
     left: number;
     top: number;

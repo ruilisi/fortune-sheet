@@ -1,6 +1,6 @@
-import _ from "lodash";
+import _, { flow } from "lodash";
 import { Context, getFlowdata } from "../context";
-import { Cell, CellMatrix, Range } from "../types";
+import { Cell, CellMatrix, Range, Selection } from "../types";
 import { getSheetByIndex, rgbToHex } from "../utils";
 import { genarate, update } from "./format";
 import {
@@ -463,6 +463,156 @@ export function mergeBorder(
     };
   }
   return null;
+}
+
+function mergeMove(
+  ctx: Context,
+  mc: any,
+  columnseleted: number[],
+  rowseleted: number[],
+  s: Selection,
+  top: number,
+  height: number,
+  left: number,
+  width: number
+) {
+  const row_st = mc.r;
+  const row_ed = mc.r + mc.rs - 1;
+  const col_st = mc.c;
+  const col_ed = mc.c + mc.cs - 1;
+  let ismatch = false;
+
+  columnseleted[0] = Math.min(columnseleted[0], columnseleted[1]);
+  rowseleted[0] = Math.min(rowseleted[0], rowseleted[1]);
+
+  if (
+    (columnseleted[0] <= col_st &&
+      columnseleted[1] >= col_ed &&
+      rowseleted[0] <= row_st &&
+      rowseleted[1] >= row_ed) ||
+    (!(columnseleted[1] < col_st || columnseleted[0] > col_ed) &&
+      !(rowseleted[1] < row_st || rowseleted[0] > row_ed))
+  ) {
+    const flowdata = getFlowdata(ctx);
+    if (!flowdata) return null;
+
+    const margeset = mergeBorder(ctx, flowdata, mc.r, mc.c);
+    if (margeset) {
+      const row = margeset.row[1];
+      const row_pre = margeset.row[0];
+      const col = margeset.column[1];
+      const col_pre = margeset.column[0];
+
+      if (!(columnseleted[1] < col_st || columnseleted[0] > col_ed)) {
+        // 向上滑动
+        if (rowseleted[0] <= row_ed && rowseleted[0] >= row_st) {
+          height += top - row_pre;
+          top = row_pre;
+          rowseleted[0] = row_st;
+        }
+
+        // 向下滑动或者居中时往上滑动的向下补齐
+        if (rowseleted[1] >= row_st && rowseleted[1] <= row_ed) {
+          if (s.row_focus! >= row_st && s.row_focus! <= row_ed) {
+            height = row - top;
+          } else {
+            height = row - top;
+          }
+
+          rowseleted[1] = row_ed;
+        }
+      }
+
+      if (!(rowseleted[1] < row_st || rowseleted[0] > row_ed)) {
+        if (columnseleted[0] <= col_ed && columnseleted[0] >= col_st) {
+          width += left - col_pre;
+          left = col_pre;
+          columnseleted[0] = col_st;
+        }
+
+        // 向右滑动或者居中时往左滑动的向下补齐
+        if (columnseleted[1] >= col_st && columnseleted[1] <= col_ed) {
+          if (s.column_focus! >= col_st && s.column_focus! <= col_ed) {
+            width = col - left;
+          } else {
+            width = col - left;
+          }
+
+          columnseleted[1] = col_ed;
+        }
+      }
+
+      ismatch = true;
+    }
+  }
+
+  if (ismatch) {
+    return [columnseleted, rowseleted, top, height, left, width];
+  }
+  return null;
+}
+
+export function mergeMoveMain(
+  ctx: Context,
+  columnseleted: number[],
+  rowseleted: number[],
+  s: Selection,
+  top: number,
+  height: number,
+  left: number,
+  width: number
+) {
+  const mergesetting = ctx.config.merge;
+
+  if (!mergesetting) {
+    return null;
+  }
+
+  const mcset = Object.keys(mergesetting);
+
+  rowseleted[1] = Math.max(rowseleted[0], rowseleted[1]);
+  columnseleted[1] = Math.max(columnseleted[0], columnseleted[1]);
+
+  let offloop = true;
+  const mergeMoveData: any = {};
+
+  while (offloop) {
+    offloop = false;
+
+    for (let i = 0; i < mcset.length; i += 1) {
+      const key = mcset[i];
+      const mc = mergesetting[key];
+
+      if (key in mergeMoveData) {
+        continue;
+      }
+
+      const changeparam = mergeMove(
+        ctx,
+        mc,
+        columnseleted,
+        rowseleted,
+        s,
+        top,
+        height,
+        left,
+        width
+      );
+
+      if (changeparam != null) {
+        mergeMoveData[key] = mc;
+
+        // @ts-ignore
+        [columnseleted, rowseleted, top, height, left, width] = changeparam;
+
+        offloop = true;
+      } else {
+        delete mergeMoveData[key];
+      }
+    }
+  }
+
+  return [columnseleted, rowseleted, top, height, left, width];
 }
 
 export function canceFunctionrangeSelected(ctx: Context) {

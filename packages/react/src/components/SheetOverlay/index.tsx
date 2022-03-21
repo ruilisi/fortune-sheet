@@ -4,6 +4,8 @@ import produce from "immer";
 import {
   handleCellAreaDoubleClick,
   handleCellAreaMouseDown,
+  handleCellAreaMouseMove,
+  handleCellAreaMouseUp,
 } from "@fortune-sheet/core/src/events/mouse";
 import WorkbookContext from "../../context";
 import ColumnHeader from "./ColumnHeader";
@@ -48,6 +50,31 @@ const SheetOverlay: React.FC = () => {
     [setContext, settings]
   );
 
+  const cellAreaMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      if (e.target !== e.currentTarget) {
+        return;
+      }
+      setContext(
+        produce((draftCtx) => {
+          handleCellAreaMouseMove(draftCtx, e.nativeEvent);
+        })
+      );
+    },
+    [setContext]
+  );
+
+  const cellAreaMouseUp = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      setContext(
+        produce((draftCtx) => {
+          handleCellAreaMouseUp(draftCtx, settings, e.nativeEvent);
+        })
+      );
+    },
+    [setContext, settings]
+  );
+
   useEffect(() => {
     cellAreaRef.current!.scrollLeft = context.scrollLeft;
     cellAreaRef.current!.scrollTop = context.scrollTop;
@@ -80,6 +107,8 @@ const SheetOverlay: React.FC = () => {
         <div
           ref={cellAreaRef}
           onMouseDown={cellAreaOnMouseDown}
+          onMouseMove={cellAreaMouseMove}
+          onMouseUp={cellAreaMouseUp}
           onDoubleClick={cellAreaDoubleClick}
           className="fortune-cell-area"
           style={{
