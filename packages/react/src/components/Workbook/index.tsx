@@ -18,7 +18,7 @@ import {
   CellWithRowAndCol,
   Sheet as SheetType,
 } from "@fortune-sheet/core/src/types";
-import { handleGlobalKeyDown } from "@fortune-sheet/core/src/modules/keyboard";
+import { handleGlobalKeyDown } from "@fortune-sheet/core/src/events/keyboard";
 import { getSheetIndex } from "@fortune-sheet/core/src/utils";
 import Sheet from "../Sheet";
 import WorkbookContext from "../../context";

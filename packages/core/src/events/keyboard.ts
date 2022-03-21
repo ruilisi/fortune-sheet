@@ -1,8 +1,8 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
-import { updateCell, cancelNormalSelected } from "./cell";
-import { handleFormulaInput } from "./formula";
-import { moveHighlightCell } from "./selection";
+import { updateCell, cancelNormalSelected } from "../modules/cell";
+import { handleFormulaInput } from "../modules/formula";
+import { moveHighlightCell } from "../modules/selection";
 
 function handleGlobalEnter(
   ctx: Context,

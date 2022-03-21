@@ -11,7 +11,7 @@ import {
   hasGroupValuesRefreshData,
 } from "@fortune-sheet/core/src/modules/formula";
 import produce from "immer";
-import { handleGlobalWheel } from "@fortune-sheet/core/src/canvas";
+import { handleGlobalWheel } from "@fortune-sheet/core/src/events/mouse";
 import WorkbookContext from "../../context";
 import SheetOverlay from "../SheetOverlay";
 
