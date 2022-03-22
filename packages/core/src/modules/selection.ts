@@ -1,8 +1,11 @@
 import _ from "lodash";
 import type { Sheet as SheetType } from "@fortune-sheet/core/src/types";
 import { Context, getFlowdata } from "../context";
-import { mergeBorder } from "./cell";
+import { getCellValue, getStyleByCell, mergeBorder } from "./cell";
 import { formulaCache } from "./formula";
+import clipboard from "./clipboard";
+import { getBorderInfoCompute } from "./border";
+import { replaceHtml } from "../utils";
 
 export function normalizeSelection(
   ctx: Context,
@@ -458,4 +461,550 @@ export function moveHighlightCell(
 
   // 移动单元格通知后台
   // server.saveParam("mv", ctx.currentSheetIndex, ctx.luckysheet_select_save);
+}
+
+function getHtmlBorderStyle(type: string, color: string) {
+  let style = "";
+  const borderType: any = {
+    "0": "none",
+    "1": "Thin",
+    "2": "Hair",
+    "3": "Dotted",
+    "4": "Dashed",
+    "5": "DashDot",
+    "6": "DashDotDot",
+    "7": "Double",
+    "8": "Medium",
+    "9": "MediumDashed",
+    "10": "MediumDashDot",
+    "11": "MediumDashDotDot",
+    "12": "SlantedDashDot",
+    "13": "Thick",
+  };
+  type = borderType[type.toString()];
+
+  if (type.indexOf("Medium") > -1) {
+    style += "1pt ";
+  } else if (type === "Thick") {
+    style += "1.5pt ";
+  } else {
+    style += "0.5pt ";
+  }
+
+  if (type === "Hair") {
+    style += "double ";
+  } else if (type.indexOf("DashDotDot") > -1) {
+    style += "dotted ";
+  } else if (type.indexOf("DashDot") > -1) {
+    style += "dashed ";
+  } else if (type.indexOf("Dotted") > -1) {
+    style += "dotted ";
+  } else if (type.indexOf("Dashed") > -1) {
+    style += "dashed ";
+  } else {
+    style += "solid ";
+  }
+
+  return `${style + color};`;
+}
+
+export function copy(ctx: Context) {
+  // copy事件
+  const flowdata = getFlowdata(ctx);
+
+  ctx.luckysheet_selection_range = [];
+  // copy范围
+  const rowIndexArr: number[] = [];
+  const colIndexArr: number[] = [];
+  const copyRange = [];
+  let RowlChange = false;
+  let HasMC = false;
+
+  for (let s = 0; s < (ctx.luckysheet_select_save?.length ?? 0); s += 1) {
+    const range = ctx.luckysheet_select_save![s];
+
+    const r1 = range.row[0];
+    const r2 = range.row[1];
+    const c1 = range.column[0];
+    const c2 = range.column[1];
+
+    for (let copyR = r1; copyR <= r2; copyR += 1) {
+      if (
+        !_.isNil(ctx.config.rowhidden) &&
+        !_.isNil(ctx.config.rowhidden[copyR])
+      ) {
+        continue;
+      }
+
+      if (!rowIndexArr.includes(copyR)) {
+        rowIndexArr.push(copyR);
+      }
+
+      if (!_.isNil(ctx.config.rowlen) && copyR in ctx.config.rowlen) {
+        RowlChange = true;
+      }
+
+      for (let copyC = c1; copyC <= c2; copyC += 1) {
+        if (
+          !_.isNil(ctx.config.colhidden) &&
+          !_.isNil(ctx.config.colhidden[copyC])
+        ) {
+          continue;
+        }
+
+        if (!colIndexArr.includes(copyC)) {
+          colIndexArr.push(copyC);
+        }
+
+        const cell = flowdata?.[copyR]?.[copyC];
+
+        if (!_.isNil(cell?.mc?.rs)) {
+          HasMC = true;
+        }
+      }
+    }
+
+    ctx.luckysheet_selection_range.push({
+      row: range.row,
+      column: range.column,
+    });
+    copyRange.push({ row: range.row, column: range.column });
+  }
+
+  // selectionCopyShow();
+
+  // luckysheet内copy保存
+  ctx.luckysheet_copy_save = {
+    dataSheetIndex: ctx.currentSheetIndex,
+    copyRange,
+    RowlChange,
+    HasMC,
+  };
+
+  // copy范围数据拼接成table 赋给剪贴板
+
+  let borderInfoCompute;
+  if (ctx.config.borderInfo && ctx.config.borderInfo.length > 0) {
+    // 边框
+    borderInfoCompute = getBorderInfoCompute(ctx);
+  }
+
+  let cpdata = "";
+  const d = getFlowdata(ctx);
+  if (!d) return;
+
+  let colgroup = "";
+
+  // rowIndexArr = rowIndexArr.sort();
+  // colIndexArr = colIndexArr.sort();
+
+  for (let i = 0; i < rowIndexArr.length; i += 1) {
+    const r = rowIndexArr[i];
+
+    if (!_.isNil(ctx.config.rowhidden) && !_.isNil(ctx.config.rowhidden[r])) {
+      continue;
+    }
+
+    cpdata += "<tr>";
+
+    for (let j = 0; j < colIndexArr.length; j += 1) {
+      const c = colIndexArr[j];
+
+      if (!_.isNil(ctx.config.colhidden) && !_.isNil(ctx.config.colhidden[c])) {
+        continue;
+      }
+
+      // eslint-disable-next-line no-template-curly-in-string
+      let column = '<td ${span} style="${style}">';
+
+      if (!_.isNil(d[r]) && !_.isNil(d[r][c])) {
+        let style = "";
+        let span = "";
+
+        if (r === rowIndexArr[0]) {
+          if (
+            _.isNil(ctx.config) ||
+            _.isNil(ctx.config.columnlen) ||
+            _.isNil(ctx.config.columnlen[c.toString()])
+          ) {
+            colgroup += '<colgroup width="72px"></colgroup>';
+          } else {
+            colgroup += `<colgroup width="${
+              ctx.config.columnlen[c.toString()]
+            }px"></colgroup>`;
+          }
+        }
+
+        if (c === colIndexArr[0]) {
+          if (
+            _.isNil(ctx.config) ||
+            _.isNil(ctx.config.rowlen) ||
+            _.isNil(ctx.config.rowlen[r.toString()])
+          ) {
+            style += "height:19px;";
+          } else {
+            style += `height:${ctx.config.rowlen[r.toString()]}px;`;
+          }
+        }
+
+        const reg = /^(w|W)((0?)|(0\.0+))$/;
+        let c_value;
+        if (
+          !_.isNil(d[r][c].ct) &&
+          !_.isNil(d[r][c].ct.fa) &&
+          d[r][c].ct.fa.match(reg)
+        ) {
+          c_value = getCellValue(r, c, d);
+        } else {
+          c_value = getCellValue(r, c, d, "m");
+        }
+
+        const styleObj = getStyleByCell(d, r, c);
+        style += _.map(styleObj, (v, key) => {
+          return `${_.kebabCase(key)}:${_.isNumber(v) ? `${v}px` : v};`;
+        }).join("");
+
+        if (d[r]?.[c]?.mc) {
+          if ("rs" in d[r][c].mc) {
+            span = `rowspan="${d[r][c].mc.rs}" colspan="${d[r][c].mc.cs}"`;
+
+            // 边框
+            if (borderInfoCompute && borderInfoCompute[`${r}_${c}`]) {
+              const bl_obj = { color: {}, style: {} };
+              const br_obj = { color: {}, style: {} };
+              const bt_obj = { color: {}, style: {} };
+              const bb_obj = { color: {}, style: {} };
+
+              for (let bd_r = r; bd_r < r + d[r][c].mc.rs; bd_r += 1) {
+                for (let bd_c = c; bd_c < c + d[r][c].mc.cs; bd_c += 1) {
+                  if (
+                    bd_r === r &&
+                    borderInfoCompute[`${bd_r}_${bd_c}`] &&
+                    borderInfoCompute[`${bd_r}_${bd_c}`].t
+                  ) {
+                    const linetype =
+                      borderInfoCompute[`${bd_r}_${bd_c}`].t.style;
+                    const bcolor = borderInfoCompute[`${bd_r}_${bd_c}`].t.color;
+
+                    if (_.isNil(bt_obj.style[linetype])) {
+                      bt_obj.style[linetype] = 1;
+                    } else {
+                      bt_obj.style[linetype] = bt_obj.style[linetype] + 1;
+                    }
+
+                    if (_.isNil(bt_obj.color[bcolor])) {
+                      bt_obj.color[bcolor] = 1;
+                    } else {
+                      bt_obj.color[bcolor] = bt_obj.color[bcolor] + 1;
+                    }
+                  }
+
+                  if (
+                    bd_r === r + d[r][c].mc.rs - 1 &&
+                    borderInfoCompute[`${bd_r}_${bd_c}`] &&
+                    borderInfoCompute[`${bd_r}_${bd_c}`].b
+                  ) {
+                    const linetype =
+                      borderInfoCompute[`${bd_r}_${bd_c}`].b.style;
+                    const bcolor = borderInfoCompute[`${bd_r}_${bd_c}`].b.color;
+
+                    if (_.isNil(bb_obj.style[linetype])) {
+                      bb_obj.style[linetype] = 1;
+                    } else {
+                      bb_obj.style[linetype] = bb_obj.style[linetype] + 1;
+                    }
+
+                    if (_.isNil(bb_obj.color[bcolor])) {
+                      bb_obj.color[bcolor] = 1;
+                    } else {
+                      bb_obj.color[bcolor] = bb_obj.color[bcolor] + 1;
+                    }
+                  }
+
+                  if (
+                    bd_c === c &&
+                    borderInfoCompute[`${bd_r}_${bd_c}`] &&
+                    borderInfoCompute[`${bd_r}_${bd_c}`].l
+                  ) {
+                    const linetype = borderInfoCompute[`${r}_${c}`].l.style;
+                    const bcolor = borderInfoCompute[`${bd_r}_${bd_c}`].l.color;
+
+                    if (_.isNil(bl_obj.style[linetype])) {
+                      bl_obj.style[linetype] = 1;
+                    } else {
+                      bl_obj.style[linetype] = bl_obj.style[linetype] + 1;
+                    }
+
+                    if (_.isNil(bl_obj.color[bcolor])) {
+                      bl_obj.color[bcolor] = 1;
+                    } else {
+                      bl_obj.color[bcolor] = bl_obj.color[bcolor] + 1;
+                    }
+                  }
+
+                  if (
+                    bd_c === c + d[r][c].mc.cs - 1 &&
+                    borderInfoCompute[`${bd_r}_${bd_c}`] &&
+                    borderInfoCompute[`${bd_r}_${bd_c}`].r
+                  ) {
+                    const linetype =
+                      borderInfoCompute[`${bd_r}_${bd_c}`].r.style;
+                    const bcolor = borderInfoCompute[`${bd_r}_${bd_c}`].r.color;
+
+                    if (_.isNil(br_obj.style[linetype])) {
+                      br_obj.style[linetype] = 1;
+                    } else {
+                      br_obj.style[linetype] = br_obj.style[linetype] + 1;
+                    }
+
+                    if (_.isNil(br_obj.color[bcolor])) {
+                      br_obj.color[bcolor] = 1;
+                    } else {
+                      br_obj.color[bcolor] = br_obj.color[bcolor] + 1;
+                    }
+                  }
+                }
+              }
+
+              const rowlen = d[r][c].mc.rs;
+              const collen = d[r][c].mc.cs;
+
+              if (JSON.stringify(bl_obj).length > 23) {
+                let bl_color = null;
+                let bl_style = null;
+
+                Object.keys(bl_obj.color).forEach((x) => {
+                  if (bl_obj.color[x] >= rowlen / 2) {
+                    bl_color = x;
+                  }
+                });
+
+                Object.keys(bl_obj.style).forEach((x) => {
+                  if (bl_obj.style[x] >= rowlen / 2) {
+                    bl_style = x;
+                  }
+                });
+
+                if (!_.isNil(bl_color) && !_.isNil(bl_style)) {
+                  style += `border-left:${getHtmlBorderStyle(
+                    bl_style,
+                    bl_color
+                  )}`;
+                }
+              }
+
+              if (JSON.stringify(br_obj).length > 23) {
+                let br_color = null;
+                let br_style = null;
+
+                Object.keys(br_obj.color).forEach((x) => {
+                  if (br_obj.color[x] >= rowlen / 2) {
+                    br_color = x;
+                  }
+                });
+
+                Object.keys(br_obj.style).forEach((x) => {
+                  if (br_obj.style[x] >= rowlen / 2) {
+                    br_style = x;
+                  }
+                });
+
+                if (!_.isNil(br_color) && !_.isNil(br_style)) {
+                  style += `border-right:${getHtmlBorderStyle(
+                    br_style,
+                    br_color
+                  )}`;
+                }
+              }
+
+              if (JSON.stringify(bt_obj).length > 23) {
+                let bt_color = null;
+                let bt_style = null;
+
+                Object.keys(bt_obj.color).forEach((x) => {
+                  if (bt_obj.color[x] >= collen / 2) {
+                    bt_color = x;
+                  }
+                });
+
+                Object.keys(bt_obj.style).forEach((x) => {
+                  if (bt_obj.style[x] >= collen / 2) {
+                    bt_style = x;
+                  }
+                });
+
+                if (!_.isNil(bt_color) && !_.isNil(bt_style)) {
+                  style += `border-top:${getHtmlBorderStyle(
+                    bt_style,
+                    bt_color
+                  )}`;
+                }
+              }
+
+              if (JSON.stringify(bb_obj).length > 23) {
+                let bb_color = null;
+                let bb_style = null;
+
+                Object.keys(bb_obj.color).forEach((x) => {
+                  if (bb_obj.color[x] >= collen / 2) {
+                    bb_color = x;
+                  }
+                });
+
+                Object.keys(bb_obj.style).forEach((x) => {
+                  if (bb_obj.style[x] >= collen / 2) {
+                    bb_style = x;
+                  }
+                });
+
+                if (!_.isNil(bb_color) && !_.isNil(bb_style)) {
+                  style += `border-bottom:${getHtmlBorderStyle(
+                    bb_style,
+                    bb_color
+                  )}`;
+                }
+              }
+            }
+          } else {
+            continue;
+          }
+        } else {
+          // 边框
+          if (borderInfoCompute && borderInfoCompute[`${r}_${c}`]) {
+            // 左边框
+            if (borderInfoCompute[`${r}_${c}`].l) {
+              const linetype = borderInfoCompute[`${r}_${c}`].l.style;
+              const bcolor = borderInfoCompute[`${r}_${c}`].l.color;
+              style += `border-left:${getHtmlBorderStyle(linetype, bcolor)}`;
+            }
+
+            // 右边框
+            if (borderInfoCompute[`${r}_${c}`].r) {
+              const linetype = borderInfoCompute[`${r}_${c}`].r.style;
+              const bcolor = borderInfoCompute[`${r}_${c}`].r.color;
+              style += `border-right:${getHtmlBorderStyle(linetype, bcolor)}`;
+            }
+
+            // 下边框
+            if (borderInfoCompute[`${r}_${c}`].b) {
+              const linetype = borderInfoCompute[`${r}_${c}`].b.style;
+              const bcolor = borderInfoCompute[`${r}_${c}`].b.color;
+              style += `border-bottom:${getHtmlBorderStyle(linetype, bcolor)}`;
+            }
+
+            // 上边框
+            if (borderInfoCompute[`${r}_${c}`].t) {
+              const linetype = borderInfoCompute[`${r}_${c}`].t.style;
+              const bcolor = borderInfoCompute[`${r}_${c}`].t.color;
+              style += `border-top:${getHtmlBorderStyle(linetype, bcolor)}`;
+            }
+          }
+        }
+
+        column = replaceHtml(column, { style, span });
+
+        if (_.isNil(c_value)) {
+          c_value = getCellValue(r, c, d);
+        }
+        // if (
+        //   _.isNil(c_value) &&
+        //   d[r][c] &&
+        //   d[r][c].ct &&
+        //   d[r][c].ct.t === "inlineStr"
+        // ) {
+        //   c_value = d[r][c].ct.s
+        //     .map((val) => {
+        //       const font = $("<font></font>");
+        //       val.fs && font.css("font-size", val.fs);
+        //       val.bl && font.css("font-weight", val.border);
+        //       val.it && font.css("font-style", val.italic);
+        //       val.cl === 1 && font.css("text-decoration", "underline");
+        //       font.text(val.v);
+        //       return font[0].outerHTML;
+        //     })
+        //     .join("");
+        // }
+
+        if (_.isNil(c_value)) {
+          c_value = "";
+        }
+
+        column += c_value;
+      } else {
+        let style = "";
+
+        // 边框
+        if (borderInfoCompute && borderInfoCompute[`${r}_${c}`]) {
+          // 左边框
+          if (borderInfoCompute[`${r}_${c}`].l) {
+            const linetype = borderInfoCompute[`${r}_${c}`].l.style;
+            const bcolor = borderInfoCompute[`${r}_${c}`].l.color;
+            style += `border-left:${getHtmlBorderStyle(linetype, bcolor)}`;
+          }
+
+          // 右边框
+          if (borderInfoCompute[`${r}_${c}`].r) {
+            const linetype = borderInfoCompute[`${r}_${c}`].r.style;
+            const bcolor = borderInfoCompute[`${r}_${c}`].r.color;
+            style += `border-right:${getHtmlBorderStyle(linetype, bcolor)}`;
+          }
+
+          // 下边框
+          if (borderInfoCompute[`${r}_${c}`].b) {
+            const linetype = borderInfoCompute[`${r}_${c}`].b.style;
+            const bcolor = borderInfoCompute[`${r}_${c}`].b.color;
+            style += `border-bottom:${getHtmlBorderStyle(linetype, bcolor)}`;
+          }
+
+          // 上边框
+          if (borderInfoCompute[`${r}_${c}`].t) {
+            const linetype = borderInfoCompute[`${r}_${c}`].t.style;
+            const bcolor = borderInfoCompute[`${r}_${c}`].t.color;
+            style += `border-top:${getHtmlBorderStyle(linetype, bcolor)}`;
+          }
+        }
+
+        column += "";
+
+        if (r === rowIndexArr[0]) {
+          if (
+            _.isNil(ctx.config) ||
+            _.isNil(ctx.config.columnlen) ||
+            _.isNil(ctx.config.columnlen[c.toString()])
+          ) {
+            colgroup += '<colgroup width="72px"></colgroup>';
+          } else {
+            colgroup += `<colgroup width="${
+              ctx.config.columnlen[c.toString()]
+            }px"></colgroup>`;
+          }
+        }
+
+        if (c === colIndexArr[0]) {
+          if (
+            _.isNil(ctx.config) ||
+            _.isNil(ctx.config.rowlen) ||
+            _.isNil(ctx.config.rowlen[r.toString()])
+          ) {
+            style += "height:19px;";
+          } else {
+            style += `height:${ctx.config.rowlen[r.toString()]}px;`;
+          }
+        }
+
+        column = replaceHtml(column, { style, span: "" });
+        column += "";
+      }
+
+      column += "</td>";
+      cpdata += column;
+    }
+
+    cpdata += "</tr>";
+  }
+  cpdata = `<table data-type="luckysheet_copy_action_table">${colgroup}${cpdata}</table>`;
+
+  ctx.iscopyself = true;
+
+  clipboard.writeHtml(cpdata);
 }

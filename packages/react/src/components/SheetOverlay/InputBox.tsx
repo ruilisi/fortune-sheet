@@ -2,6 +2,8 @@ import {
   cancelNormalSelected,
   getCellValue,
   updateCell,
+  getInlineStringHTML,
+  getStyleByCell,
 } from "@fortune-sheet/core/src/modules/cell";
 import { isInlineStringCell } from "@fortune-sheet/core/src/modules/inline-string";
 import { moveToEnd } from "@fortune-sheet/core/src/modules/cursor";
@@ -19,7 +21,6 @@ import { getFlowdata } from "@fortune-sheet/core/src/context";
 import { handleFormulaInput } from "@fortune-sheet/core/src/modules/formula";
 import { moveHighlightCell } from "@fortune-sheet/core/src/modules/selection";
 import WorkbookContext from "../../context";
-import { getInlineStringHTML, getStyleByCell } from "./util";
 import ContentEditable from "./ContentEditable";
 import FormulaSearch from "./FormulaSearch";
 import FormulaHint from "./FormulaHint";

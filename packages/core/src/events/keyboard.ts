@@ -1,8 +1,11 @@
-import _ from "lodash";
+import _, { ceil } from "lodash";
 import { Context, getFlowdata } from "../context";
 import { updateCell, cancelNormalSelected } from "../modules/cell";
 import { handleFormulaInput } from "../modules/formula";
-import { moveHighlightCell } from "../modules/selection";
+import { copy, moveHighlightCell } from "../modules/selection";
+import { handleBold } from "../modules/toolbar";
+import { hasPartMC } from "../modules/validation";
+import { getNowDateTime } from "../utils";
 
 function handleGlobalEnter(
   ctx: Context,
@@ -12,10 +15,12 @@ function handleGlobalEnter(
   const flowdata = getFlowdata(ctx);
   if ((e.altKey || e.metaKey) && ctx.luckysheetCellUpdate.length > 0) {
     const last =
-      ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
-    const row_index = last.row_focus;
-    const col_index = last.column_focus;
-    enterKeyControll(flowdata?.[row_index]?.[col_index]);
+      ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1];
+    if (last && !_.isNil(last.row_focus) && !_.isNil(last.column_focus)) {
+      const row_index = last.row_focus;
+      const col_index = last.column_focus;
+      enterKeyControll(flowdata?.[row_index]?.[col_index]);
+    }
     e.preventDefault();
   } else if (ctx.luckysheetCellUpdate.length > 0) {
     // if (
@@ -62,9 +67,9 @@ function handleGlobalEnter(
     // ) {
     //   return;
     // }
-    if (ctx.luckysheet_select_save.length > 0) {
+    if ((ctx.luckysheet_select_save?.length ?? 0) > 0) {
       const last =
-        ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
+        ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1];
 
       const row_index = last.row_focus;
       const col_index = last.column_focus;
@@ -104,54 +109,55 @@ function handleBatchSelectionWithArrowKey(ctx: Context, e: KeyboardEvent) {
 
 function handleWithCtrlOrMetaKey(
   ctx: Context,
+  e: KeyboardEvent,
   cellInput: HTMLDivElement,
-  e: KeyboardEvent
+  fxInput: HTMLDivElement
 ) {
+  const flowdata = getFlowdata(ctx);
+  if (!flowdata) return;
+
   if (e.shiftKey) {
-    if (!luckysheet_shiftkeydown) {
-      ctx.luckysheet_shiftpositon = $.extend(
-        true,
-        {},
-        ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1]
-      );
-      ctx.luckysheet_shiftkeydown = true;
-    }
+    ctx.luckysheet_shiftpositon = _.cloneDeep(
+      ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1]
+    );
+    ctx.luckysheet_shiftkeydown = true;
 
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
       // Ctrl + Shift + 方向键  调整选区
       handleBatchSelectionWithArrowKey(ctx, e);
     } else if (e.key === ":" || e.key === "'") {
       const last =
-        ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
-      const row_index = last.row_focus;
-      const col_index = last.column_focus;
-      luckysheetupdateCell(row_index, col_index, ctx.flowdata, true);
+        ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1];
+      if (!last) return;
+
+      const row_index = last.row_focus!;
+      const col_index = last.column_focus!;
+      updateCell(ctx, row_index, col_index, cellInput, flowdata, true);
 
       const value = getNowDateTime(2);
-      $("#luckysheet-rich-text-editor").html(value);
-      luckysheetRangeLast($("#luckysheet-rich-text-editor")[0]);
-      formula.functionInputHanddler(
-        $("#luckysheet-functionbox-cell"),
-        $("#luckysheet-rich-text-editor"),
-        kcode
-      );
+      cellInput.innerHTML = value;
+      // $("#luckysheet-rich-text-editor").html(value);
+      // luckysheetRangeLast($("#luckysheet-rich-text-editor")[0]);
+      handleFormulaInput(ctx, fxInput, cellInput, e.keyCode);
     }
   } else if (e.key === "b") {
     // Ctrl + B  加粗
+    handleBold(ctx, cellInput);
     // $("#luckysheet-icon-bold").click();
   } else if (e.key === "c") {
     // Ctrl + C  复制
-    if (imageCtrl.currentImgId != null) {
-      imageCtrl.copyImgItem(event);
-      return;
-    }
+    // if (imageCtrl.currentImgId != null) {
+    //   imageCtrl.copyImgItem(event);
+    //   return;
+    // }
 
-    // 复制时存在格式刷状态，取消格式刷
-    if (menuButton.luckysheetPaintModelOn) {
-      menuButton.cancelPaintModel();
-    }
+    // // 复制时存在格式刷状态，取消格式刷
+    // if (menuButton.luckysheetPaintModelOn) {
+    //   menuButton.cancelPaintModel();
+    // }
 
-    if (ctx.luckysheet_select_save.length === 0) {
+    const selection = ctx.luckysheet_select_save;
+    if (!selection || _.isEmpty(selection)) {
       return;
     }
 
@@ -159,13 +165,13 @@ function handleWithCtrlOrMetaKey(
     if (ctx.config.merge != null) {
       let has_PartMC = false;
 
-      for (let s = 0; s < ctx.luckysheet_select_save.length; s += 1) {
-        const r1 = ctx.luckysheet_select_save[s].row[0];
-        const r2 = ctx.luckysheet_select_save[s].row[1];
-        const c1 = ctx.luckysheet_select_save[s].column[0];
-        const c2 = ctx.luckysheet_select_save[s].column[1];
+      for (let s = 0; s < selection.length; s += 1) {
+        const r1 = selection[s].row[0];
+        const r2 = selection[s].row[1];
+        const c1 = selection[s].column[0];
+        const c2 = selection[s].column[1];
 
-        has_PartMC = hasPartMC(ctx.config, r1, r2, c1, c2);
+        has_PartMC = hasPartMC(ctx, ctx.config, r1, r2, c1, c2);
 
         if (has_PartMC) {
           break;
@@ -183,67 +189,64 @@ function handleWithCtrlOrMetaKey(
     }
 
     // 多重选区 有条件格式时 提示
-    const cdformat =
-      ctx.luckysheetfile[getSheetIndex(ctx.currentSheetIndex)]
-        .luckysheet_conditionformat_save;
-    if (
-      ctx.luckysheet_select_save.length > 1 &&
-      cdformat != null &&
-      cdformat.length > 0
-    ) {
-      let hasCF = false;
+    // const cdformat =
+    //   ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)]
+    //     .luckysheet_conditionformat_save;
+    // if (
+    //   ctx.luckysheet_select_save.length > 1 &&
+    //   cdformat != null &&
+    //   cdformat.length > 0
+    // ) {
+    //   let hasCF = false;
 
-      const cf_compute = conditionformat.getComputeMap();
+    //   const cf_compute = conditionformat.getComputeMap();
 
-      label: for (let s = 0; s < ctx.luckysheet_select_save.length; s++) {
-        if (hasCF) {
-          break;
-        }
+    //   label: for (let s = 0; s < ctx.luckysheet_select_save.length; s++) {
+    //     if (hasCF) {
+    //       break;
+    //     }
 
-        const r1 = ctx.luckysheet_select_save[s].row[0];
-        const r2 = ctx.luckysheet_select_save[s].row[1];
-        const c1 = ctx.luckysheet_select_save[s].column[0];
-        const c2 = ctx.luckysheet_select_save[s].column[1];
+    //     const r1 = ctx.luckysheet_select_save[s].row[0];
+    //     const r2 = ctx.luckysheet_select_save[s].row[1];
+    //     const c1 = ctx.luckysheet_select_save[s].column[0];
+    //     const c2 = ctx.luckysheet_select_save[s].column[1];
 
-        for (let r = r1; r <= r2; r++) {
-          for (let c = c1; c <= c2; c++) {
-            if (conditionformat.checksCF(r, c, cf_compute) != null) {
-              hasCF = true;
-              continue label;
-            }
-          }
-        }
-      }
+    //     for (let r = r1; r <= r2; r++) {
+    //       for (let c = c1; c <= c2; c++) {
+    //         if (conditionformat.checksCF(r, c, cf_compute) != null) {
+    //           hasCF = true;
+    //           continue label;
+    //         }
+    //       }
+    //     }
+    //   }
 
-      if (hasCF) {
-        if (isEditMode()) {
-          alert(locale_drag.noMulti);
-        } else {
-          tooltip.info(locale_drag.noMulti, "");
-        }
-        return;
-      }
-    }
+    //   if (hasCF) {
+    //     if (isEditMode()) {
+    //       alert(locale_drag.noMulti);
+    //     } else {
+    //       tooltip.info(locale_drag.noMulti, "");
+    //     }
+    //     return;
+    //   }
+    // }
 
     // 多重选区 行不一样且列不一样时 提示
-    if (ctx.luckysheet_select_save.length > 1) {
+    if (selection.length > 1) {
       let isSameRow = true;
-      const str_r = ctx.luckysheet_select_save[0].row[0];
-      const end_r = ctx.luckysheet_select_save[0].row[1];
+      const str_r = selection[0].row[0];
+      const end_r = selection[0].row[1];
       let isSameCol = true;
-      const str_c = ctx.luckysheet_select_save[0].column[0];
-      const end_c = ctx.luckysheet_select_save[0].column[1];
+      const str_c = selection[0].column[0];
+      const end_c = selection[0].column[1];
 
-      for (let s = 1; s < ctx.luckysheet_select_save.length; s += 1) {
-        if (
-          ctx.luckysheet_select_save[s].row[0] !== str_r ||
-          ctx.luckysheet_select_save[s].row[1] !== end_r
-        ) {
+      for (let s = 1; s < selection.length; s += 1) {
+        if (selection[s].row[0] !== str_r || selection[s].row[1] !== end_r) {
           isSameRow = false;
         }
         if (
-          ctx.luckysheet_select_save[s].column[0] !== str_c ||
-          ctx.luckysheet_select_save[s].column[1] !== end_c
+          selection[s].column[0] !== str_c ||
+          selection[s].column[1] !== end_c
         ) {
           isSameCol = false;
         }
@@ -259,12 +262,12 @@ function handleWithCtrlOrMetaKey(
       }
     }
 
-    selection.copy(event);
+    copy(ctx);
 
     ctx.luckysheet_paste_iscut = false;
-    luckysheetactiveCell();
+    // luckysheetactiveCell();
 
-    event.stopPropagation();
+    e.stopPropagation();
     return;
   } else if (e.key === "f") {
     // Ctrl + F  查找
@@ -384,7 +387,7 @@ function handleWithCtrlOrMetaKey(
     }
 
     luckysheetMoveHighlightCell2("up", "rangeOfSelect");
-  } else if (kcode === keycode.DOWN) {
+  } else if (e.key === "ArrowDown") {
     // Ctrl + down  调整单元格
     if (
       parseInt($inputbox.css("top")) > 0 ||
@@ -395,7 +398,7 @@ function handleWithCtrlOrMetaKey(
     }
 
     luckysheetMoveHighlightCell2("down", "rangeOfSelect");
-  } else if (kcode === keycode.LEFT) {
+  } else if (e.key === "ArrowLeft") {
     // Ctrl + top  调整单元格
     if (
       parseInt($inputbox.css("top")) > 0 ||
@@ -406,7 +409,7 @@ function handleWithCtrlOrMetaKey(
     }
 
     luckysheetMoveHighlightCell2("left", "rangeOfSelect");
-  } else if (kcode === keycode.RIGHT) {
+  } else if (e.key === "ArrowRight") {
     // Ctrl + right  调整单元格
     if (
       parseInt($inputbox.css("top")) > 0 ||
@@ -417,7 +420,7 @@ function handleWithCtrlOrMetaKey(
     }
 
     luckysheetMoveHighlightCell2("right", "rangeOfSelect");
-  } else if (kcode === 186) {
+  } else if (e.keyCode === 186) {
     // Ctrl + ; 填充系统日期
     const last =
       ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
@@ -431,9 +434,9 @@ function handleWithCtrlOrMetaKey(
     formula.functionInputHanddler(
       $("#luckysheet-functionbox-cell"),
       $("#luckysheet-rich-text-editor"),
-      kcode
+      e.keyCode
     );
-  } else if (kcode === 222) {
+  } else if (e.keyCode === 222) {
     // Ctrl + ' 填充系统时间
     const last =
       ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
@@ -447,7 +450,7 @@ function handleWithCtrlOrMetaKey(
     formula.functionInputHanddler(
       $("#luckysheet-functionbox-cell"),
       $("#luckysheet-rich-text-editor"),
-      kcode
+      e.keyCode
     );
   } else if (e.key === "a") {
     // Ctrl + A  全选
@@ -646,7 +649,7 @@ export function handleGlobalKeyDown(
     e.preventDefault();
   } else {
     if (e.ctrlKey || e.metaKey) {
-      handleWithCtrlOrMetaKey(ctx, cellInput, e);
+      handleWithCtrlOrMetaKey(ctx, e, cellInput, fxInput);
       return;
     }
     if (

@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import _ from "lodash";
+import { Context } from "../context";
 import { hasChinaword } from "./text";
 
 export const error = {
@@ -63,8 +64,8 @@ function checkDateTime(str: string) {
     return false;
   }
 
-  if (month == 2) {
-    if (new Date(year, 1, 29).getDate() == 29 && day > 29) {
+  if (month === 2) {
+    if (new Date(year, 1, 29).getDate() === 29 && day > 29) {
       return false;
     }
     if (new Date(year, 1, 29).getDate() != 29 && day > 28) {
@@ -75,7 +76,7 @@ function checkDateTime(str: string) {
 }
 
 export function isdatetime(s: any) {
-  if (s == null || s.toString().length < 5) {
+  if (s === null || s.toString().length < 5) {
     return false;
   }
   if (checkDateTime(s)) {
@@ -112,4 +113,117 @@ export function isdatatype(s: any) {
   }
 
   return type;
+}
+
+// 范围是否只包含部分合并单元格
+export function hasPartMC(
+  ctx: Context,
+  cfg: any,
+  r1: number,
+  r2: number,
+  c1: number,
+  c2: number
+) {
+  let ret = false;
+
+  _.forEach(ctx.config.merge, (mc) => {
+    if (r1 < mc.r) {
+      if (r2 >= mc.r && r2 < mc.r + mc.rs - 1) {
+        if (c1 >= mc.c && c1 <= mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c2 >= mc.c && c2 <= mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c1 < mc.c && c2 > mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+      } else if (r2 >= mc.r && r2 === mc.r + mc.rs - 1) {
+        if (c1 > mc.c && c1 < mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c2 > mc.c && c2 < mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c1 === mc.c && c2 < mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c1 > mc.c && c2 === mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+      } else if (r2 > mc.r + mc.rs - 1) {
+        if (c1 > mc.c && c1 <= mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c2 >= mc.c && c2 < mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c1 === mc.c && c2 < mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c1 > mc.c && c2 === mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+      }
+    } else if (r1 === mc.r) {
+      if (r2 < mc.r + mc.rs - 1) {
+        if (c1 >= mc.c && c1 <= mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c2 >= mc.c && c2 <= mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c1 < mc.c && c2 > mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+      } else if (r2 >= mc.r + mc.rs - 1) {
+        if (c1 > mc.c && c1 <= mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c2 >= mc.c && c2 < mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c1 === mc.c && c2 < mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+        if (c1 > mc.c && c2 === mc.c + mc.cs - 1) {
+          ret = true;
+          return false;
+        }
+      }
+    } else if (r1 <= mc.r + mc.rs - 1) {
+      if (c1 >= mc.c && c1 <= mc.c + mc.cs - 1) {
+        ret = true;
+        return false;
+      }
+      if (c2 >= mc.c && c2 <= mc.c + mc.cs - 1) {
+        ret = true;
+        return false;
+      }
+      if (c1 < mc.c && c2 > mc.c + mc.cs - 1) {
+        ret = true;
+        return false;
+      }
+    }
+    return true;
+  });
+
+  return ret;
 }

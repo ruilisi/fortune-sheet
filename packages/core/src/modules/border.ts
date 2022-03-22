@@ -1461,7 +1461,7 @@ export function getBorderInfoComputeRange(
 }
 
 export function getBorderInfoCompute(ctx: Context, sheetIndex?: string) {
-  let borderInfoCompute = {};
+  let borderInfoCompute: any = {};
   const flowdata = getFlowdata(ctx);
 
   let data: any = {};

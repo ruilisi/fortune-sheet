@@ -1,6 +1,6 @@
 import produce from "immer";
 import _ from "lodash";
-import { Sheet } from "./types";
+import { Sheet, Selection } from "./types";
 import { generateRandomSheetIndex, getSheetIndex } from "./utils";
 
 export type Context = {
@@ -51,7 +51,12 @@ export type Context = {
   functionCandidates: any[];
   functionHint: string | null | undefined;
 
-  luckysheet_copy_save: any; // 复制粘贴
+  luckysheet_copy_save: {
+    dataSheetIndex: string;
+    copyRange: { row: number[]; column: number[] }[];
+    RowlChange: boolean;
+    HasMC: boolean;
+  }; // 复制粘贴
   luckysheet_paste_iscut: boolean;
 
   filterchage: boolean; // 筛选
@@ -76,7 +81,8 @@ export type Context = {
 
   luckysheetCellUpdate: any[];
 
-  luckysheet_shiftpositon: any;
+  luckysheet_shiftkeydown: boolean;
+  luckysheet_shiftpositon: Selection | undefined;
 
   iscopyself: boolean;
 
@@ -224,7 +230,8 @@ function defaultContext(): Context {
 
     luckysheetCellUpdate: [],
 
-    luckysheet_shiftpositon: null,
+    luckysheet_shiftkeydown: false,
+    luckysheet_shiftpositon: undefined,
 
     iscopyself: true,
 

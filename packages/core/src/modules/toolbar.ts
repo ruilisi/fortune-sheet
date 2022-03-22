@@ -234,19 +234,19 @@ function handleToggleAttr(
   updateFormat(ctx, cellInput, flowdata, attr, foucsStatus);
 }
 
-function handleBold(ctx: Context, cellInput: HTMLDivElement) {
+export function handleBold(ctx: Context, cellInput: HTMLDivElement) {
   handleToggleAttr(ctx, cellInput, "bl");
 }
 
-function handleItalic(ctx: Context, cellInput: HTMLDivElement) {
+export function handleItalic(ctx: Context, cellInput: HTMLDivElement) {
   handleToggleAttr(ctx, cellInput, "it");
 }
 
-function handleStrikeThrough(ctx: Context, cellInput: HTMLDivElement) {
+export function handleStrikeThrough(ctx: Context, cellInput: HTMLDivElement) {
   handleToggleAttr(ctx, cellInput, "cl");
 }
 
-function handleUnderline(ctx: Context, cellInput: HTMLDivElement) {
+export function handleUnderline(ctx: Context, cellInput: HTMLDivElement) {
   handleToggleAttr(ctx, cellInput, "un");
 }
 

@@ -85,3 +85,46 @@ export function getSheetByIndex(ctx: Context, index: string) {
   }
   return ctx.luckysheetfile[i];
 }
+
+// 获取当前日期时间
+export function getNowDateTime(format: number) {
+  const now = new Date();
+  const year = now.getFullYear(); // 得到年份
+  let month: string | number = now.getMonth(); // 得到月份
+  let date: string | number = now.getDate(); // 得到日期
+  let hour: string | number = now.getHours(); // 得到小时
+  let minu: string | number = now.getMinutes(); // 得到分钟
+  let sec: string | number = now.getSeconds(); // 得到秒
+
+  month += 1;
+  if (month < 10) month = `0${month}`;
+  if (date < 10) date = `0${date}`;
+  if (hour < 10) hour = `0${hour}`;
+  if (minu < 10) minu = `0${minu}`;
+  if (sec < 10) sec = `0${sec}`;
+
+  let time = "";
+
+  // 日期
+  if (format === 1) {
+    time = `${year}-${month}-${date}`;
+  }
+  // 日期时间
+  else if (format === 2) {
+    time = `${year}-${month}-${date} ${hour}:${minu}:${sec}`;
+  }
+
+  return time;
+}
+
+// 替换temp中的${xxx}为指定内容 ,temp:字符串，这里指html代码，dataarry：一个对象{"xxx":"替换的内容"}
+// 例：luckysheet.replaceHtml("${image}",{"image":"abc","jskdjslf":"abc"})   ==>  abc
+export function replaceHtml(temp: string, dataarry: any) {
+  return temp.replace(/\$\{([\w]+)\}/g, (s1, s2) => {
+    const s = dataarry[s2];
+    if (typeof s !== "undefined") {
+      return s;
+    }
+    return s1;
+  });
+}

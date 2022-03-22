@@ -143,7 +143,42 @@ const SheetOverlay: React.FC = () => {
             className="luckysheet-cell-selected-focus"
             id="luckysheet-cell-selected-focus"
           />
-          <div id="luckysheet-selection-copy" />
+          {(context.luckysheet_selection_range?.length ?? 0) > 0 && (
+            <div id="luckysheet-selection-copy">
+              {context.luckysheet_selection_range!.map((range) => {
+                const r1 = range.row[0];
+                const r2 = range.row[1];
+                const c1 = range.column[0];
+                const c2 = range.column[1];
+
+                const row = context.visibledatarow[r2];
+                const row_pre =
+                  r1 - 1 === -1 ? 0 : context.visibledatarow[r1 - 1];
+                const col = context.visibledatacolumn[c2];
+                const col_pre =
+                  c1 - 1 === -1 ? 0 : context.visibledatacolumn[c1 - 1];
+
+                return (
+                  <div
+                    className="luckysheet-selection-copy"
+                    key={`${r1}-${r2}-${c1}-${c2}`}
+                    style={{
+                      left: col_pre,
+                      width: col - col_pre - 1,
+                      top: row_pre,
+                      height: row - row_pre - 1,
+                    }}
+                  >
+                    <div className="luckysheet-selection-copy-top luckysheet-copy" />
+                    <div className="luckysheet-selection-copy-right luckysheet-copy" />
+                    <div className="luckysheet-selection-copy-bottom luckysheet-copy" />
+                    <div className="luckysheet-selection-copy-left luckysheet-copy" />
+                    <div className="luckysheet-selection-copy-hc" />
+                  </div>
+                );
+              })}
+            </div>
+          )}
           <div id="luckysheet-chart-rangeShow" />
           <div
             className="luckysheet-cell-selected-extend"

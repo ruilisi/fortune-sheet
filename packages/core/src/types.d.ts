@@ -70,8 +70,8 @@ export type Sheet = {
   status?: number;
   luckysheet_select_save?: Selection[];
   luckysheet_selection_range?: {
-    row: number;
-    column: number;
+    row: number[];
+    column: number[];
   }[];
   calcChain?: any[];
   defaultRowHeight?: number;
