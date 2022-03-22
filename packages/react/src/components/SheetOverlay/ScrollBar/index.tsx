@@ -7,7 +7,7 @@ type Props = {
 };
 
 const ScrollBar: React.FC<Props> = ({ axis }) => {
-  const { context, refs } = useContext(WorkbookContext);
+  const { context, refs, setContextValue } = useContext(WorkbookContext);
 
   useEffect(() => {
     if (axis === "x") {
@@ -20,9 +20,23 @@ const ScrollBar: React.FC<Props> = ({ axis }) => {
   return (
     <div
       ref={axis === "x" ? refs.scrollbarX : refs.scrollbarY}
+      style={axis === "x" ? { width: "100%" } : { height: "100%" }}
       className={`luckysheet-scrollbars luckysheet-scrollbar-ltr luckysheet-scrollbar-${axis}`}
+      onScroll={() => {
+        if (axis === "x") {
+          setContextValue("scrollLeft", refs.scrollbarX.current!.scrollLeft);
+        } else {
+          setContextValue("scrollTop", refs.scrollbarY.current!.scrollTop);
+        }
+      }}
     >
-      <div />
+      <div
+        style={
+          axis === "x"
+            ? { width: context.ch_width, height: 10 }
+            : { width: 10, height: context.rh_height }
+        }
+      />
     </div>
   );
 };

@@ -22,7 +22,7 @@ type Props = {
 const Sheet: React.FC<Props> = ({ data }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { context, setContext } = useContext(WorkbookContext);
+  const { context, setContext, refs } = useContext(WorkbookContext);
 
   useEffect(() => {
     setContext((ctx) => updateContextWithSheetData(ctx, data));
@@ -56,11 +56,16 @@ const Sheet: React.FC<Props> = ({ data }) => {
     (e: WheelEvent) => {
       setContext(
         produce((draftCtx) => {
-          handleGlobalWheel(draftCtx, e);
+          handleGlobalWheel(
+            draftCtx,
+            e,
+            refs.scrollbarX.current!,
+            refs.scrollbarY.current!
+          );
         })
       );
     },
-    [setContext]
+    [refs.scrollbarX, refs.scrollbarY, setContext]
   );
 
   useEffect(() => {

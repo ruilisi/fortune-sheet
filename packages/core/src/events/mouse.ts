@@ -7,7 +7,12 @@ import { normalizeSelection } from "../modules/selection";
 import { Settings } from "../settings";
 import { Selection } from "../types";
 
-export function handleGlobalWheel(ctx: Context, e: WheelEvent) {
+export function handleGlobalWheel(
+  ctx: Context,
+  e: WheelEvent,
+  scrollbarX: HTMLDivElement,
+  scrollbarY: HTMLDivElement
+) {
   let { scrollLeft } = ctx;
   const { scrollTop } = ctx;
   let visibledatacolumn_c = ctx.visibledatacolumn;
@@ -83,16 +88,18 @@ export function handleGlobalWheel(ctx: Context, e: WheelEvent) {
     //   rowscroll -= luckysheetFreezen.freezenhorizontaldata[0];
     // }
 
-    ctx.scrollTop = Math.max(rowscroll, 0);
-    // scrollbarY.scrollTop = rowscroll;
+    // 通过滚动scrollbar来让浏览器自动控制滚动边界
+    scrollbarY.scrollTop = rowscroll;
+
   } else if (e.deltaX !== 0) {
     if (e.deltaX > 0) {
       scrollLeft += 20 * ctx.zoomRatio;
     } else {
       scrollLeft -= 20 * ctx.zoomRatio;
     }
-    ctx.scrollLeft = Math.max(scrollLeft, 0);
-    // scrollbarY.scrollLeft = scrollLeft;
+
+    // 通过滚动scrollbar来让浏览器自动控制滚动边界
+    scrollbarX.scrollLeft = scrollLeft;
   }
 
   // mousewheelArrayUniqueTimeout = setTimeout(() => {
