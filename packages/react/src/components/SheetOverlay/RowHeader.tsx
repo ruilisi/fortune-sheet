@@ -15,11 +15,15 @@ import React, {
   useEffect,
 } from "react";
 import produce from "immer";
+import {
+  handleRowHeaderMouseDown,
+  handleRowSizeHandleMouseDown,
+} from "@fortune-sheet/core/src/events/mouse";
 import WorkbookContext from "../../context";
-import { handleRowHeaderMouseDown } from "@fortune-sheet/core/src/events/mouse";
 
 const RowHeader: React.FC = () => {
-  const { context, setContext } = useContext(WorkbookContext);
+  const { context, setContext, refs } = useContext(WorkbookContext);
+  const rowChangeSizeRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoverLocation, setHoverLocation] = useState({
     row: -1,
@@ -31,6 +35,9 @@ const RowHeader: React.FC = () => {
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      if (context.luckysheet_rows_change_size) {
+        return;
+      }
       if (e.target !== e.currentTarget) {
         return;
       }
@@ -51,6 +58,30 @@ const RowHeader: React.FC = () => {
       );
     },
     [setContext]
+  );
+
+  const onMouseLeave = useCallback(() => {
+    if (context.luckysheet_rows_change_size) {
+      return;
+    }
+    setHoverLocation({ row: -1, row_pre: -1 });
+  }, [context.luckysheet_rows_change_size]);
+
+  const onRowSizeHandleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      setContext(
+        produce((draftCtx) => {
+          handleRowSizeHandleMouseDown(
+            draftCtx,
+            e.nativeEvent,
+            containerRef.current!,
+            refs.cellArea.current!
+          );
+        })
+      );
+      e.stopPropagation();
+    },
+    [refs.cellArea, setContext]
   );
 
   useEffect(() => {
@@ -89,7 +120,18 @@ const RowHeader: React.FC = () => {
       }}
       onMouseMove={onMouseMove}
       onMouseDown={onMouseDown}
+      onMouseLeave={onMouseLeave}
     >
+      <div
+        className="luckysheet-rows-change-size"
+        ref={rowChangeSizeRef}
+        id="luckysheet-rows-change-size"
+        onMouseDown={onRowSizeHandleMouseDown}
+        style={{
+          top: hoverLocation.row - 3,
+          opacity: context.luckysheet_rows_change_size ? 1 : 0,
+        }}
+      />
       {hoverLocation.row >= 0 && hoverLocation.row_pre >= 0 ? (
         <div
           className="fortune-row-header-hover"

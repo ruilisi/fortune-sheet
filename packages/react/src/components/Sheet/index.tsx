@@ -26,7 +26,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
 
   useEffect(() => {
     setContext((ctx) => updateContextWithSheetData(ctx, data));
-  }, [data, setContext]);
+  }, [context.config?.rowlen, context.config?.columnlen, data, setContext]);
 
   useEffect(() => {
     setContext((ctx) => updateContextWithCanvas(ctx, canvasRef.current!));

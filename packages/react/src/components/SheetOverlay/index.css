@@ -442,3 +442,34 @@
   border-bottom: 1px solid #d4d4d4;
   width: inherit;
 }
+
+.luckysheet-cols-change-size,
+.luckysheet-rows-change-size,
+.luckysheet-change-size-line {
+    /*display: none;*/
+    position: absolute;
+    z-index: 12;
+}
+
+.luckysheet-cols-change-size {
+    width: 5px;
+    height: 100%;
+    background: #0188fb;
+    cursor: ew-resize;
+    opacity: 0;
+}
+
+.luckysheet-rows-change-size {
+    width: 100%;
+    height: 5px;
+    background: #0188fb;
+    cursor: ns-resize;
+    opacity: 0;
+}
+
+.luckysheet-change-size-line {
+    border-color: #0188fb;
+    border-style: solid;
+    z-index: 15;
+    cursor: ew-resize;
+}

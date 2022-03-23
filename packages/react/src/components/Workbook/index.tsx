@@ -33,6 +33,7 @@ const Workbook: React.FC<Settings> = (props) => {
   const fxInput = useRef<HTMLDivElement>(null);
   const scrollbarX = useRef<HTMLDivElement>(null);
   const scrollbarY = useRef<HTMLDivElement>(null);
+  const cellArea = useRef<HTMLDivElement>(null);
   const globalCache = useRef<any>({});
   const mergedSettings = useMemo(() => assign(defaultSettings, props), [props]);
   const setContextValue = useCallback(
@@ -57,6 +58,7 @@ const Workbook: React.FC<Settings> = (props) => {
         fxInput,
         scrollbarX,
         scrollbarY,
+        cellArea,
       },
     }),
     [context, mergedSettings, setContextValue]

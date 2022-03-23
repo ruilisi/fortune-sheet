@@ -4,8 +4,8 @@ import produce from "immer";
 import {
   handleCellAreaDoubleClick,
   handleCellAreaMouseDown,
-  handleCellAreaMouseMove,
-  handleCellAreaMouseUp,
+  handleOverlayMouseMove,
+  handleOverlayMouseUp,
 } from "@fortune-sheet/core/src/events/mouse";
 import WorkbookContext from "../../context";
 import ColumnHeader from "./ColumnHeader";
@@ -16,24 +16,21 @@ import ScrollBar from "./ScrollBar";
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
-  const cellAreaRef = useRef<HTMLDivElement>(null);
 
-  const cellAreaOnMouseDown = useCallback(
+  const cellAreaMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (e.target !== e.currentTarget) {
-        return;
-      }
       setContext(
         produce((draftCtx) => {
           handleCellAreaMouseDown(
             draftCtx,
             e.nativeEvent,
-            refs.cellInput.current!
+            refs.cellInput.current!,
+            refs.cellArea.current!
           );
         })
       );
     },
-    [refs.cellInput, setContext]
+    [refs.cellArea, refs.cellInput, setContext]
   );
 
   const cellAreaDoubleClick = useCallback(
@@ -50,25 +47,33 @@ const SheetOverlay: React.FC = () => {
     [setContext, settings]
   );
 
-  const cellAreaMouseMove = useCallback(
+  const onMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (e.target !== e.currentTarget) {
-        return;
-      }
       setContext(
         produce((draftCtx) => {
-          handleCellAreaMouseMove(draftCtx, e.nativeEvent);
+          handleOverlayMouseMove(
+            draftCtx,
+            e.nativeEvent,
+            refs.scrollbarX.current!,
+            refs.scrollbarY.current!,
+            containerRef.current!
+          );
         })
       );
     },
-    [setContext]
+    [refs.scrollbarX, refs.scrollbarY, setContext]
   );
 
-  const cellAreaMouseUp = useCallback(
+  const onMouseUp = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       setContext(
         produce((draftCtx) => {
-          handleCellAreaMouseUp(draftCtx, settings, e.nativeEvent);
+          handleOverlayMouseUp(
+            draftCtx,
+            settings,
+            e.nativeEvent,
+            containerRef.current!
+          );
         })
       );
     },
@@ -76,14 +81,16 @@ const SheetOverlay: React.FC = () => {
   );
 
   useEffect(() => {
-    cellAreaRef.current!.scrollLeft = context.scrollLeft;
-    cellAreaRef.current!.scrollTop = context.scrollTop;
-  }, [context.scrollLeft, context.scrollTop]);
+    refs.cellArea.current!.scrollLeft = context.scrollLeft;
+    refs.cellArea.current!.scrollTop = context.scrollTop;
+  }, [context.scrollLeft, context.scrollTop, refs.cellArea]);
 
   return (
     <div
       className="fortune-sheet-overlay"
       ref={containerRef}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
       tabIndex={-1}
       style={{
         width: context.luckysheetTableContentHW[0],
@@ -105,12 +112,10 @@ const SheetOverlay: React.FC = () => {
         <ScrollBar axis="x" />
         <ScrollBar axis="y" />
         <div
-          ref={cellAreaRef}
-          onMouseDown={cellAreaOnMouseDown}
-          onMouseMove={cellAreaMouseMove}
-          onMouseUp={cellAreaMouseUp}
-          onDoubleClick={cellAreaDoubleClick}
+          ref={refs.cellArea}
           className="fortune-cell-area"
+          onMouseDown={cellAreaMouseDown}
+          onDoubleClick={cellAreaDoubleClick}
           style={{
             width: context.cellmainWidth,
             height: context.cellmainHeight,
@@ -138,6 +143,10 @@ const SheetOverlay: React.FC = () => {
           <div
             className="luckysheet-change-size-line"
             id="luckysheet-change-size-line"
+            hidden={
+              !context.luckysheet_cols_change_size &&
+              !context.luckysheet_rows_change_size
+            }
           />
           <div
             className="luckysheet-cell-selected-focus"

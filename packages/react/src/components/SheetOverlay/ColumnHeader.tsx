@@ -15,12 +15,16 @@ import React, {
   useEffect,
 } from "react";
 import produce from "immer";
-import { handleColumnHeaderMouseDown } from "@fortune-sheet/core/src/events/mouse";
+import {
+  handleColSizeHandleMouseDown,
+  handleColumnHeaderMouseDown,
+} from "@fortune-sheet/core/src/events/mouse";
 import WorkbookContext from "../../context";
 
 const ColumnHeader: React.FC = () => {
-  const { context, setContext } = useContext(WorkbookContext);
+  const { context, setContext, refs } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
+  const colChangeSizeRef = useRef<HTMLDivElement>(null);
   const [hoverLocation, setHoverLocation] = useState({
     col: -1,
     col_pre: -1,
@@ -31,11 +35,14 @@ const ColumnHeader: React.FC = () => {
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      if (context.luckysheet_cols_change_size) {
+        return;
+      }
       if (e.target !== e.currentTarget) {
         return;
       }
-      const x = e.nativeEvent.offsetX + containerRef.current!.scrollLeft;
-      const col_location = colLocation(x, context.visibledatacolumn);
+      const x1 = e.nativeEvent.offsetX + containerRef.current!.scrollLeft;
+      const col_location = colLocation(x1, context.visibledatacolumn);
       const [col_pre, col] = col_location;
       setHoverLocation({ col_pre, col });
     },
@@ -51,6 +58,30 @@ const ColumnHeader: React.FC = () => {
       );
     },
     [setContext]
+  );
+
+  const onMouseLeave = useCallback(() => {
+    if (context.luckysheet_cols_change_size) {
+      return;
+    }
+    setHoverLocation({ col: -1, col_pre: -1 });
+  }, [context.luckysheet_cols_change_size]);
+
+  const onColSizeHandleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      setContext(
+        produce((draftCtx) => {
+          handleColSizeHandleMouseDown(
+            draftCtx,
+            e.nativeEvent,
+            containerRef.current!,
+            refs.cellArea.current!
+          );
+        })
+      );
+      e.stopPropagation();
+    },
+    [refs.cellArea, setContext]
   );
 
   useEffect(() => {
@@ -90,8 +121,21 @@ const ColumnHeader: React.FC = () => {
       }}
       onMouseMove={onMouseMove}
       onMouseDown={onMouseDown}
+      onMouseLeave={onMouseLeave}
     >
-      {hoverLocation.col >= 0 && hoverLocation.col_pre >= 0 ? (
+      <div
+        className="luckysheet-cols-change-size"
+        ref={colChangeSizeRef}
+        id="luckysheet-cols-change-size"
+        onMouseDown={onColSizeHandleMouseDown}
+        style={{
+          left: hoverLocation.col - 5,
+          opacity: context.luckysheet_cols_change_size ? 1 : 0,
+        }}
+      />
+      {!context.luckysheet_cols_change_size &&
+      hoverLocation.col >= 0 &&
+      hoverLocation.col_pre >= 0 ? (
         <div
           className="fortune-col-header-hover"
           style={{
