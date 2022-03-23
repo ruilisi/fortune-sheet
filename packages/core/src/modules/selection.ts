@@ -7,6 +7,10 @@ import clipboard from "./clipboard";
 import { getBorderInfoCompute } from "./border";
 import { replaceHtml } from "../utils";
 
+export const selectionCache = {
+  isPasteAction: false,
+};
+
 export function normalizeSelection(
   ctx: Context,
   selection: SheetType["luckysheet_select_save"]

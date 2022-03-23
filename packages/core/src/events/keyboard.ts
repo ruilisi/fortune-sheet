@@ -1,8 +1,8 @@
-import _, { ceil } from "lodash";
+import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { updateCell, cancelNormalSelected } from "../modules/cell";
 import { handleFormulaInput } from "../modules/formula";
-import { copy, moveHighlightCell } from "../modules/selection";
+import { copy, moveHighlightCell, selectionCache } from "../modules/selection";
 import { handleBold } from "../modules/toolbar";
 import { hasPartMC } from "../modules/validation";
 import { getNowDateTime } from "../utils";
@@ -286,28 +286,28 @@ function handleWithCtrlOrMetaKey(
     $("#luckysheet-icon-italic").click();
   } else if (e.key === "v") {
     // Ctrl + V  粘贴
-    if (isEditMode()) {
-      // 此模式下禁用粘贴
+    // if (isEditMode()) {
+    //   // 此模式下禁用粘贴
+    //   return;
+    // }
+
+    // if ($(event.target).hasClass("formulaInputFocus")) {
+    //   return;
+    // }
+
+    if ((ctx.luckysheet_select_save?.length ?? 0) > 1) {
+      // if (isEditMode()) {
+      //   alert(locale_drag.noPaste);
+      // } else {
+      //   tooltip.info(locale_drag.noPaste, "");
+      // }
       return;
     }
 
-    if ($(event.target).hasClass("formulaInputFocus")) {
-      return;
-    }
+    selectionCache.isPasteAction = true;
+    // luckysheetactiveCell();
 
-    if (ctx.luckysheet_select_save.length > 1) {
-      if (isEditMode()) {
-        alert(locale_drag.noPaste);
-      } else {
-        tooltip.info(locale_drag.noPaste, "");
-      }
-      return;
-    }
-
-    selection.isPasteAction = true;
-    luckysheetactiveCell();
-
-    event.stopPropagation();
+    e.stopPropagation();
     return;
   } else if (e.key === "x") {
     // Ctrl + X  剪切

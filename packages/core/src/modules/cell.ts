@@ -1,7 +1,7 @@
 import _, { flow } from "lodash";
 import { Context, getFlowdata } from "../context";
 import { Cell, CellMatrix, Range, Selection } from "../types";
-import { getSheetByIndex, rgbToHex } from "../utils";
+import { getSheetByIndex, getSheetIndex, rgbToHex } from "../utils";
 import { genarate, update } from "./format";
 import {
   delFunctionGroup,
@@ -14,6 +14,8 @@ import {
   isInlineStringCell,
   isInlineStringCT,
 } from "./inline-string";
+import { colLocationByIndex } from "./location";
+import { getCellTextInfo } from "./text";
 import { isRealNull, isRealNum, valueIsError } from "./validation";
 
 // TODO put these in context ref
@@ -1277,4 +1279,210 @@ export function getInlineStringHTML(r: number, c: number, data: CellMatrix) {
     return value;
   }
   return "";
+}
+
+export function getQKBorder(width: string, type: string, color: string) {
+  let bordertype = "";
+
+  if (width.toString().indexOf("pt") > -1) {
+    const nWidth = parseFloat(width);
+
+    if (nWidth < 1) {
+    } else if (nWidth < 1.5) {
+      bordertype = "Medium";
+    } else {
+      bordertype = "Thick";
+    }
+  } else {
+    const nWidth = parseFloat(width);
+
+    if (nWidth < 2) {
+    } else if (nWidth < 3) {
+      bordertype = "Medium";
+    } else {
+      bordertype = "Thick";
+    }
+  }
+
+  let style = 0;
+  type = type.toLowerCase();
+
+  if (type === "double") {
+    style = 2;
+  } else if (type === "dotted") {
+    if (bordertype === "Medium" || bordertype === "Thick") {
+      style = 3;
+    } else {
+      style = 10;
+    }
+  } else if (type === "dashed") {
+    if (bordertype === "Medium" || bordertype === "Thick") {
+      style = 4;
+    } else {
+      style = 9;
+    }
+  } else if (type === "solid") {
+    if (bordertype === "Medium") {
+      style = 8;
+    } else if (bordertype === "Thick") {
+      style = 13;
+    } else {
+      style = 1;
+    }
+  }
+
+  return [style, color];
+}
+
+/**
+ * 计算范围行高
+ *
+ * @param d 原始数据
+ * @param r1 起始行
+ * @param r2 截至行
+ * @param cfg 配置
+ * @returns 计算后的配置
+ */
+function rowlenByRange(
+  ctx: Context,
+  d: CellMatrix,
+  r1: number,
+  r2: number,
+  cfg: any
+) {
+  const cfg_clone = _.cloneDeep(cfg);
+  if (cfg_clone.rowlen == null) {
+    cfg_clone.rowlen = {};
+  }
+
+  if (cfg_clone.customHeight == null) {
+    cfg_clone.customHeight = {};
+  }
+
+  const canvas = $("#luckysheetTableContent").get(0).getContext("2d");
+  canvas.textBaseline = "top"; // textBaseline以top计算
+
+  for (let r = r1; r <= r2; r += 1) {
+    if (cfg_clone.rowhidden != null && cfg_clone.rowhidden[r] != null) {
+      continue;
+    }
+
+    let currentRowLen = ctx.defaultrowlen;
+
+    if (cfg_clone.customHeight[r] === 1) {
+      continue;
+    }
+
+    delete cfg_clone.rowlen[r];
+
+    for (let c = 0; c < d[r].length; c += 1) {
+      const cell = d[r][c];
+
+      if (cell == null) {
+        continue;
+      }
+
+      if (cell != null && (cell.v != null || isInlineStringCell(cell))) {
+        let cellWidth;
+        if (cell.mc) {
+          if (c === cell.mc.c) {
+            const st_cellWidth = colLocationByIndex(
+              c,
+              ctx.visibledatacolumn
+            )[0];
+            const ed_cellWidth = colLocationByIndex(
+              cell.mc.c + cell.mc.cs - 1,
+              ctx.visibledatacolumn
+            )[1];
+            cellWidth = ed_cellWidth - st_cellWidth - 2;
+          } else {
+            continue;
+          }
+        } else {
+          cellWidth =
+            colLocationByIndex(c, ctx.visibledatacolumn)[1] -
+            colLocationByIndex(c, ctx.visibledatacolumn)[0] -
+            2;
+        }
+
+        const textInfo = getCellTextInfo(cell, canvas, {
+          r,
+          c,
+          cellWidth,
+        });
+
+        let computeRowlen = 0;
+
+        if (textInfo != null) {
+          computeRowlen = textInfo.textHeightAll + 2;
+        }
+
+        // 比较计算高度和当前高度取最大高度
+        if (computeRowlen > currentRowLen) {
+          currentRowLen = computeRowlen;
+        }
+      }
+    }
+
+    currentRowLen /= ctx.zoomRatio;
+
+    if (currentRowLen !== ctx.defaultrowlen) {
+      cfg_clone.rowlen[r] = currentRowLen;
+    } else {
+      if (cfg.rowlen?.[r]) {
+        cfg_clone.rowlen[r] = cfg.rowlen[r];
+      }
+    }
+  }
+
+  return cfg_clone;
+}
+
+export function getdatabyselection(
+  ctx: Context,
+  range: Selection | undefined,
+  sheetIndex: string
+) {
+  if (range == null && ctx.luckysheet_select_save) {
+    [range] = ctx.luckysheet_select_save;
+  }
+
+  if (!range) return [];
+
+  if (range.row == null || range.row.length === 0) {
+    return [];
+  }
+
+  // 取数据
+  let d;
+  let cfg;
+  if (sheetIndex != null && sheetIndex !== ctx.currentSheetIndex) {
+    d = ctx.luckysheetfile[getSheetIndex(ctx, sheetIndex)].data;
+    cfg = ctx.luckysheetfile[getSheetIndex(ctx, sheetIndex)].config;
+  } else {
+    d = getFlowdata(ctx);
+    cfg = ctx.config;
+  }
+
+  const data = [];
+
+  for (let r = range.row[0]; r <= range.row[1]; r += 1) {
+    if (d[r] == null) {
+      continue;
+    }
+
+    if (cfg.rowhidden != null && cfg.rowhidden[r] != null) {
+      continue;
+    }
+
+    const row = [];
+
+    for (let c = range.column[0]; c <= range.column[1]; c += 1) {
+      row.push(d[r][c]);
+    }
+
+    data.push(row);
+  }
+
+  return data;
 }

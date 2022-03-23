@@ -20,6 +20,7 @@ import {
 } from "@fortune-sheet/core/src/types";
 import { handleGlobalKeyDown } from "@fortune-sheet/core/src/events/keyboard";
 import { getSheetIndex } from "@fortune-sheet/core/src/utils";
+import { handlePaste } from "@fortune-sheet/core/src/events/paste";
 import Sheet from "../Sheet";
 import WorkbookContext from "../../context";
 import Toolbar from "../Toolbar";
@@ -196,6 +197,21 @@ const Workbook: React.FC<Settings> = (props) => {
     },
     [providerValue.refs.cellInput, providerValue.refs.fxInput]
   );
+
+  const onPaste = useCallback((e: ClipboardEvent) => {
+    setContext(
+      produce((draftCtx) => {
+        handlePaste(draftCtx, e);
+      })
+    );
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("paste", onPaste);
+    return () => {
+      document.removeEventListener("paste", onPaste);
+    };
+  }, [onPaste]);
 
   if (!context.luckysheetfile) {
     return null;

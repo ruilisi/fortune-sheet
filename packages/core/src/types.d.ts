@@ -1,7 +1,7 @@
 export type CellStyle = {
   bl?: number;
   it?: number;
-  ff?: number;
+  ff?: number | string;
   fs?: number;
   fc?: string;
   ht?: number;
