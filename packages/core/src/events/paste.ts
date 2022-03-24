@@ -18,7 +18,7 @@ function pasteHandlerOfCopyPaste(ctx: Context, copyRange) {
   // ) {
   //   return;
   // }
-  let cfg = ctx.config;
+  const cfg = ctx.config;
   if (_.isNil(cfg.merge)) {
     cfg.merge = {};
   }
@@ -211,7 +211,6 @@ function pasteHandlerOfCopyPaste(ctx: Context, copyRange) {
             cfg.borderInfo.push(bd_obj);
           }
 
-      console.info(77)
           // 数据验证 复制
           if (c_dataVerification[`${c_r1 + h - mth}_${c_c1 + c - mtc}`]) {
             if (_.isNil(dataVerification)) {
@@ -266,7 +265,6 @@ function pasteHandlerOfCopyPaste(ctx: Context, copyRange) {
 
             const funcV = formula.execfunction(func, h, c, undefined, true);
 
-      console.info(88)
             if (!_.isNil(value.spl)) {
               // value.f = funcV[2];
               // value.v = funcV[1];
@@ -308,7 +306,7 @@ function pasteHandlerOfCopyPaste(ctx: Context, copyRange) {
   }
 
   // 复制范围 是否有 条件格式和数据验证
-  let cdformat = null;
+  const cdformat = null;
   /*
   if (copyRange.copyRange.length === 1) {
     const c_file = ctx.luckysheetfile[getSheetIndex(ctx, copySheetIndex)];
@@ -366,7 +364,6 @@ function pasteHandlerOfCopyPaste(ctx: Context, copyRange) {
 
   if (copyRowlChange || addr > 0 || addc > 0) {
     // cfg = rowlenByRange(d, minh, maxh, cfg);
-
     // const allParam = {
     //   cfg,
     //   RowlChange: true,
@@ -375,14 +372,12 @@ function pasteHandlerOfCopyPaste(ctx: Context, copyRange) {
     // };
     // jfrefreshgrid(d, ctx.luckysheet_select_save, allParam);
   } else {
-
     // const allParam = {
     //   cfg,
     //   cdformat,
     //   dataVerification,
     // };
     // jfrefreshgrid(d, ctx.luckysheet_select_save, allParam);
-
     // selectHightlightShow();
   }
 }
@@ -798,4 +793,50 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
       document.execCommand("insertText", false, text);
     }
   }
+}
+
+export function handlePasteByClick(ctx: Context) {
+  if (ctx.allowEdit === false) {
+    return;
+  }
+
+  const _locale = locale();
+  const local_drag = _locale.drag;
+
+  const textarea = document.querySelector("#luckysheet-copy-content");
+  // textarea.focus();
+  // textarea.select();
+
+  // 等50毫秒，keyPress事件发生了再去处理数据
+  // setTimeout(function () {
+  const data = textarea?.innerHTML;
+  if (!data) return;
+
+  if (
+    data.indexOf("luckysheet_copy_action_table") > -1 &&
+    ctx.luckysheet_copy_save.copyRange != null &&
+    ctx.luckysheet_copy_save.copyRange.length > 0
+  ) {
+    if (ctx.luckysheet_paste_iscut) {
+      ctx.luckysheet_paste_iscut = false;
+      pasteHandlerOfCutPaste(ctx.luckysheet_copy_save);
+      clearcopy(e);
+    } else {
+      pasteHandlerOfCopyPaste(ctx, ctx.luckysheet_copy_save);
+    }
+  } else if (data.indexOf("luckysheet_copy_action_image") > -1) {
+    imageCtrl.pasteImgItem();
+  } else if (triggerType != "btn") {
+    pasteHandler(data);
+  } else {
+    if (isEditMode()) {
+      alert(local_drag.pasteMustKeybordAlert);
+    } else {
+      tooltip.info(
+        local_drag.pasteMustKeybordAlertHTMLTitle,
+        local_drag.pasteMustKeybordAlertHTML
+      );
+    }
+  }
+  // }, 10);
 }

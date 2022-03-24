@@ -9,6 +9,7 @@ type RefValues = {
   scrollbarX: React.MutableRefObject<HTMLDivElement | null>;
   scrollbarY: React.MutableRefObject<HTMLDivElement | null>;
   cellArea: React.MutableRefObject<HTMLDivElement | null>;
+  workbookContainer: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 const WorkbookContext = React.createContext<{
@@ -30,6 +31,7 @@ const WorkbookContext = React.createContext<{
     scrollbarX: React.createRef<HTMLDivElement | null>(),
     scrollbarY: React.createRef<HTMLDivElement | null>(),
     cellArea: React.createRef<HTMLDivElement | null>(),
+    workbookContainer: React.createRef<HTMLDivElement | null>(),
   },
 });
 

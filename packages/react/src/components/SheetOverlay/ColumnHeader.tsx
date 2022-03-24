@@ -18,11 +18,12 @@ import produce from "immer";
 import {
   handleColSizeHandleMouseDown,
   handleColumnHeaderMouseDown,
+  handleContextMenu,
 } from "@fortune-sheet/core/src/events/mouse";
 import WorkbookContext from "../../context";
 
 const ColumnHeader: React.FC = () => {
-  const { context, setContext, refs } = useContext(WorkbookContext);
+  const { context, setContext, settings, refs } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const colChangeSizeRef = useRef<HTMLDivElement>(null);
   const [hoverLocation, setHoverLocation] = useState({
@@ -84,6 +85,22 @@ const ColumnHeader: React.FC = () => {
     [refs.cellArea, setContext]
   );
 
+  const onContextMenu = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      setContext(
+        produce((draftCtx) => {
+          handleContextMenu(
+            draftCtx,
+            settings,
+            e.nativeEvent,
+            refs.workbookContainer.current!
+          );
+        })
+      );
+    },
+    [refs.workbookContainer, setContext, settings]
+  );
+
   useEffect(() => {
     const s = context.luckysheet_select_save;
     if (_.isNil(s)) return;
@@ -122,6 +139,7 @@ const ColumnHeader: React.FC = () => {
       onMouseMove={onMouseMove}
       onMouseDown={onMouseDown}
       onMouseLeave={onMouseLeave}
+      onContextMenu={onContextMenu}
     >
       <div
         className="luckysheet-cols-change-size"

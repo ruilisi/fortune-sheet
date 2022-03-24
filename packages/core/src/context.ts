@@ -1,6 +1,6 @@
 import produce from "immer";
 import _ from "lodash";
-import { Sheet, Selection } from "./types";
+import { Sheet, Selection, Cell } from "./types";
 import { generateRandomSheetIndex, getSheetIndex } from "./utils";
 
 export type Context = {
@@ -13,6 +13,8 @@ export type Context = {
   devicePixelRatio: number;
   limitSheetNameLength: boolean;
   defaultSheetNameMaxLength?: number;
+
+  contextMenu: any;
 
   currentSheetIndex: string;
   calculateSheetIndex: string;
@@ -51,7 +53,7 @@ export type Context = {
   functionCandidates: any[];
   functionHint: string | null | undefined;
 
-  luckysheet_copy_save: {
+  luckysheet_copy_save?: {
     dataSheetIndex: string;
     copyRange: { row: number[]; column: number[] }[];
     RowlChange: boolean;
@@ -142,19 +144,7 @@ export type Context = {
   // Resources that currently need to be loaded asynchronously, especially plugins. 'Core' marks the core rendering process.
   asyncLoad: string[];
   // 默认单元格
-  defaultCell: {
-    bg: any;
-    bl: number;
-    ct: { fa: string; t: string };
-    fc: string;
-    ff: number;
-    fs: number;
-    ht: number;
-    it: number;
-    vt: number;
-    m: string | number;
-    v: string | number;
-  };
+  defaultCell: Cell;
 };
 
 function defaultContext(): Context {
@@ -167,6 +157,8 @@ function defaultContext(): Context {
     fullscreenmode: true,
     devicePixelRatio: window.devicePixelRatio,
     limitSheetNameLength: false,
+
+    contextMenu: {},
 
     currentSheetIndex: "",
     calculateSheetIndex: "",
@@ -205,7 +197,7 @@ function defaultContext(): Context {
     functionCandidates: [],
     functionHint: null,
 
-    luckysheet_copy_save: {}, // 复制粘贴
+    luckysheet_copy_save: undefined, // 复制粘贴
     luckysheet_paste_iscut: false,
 
     filterchage: true, // 筛选
@@ -291,7 +283,6 @@ function defaultContext(): Context {
     asyncLoad: ["core"],
     // 默认单元格
     defaultCell: {
-      bg: null,
       bl: 0,
       ct: { fa: "General", t: "n" },
       fc: "rgb(51, 51, 51)",

@@ -1,0 +1,64 @@
+.fortune-context-menu {
+  max-height: 100%;
+  overflow-y: auto;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  -webkit-transition: opacity 0.218s;
+  -moz-transition: opacity 0.218s;
+  -o-transition: opacity 0.218s;
+  transition: opacity 0.218s;
+  background: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  cursor: default;
+  font-size: 13px;
+  margin: 0;
+  outline: none;
+  padding: 6px 0;
+  position: absolute;
+  z-index: 1004;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.fortune-context-menu input {
+  width: 35px;
+  text-align: center;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.luckysheet-cols-menu .luckysheet-cols-menuitem {
+  position: relative;
+  color: #333;
+  cursor: pointer;
+  list-style: none;
+  margin: 0;
+  padding: 1px 6em 1px 20px;
+  white-space: nowrap;
+  padding-left: 8px;
+  vertical-align: middle;
+  padding-right: 24px;
+  user-select: none;
+}
+
+/* 右击菜单项目 hover背景色 */
+.luckysheet-cols-menu .luckysheet-cols-menuitem:hover,
+.luckysheet-cols-menu .luckysheet-cols-menuitem-hover {
+  background: #EFEFEF;
+}
+
+.luckysheet-cols-menu .luckysheet-cols-menuitem .luckysheet-cols-menuitem-content {
+  position: relative;
+  color: #333;
+  cursor: pointer;
+  list-style: none;
+  margin: 0;
+  padding: 6px 7em 6px 30px;
+  white-space: nowrap;
+  user-select: none;
+}

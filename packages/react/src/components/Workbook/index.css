@@ -5,6 +5,7 @@
   margin: 0;
   padding: 0;
   flex-direction: column;
+  font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
 }
 
 .fortune-workarea {

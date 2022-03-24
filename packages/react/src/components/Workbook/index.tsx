@@ -26,6 +26,7 @@ import WorkbookContext from "../../context";
 import Toolbar from "../Toolbar";
 import FxEditor from "../FxEditor";
 import SheetTab from "../SheetTab";
+import ContextMenu from "../ContextMenu";
 
 const Workbook: React.FC<Settings> = (props) => {
   const [context, setContext] = useState(defaultContext());
@@ -34,6 +35,7 @@ const Workbook: React.FC<Settings> = (props) => {
   const scrollbarX = useRef<HTMLDivElement>(null);
   const scrollbarY = useRef<HTMLDivElement>(null);
   const cellArea = useRef<HTMLDivElement>(null);
+  const workbookContainer = useRef<HTMLDivElement>(null);
   const globalCache = useRef<any>({});
   const mergedSettings = useMemo(() => assign(defaultSettings, props), [props]);
   const setContextValue = useCallback(
@@ -59,6 +61,7 @@ const Workbook: React.FC<Settings> = (props) => {
         scrollbarX,
         scrollbarY,
         cellArea,
+        workbookContainer,
       },
     }),
     [context, mergedSettings, setContextValue]
@@ -226,13 +229,40 @@ const Workbook: React.FC<Settings> = (props) => {
 
   return (
     <WorkbookContext.Provider value={providerValue}>
-      <div className="fortune-container" onKeyDown={onKeyDown}>
+      <div
+        className="fortune-container"
+        ref={workbookContainer}
+        onKeyDown={onKeyDown}
+      >
         <div className="fortune-workarea">
           <Toolbar />
           <FxEditor />
         </div>
         <Sheet data={sheetData} />
         <SheetTab />
+        <ContextMenu />
+        {!_.isEmpty(context.contextMenu) && (
+          <div
+            onMouseDown={() => {
+              setContextValue("contextMenu", undefined);
+            }}
+            onMouseMove={(e) => e.stopPropagation()}
+            onMouseUp={(e) => e.stopPropagation()}
+            onContextMenu={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            className="fortune-popover-backdrop"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              zIndex: 1003, // should below .fortune-context-menu
+              height: "100%",
+              width: "100%",
+            }}
+          />
+        )}
       </div>
     </WorkbookContext.Provider>
   );

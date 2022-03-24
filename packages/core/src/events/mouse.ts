@@ -123,6 +123,8 @@ export function handleCellAreaMouseDown(
   cellInput: HTMLDivElement,
   container: HTMLDivElement
 ) {
+  ctx.contextMenu = undefined;
+
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
   // TODO set MouseDown state to context
@@ -1270,6 +1272,58 @@ export function handleCellAreaDoubleClick(
 
   ctx.luckysheetCellUpdate = [row_index, col_index];
   // }
+}
+
+export function handleContextMenu(
+  ctx: Context,
+  settings: Settings,
+  e: MouseEvent,
+  workbookContainer: HTMLDivElement
+) {
+  if (!ctx.allowEdit) {
+    return;
+  }
+  const flowdata = getFlowdata(ctx);
+  if (!flowdata) return;
+
+  // if (isEditMode()) {
+  //   //非编辑模式下禁止右键功能框
+  //   return;
+  // }
+  const workbookRect = workbookContainer.getBoundingClientRect();
+
+  if ((ctx.luckysheet_select_save?.length ?? 0) === 0) {
+    return;
+  }
+
+  const { cellRightClickConfig } = settings;
+
+  // $("#luckysheet-cols-rows-data").show();
+  // $("#luckysheet-cols-rows-handleincell").show();
+  // $("#luckysheet-cols-rows-add, #luckysheet-cols-rows-shift").hide();
+
+  // $$("#luckysheet-cols-rows-data .luckysheet-menuseparator").style.display =
+  //   "block";
+  // $$(
+  //   "#luckysheet-cols-rows-handleincell .luckysheet-menuseparator"
+  // ).style.display = "block";
+
+  // 如果全部按钮都隐藏，则整个菜单容器也要隐藏
+  if (_.isEmpty(cellRightClickConfig)) {
+    return;
+  }
+
+  // relative to the workbook container
+  const x = e.pageX - workbookRect.left;
+  const y = e.pageY - workbookRect.top;
+
+  // showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
+  ctx.contextMenu = {
+    x,
+    y,
+  };
+
+  e.preventDefault();
 }
 
 function mouseRender(

@@ -16,13 +16,14 @@ import React, {
 } from "react";
 import produce from "immer";
 import {
+  handleContextMenu,
   handleRowHeaderMouseDown,
   handleRowSizeHandleMouseDown,
 } from "@fortune-sheet/core/src/events/mouse";
 import WorkbookContext from "../../context";
 
 const RowHeader: React.FC = () => {
-  const { context, setContext, refs } = useContext(WorkbookContext);
+  const { context, setContext, settings, refs } = useContext(WorkbookContext);
   const rowChangeSizeRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoverLocation, setHoverLocation] = useState({
@@ -84,6 +85,22 @@ const RowHeader: React.FC = () => {
     [refs.cellArea, setContext]
   );
 
+  const onContextMenu = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      setContext(
+        produce((draftCtx) => {
+          handleContextMenu(
+            draftCtx,
+            settings,
+            e.nativeEvent,
+            refs.workbookContainer.current!
+          );
+        })
+      );
+    },
+    [refs.workbookContainer, setContext, settings]
+  );
+
   useEffect(() => {
     const s = context.luckysheet_select_save || [];
     let rowTitleMap: Record<number, number> = {};
@@ -121,6 +138,7 @@ const RowHeader: React.FC = () => {
       onMouseMove={onMouseMove}
       onMouseDown={onMouseDown}
       onMouseLeave={onMouseLeave}
+      onContextMenu={onContextMenu}
     >
       <div
         className="luckysheet-rows-change-size"

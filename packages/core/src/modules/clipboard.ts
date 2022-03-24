@@ -1,18 +1,21 @@
 export default class clipboard {
   static writeHtml(str: string) {
     try {
-      const ele = document.createElement("div");
-      ele.setAttribute("contentEditable", "true");
-      ele.innerHTML = str;
-      ele.style.position = "fixed";
-      ele.style.height = "0";
-      ele.style.width = "0";
-      ele.style.left = "-100px";
-      document.body.append(ele);
+      let ele = document.getElementById("luckysheet-copy-content");
+      if (!ele) {
+        ele = document.createElement("div");
+        ele.setAttribute("contentEditable", "true");
+        ele.id = "luckysheet-copy-content";
+        ele.innerHTML = str;
+        ele.style.position = "fixed";
+        ele.style.height = "0";
+        ele.style.width = "0";
+        ele.style.left = "-100px";
+        document.querySelector(".fortune-container")?.append(ele);
+      }
       ele.focus();
       document.execCommand("selectAll");
       document.execCommand("copy");
-      setTimeout(() => ele.remove(), 50);
     } catch (e) {
       console.error(e);
     }

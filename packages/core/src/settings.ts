@@ -39,7 +39,7 @@ export type Settings = {
   showtoolbarConfig: string[];
   showsheetbarConfig: any;
   showstatisticBarConfig: any;
-  cellRightClickConfig: any;
+  cellRightClickConfig: string[];
   sheetRightClickConfig: any;
   imageUpdateMethodConfig: any;
 };
@@ -83,7 +83,29 @@ export const defaultSettings: Settings = {
   showtoolbarConfig: ["bold", "italic", "strike-through", "underline"], // 自定义工具栏
   showsheetbarConfig: {}, // 自定义底部sheet页
   showstatisticBarConfig: {}, // 自定义计数栏
-  cellRightClickConfig: {}, // 自定义单元格右键菜单
+  cellRightClickConfig: [
+    "copy", // 复制
+    "copyAs", // 复制为
+    "paste", // 粘贴
+    "insertRow", // 插入行
+    "insertColumn", // 插入列
+    "deleteRow", // 删除选中行
+    "deleteColumn", // 删除选中列
+    "deleteCell", // 删除单元格
+    "hideRow", // 隐藏选中行和显示选中行
+    "hideColumn", // 隐藏选中列和显示选中列
+    "rowHeight", // 行高
+    "columnWidth", // 列宽
+    "clear", // 清除内容
+    "matrix", // 矩阵操作选区
+    "sort", // 排序选区
+    "filter", // 筛选选区
+    "chart", // 图表生成
+    "image", // 插入图片
+    "link", // 插入链接
+    "data", // 数据验证
+    "cellFormat", // 设置单元格格式
+  ], // 自定义单元格右键菜单
   sheetRightClickConfig: {}, // 自定义底部sheet页右击菜单
   imageUpdateMethodConfig: {}, // 自定义图片同步方式
 };

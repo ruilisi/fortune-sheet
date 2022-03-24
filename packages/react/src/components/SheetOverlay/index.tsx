@@ -4,6 +4,7 @@ import produce from "immer";
 import {
   handleCellAreaDoubleClick,
   handleCellAreaMouseDown,
+  handleContextMenu,
   handleOverlayMouseMove,
   handleOverlayMouseUp,
 } from "@fortune-sheet/core/src/events/mouse";
@@ -31,6 +32,22 @@ const SheetOverlay: React.FC = () => {
       );
     },
     [refs.cellArea, refs.cellInput, setContext]
+  );
+
+  const cellAreaContextMenu = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      setContext(
+        produce((draftCtx) => {
+          handleContextMenu(
+            draftCtx,
+            settings,
+            e.nativeEvent,
+            refs.workbookContainer.current!
+          );
+        })
+      );
+    },
+    [refs.workbookContainer, setContext, settings]
   );
 
   const cellAreaDoubleClick = useCallback(
@@ -116,6 +133,7 @@ const SheetOverlay: React.FC = () => {
           className="fortune-cell-area"
           onMouseDown={cellAreaMouseDown}
           onDoubleClick={cellAreaDoubleClick}
+          onContextMenu={cellAreaContextMenu}
           style={{
             width: context.cellmainWidth,
             height: context.cellmainHeight,
