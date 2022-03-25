@@ -16,6 +16,7 @@ import produce from "immer";
 import _, { assign } from "lodash";
 import {
   CellWithRowAndCol,
+  GlobalCache,
   Sheet as SheetType,
 } from "@fortune-sheet/core/src/types";
 import { handleGlobalKeyDown } from "@fortune-sheet/core/src/events/keyboard";
@@ -36,7 +37,7 @@ const Workbook: React.FC<Settings> = (props) => {
   const scrollbarY = useRef<HTMLDivElement>(null);
   const cellArea = useRef<HTMLDivElement>(null);
   const workbookContainer = useRef<HTMLDivElement>(null);
-  const globalCache = useRef<any>({});
+  const globalCache = useRef<GlobalCache>({});
   const mergedSettings = useMemo(() => assign(defaultSettings, props), [props]);
   const setContextValue = useCallback(
     <K extends keyof Context>(key: K, value: Context[K]) => {
@@ -187,21 +188,19 @@ const Workbook: React.FC<Settings> = (props) => {
     mergedSettings.defaultSheetNameMaxLength,
   ]);
 
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      setContext(
-        produce((draftCtx) => {
-          handleGlobalKeyDown(
-            draftCtx,
-            providerValue.refs.cellInput.current!,
-            providerValue.refs.fxInput.current!,
-            e.nativeEvent
-          );
-        })
-      );
-    },
-    [providerValue.refs.cellInput, providerValue.refs.fxInput]
-  );
+  const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    setContext(
+      produce((draftCtx) => {
+        handleGlobalKeyDown(
+          draftCtx,
+          cellInput.current!,
+          fxInput.current!,
+          e.nativeEvent,
+          globalCache.current!
+        );
+      })
+    );
+  }, []);
 
   const onPaste = useCallback((e: ClipboardEvent) => {
     setContext(

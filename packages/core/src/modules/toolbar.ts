@@ -253,7 +253,7 @@ export function handleUnderline(ctx: Context, cellInput: HTMLDivElement) {
 const handlerMap: Record<string, ToolbarItemClickHandler> = {
   bold: handleBold,
   italic: handleItalic,
-  "strike-though": handleStrikeThrough,
+  "strike-through": handleStrikeThrough,
   underline: handleUnderline,
 };
 

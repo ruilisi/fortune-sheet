@@ -1,9 +1,10 @@
 import React from "react";
 import defaultContext, { Context } from "@fortune-sheet/core/src/context";
 import { defaultSettings, Settings } from "@fortune-sheet/core/src/settings";
+import { GlobalCache } from "@fortune-sheet/core/src/types";
 
 type RefValues = {
-  globalCache: Record<string, any>;
+  globalCache: GlobalCache;
   cellInput: React.MutableRefObject<HTMLDivElement | null>;
   fxInput: React.MutableRefObject<HTMLDivElement | null>;
   scrollbarX: React.MutableRefObject<HTMLDivElement | null>;

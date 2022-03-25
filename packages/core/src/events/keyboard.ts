@@ -5,6 +5,7 @@ import { handleFormulaInput } from "../modules/formula";
 import { copy, moveHighlightCell, selectionCache } from "../modules/selection";
 import { handleBold } from "../modules/toolbar";
 import { hasPartMC } from "../modules/validation";
+import { GlobalCache } from "../types";
 import { getNowDateTime } from "../utils";
 import { handleCopy } from "./copy";
 
@@ -418,7 +419,8 @@ export function handleGlobalKeyDown(
   ctx: Context,
   cellInput: HTMLDivElement,
   fxInput: HTMLDivElement,
-  e: KeyboardEvent
+  e: KeyboardEvent,
+  cache: GlobalCache
 ) {
   const kcode = e.keyCode;
   const kstr = e.key;
@@ -546,14 +548,15 @@ export function handleGlobalKeyDown(
     ) {
       handleShiftWithArrowKey(ctx, e);
     } else if (kstr === "Escape") {
-      if (menuButton.luckysheetPaintModelOn) {
-        menuButton.cancelPaintModel();
-      } else {
-        cleargridelement(event);
-        e.preventDefault();
-      }
+      ctx.contextMenu = undefined;
+      // if (menuButton.luckysheetPaintModelOn) {
+      //   menuButton.cancelPaintModel();
+      // } else {
+      //   cleargridelement(event);
+      //   e.preventDefault();
+      // }
 
-      selectHightlightShow();
+      // selectHightlightShow();
     } else if (kstr === "Delete" || kstr === "Backspace") {
       if (imageCtrl.currentImgId != null) {
         imageCtrl.removeImgItem();
@@ -604,6 +607,7 @@ export function handleGlobalKeyDown(
         const col_index = last.column_focus;
 
         ctx.luckysheetCellUpdate = [row_index, col_index];
+        cache.overwriteCell = true;
 
         // if (kstr === "Backspace") {
         //   $("#luckysheet-rich-text-editor").html("<br/>");

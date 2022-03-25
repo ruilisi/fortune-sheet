@@ -1737,125 +1737,125 @@ function mouseRender(
     // } else if (formula.rangedrag_column_start) {
     //   formula.rangedrag_column(event);
   } else if (ctx.luckysheet_rows_selected_status) {
-    const mouse = mouseposition(event.pageX, event.pageY);
-    const y = mouse[1] + $("#luckysheet-rows-h").scrollTop();
-    if (y < 0) {
-      return false;
-    }
+    // const mouse = mouseposition(event.pageX, event.pageY);
+    // const y = mouse[1] + $("#luckysheet-rows-h").scrollTop();
+    // if (y < 0) {
+    //   return false;
+    // }
 
-    const row_location = rowLocation(y);
-    const row = row_location[1];
-    const row_pre = row_location[0];
-    const row_index = row_location[2];
-    const col_index = ctx.visibledatacolumn.length - 1;
-    const col = ctx.visibledatacolumn[col_index];
-    const col_pre = 0;
+    // const row_location = rowLocation(y);
+    // const row = row_location[1];
+    // const row_pre = row_location[0];
+    // const row_index = row_location[2];
+    // const col_index = ctx.visibledatacolumn.length - 1;
+    // const col = ctx.visibledatacolumn[col_index];
+    // const col_pre = 0;
 
-    const last = $.extend(
-      true,
-      {},
-      ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1]
-    );
+    // const last = $.extend(
+    //   true,
+    //   {},
+    //   ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1]
+    // );
 
-    let top = 0;
-    let height = 0;
-    let rowseleted = [];
-    if (last.top > row_pre) {
-      top = row_pre;
-      height = last.top + last.height - row_pre;
+    // let top = 0;
+    // let height = 0;
+    // let rowseleted = [];
+    // if (last.top > row_pre) {
+    //   top = row_pre;
+    //   height = last.top + last.height - row_pre;
 
-      if (last.row[1] > last.row_focus) {
-        last.row[1] = last.row_focus;
-      }
+    //   if (last.row[1] > last.row_focus) {
+    //     last.row[1] = last.row_focus;
+    //   }
 
-      rowseleted = [row_index, last.row[1]];
-    } else if (last.top == row_pre) {
-      top = row_pre;
-      height = last.top + last.height - row_pre;
-      rowseleted = [row_index, last.row[0]];
-    } else {
-      top = last.top;
-      height = row - last.top - 1;
+    //   rowseleted = [row_index, last.row[1]];
+    // } else if (last.top == row_pre) {
+    //   top = row_pre;
+    //   height = last.top + last.height - row_pre;
+    //   rowseleted = [row_index, last.row[0]];
+    // } else {
+    //   top = last.top;
+    //   height = row - last.top - 1;
 
-      if (last.row[0] < last.row_focus) {
-        last.row[0] = last.row_focus;
-      }
+    //   if (last.row[0] < last.row_focus) {
+    //     last.row[0] = last.row_focus;
+    //   }
 
-      rowseleted = [last.row[0], row_index];
-    }
+    //   rowseleted = [last.row[0], row_index];
+    // }
 
-    last.row = rowseleted;
+    // last.row = rowseleted;
 
-    last.top_move = top;
-    last.height_move = height;
+    // last.top_move = top;
+    // last.height_move = height;
 
-    ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1] = last;
+    // ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1] = last;
 
-    selectHightlightShow();
-    clearTimeout(ctx.countfuncTimeout);
-    ctx.countfuncTimeout = setTimeout(function () {
-      countfunc();
-    }, 500);
+    // selectHightlightShow();
+    // clearTimeout(ctx.countfuncTimeout);
+    // ctx.countfuncTimeout = setTimeout(function () {
+    //   countfunc();
+    // }, 500);
   } else if (ctx.luckysheet_cols_selected_status) {
-    const mouse = mouseposition(event.pageX, event.pageY);
-    const x = mouse[0] + $("#luckysheet-cols-h-c").scrollLeft();
-    if (x < 0) {
-      return false;
-    }
+    // const mouse = mouseposition(event.pageX, event.pageY);
+    // const x = mouse[0] + $("#luckysheet-cols-h-c").scrollLeft();
+    // if (x < 0) {
+    //   return false;
+    // }
 
-    const row_index = ctx.visibledatarow.length - 1;
-    const row = ctx.visibledatarow[row_index];
-    const row_pre = 0;
-    const col_location = colLocation(x);
-    const col = col_location[1];
-    const col_pre = col_location[0];
-    const col_index = col_location[2];
+    // const row_index = ctx.visibledatarow.length - 1;
+    // const row = ctx.visibledatarow[row_index];
+    // const row_pre = 0;
+    // const col_location = colLocation(x);
+    // const col = col_location[1];
+    // const col_pre = col_location[0];
+    // const col_index = col_location[2];
 
-    const last = $.extend(
-      true,
-      {},
-      ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1]
-    );
+    // const last = $.extend(
+    //   true,
+    //   {},
+    //   ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1]
+    // );
 
-    let left = 0;
-    let width = 0;
-    let columnseleted = [];
-    if (last.left > col_pre) {
-      left = col_pre;
-      width = last.left + last.width - col_pre;
+    // let left = 0;
+    // let width = 0;
+    // let columnseleted = [];
+    // if (last.left > col_pre) {
+    //   left = col_pre;
+    //   width = last.left + last.width - col_pre;
 
-      if (last.column[1] > last.column_focus) {
-        last.column[1] = last.column_focus;
-      }
+    //   if (last.column[1] > last.column_focus) {
+    //     last.column[1] = last.column_focus;
+    //   }
 
-      columnseleted = [col_index, last.column[1]];
-    } else if (last.left == col_pre) {
-      left = col_pre;
-      width = last.left + last.width - col_pre;
-      columnseleted = [col_index, last.column[0]];
-    } else {
-      left = last.left;
-      width = col - last.left - 1;
+    //   columnseleted = [col_index, last.column[1]];
+    // } else if (last.left == col_pre) {
+    //   left = col_pre;
+    //   width = last.left + last.width - col_pre;
+    //   columnseleted = [col_index, last.column[0]];
+    // } else {
+    //   left = last.left;
+    //   width = col - last.left - 1;
 
-      if (last.column[0] < last.column_focus) {
-        last.column[0] = last.column_focus;
-      }
+    //   if (last.column[0] < last.column_focus) {
+    //     last.column[0] = last.column_focus;
+    //   }
 
-      columnseleted = [last.column[0], col_index];
-    }
+    //   columnseleted = [last.column[0], col_index];
+    // }
 
-    last.column = columnseleted;
+    // last.column = columnseleted;
 
-    last.left_move = left;
-    last.width_move = width;
+    // last.left_move = left;
+    // last.width_move = width;
 
-    ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1] = last;
+    // ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1] = last;
 
-    selectHightlightShow();
-    clearTimeout(ctx.countfuncTimeout);
-    ctx.countfuncTimeout = setTimeout(function () {
-      countfunc();
-    }, 500);
+    // selectHightlightShow();
+    // clearTimeout(ctx.countfuncTimeout);
+    // ctx.countfuncTimeout = setTimeout(function () {
+    //   countfunc();
+    // }, 500);
   } else if (ctx.luckysheet_cell_selected_move) {
     const mouse = mouseposition(event.pageX, event.pageY);
 

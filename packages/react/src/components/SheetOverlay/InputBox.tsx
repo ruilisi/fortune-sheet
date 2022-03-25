@@ -29,16 +29,14 @@ const InputBox: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const inputRef = useRef<HTMLDivElement>(null);
   const lastKeyDownEventRef = useRef<React.KeyboardEvent<HTMLDivElement>>();
+  const firstSelection = context.luckysheet_select_save?.[0];
 
   const inputBoxStyle = useMemo(() => {
-    if (
-      (context.luckysheet_select_save?.length ?? 0) > 0 &&
-      context.luckysheetCellUpdate.length > 0
-    ) {
+    if (firstSelection && context.luckysheetCellUpdate.length > 0) {
       return getStyleByCell(
         getFlowdata(context),
-        context.luckysheet_select_save![0].row_focus!,
-        context.luckysheet_select_save![0].column_focus!
+        firstSelection.row_focus!,
+        firstSelection.column_focus!
       );
     }
     return {};
@@ -47,36 +45,35 @@ const InputBox: React.FC = () => {
     context.luckysheetfile,
     context.currentSheetIndex,
     context.luckysheetCellUpdate,
-    context.luckysheet_select_save,
+    firstSelection,
   ]);
 
   useEffect(() => {
-    if (
-      (context.luckysheet_select_save?.length ?? 0) > 0 &&
-      context.luckysheetCellUpdate.length > 0
-    ) {
+    if (firstSelection && context.luckysheetCellUpdate.length > 0) {
       const flowdata = getFlowdata(context);
-      const row_index = context.luckysheet_select_save![0].row_focus!;
-      const col_index = context.luckysheet_select_save![0].column_focus!;
+      const row_index = firstSelection.row_focus!;
+      const col_index = firstSelection.column_focus!;
       const cell = flowdata?.[row_index]?.[col_index];
       if (!cell) {
         return;
       }
       let value = "";
-      if (isInlineStringCell(cell)) {
-        value = getInlineStringHTML(row_index, col_index, flowdata);
-      } else if (cell.f) {
-        value = getCellValue(row_index, col_index, flowdata, "f");
-      } else {
-        value =
-          getCellValue(row_index, col_index, flowdata, "m") ||
-          getCellValue(row_index, col_index, flowdata, "v");
-        // if (Number(cell.qp) === "1") {
-        //   value = value ? "" + value : value;
-        // }
+      if (!refs.globalCache.overwriteCell) {
+        if (isInlineStringCell(cell)) {
+          value = getInlineStringHTML(row_index, col_index, flowdata);
+        } else if (cell.f) {
+          value = getCellValue(row_index, col_index, flowdata, "f");
+        } else {
+          value =
+            getCellValue(row_index, col_index, flowdata, "m") ||
+            getCellValue(row_index, col_index, flowdata, "v");
+          // if (Number(cell.qp) === "1") {
+          //   value = value ? "" + value : value;
+          // }
+        }
       }
+      refs.globalCache.overwriteCell = false;
       inputRef.current!.innerHTML = escapeScriptTag(value);
-      // setInputHTML();
       if (!refs.globalCache.doNotFocus) {
         setTimeout(() => {
           moveToEnd(inputRef.current!);
@@ -89,7 +86,7 @@ const InputBox: React.FC = () => {
     context.luckysheetCellUpdate,
     context.luckysheetfile,
     context.currentSheetIndex,
-    context.luckysheet_select_save,
+    firstSelection,
   ]);
 
   useEffect(() => {
@@ -97,7 +94,6 @@ const InputBox: React.FC = () => {
       if (inputRef.current) {
         inputRef.current.innerHTML = "";
       }
-      // setInputHTML("");
     }
   }, [context.luckysheetCellUpdate]);
 
@@ -248,30 +244,33 @@ const InputBox: React.FC = () => {
     [refs.cellInput, refs.fxInput, setContext]
   );
 
-  if (
-    !(
-      (context.luckysheet_select_save?.length ?? 0) > 0 &&
-      context.luckysheetCellUpdate.length > 0
-    )
-  ) {
-    return null;
-  }
-
   return (
     <div
       className="luckysheet-input-box"
-      style={{
-        left: context.luckysheet_select_save![0].left_move,
-        top: context.luckysheet_select_save![0].top_move,
-      }}
+      style={
+        firstSelection
+          ? {
+              left: firstSelection.left_move,
+              top: firstSelection.top_move,
+              display:
+                firstSelection && context.luckysheetCellUpdate.length > 0
+                  ? "block"
+                  : "none",
+            }
+          : { display: "none" }
+      }
     >
       <div
         className="luckysheet-input-box-inner"
-        style={{
-          minWidth: context.luckysheet_select_save![0].width_move,
-          height: context.luckysheet_select_save![0].height_move,
-          ...inputBoxStyle,
-        }}
+        style={
+          firstSelection
+            ? {
+                minWidth: firstSelection.width_move,
+                height: firstSelection.height_move,
+                ...inputBoxStyle,
+              }
+            : {}
+        }
       >
         <ContentEditable
           innerRef={(e) => {
@@ -287,12 +286,12 @@ const InputBox: React.FC = () => {
       </div>
       <FormulaSearch
         style={{
-          top: (context.luckysheet_select_save?.[0]?.height_move || 0) + 4,
+          top: (firstSelection?.height_move || 0) + 4,
         }}
       />
       <FormulaHint
         style={{
-          top: (context.luckysheet_select_save?.[0]?.height_move || 0) + 4,
+          top: (firstSelection?.height_move || 0) + 4,
         }}
       />
     </div>

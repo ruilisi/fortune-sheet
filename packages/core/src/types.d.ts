@@ -79,4 +79,9 @@ export type Sheet = {
   showGridLines?: boolean | number;
 };
 
+export type GlobalCache = {
+  overwriteCell?: boolean;
+  doNotFocus?: boolean;
+};
+
 export type Range = { row: number[]; column: number[] }[];
