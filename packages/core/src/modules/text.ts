@@ -256,7 +256,7 @@ export function drawLineInfo(
     underLine = wordGroup.style.un;
   }
 
-  if (cancelLine !== "0") {
+  if (Number(cancelLine) !== 0) {
     wordGroup.cancelLine = {};
     wordGroup.cancelLine.startX = left;
     wordGroup.cancelLine.startY = top - asc / 2 + 1;
@@ -267,9 +267,10 @@ export function drawLineInfo(
     wordGroup.cancelLine.fs = fs;
   }
 
-  if (underLine !== "0") {
+  const nUnderline = Number(underLine);
+  if (nUnderline !== 0) {
     wordGroup.underLine = [];
-    if (underLine === "1" || underLine === "2") {
+    if (nUnderline === 1 || nUnderline === 2) {
       const item: any = {};
       item.startX = left;
       item.startY = top + 3;
@@ -282,7 +283,7 @@ export function drawLineInfo(
       wordGroup.underLine.push(item);
     }
 
-    if (underLine === "2") {
+    if (nUnderline === 2) {
       const item: any = {};
       item.startX = left;
       item.startY = top + desc;
@@ -295,7 +296,7 @@ export function drawLineInfo(
       wordGroup.underLine.push(item);
     }
 
-    if (underLine === "3" || underLine === "4") {
+    if (nUnderline === 3 || nUnderline === 4) {
       const item: any = {};
       item.startX = left;
       item.startY = top + desc;
@@ -308,7 +309,7 @@ export function drawLineInfo(
       wordGroup.underLine.push(item);
     }
 
-    if (underLine === "4") {
+    if (nUnderline === 4) {
       const item: any = {};
       item.startX = left;
       item.startY = top + desc + 2;
