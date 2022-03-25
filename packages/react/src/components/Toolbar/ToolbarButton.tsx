@@ -1,46 +1,23 @@
 import React, { CSSProperties } from "react";
+import SVGIcon from "../SVGIcon";
 
 type Props = {
   tooltip: string;
-  iconClassName: string;
+  iconId: string;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 };
 
-const ToolbarButton: React.FC<Props> = ({
-  tooltip,
-  onClick,
-  iconClassName,
-}) => {
+const ToolbarButton: React.FC<Props> = ({ tooltip, onClick, iconId }) => {
   const style: CSSProperties = { userSelect: "none" };
   return (
     <div
-      className="luckysheet-toolbar-button luckysheet-inline-block"
+      className="luckysheet-toolbar-button"
       onClick={onClick}
       data-tips={tooltip}
-      id="luckysheet-icon-paintformat"
       role="button"
       style={style}
     >
-      <div
-        className="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-        style={style}
-      >
-        <div
-          className="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-          style={style}
-        >
-          <div
-            className="luckysheet-icon luckysheet-inline-block "
-            style={style}
-          >
-            <div
-              aria-hidden="true"
-              className={`luckysheet-icon-img-container luckysheet-icon-img iconfont ${iconClassName}`}
-              style={style}
-            />
-          </div>
-        </div>
-      </div>
+      <SVGIcon name={iconId} />
     </div>
   );
 };

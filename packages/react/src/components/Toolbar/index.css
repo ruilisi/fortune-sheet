@@ -1,3 +1,14 @@
+.fortune-toolbar {
+  display: flex;
+  flex-direction: row;
+  background: #fafafc;
+  position: relative;
+  padding: 5px 0px 3px 15px;
+  border-bottom: 1px solid #d4d4d4;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
 .luckysheet-toolbar-left-theme {
   width: 15px;
   /* background: #0188fb;  */ /* 工具栏左边的蓝色背景 */
@@ -253,35 +264,27 @@
 /*button*/
 .luckysheet-toolbar-button,
 .luckysheet-toolbar-menu-button {
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
-  border-radius: 2px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
   background: 0;
-  border: 1px solid transparent;
   outline: none;
   padding: 0;
   list-style: none;
-  font-size: 11px;
-  /* font-weight: bold; */
   text-decoration: none;
-  vertical-align: middle;
-  cursor: default;
-
-  /* margin: 3px -3px 0px 2px; */
-  height: 26px;
-  line-height: 26px;
-  /* color: rgba(0, 0, 0, .7); */
-  color: #333;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  margin: 2px 4px;
 }
 
 .luckysheet-toolbar-button:hover,
 .luckysheet-toolbar-menu-button:hover,
 .luckysheet-toolbar-button-hover {
-  border: 1px solid transparent;
   background-color: rgba(0, 0, 0, 0.06);
   background-image: none;
   box-shadow: none;
@@ -303,7 +306,6 @@
 
 .luckysheet-toolbar-button:active,
 .luckysheet-toolbar-menu-button:active {
-  border: 1px solid transparent;
   background-color: rgba(0, 0, 0, 0.12);
   background-image: none;
   box-shadow: none;

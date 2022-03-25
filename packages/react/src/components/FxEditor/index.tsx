@@ -16,6 +16,7 @@ import { moveHighlightCell } from "@fortune-sheet/core/src/modules/selection";
 import _ from "lodash";
 import { rangeHightlightselected } from "@fortune-sheet/core/src/modules/formula";
 import WorkbookContext from "../../context";
+import SVGIcon from "../SVGIcon";
 
 const FxEditor: React.FC = () => {
   const [fxInputHTML, setFxInputHTML] = useState<string>("");
@@ -214,7 +215,7 @@ const FxEditor: React.FC = () => {
   );
 
   return (
-    <div id="luckysheet-wa-calculate" className="luckysheet-wa-calculate">
+    <div className="fortune-fx-editor">
       <div
         className="luckysheet-wa-calculate-size"
         id="luckysheet-wa-calculate-size"
@@ -236,65 +237,23 @@ const FxEditor: React.FC = () => {
           <i className="fa fa-caret-down" aria-hidden="true" />
         </div>
       </div>
-      <div
-        id="luckysheet-wa-functionbox-cancel"
-        className="luckysheet-wa-functionbox"
-      >
-        <span>
-          <i
-            className="iconfont luckysheet-iconfont-qingchu"
-            aria-hidden="true"
-          />
-        </span>
+      <div className="fortune-fx-icon">
+        <SVGIcon name="fx" width={18} height={18} />
       </div>
-      <div
-        id="luckysheet-wa-functionbox-confirm"
-        className="luckysheet-wa-functionbox"
-      >
-        <span>
-          <i
-            className="iconfont luckysheet-iconfont-yunhang"
-            aria-hidden="true"
-          />
-        </span>
-      </div>
-      <div
-        id="luckysheet-wa-functionbox-fx"
-        className="luckysheet-wa-functionbox"
-      >
-        <span>
-          <i
-            className="iconfont luckysheet-iconfont-hanshu"
-            aria-hidden="true"
-            style={{ color: "#333" }}
-          />
-        </span>
-      </div>
-      <div
-        id="luckysheet-functionbox-container"
-        className="luckysheet-mousedown-cancel"
-      >
-        <div className="luckysheet-mousedown-cancel" dir="ltr">
-          <div
-            spellCheck="false"
-            aria-hidden="false"
-            id="luckysheet-functionbox"
-          >
-            <div
-              ref={refs.fxInput}
-              id="luckysheet-functionbox-cell"
-              onFocus={onFocus}
-              onKeyDown={onKeyDown}
-              className="luckysheet-functionbox-cell-input luckysheet-mousedown-cancel"
-              tabIndex={0}
-              contentEditable="true"
-              dir="ltr"
-              aria-autocomplete="list"
-              aria-label="D4"
-              dangerouslySetInnerHTML={{ __html: fxInputHTML }}
-            />
-          </div>
-        </div>
+      <div className="fortune-fx-input-container">
+        <div
+          ref={refs.fxInput}
+          id="luckysheet-functionbox-cell"
+          onFocus={onFocus}
+          onKeyDown={onKeyDown}
+          className="luckysheet-functionbox-cell-input luckysheet-mousedown-cancel"
+          tabIndex={0}
+          contentEditable="true"
+          dir="ltr"
+          aria-autocomplete="list"
+          aria-label="D4"
+          dangerouslySetInnerHTML={{ __html: fxInputHTML }}
+        />
       </div>
     </div>
   );

@@ -28,6 +28,7 @@ import Toolbar from "../Toolbar";
 import FxEditor from "../FxEditor";
 import SheetTab from "../SheetTab";
 import ContextMenu from "../ContextMenu";
+import SVGDefines from "../SVGDefines";
 
 const Workbook: React.FC<Settings> = (props) => {
   const [context, setContext] = useState(defaultContext());
@@ -233,6 +234,7 @@ const Workbook: React.FC<Settings> = (props) => {
         ref={workbookContainer}
         onKeyDown={onKeyDown}
       >
+        <SVGDefines />
         <div className="fortune-workarea">
           <Toolbar />
           <FxEditor />

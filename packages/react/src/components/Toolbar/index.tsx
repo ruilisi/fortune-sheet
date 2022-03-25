@@ -13,7 +13,7 @@ const Toolbar: React.FC = () => {
     (name: string) => {
       return (
         <ToolbarButton
-          iconClassName={name}
+          iconId={name}
           tooltip={name}
           key={name}
           onClick={() =>
