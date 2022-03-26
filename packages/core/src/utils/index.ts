@@ -1,9 +1,38 @@
 import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import { Context } from "../context";
+import locale from "../locale";
+import { Sheet } from "../types";
 
 export function generateRandomSheetIndex() {
   return uuidv4();
+}
+
+export function generateRandomSheetName(file: Sheet[], isPivotTable: boolean) {
+  let index = file.length;
+
+  const locale_pivotTable = locale().pivotTable;
+  const { title } = locale_pivotTable;
+
+  for (let i = 0; i < file.length; i += 1) {
+    if (
+      file[i].name.indexOf("Sheet") > -1 ||
+      file[i].name.indexOf(title) > -1
+    ) {
+      const suffix = parseFloat(
+        file[i].name.replace("Sheet", "").replace(title, "")
+      );
+
+      if (!Number.isNaN(suffix) && Math.ceil(suffix) > index) {
+        index = Math.ceil(suffix);
+      }
+    }
+  }
+
+  if (isPivotTable) {
+    return title + (index + 1);
+  }
+  return `Sheet${index + 1}`;
 }
 
 // 颜色 rgb转16进制

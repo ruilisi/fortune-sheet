@@ -61,10 +61,11 @@ export type Selection = {
 export type Sheet = {
   name: string;
   config?: any;
+  order?: number;
   data?: CellMatrix;
   celldata?: CellWithRowAndCol[];
   index: string;
-  zoomRatio: number;
+  zoomRatio?: number;
   column?: number;
   row?: number;
   status?: number;
@@ -77,6 +78,8 @@ export type Sheet = {
   defaultRowHeight?: number;
   defaultColWidth?: number;
   showGridLines?: boolean | number;
+  pivotTable?: any;
+  isPivotTable?: boolean;
 };
 
 export type GlobalCache = {

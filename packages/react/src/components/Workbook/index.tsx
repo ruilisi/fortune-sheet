@@ -72,7 +72,9 @@ const Workbook: React.FC<Settings> = (props) => {
   useEffect(() => {
     setContext(
       produce((draftCtx) => {
-        draftCtx.luckysheetfile = mergedSettings.data;
+        if (_.isEmpty(draftCtx.luckysheetfile)) {
+          draftCtx.luckysheetfile = mergedSettings.data;
+        }
         draftCtx.defaultcolumnNum = mergedSettings.column;
         draftCtx.defaultrowNum = mergedSettings.row;
         draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
@@ -89,33 +91,29 @@ const Workbook: React.FC<Settings> = (props) => {
         const sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
         if (_.isNil(sheetIdx)) return;
 
-        const sheet = mergedSettings.data?.[sheetIdx];
+        const sheet = draftCtx.luckysheetfile?.[sheetIdx];
         if (!sheet) return;
 
         const cellData = sheet.celldata;
         let { data } = sheet;
         // expand cell data
-        if (_.isEmpty(data) && !_.isEmpty(cellData)) {
+        if (_.isEmpty(data)) {
           const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
           const lastCol = _.maxBy(cellData, "c");
-          if (lastRow && lastCol) {
-            const expandedData: SheetType["data"] = _.times(lastRow.r + 1, () =>
-              _.times(lastCol.c + 1, () => null)
+          const lastRowNum = lastRow?.r || draftCtx.defaultrowNum;
+          const lastColNum = lastCol?.c || draftCtx.defaultcolumnNum;
+          if (lastRowNum && lastColNum) {
+            const expandedData: SheetType["data"] = _.times(
+              lastRowNum + 1,
+              () => _.times(lastColNum + 1, () => null)
             );
             cellData?.forEach((d) => {
               // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
               expandedData[d.r][d.c] = d.v;
             });
-            draftCtx.luckysheetfile = produce(
-              mergedSettings.data,
-              (draftData) => {
-                draftData[sheetIdx].data = expandedData;
-              }
-            );
+            sheet.data = expandedData;
             data = expandedData;
           }
-        } else {
-          draftCtx.luckysheetfile = mergedSettings.data;
         }
 
         draftCtx.luckysheet_select_save = sheet.luckysheet_select_save;

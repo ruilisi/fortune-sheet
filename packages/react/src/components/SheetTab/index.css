@@ -181,3 +181,9 @@
   /* border-color: #aaa; */
   color: #222;
 }
+
+.fortune-sheettab-button {
+  display: flex;
+  align-items: center;
+  margin: 0 8px;
+}

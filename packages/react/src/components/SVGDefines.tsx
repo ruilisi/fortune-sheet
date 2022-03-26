@@ -2152,7 +2152,7 @@ const SVGDefines: React.FC = () => (
       <symbol fill="none" viewBox="0 0 16 16" id="plus">
         <path
           d="M8 1.715v12.571M1.714 8h12.572"
-          stroke="#5383FE"
+          stroke="#666"
           strokeWidth="1.714"
         />
       </symbol>
