@@ -69,16 +69,41 @@
   z-index: 1002;
 }
 
+.fortune-toolbar-select,
 .fortune-toolbar-color-picker {
-  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
   padding: 10px;
   border-radius: 6px;
   background: white;
 }
 
+.fortune-toolbar-select {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.fortune-toolbar-combo-button {
+  font-size: 12px;
+}
+
+.fortune-toolbar-select-option {
+  font-size: 12px;
+  min-width: 60px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.fortune-toolbar-select-option:hover {
+  background: #efefef;
+}
+
 .fortune-toolbar-color-picker-row {
   display: flex;
   flex-direction: row;
+}
+
+.fortune-toolbar-combo-text {
+  margin: 0 4px;
 }
 
 .fortune-toolbar-color-picker-item {

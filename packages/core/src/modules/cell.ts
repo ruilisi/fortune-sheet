@@ -1343,7 +1343,7 @@ export function getQKBorder(width: string, type: string, color: string) {
  * @param cfg 配置
  * @returns 计算后的配置
  */
-function rowlenByRange(
+export function rowlenByRange(
   ctx: Context,
   d: CellMatrix,
   r1: number,

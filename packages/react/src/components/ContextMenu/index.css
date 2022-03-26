@@ -1,15 +1,8 @@
 .fortune-context-menu {
   max-height: 100%;
   overflow-y: auto;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  -webkit-transition: opacity 0.218s;
-  -moz-transition: opacity 0.218s;
-  -o-transition: opacity 0.218s;
+  border-radius: 4px;
+  box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.15);
   transition: opacity 0.218s;
   background: #fff;
   border: 1px solid #ccc;

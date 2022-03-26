@@ -1164,7 +1164,7 @@ const SVGDefines: React.FC = () => (
           strokeWidth="1.33"
         />
       </symbol>
-      <symbol viewBox="0 0 24 24" fill="none" id="erase">
+      <symbol viewBox="0 0 24 24" fill="none" id="clear-format">
         <line
           x1="8"
           y1="18.25"
@@ -1895,7 +1895,7 @@ const SVGDefines: React.FC = () => (
           fill="#525C6F"
         />
       </symbol>
-      <symbol viewBox="0 0 24 24" fill="none" id="merge_cell">
+      <symbol viewBox="0 0 24 24" fill="none" id="merge-cell">
         <path
           d="M15.5 14.9998L12 11.9996L15.5 8.99982V14.9998Z"
           fill="#525C6F"

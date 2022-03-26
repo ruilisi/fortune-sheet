@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { Cell, CellMatrix } from "../types";
-import { isAllSelectedCellsInStatus } from "./cell";
+import { isAllSelectedCellsInStatus, rowlenByRange } from "./cell";
 import { is_date, update } from "./format";
 import {
   inlineStyleAffectAttribute,
@@ -204,9 +204,9 @@ function updateFormat(
 
     updateFormatCell(ctx, d, attr, foucsStatus, row_st, row_ed, col_st, col_ed);
 
-    if (attr === "tb" || attr === "tr" || attr === "fs") {
-      cfg = rowlenByRange(d, row_st, row_ed, cfg);
-    }
+    // if (attr === "tb" || attr === "tr" || attr === "fs") {
+    //   cfg = rowlenByRange(ctx, d, row_st, row_ed, cfg);
+    // }
   });
 
   //   let allParam = {};
@@ -220,11 +220,7 @@ function updateFormat(
   //   jfrefreshgrid(d, ctx.luckysheet_select_save, allParam, false);
 }
 
-function handleToggleAttr(
-  ctx: Context,
-  cellInput: HTMLDivElement,
-  attr: keyof Cell
-) {
+function toggleAttr(ctx: Context, cellInput: HTMLDivElement, attr: keyof Cell) {
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
 
@@ -234,20 +230,32 @@ function handleToggleAttr(
   updateFormat(ctx, cellInput, flowdata, attr, foucsStatus);
 }
 
+function setAttr(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  attr: keyof Cell,
+  value: any
+) {
+  const flowdata = getFlowdata(ctx);
+  if (!flowdata) return;
+
+  updateFormat(ctx, cellInput, flowdata, attr, value);
+}
+
 export function handleBold(ctx: Context, cellInput: HTMLDivElement) {
-  handleToggleAttr(ctx, cellInput, "bl");
+  toggleAttr(ctx, cellInput, "bl");
 }
 
 export function handleItalic(ctx: Context, cellInput: HTMLDivElement) {
-  handleToggleAttr(ctx, cellInput, "it");
+  toggleAttr(ctx, cellInput, "it");
 }
 
 export function handleStrikeThrough(ctx: Context, cellInput: HTMLDivElement) {
-  handleToggleAttr(ctx, cellInput, "cl");
+  toggleAttr(ctx, cellInput, "cl");
 }
 
 export function handleUnderline(ctx: Context, cellInput: HTMLDivElement) {
-  handleToggleAttr(ctx, cellInput, "un");
+  toggleAttr(ctx, cellInput, "un");
 }
 
 export function handleTextColor(
@@ -255,10 +263,7 @@ export function handleTextColor(
   cellInput: HTMLDivElement,
   color: string
 ) {
-  const flowdata = getFlowdata(ctx);
-  if (!flowdata) return;
-
-  updateFormat(ctx, cellInput, flowdata, "fc", color);
+  setAttr(ctx, cellInput, "fc", color);
 }
 
 export function handleTextBackground(
@@ -266,10 +271,15 @@ export function handleTextBackground(
   cellInput: HTMLDivElement,
   color: string
 ) {
-  const flowdata = getFlowdata(ctx);
-  if (!flowdata) return;
+  setAttr(ctx, cellInput, "bg", color);
+}
 
-  updateFormat(ctx, cellInput, flowdata, "bg", color);
+export function handleTextSize(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  size: number
+) {
+  setAttr(ctx, cellInput, "fs", size);
 }
 
 const handlerMap: Record<string, ToolbarItemClickHandler> = {

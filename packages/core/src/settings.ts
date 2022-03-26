@@ -81,6 +81,11 @@ export const defaultSettings: Settings = {
   defaultSheetNameMaxLength: 31, // 默认工作表名称的最大长度
   sheetFormulaBar: true, // 是否显示公式栏
   showtoolbarConfig: [
+    "clear-format",
+    "|",
+    "format",
+    "text-size",
+    "|",
     "bold",
     "italic",
     "strike-through",
@@ -88,8 +93,15 @@ export const defaultSettings: Settings = {
     "|",
     "text-color",
     "text-background",
+    "border-all",
+    "merge-cell",
+    "|",
     "align-left",
+    "align-center",
+    "align-right",
+    "align-top",
     "align-mid",
+    "align-bottom",
   ], // 自定义工具栏
   showsheetbarConfig: {}, // 自定义底部sheet页
   showstatisticBarConfig: {}, // 自定义计数栏

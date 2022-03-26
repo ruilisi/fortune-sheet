@@ -4,17 +4,26 @@ import {
   getToolbarItemClickHandler,
   handleTextBackground,
   handleTextColor,
+  handleTextSize,
 } from "@fortune-sheet/core/src/modules/toolbar";
+import { normalizedCellAttr } from "@fortune-sheet/core/src/modules/cell";
+import { getFlowdata } from "@fortune-sheet/core/src/context";
 import WorkbookContext from "../../context";
 import "./index.css";
 import Button from "./Button";
 import Divider from "./Divider";
 import Combo from "./Combo";
 import ColorPicker from "./ColorPicker";
+import Select, { Option } from "./Select";
 
 const Toolbar: React.FC = () => {
-  const { setContext, refs, settings } = useContext(WorkbookContext);
+  const { context, setContext, refs, settings } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
+  const firstSelection = context.luckysheet_select_save?.[0];
+  const flowdata = getFlowdata(context);
+  const row = firstSelection?.row_focus;
+  const col = firstSelection?.column_focus;
+  const cell = flowdata && row && col ? flowdata?.[row]?.[col] : undefined;
 
   const getToolbarItem = useCallback(
     (name: string, i: number) => {
@@ -62,6 +71,58 @@ const Toolbar: React.FC = () => {
           </Combo>
         );
       }
+      if (name === "format") {
+        return (
+          <Combo text="自动" key={name} tooltip={name}>
+            {(setOpen) => (
+              <Select>
+                <Option
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  自动
+                </Option>
+              </Select>
+            )}
+          </Combo>
+        );
+      }
+      if (name === "text-size") {
+        return (
+          <Combo
+            text={cell ? normalizedCellAttr(cell, "fs") : "10"}
+            key={name}
+            tooltip={name}
+          >
+            {(setOpen) => (
+              <Select>
+                {[
+                  9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72,
+                ].map((num) => (
+                  <Option
+                    key={num}
+                    onClick={() => {
+                      setContext(
+                        produce((draftContext) =>
+                          handleTextSize(
+                            draftContext,
+                            refs.cellInput.current!,
+                            num
+                          )
+                        )
+                      );
+                      setOpen(false);
+                    }}
+                  >
+                    {num}
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
       return (
         <Button
           iconId={name}
@@ -80,7 +141,7 @@ const Toolbar: React.FC = () => {
         />
       );
     },
-    [refs.cellInput, refs.globalCache, setContext]
+    [cell, refs.cellInput, refs.globalCache, setContext]
   );
 
   return (
