@@ -85,6 +85,7 @@ export const defaultSettings: Settings = {
     "italic",
     "strike-through",
     "underline",
+    "|",
     "text-color",
     "text-background",
     "align-left",

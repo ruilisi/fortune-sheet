@@ -250,6 +250,28 @@ export function handleUnderline(ctx: Context, cellInput: HTMLDivElement) {
   handleToggleAttr(ctx, cellInput, "un");
 }
 
+export function handleTextColor(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  color: string
+) {
+  const flowdata = getFlowdata(ctx);
+  if (!flowdata) return;
+
+  updateFormat(ctx, cellInput, flowdata, "fc", color);
+}
+
+export function handleTextBackground(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  color: string
+) {
+  const flowdata = getFlowdata(ctx);
+  if (!flowdata) return;
+
+  updateFormat(ctx, cellInput, flowdata, "bg", color);
+}
+
 const handlerMap: Record<string, ToolbarItemClickHandler> = {
   bold: handleBold,
   italic: handleItalic,

@@ -140,7 +140,7 @@ const SheetOverlay: React.FC = () => {
           }}
         >
           <div id="luckysheet-formula-functionrange" />
-          <div
+          {/* <div
             id="luckysheet-formula-functionrange-select"
             className="luckysheet-selection-copy luckysheet-formula-functionrange-select"
           >
@@ -149,7 +149,7 @@ const SheetOverlay: React.FC = () => {
             <div className="luckysheet-selection-copy-bottom luckysheet-copy" />
             <div className="luckysheet-selection-copy-left luckysheet-copy" />
             <div className="luckysheet-selection-copy-hc" />
-          </div>
+          </div> */}
           <div
             className="luckysheet-row-count-show luckysheet-count-show"
             id="luckysheet-row-count-show"

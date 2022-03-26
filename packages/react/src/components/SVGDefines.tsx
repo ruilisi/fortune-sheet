@@ -862,7 +862,7 @@ const SVGDefines: React.FC = () => (
           fill="#525C6F"
         />
       </symbol>
-      <symbol viewBox="0 0 10 24" fill="none" id="combo_expand">
+      <symbol viewBox="0 0 10 24" fill="none" id="combo-arrow">
         <path d="M8 10H2L5 14L8 10Z" fill="#A6A6A6" />
       </symbol>
       <symbol fill="none" viewBox="0 0 24 24" id="comment">

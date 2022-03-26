@@ -7,11 +7,11 @@ type Props = {
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 };
 
-const ToolbarButton: React.FC<Props> = ({ tooltip, onClick, iconId }) => {
+const Button: React.FC<Props> = ({ tooltip, onClick, iconId }) => {
   const style: CSSProperties = { userSelect: "none" };
   return (
     <div
-      className="luckysheet-toolbar-button"
+      className="fortune-toolbar-button"
       onClick={onClick}
       data-tips={tooltip}
       role="button"
@@ -22,4 +22,4 @@ const ToolbarButton: React.FC<Props> = ({ tooltip, onClick, iconId }) => {
   );
 };
 
-export default ToolbarButton;
+export default Button;

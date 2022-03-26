@@ -82,6 +82,8 @@ export type Sheet = {
 export type GlobalCache = {
   overwriteCell?: boolean;
   doNotFocus?: boolean;
+  recentTextColor?: string;
+  recentBackgroundColor?: string;
 };
 
 export type Range = { row: number[]; column: number[] }[];
