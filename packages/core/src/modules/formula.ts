@@ -2923,7 +2923,7 @@ function functionStrChange_range(
   txt: string,
   type: string,
   rc: "row" | "col",
-  orient: string,
+  orient: string | null,
   stindex: number,
   step: number
 ) {
@@ -3128,7 +3128,7 @@ export function functionStrChange(
   txt: string,
   type: string,
   rc: "row" | "col",
-  orient: string,
+  orient: string | null,
   stindex: number,
   step: number
 ) {

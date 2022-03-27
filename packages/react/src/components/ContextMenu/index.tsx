@@ -4,7 +4,10 @@ import _ from "lodash";
 import React, { useContext, useMemo } from "react";
 import produce from "immer";
 import { handlePasteByClick } from "@fortune-sheet/core/src/events/paste";
-import { extendSheet } from "@fortune-sheet/core/src/modules/rowcol";
+import {
+  deleteRowCol,
+  extendSheet,
+} from "@fortune-sheet/core/src/modules/rowcol";
 import WorkbookContext from "../../context";
 import "./index.css";
 import Menu from "./Menu";
@@ -146,6 +149,42 @@ const ContextMenu: React.FC = () => {
               </>
             </Menu>
           )),
+      deleteColumn: selection?.row_select ? null : (
+        <Menu
+          key="delete-col"
+          onClick={() => {
+            if (!selection) return;
+            const [st_index, ed_index] = selection.column;
+            setContext(
+              produce((draftCtx) => {
+                deleteRowCol(draftCtx, "column", st_index, ed_index);
+                draftCtx.contextMenu = undefined;
+              })
+            );
+          }}
+        >
+          {rightclick.deleteSelected}
+          {rightclick.column}
+        </Menu>
+      ),
+      deleteRow: selection?.column_select ? null : (
+        <Menu
+          key="delete-row"
+          onClick={() => {
+            if (!selection) return;
+            const [st_index, ed_index] = selection.row;
+            setContext(
+              produce((draftCtx) => {
+                deleteRowCol(draftCtx, "row", st_index, ed_index);
+                draftCtx.contextMenu = undefined;
+              })
+            );
+          }}
+        >
+          {rightclick.deleteSelected}
+          {rightclick.row}
+        </Menu>
+      ),
     };
   }, [context.luckysheet_select_save, rightclick, setContext]);
 
