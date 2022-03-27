@@ -5,10 +5,10 @@ import { addSheet } from "@fortune-sheet/core/src/modules/sheet";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
 import "./index.css";
+import SheetItem from "./SheetItem";
 
 const SheetTab: React.FC = () => {
-  const { context, setContext, setContextValue, refs } =
-    useContext(WorkbookContext);
+  const { context, setContext, refs } = useContext(WorkbookContext);
 
   return (
     <div
@@ -64,29 +64,7 @@ const SheetTab: React.FC = () => {
             id="luckysheet-sheet-container-c"
           >
             {context.luckysheetfile.map((sheet) => {
-              return (
-                <div
-                  key={sheet.index}
-                  className={`luckysheet-sheets-item${
-                    context.currentSheetIndex === sheet.index
-                      ? " luckysheet-sheets-item-active"
-                      : ""
-                  }`}
-                  onClick={() => {
-                    setContextValue("currentSheetIndex", sheet.index);
-                  }}
-                >
-                  <span
-                    className="luckysheet-sheets-item-name"
-                    spellCheck="false"
-                  >
-                    {sheet.name}
-                  </span>
-                  <span className="luckysheet-sheets-item-menu luckysheet-mousedown-cancel">
-                    <i className="fa fa-sort-desc luckysheet-mousedown-cancel" />
-                  </span>
-                </div>
-              );
+              return <SheetItem key={sheet.index} sheet={sheet} />;
             })}
           </div>
         </div>

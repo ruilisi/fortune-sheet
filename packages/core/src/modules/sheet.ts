@@ -132,3 +132,70 @@ export function addSheet(ctx: Context, isPivotTable = false) {
 
   changeSheet(ctx, index, isPivotTable, true);
 }
+
+export function handleSheetTabOnBlur(ctx: Context, editable: HTMLSpanElement) {
+  if (ctx.allowEdit === false) {
+    return;
+  }
+  const oldtxt = editable.dataset.oldText || "";
+  const txt = editable.innerText;
+
+  if (txt.length === 0) {
+    // tooltip.info("", locale_sheetconfig.sheetNamecannotIsEmptyError);
+    editable.innerText = oldtxt;
+    return;
+  }
+
+  if (
+    txt.length > 31 ||
+    txt.charAt(0) === "'" ||
+    txt.charAt(txt.length - 1) === "'" ||
+    /[：\:\\\/？\?\*\[\]]+/.test(txt)
+  ) {
+    // tooltip.info("", locale_sheetconfig.sheetNameSpecCharError);
+    editable.innerText = oldtxt;
+    return;
+  }
+
+  const index = getSheetIndex(ctx, ctx.currentSheetIndex);
+  if (index == null) return;
+
+  for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
+    if (index !== i && ctx.luckysheetfile[i].name === txt) {
+      // if (isEditMode()) {
+      //   alert(locale_sheetconfig.tipNameRepeat);
+      // } else {
+      //   tooltip.info("", locale_sheetconfig.tipNameRepeat);
+      // }
+      editable.innerText = oldtxt;
+      return;
+    }
+  }
+
+  // sheetmanage.sheetArrowShowAndHide();
+
+  ctx.luckysheetfile[index].name = txt;
+  // server.saveParam("all", ctx.currentSheetIndex, txt, { k: "name" });
+
+  // $t.attr("contenteditable", "false").removeClass(
+  //   "luckysheet-mousedown-cancel"
+  // );
+
+  // if (ctx.clearjfundo) {
+  //   const redo = {};
+  //   redo.type = "sheetName";
+  //   redo.sheetIndex = ctx.currentSheetIndex;
+
+  //   redo.oldtxt = oldtxt;
+  //   redo.txt = txt;
+
+  //   ctx.jfundo.length = 0;
+  //   ctx.jfredo.push(redo);
+  // }
+  // // 钩子： sheetEditNameAfter
+  // method.createHookFunction("sheetEditNameAfter", {
+  //   i: ctx.luckysheetfile[index].index,
+  //   oldName: oldtxt,
+  //   newName: txt,
+  // });
+}

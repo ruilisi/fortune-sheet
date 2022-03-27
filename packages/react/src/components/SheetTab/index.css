@@ -187,3 +187,11 @@
   align-items: center;
   margin: 0 8px;
 }
+
+.luckysheet-noselected-text {
+  -moz-user-select: -moz-test;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
