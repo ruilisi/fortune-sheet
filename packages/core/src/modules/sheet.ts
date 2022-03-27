@@ -133,6 +133,39 @@ export function addSheet(ctx: Context, isPivotTable = false) {
   changeSheet(ctx, index, isPivotTable, true);
 }
 
+export function deleteSheet(ctx: Context, index: string) {
+  if (ctx.allowEdit === false) {
+    return;
+  }
+
+  const arrIndex = getSheetIndex(ctx, index);
+  if (arrIndex == null) return;
+
+  // const file = ctx.luckysheetfile[arrIndex];
+
+  // // 钩子 sheetDeleteBefore
+  // if (!method.createHookFunction("sheetDeleteBefore", { sheet: file })) {
+  //   return;
+  // }
+
+  // _this.setSheetHide(index, true);
+
+  // $(`#luckysheet-sheets-item${index}`).remove();
+  // $(`#luckysheet-datavisual-selection-set-${index}`).remove();
+
+  ctx.luckysheetfile.splice(arrIndex, 1);
+  // _this.reOrderAllSheet();
+
+  // server.saveParam("shd", null, { deleIndex: index });
+
+  // if (ctx.clearjfundo) {
+  //   removedsheet[0].type = "deleteSheet";
+  //   ctx.jfredo.push(removedsheet[0]);
+  // }
+  // // 钩子 sheetDeleteAfter
+  // method.createHookFunction("sheetDeleteAfter", { sheet: file });
+}
+
 export function handleSheetTabOnBlur(ctx: Context, editable: HTMLSpanElement) {
   if (ctx.allowEdit === false) {
     return;

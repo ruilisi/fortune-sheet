@@ -1,5 +1,4 @@
 .fortune-context-menu {
-  max-height: 100%;
   overflow-y: auto;
   border-radius: 4px;
   box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.15);

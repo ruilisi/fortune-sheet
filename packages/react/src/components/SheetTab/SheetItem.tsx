@@ -9,6 +9,7 @@ import React, {
 import produce from "immer";
 import { handleSheetTabOnBlur } from "@fortune-sheet/core/src/modules/sheet";
 import WorkbookContext from "../../context";
+import SheetTabContextMenu from "../ContextMenu/SheetTab";
 
 type Props = {
   sheet: Sheet;
@@ -17,7 +18,13 @@ type Props = {
 const SheetItem: React.FC<Props> = ({ sheet }) => {
   const { context, setContext, setContextValue } = useContext(WorkbookContext);
   const [editing, setEditing] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const editable = useRef<HTMLSpanElement>(null);
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    sheet?: Sheet;
+  }>({ x: -1, y: -1 });
 
   useEffect(() => {
     if (editing) {
@@ -58,6 +65,7 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
   return (
     <div
       key={sheet.index}
+      ref={containerRef}
       className={`luckysheet-sheets-item${
         context.currentSheetIndex === sheet.index
           ? " luckysheet-sheets-item-active"
@@ -65,6 +73,14 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
       }`}
       onClick={() => {
         setContextValue("currentSheetIndex", sheet.index);
+      }}
+      onContextMenu={(e) => {
+        const rect = containerRef.current!.getBoundingClientRect();
+        setContextMenu({
+          x: e.pageX - rect.left,
+          y: e.pageY - rect.top,
+          sheet,
+        });
       }}
     >
       <span
@@ -80,6 +96,13 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
       <span className="luckysheet-sheets-item-menu luckysheet-mousedown-cancel">
         <i className="fa fa-sort-desc luckysheet-mousedown-cancel" />
       </span>
+      {contextMenu.x > -1 && contextMenu.y > -1 ? (
+        <SheetTabContextMenu
+          {...contextMenu}
+          onClose={() => setContextMenu({ x: -1, y: -1 })}
+          onRename={() => setEditing(true)}
+        />
+      ) : null}
     </div>
   );
 };

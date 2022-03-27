@@ -12,6 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 }
 #luckysheet-sheet-content {
   width: 0;
@@ -53,7 +54,7 @@
   div.luckysheet-sheet-container-c {
   padding: 0px 0px;
   margin-left: 0px;
-  overflow: hidden;
+  overflow: visible;
   white-space: nowrap;
   position: relative;
   max-width: 100%;

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import produce from "immer";
 import { updateCell } from "@fortune-sheet/core/src/modules/cell";
 import { addSheet } from "@fortune-sheet/core/src/modules/sheet";
@@ -9,10 +9,13 @@ import SheetItem from "./SheetItem";
 
 const SheetTab: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   return (
     <div
       className="luckysheet-sheet-area luckysheet-noselected-text"
+      onContextMenu={(e) => e.preventDefault()}
+      ref={containerRef}
       id="luckysheet-sheet-area"
     >
       <div id="luckysheet-sheet-content">

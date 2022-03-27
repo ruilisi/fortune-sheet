@@ -88,8 +88,14 @@ const Workbook: React.FC<Settings> = (props) => {
         if (_.isEmpty(draftCtx.currentSheetIndex)) {
           initSheetIndex(draftCtx);
         }
-        const sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
-        if (_.isNil(sheetIdx)) return;
+        let sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
+        if (sheetIdx == null) {
+          if ((draftCtx.luckysheetfile?.length ?? 0) > 0) {
+            sheetIdx = 0;
+            draftCtx.currentSheetIndex = draftCtx.luckysheetfile[0].index;
+          }
+        }
+        if (sheetIdx == null) return;
 
         const sheet = draftCtx.luckysheetfile?.[sheetIdx];
         if (!sheet) return;
@@ -175,6 +181,7 @@ const Workbook: React.FC<Settings> = (props) => {
   }, [
     mergedSettings.data,
     context.currentSheetIndex,
+    context.luckysheetfile?.length,
     mergedSettings.defaultRowHeight,
     mergedSettings.defaultColWidth,
     mergedSettings.column,
