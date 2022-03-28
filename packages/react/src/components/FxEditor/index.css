@@ -84,11 +84,12 @@
 
 .fortune-fx-input-container {
   padding-left: 10px;
-  overflow: hidden;
+  overflow: visible;
   padding: 0;
   flex: 1;
   display: flex;
   align-items: center;
+  position: relative;
   border-left: 1px solid #e5e5e5;
 }
 

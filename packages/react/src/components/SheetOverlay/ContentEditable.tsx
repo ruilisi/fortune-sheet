@@ -7,6 +7,7 @@ type ContentEditableProps = Omit<
 > & {
   innerRef: (e: HTMLDivElement | null) => void;
   onChange: (html: string) => void;
+  onBlur?: (e: React.FocusEvent<HTMLDivElement, Element>) => void;
 };
 
 class ContentEditable extends React.Component<ContentEditableProps> {
@@ -24,10 +25,10 @@ class ContentEditable extends React.Component<ContentEditableProps> {
   }
 
   render() {
-    const { innerRef } = this.props;
+    const { innerRef, onBlur } = this.props;
     return (
       <div
-        {..._.omit(this.props, "innerRef", "onChange", "html")}
+        {..._.omit(this.props, "innerRef", "onChange", "html", "onBlur")}
         ref={(e) => {
           this.root = e;
           innerRef?.(e);
@@ -36,7 +37,10 @@ class ContentEditable extends React.Component<ContentEditableProps> {
         onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
         onInput={this.emitChange.bind(this)}
-        onBlur={this.emitChange.bind(this)}
+        onBlur={(e) => {
+          this.emitChange.bind(this)();
+          onBlur?.(e);
+        }}
         contentEditable
       />
     );

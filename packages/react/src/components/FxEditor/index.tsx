@@ -9,18 +9,32 @@ import {
   isInlineStringCell,
 } from "@fortune-sheet/core/src/modules/inline-string";
 import { escapeScriptTag } from "@fortune-sheet/core/src/utils";
-import React, { useContext, useState, useCallback, useEffect } from "react";
+import React, {
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import produce from "immer";
 import "./index.css";
 import { moveHighlightCell } from "@fortune-sheet/core/src/modules/selection";
 import _ from "lodash";
-import { rangeHightlightselected } from "@fortune-sheet/core/src/modules/formula";
+import {
+  handleFormulaInput,
+  rangeHightlightselected,
+} from "@fortune-sheet/core/src/modules/formula";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
+import ContentEditable from "../SheetOverlay/ContentEditable";
+import FormulaSearch from "../SheetOverlay/FormulaSearch";
+import FormulaHint from "../SheetOverlay/FormulaHint";
 
 const FxEditor: React.FC = () => {
-  const [fxInputHTML, setFxInputHTML] = useState<string>("");
   const { context, setContext, refs } = useContext(WorkbookContext);
+  const [focused, setFocused] = useState(false);
+  const lastKeyDownEventRef = useRef<React.KeyboardEvent<HTMLDivElement>>();
+  const inputContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const d = getFlowdata(context);
@@ -41,9 +55,9 @@ const FxEditor: React.FC = () => {
           value = getCellValue(r, c, d, "m") || getCellValue(r, c, d, "v");
         }
       }
-      setFxInputHTML(escapeScriptTag(value));
+      refs.fxInput.current!.innerHTML = escapeScriptTag(value);
     } else {
-      setFxInputHTML("");
+      refs.fxInput.current!.innerHTML = "";
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -54,6 +68,7 @@ const FxEditor: React.FC = () => {
 
   const onFocus = useCallback(() => {
     if ((context.luckysheet_select_save?.length ?? 0) > 0) {
+      setFocused(true);
       setContext(
         produce((draftCtx) => {
           const last =
@@ -78,10 +93,9 @@ const FxEditor: React.FC = () => {
       //   // 此模式下禁用公式栏
       //   return;
       // }
+      lastKeyDownEventRef.current = e;
       setContext(
         produce((draftCtx) => {
-          const kcode = e.keyCode;
-
           if (context.luckysheetCellUpdate.length > 0) {
             switch (e.key) {
               case "Enter": {
@@ -181,38 +195,47 @@ const FxEditor: React.FC = () => {
               default:
                 break;
             }
-          } else {
-            if (
-              !(
-                (kcode >= 112 && kcode <= 123) ||
-                kcode <= 46 ||
-                kcode === 144 ||
-                kcode === 108 ||
-                e.ctrlKey ||
-                e.altKey ||
-                (e.shiftKey &&
-                  (kcode === 37 ||
-                    kcode === 38 ||
-                    kcode === 39 ||
-                    kcode === 40))
-              ) ||
-              kcode === 8 ||
-              kcode === 32 ||
-              kcode === 46 ||
-              (e.ctrlKey && kcode === 86)
-            ) {
-              // formula.functionInputHanddler(
-              //   $("#luckysheet-rich-text-editor"),
-              //   $("#luckysheet-functionbox-cell"),
-              //   kcode
-              // );
-            }
           }
         })
       );
     },
-    [context.luckysheetCellUpdate, refs.fxInput, setContext]
+    [context.luckysheetCellUpdate.length, refs.fxInput, setContext]
   );
+
+  const onChange = useCallback(() => {
+    const e = lastKeyDownEventRef.current;
+    if (!e) return;
+    const kcode = e.keyCode;
+    if (!kcode) return;
+
+    if (
+      !(
+        (kcode >= 112 && kcode <= 123) ||
+        kcode <= 46 ||
+        kcode === 144 ||
+        kcode === 108 ||
+        e.ctrlKey ||
+        e.altKey ||
+        (e.shiftKey &&
+          (kcode === 37 || kcode === 38 || kcode === 39 || kcode === 40))
+      ) ||
+      kcode === 8 ||
+      kcode === 32 ||
+      kcode === 46 ||
+      (e.ctrlKey && kcode === 86)
+    ) {
+      setContext(
+        produce((draftCtx) => {
+          handleFormulaInput(
+            draftCtx,
+            refs.cellInput.current!,
+            refs.fxInput.current!,
+            kcode
+          );
+        })
+      );
+    }
+  }, [refs.cellInput, refs.fxInput, setContext]);
 
   return (
     <div className="fortune-fx-editor">
@@ -240,20 +263,34 @@ const FxEditor: React.FC = () => {
       <div className="fortune-fx-icon">
         <SVGIcon name="fx" width={18} height={18} />
       </div>
-      <div className="fortune-fx-input-container">
-        <div
-          ref={refs.fxInput}
+      <div ref={inputContainerRef} className="fortune-fx-input-container">
+        <ContentEditable
+          innerRef={(e) => {
+            refs.fxInput.current = e;
+          }}
+          className="luckysheet-functionbox-cell-input luckysheet-mousedown-cancel"
           id="luckysheet-functionbox-cell"
+          aria-autocomplete="list"
           onFocus={onFocus}
           onKeyDown={onKeyDown}
-          className="luckysheet-functionbox-cell-input luckysheet-mousedown-cancel"
+          onChange={onChange}
+          onBlur={() => setFocused(false)}
           tabIndex={0}
-          contentEditable="true"
-          dir="ltr"
-          aria-autocomplete="list"
-          aria-label="D4"
-          dangerouslySetInnerHTML={{ __html: fxInputHTML }}
         />
+        {focused && (
+          <>
+            <FormulaSearch
+              style={{
+                top: inputContainerRef.current!.clientHeight,
+              }}
+            />
+            <FormulaHint
+              style={{
+                top: inputContainerRef.current!.clientHeight,
+              }}
+            />
+          </>
+        )}
       </div>
     </div>
   );

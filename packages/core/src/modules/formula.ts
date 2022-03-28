@@ -2308,6 +2308,7 @@ function functionRange(obj: HTMLDivElement, v: string, vp: string) {
     } else {
       setCaretPosition(obj.querySelectorAll("span")[fri[0]], 0, fri[1]);
     }
+    // @ts-ignore
   } else if (document.selection) {
     // ie10 9 8 7 6 5
     formulaCache.functionRangeIndex.moveToElementText(obj); // range定位到obj
@@ -2854,14 +2855,11 @@ export function handleFormulaInput(
       const currSelection = window.getSelection();
       if (!currSelection) return;
       if (currSelection.anchorNode?.nodeName.toLowerCase() === "div") {
-        const editorlen = document.querySelectorAll(
-          "#luckysheet-rich-text-editor span"
-        ).length;
+        const editorlen = $editor.querySelectorAll("span").length;
         formulaCache.functionRangeIndex = [
           editorlen - 1,
-          document
-            .querySelectorAll("#luckysheet-rich-text-editor span")
-            .item(editorlen - 1).textContent?.length,
+          $editor.querySelectorAll("span").item(editorlen - 1).textContent
+            ?.length,
         ];
       } else {
         formulaCache.functionRangeIndex = [

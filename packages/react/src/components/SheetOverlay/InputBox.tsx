@@ -15,6 +15,7 @@ import React, {
   useRef,
   useCallback,
   useLayoutEffect,
+  useState,
 } from "react";
 import _ from "lodash";
 import produce from "immer";
@@ -31,6 +32,7 @@ const InputBox: React.FC = () => {
   const inputRef = useRef<HTMLDivElement>(null);
   const lastKeyDownEventRef = useRef<React.KeyboardEvent<HTMLDivElement>>();
   const firstSelection = context.luckysheet_select_save?.[0];
+  const [focused, setFocused] = useState(false);
 
   const inputBoxStyle = useMemo(() => {
     if (firstSelection && context.luckysheetCellUpdate.length > 0) {
@@ -188,61 +190,58 @@ const InputBox: React.FC = () => {
     [refs.cellInput, setContext]
   );
 
-  const onChange = useCallback(
-    (html: string) => {
-      // setInputHTML(html);
-      const e = lastKeyDownEventRef.current;
-      if (!e) return;
-      const kcode = e.keyCode;
-      if (!kcode) return;
+  const onChange = useCallback(() => {
+    // setInputHTML(html);
+    const e = lastKeyDownEventRef.current;
+    if (!e) return;
+    const kcode = e.keyCode;
+    if (!kcode) return;
 
-      if (
-        !(
-          (
-            (kcode >= 112 && kcode <= 123) ||
-            kcode <= 46 ||
-            kcode === 144 ||
-            kcode === 108 ||
-            e.ctrlKey ||
-            e.altKey ||
-            (e.shiftKey &&
-              (kcode === 37 || kcode === 38 || kcode === 39 || kcode === 40))
-          )
-          // kcode === keycode.WIN ||
-          // kcode === keycode.WIN_R ||
-          // kcode === keycode.MENU))
-        ) ||
-        kcode === 8 ||
-        kcode === 32 ||
-        kcode === 46 ||
-        (e.ctrlKey && kcode === 86)
-      ) {
-        setContext(
-          produce((draftCtx) => {
-            // if(event.target.id!="luckysheet-input-box" && event.target.id!="luckysheet-rich-text-editor"){
-            handleFormulaInput(
-              draftCtx,
-              refs.fxInput.current!,
-              refs.cellInput.current!,
-              kcode
-            );
-            // formula.functionInputHanddler(
-            //   $("#luckysheet-functionbox-cell"),
-            //   $("#luckysheet-rich-text-editor"),
-            //   kcode
-            // );
-            // setCenterInputPosition(
-            //   draftCtx.luckysheetCellUpdate[0],
-            //   draftCtx.luckysheetCellUpdate[1],
-            //   draftCtx.flowdata
-            // );
-            // }
-          })
-        );
-      }
-    },
-    [refs.cellInput, refs.fxInput, setContext]
-  );
+    if (
+      !(
+        (
+          (kcode >= 112 && kcode <= 123) ||
+          kcode <= 46 ||
+          kcode === 144 ||
+          kcode === 108 ||
+          e.ctrlKey ||
+          e.altKey ||
+          (e.shiftKey &&
+            (kcode === 37 || kcode === 38 || kcode === 39 || kcode === 40))
+        )
+        // kcode === keycode.WIN ||
+        // kcode === keycode.WIN_R ||
+        // kcode === keycode.MENU))
+      ) ||
+      kcode === 8 ||
+      kcode === 32 ||
+      kcode === 46 ||
+      (e.ctrlKey && kcode === 86)
+    ) {
+      setContext(
+        produce((draftCtx) => {
+          // if(event.target.id!="luckysheet-input-box" && event.target.id!="luckysheet-rich-text-editor"){
+          handleFormulaInput(
+            draftCtx,
+            refs.fxInput.current!,
+            refs.cellInput.current!,
+            kcode
+          );
+          // formula.functionInputHanddler(
+          //   $("#luckysheet-functionbox-cell"),
+          //   $("#luckysheet-rich-text-editor"),
+          //   kcode
+          // );
+          // setCenterInputPosition(
+          //   draftCtx.luckysheetCellUpdate[0],
+          //   draftCtx.luckysheetCellUpdate[1],
+          //   draftCtx.flowdata
+          // );
+          // }
+        })
+      );
+    }
+  }, [refs.cellInput, refs.fxInput, setContext]);
 
   return (
     <div
@@ -283,18 +282,24 @@ const InputBox: React.FC = () => {
           aria-autocomplete="list"
           onChange={onChange}
           onKeyDown={onKeyDown}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
         />
       </div>
-      <FormulaSearch
-        style={{
-          top: (firstSelection?.height_move || 0) + 4,
-        }}
-      />
-      <FormulaHint
-        style={{
-          top: (firstSelection?.height_move || 0) + 4,
-        }}
-      />
+      {focused && (
+        <>
+          <FormulaSearch
+            style={{
+              top: (firstSelection?.height_move || 0) + 4,
+            }}
+          />
+          <FormulaHint
+            style={{
+              top: (firstSelection?.height_move || 0) + 4,
+            }}
+          />
+        </>
+      )}
     </div>
   );
 };
