@@ -25,11 +25,32 @@ const Sheet: React.FC<Props> = ({ data }) => {
   const { context, setContext, refs } = useContext(WorkbookContext);
 
   useEffect(() => {
-    setContext((ctx) => updateContextWithSheetData(ctx, data));
+    function resize() {
+      setContext(
+        produce((draftCtx) => {
+          updateContextWithSheetData(draftCtx, data);
+          updateContextWithCanvas(draftCtx, canvasRef.current!);
+        })
+      );
+    }
+    window.addEventListener("resize", resize);
+    return () => {
+      window.removeEventListener("resize", resize);
+    };
+  }, [data, setContext]);
+
+  useEffect(() => {
+    setContext(
+      produce((draftCtx) => updateContextWithSheetData(draftCtx, data))
+    );
   }, [context.config?.rowlen, context.config?.columnlen, data, setContext]);
 
   useEffect(() => {
-    setContext((ctx) => updateContextWithCanvas(ctx, canvasRef.current!));
+    setContext(
+      produce((draftCtx) =>
+        updateContextWithCanvas(draftCtx, canvasRef.current!)
+      )
+    );
   }, [setContext]);
 
   useEffect(() => {
@@ -66,7 +87,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
         })
       );
     },
-    [refs.scrollbarX, refs.scrollbarY, setContext]
+    [refs.globalCache, refs.scrollbarX, refs.scrollbarY, setContext]
   );
 
   useEffect(() => {

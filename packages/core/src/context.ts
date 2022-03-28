@@ -434,40 +434,31 @@ export function updateContextWithSheetData(ctx: Context, data: any[][]) {
   const rowCount = data.length;
   const colCount = rowCount === 0 ? 0 : data[0].length;
 
-  return produce(ctx, (draftCtx) => {
-    calcRowColSize(draftCtx, rowCount, colCount);
-    normalizeSelection(draftCtx, draftCtx.luckysheet_select_save);
+  calcRowColSize(ctx, rowCount, colCount);
+  normalizeSelection(ctx, ctx.luckysheet_select_save);
 
-    draftCtx.toolbarHeight = 41;
-    draftCtx.infobarHeight = 57;
-    draftCtx.calculatebarHeight = 29;
-    draftCtx.rowHeaderWidth = 46;
-    draftCtx.columnHeaderHeight = 20;
-    draftCtx.cellMainSrollBarSize = 12;
-    draftCtx.sheetBarHeight = 31;
-    draftCtx.statisticBarHeight = 23;
-  });
+  ctx.toolbarHeight = 41;
+  ctx.infobarHeight = 57;
+  ctx.calculatebarHeight = 29;
+  ctx.rowHeaderWidth = 46;
+  ctx.columnHeaderHeight = 20;
+  ctx.cellMainSrollBarSize = 12;
+  ctx.sheetBarHeight = 31;
+  ctx.statisticBarHeight = 23;
 }
 
 export function updateContextWithCanvas(
   ctx: Context,
   canvas: HTMLCanvasElement
 ) {
-  return produce(ctx, (draftCtx) => {
-    draftCtx.luckysheetTableContentHW = [
-      canvas.clientWidth,
-      canvas.clientHeight,
-    ];
-    draftCtx.cellmainHeight = canvas.clientHeight - draftCtx.columnHeaderHeight;
-    draftCtx.cellmainWidth = canvas.clientWidth - draftCtx.rowHeaderWidth;
+  ctx.luckysheetTableContentHW = [canvas.clientWidth, canvas.clientHeight];
+  ctx.cellmainHeight = canvas.clientHeight - ctx.columnHeaderHeight;
+  ctx.cellmainWidth = canvas.clientWidth - ctx.rowHeaderWidth;
 
-    canvas.style.width = `${draftCtx.luckysheetTableContentHW[0]}px`;
-    canvas.style.height = `${draftCtx.luckysheetTableContentHW[1]}px`;
-    canvas.width = Math.ceil(
-      draftCtx.luckysheetTableContentHW[0] * draftCtx.devicePixelRatio
-    );
-    canvas.height = Math.ceil(
-      draftCtx.luckysheetTableContentHW[1] * draftCtx.devicePixelRatio
-    );
-  });
+  canvas.width = Math.ceil(
+    ctx.luckysheetTableContentHW[0] * ctx.devicePixelRatio
+  );
+  canvas.height = Math.ceil(
+    ctx.luckysheetTableContentHW[1] * ctx.devicePixelRatio
+  );
 }
