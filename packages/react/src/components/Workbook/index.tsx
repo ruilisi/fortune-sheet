@@ -30,7 +30,9 @@ import SheetTab from "../SheetTab";
 import ContextMenu from "../ContextMenu";
 import SVGDefines from "../SVGDefines";
 
-const Workbook: React.FC<Settings> = (props) => {
+const Workbook: React.FC<
+  Settings & { onChange: (data: SheetType[]) => void }
+> = ({ onChange, ...props }) => {
   const [context, setContext] = useState(defaultContext());
   const cellInput = useRef<HTMLDivElement>(null);
   const fxInput = useRef<HTMLDivElement>(null);
@@ -68,6 +70,10 @@ const Workbook: React.FC<Settings> = (props) => {
     }),
     [context, mergedSettings, setContextValue]
   );
+
+  useEffect(() => {
+    onChange?.(context.luckysheetfile);
+  }, [context.luckysheetfile, onChange]);
 
   useEffect(() => {
     setContext(
@@ -122,7 +128,12 @@ const Workbook: React.FC<Settings> = (props) => {
           }
         }
 
-        draftCtx.luckysheet_select_save = sheet.luckysheet_select_save;
+        if (
+          _.isEmpty(draftCtx.luckysheet_select_save) &&
+          !_.isEmpty(sheet.luckysheet_select_save)
+        ) {
+          draftCtx.luckysheet_select_save = sheet.luckysheet_select_save;
+        }
         if (draftCtx.luckysheet_select_save?.length === 0) {
           if (
             data?.[0]?.[0]?.mc &&

@@ -188,7 +188,7 @@ function defaultContext(): Context {
     jfautoscrollTimeout: null,
 
     luckysheet_select_status: false,
-    luckysheet_select_save: [{ row: [0, 0], column: [0, 0] }],
+    luckysheet_select_save: undefined,
     luckysheet_selection_range: [],
     formulaRangeHighlight: [],
     functionCandidates: [],
