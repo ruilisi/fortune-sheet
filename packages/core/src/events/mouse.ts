@@ -13,17 +13,20 @@ import {
 } from "../modules/protection";
 import { normalizeSelection } from "../modules/selection";
 import { Settings } from "../settings";
-import { Selection } from "../types";
+import { GlobalCache, Selection } from "../types";
 import { getSheetIndex } from "../utils";
+
+let mouseWheelUniqueTimeout: ReturnType<typeof setTimeout>;
 
 export function handleGlobalWheel(
   ctx: Context,
   e: WheelEvent,
+  cache: GlobalCache,
   scrollbarX: HTMLDivElement,
   scrollbarY: HTMLDivElement
 ) {
-  let { scrollLeft } = ctx;
-  const { scrollTop } = ctx;
+  let { scrollLeft } = scrollbarX;
+  const { scrollTop } = scrollbarY;
   let visibledatacolumn_c = ctx.visibledatacolumn;
   let visibledatarow_c = ctx.visibledatarow;
 
@@ -35,23 +38,23 @@ export function handleGlobalWheel(
   //   visibledatacolumn_c = luckysheetFreezen.freezenverticaldata[3];
   // }
 
-  // clearTimeout(mousewheelArrayUniqueTimeout);
+  clearTimeout(mouseWheelUniqueTimeout);
 
   // if(ctx.visibledatacolumn.length!=visibledatacolumn_c.length){
-  if (ctx.visibledatacolumn_unique != null) {
-    visibledatacolumn_c = ctx.visibledatacolumn_unique;
+  if (cache.visibleColumnsUnique != null) {
+    visibledatacolumn_c = cache.visibleColumnsUnique;
   } else {
     visibledatacolumn_c = _.uniq(visibledatacolumn_c);
-    ctx.visibledatacolumn_unique = visibledatacolumn_c;
+    cache.visibleColumnsUnique = visibledatacolumn_c;
   }
   // }
 
   // if(ctx.visibledatarow.length!=visibledatarow_c.length){
-  if (ctx.visibledatarow_unique != null) {
-    visibledatarow_c = ctx.visibledatarow_unique;
+  if (cache.visibleRowsUnique != null) {
+    visibledatarow_c = cache.visibleRowsUnique;
   } else {
     visibledatarow_c = _.uniq(visibledatarow_c);
-    ctx.visibledatarow_unique = visibledatarow_c;
+    cache.visibleRowsUnique = visibledatarow_c;
   }
   // }
 
@@ -110,10 +113,11 @@ export function handleGlobalWheel(
     scrollbarX.scrollLeft = scrollLeft;
   }
 
-  // mousewheelArrayUniqueTimeout = setTimeout(() => {
-  //   ctx.visibledatacolumn_unique = null;
-  //   ctx.visibledatarow_unique = null;
-  // }, 500);
+  mouseWheelUniqueTimeout = setTimeout(() => {
+    delete cache.visibleColumnsUnique;
+    delete cache.visibleRowsUnique;
+  }, 500);
+
   e.preventDefault();
 }
 
@@ -1099,7 +1103,8 @@ export function handleCellAreaMouseDown(
 export function handleCellAreaDoubleClick(
   ctx: Context,
   settings: Settings,
-  e: MouseEvent
+  e: MouseEvent,
+  container: HTMLElement
 ) {
   // if ($(event.target).hasClass("luckysheet-mousedown-cancel")) {
   //   return;
@@ -1128,9 +1133,9 @@ export function handleCellAreaDoubleClick(
   // const scrollTop = $("#luckysheet-cell-main").scrollTop();
   // let x = mouse[0] + scrollLeft;
   // let y = mouse[1] + scrollTop;
-
-  const x = e.offsetX + ctx.scrollLeft;
-  const y = e.offsetY + ctx.scrollTop;
+  const rect = container.getBoundingClientRect();
+  const x = e.pageX - rect.left + ctx.scrollLeft;
+  const y = e.pageY - rect.top + ctx.scrollTop;
 
   /*
       if (
@@ -1321,6 +1326,8 @@ export function handleContextMenu(
   ctx.contextMenu = {
     x,
     y,
+    pageX: e.pageX,
+    pageY: e.pageY,
   };
 
   e.preventDefault();
@@ -4700,7 +4707,7 @@ export function handleOverlayMouseUp(
 export function handleRowHeaderMouseDown(
   ctx: Context,
   e: MouseEvent,
-  target: HTMLElement
+  container: HTMLElement
 ) {
   if (!checkProtectionAllSelected(ctx, ctx.currentSheetIndex)) {
     return;
@@ -4716,7 +4723,7 @@ export function handleRowHeaderMouseDown(
   //   imageCtrl.cancelActiveImgItem();
   // }
 
-  const rect = target.getBoundingClientRect();
+  const rect = container.getBoundingClientRect();
   const x = e.pageX - rect.left + ctx.scrollLeft;
   const y = e.pageY - rect.top + ctx.scrollTop;
 
@@ -5088,7 +5095,7 @@ export function handleRowHeaderMouseDown(
 export function handleColumnHeaderMouseDown(
   ctx: Context,
   e: MouseEvent,
-  target: HTMLElement
+  container: HTMLElement
 ) {
   if (!checkProtectionAllSelected(ctx, ctx.currentSheetIndex)) {
     return;
@@ -5104,7 +5111,7 @@ export function handleColumnHeaderMouseDown(
   //   imageCtrl.cancelActiveImgItem();
   // }
 
-  const rect = target.getBoundingClientRect();
+  const rect = container.getBoundingClientRect();
   const x = e.pageX - rect.left + ctx.scrollLeft;
 
   const row_index = ctx.visibledatarow.length - 1;

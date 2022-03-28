@@ -87,6 +87,8 @@ export type GlobalCache = {
   doNotFocus?: boolean;
   recentTextColor?: string;
   recentBackgroundColor?: string;
+  visibleColumnsUnique?: number[];
+  visibleRowsUnique?: number[];
 };
 
 export type Range = { row: number[]; column: number[] }[];

@@ -1,5 +1,6 @@
 import produce from "immer";
 import _ from "lodash";
+import { normalizeSelection } from "./modules/selection";
 import { Sheet, Selection, Cell } from "./types";
 import { generateRandomSheetIndex, getSheetIndex } from "./utils";
 
@@ -116,9 +117,6 @@ export type Context = {
   scrollRefreshSwitch: boolean;
 
   zoomRatio: number;
-
-  visibledatacolumn_unique: any;
-  visibledatarow_unique: any;
 
   showGridLines: boolean;
   allowEdit: boolean;
@@ -255,9 +253,6 @@ function defaultContext(): Context {
 
     zoomRatio: 1,
 
-    visibledatacolumn_unique: null,
-    visibledatarow_unique: null,
-
     showGridLines: true,
     allowEdit: true,
 
@@ -319,7 +314,7 @@ function calcRowColSize(ctx: Context, rowCount: number, colCount: number) {
       rowlen = ctx.config?.rowlen?.[r];
     }
 
-    if (ctx.config?.rowhidden?.[r]) {
+    if (ctx.config?.rowhidden?.[r] != null) {
       ctx.visibledatarow.push(ctx.rh_height);
       continue;
     }
@@ -372,7 +367,7 @@ function calcRowColSize(ctx: Context, rowCount: number, colCount: number) {
       }
     }
 
-    if (ctx.config?.colhidden?.[c]) {
+    if (ctx.config?.colhidden?.[c] != null) {
       ctx.visibledatacolumn.push(ctx.ch_width);
       continue;
     }
@@ -441,6 +436,7 @@ export function updateContextWithSheetData(ctx: Context, data: any[][]) {
 
   return produce(ctx, (draftCtx) => {
     calcRowColSize(draftCtx, rowCount, colCount);
+    normalizeSelection(draftCtx, draftCtx.luckysheet_select_save);
 
     draftCtx.toolbarHeight = 41;
     draftCtx.infobarHeight = 57;

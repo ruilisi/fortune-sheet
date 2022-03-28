@@ -1,7 +1,7 @@
 import { handleCopy } from "@fortune-sheet/core/src/events/copy";
 import locale from "@fortune-sheet/core/src/locale";
 import _ from "lodash";
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useRef, useLayoutEffect } from "react";
 import produce from "immer";
 import { handlePasteByClick } from "@fortune-sheet/core/src/events/paste";
 import {
@@ -13,6 +13,7 @@ import "./index.css";
 import Menu from "./Menu";
 
 const ContextMenu: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const { context, setContext, settings } = useContext(WorkbookContext);
   const { contextMenu } = context;
   const { rightclick } = locale();
@@ -188,11 +189,48 @@ const ContextMenu: React.FC = () => {
     };
   }, [context.luckysheet_select_save, rightclick, setContext]);
 
+  useLayoutEffect(() => {
+    // re-position the context menu if it overflows the window
+    if (!containerRef.current || !contextMenu) {
+      return;
+    }
+    const winH = window.innerHeight;
+    const winW = window.innerWidth;
+    const rect = containerRef.current.getBoundingClientRect();
+    const menuW = rect.width;
+    const menuH = rect.height;
+    let top = contextMenu.pageY;
+    let left = contextMenu.pageX;
+
+    let hasOverflow = false;
+    if (left + menuW > winW) {
+      left -= menuW;
+      hasOverflow = true;
+    }
+    if (top + menuH > winH) {
+      top -= menuH;
+      hasOverflow = true;
+    }
+    if (top < 0) {
+      top = 0;
+      hasOverflow = true;
+    }
+    if (hasOverflow) {
+      setContext(
+        produce((draftCtx) => {
+          draftCtx.contextMenu.x = left;
+          draftCtx.contextMenu.y = top;
+        })
+      );
+    }
+  }, [contextMenu, setContext]);
+
   if (_.isEmpty(context.contextMenu)) return null;
 
   return (
     <div
       className="fortune-context-menu luckysheet-cols-menu"
+      ref={containerRef}
       onContextMenu={(e) => e.stopPropagation()}
       style={{ left: contextMenu.x, top: contextMenu.y }}
     >

@@ -39,22 +39,33 @@ const ColumnHeader: React.FC = () => {
       if (context.luckysheet_cols_change_size) {
         return;
       }
-      if (e.target !== e.currentTarget) {
-        return;
-      }
-      const x1 = e.nativeEvent.offsetX + containerRef.current!.scrollLeft;
-      const col_location = colLocation(x1, context.visibledatacolumn);
+      const x =
+        e.pageX -
+        containerRef.current!.getBoundingClientRect().top +
+        containerRef.current!.scrollLeft;
+      const col_location = colLocation(x, context.visibledatacolumn);
       const [col_pre, col] = col_location;
-      setHoverLocation({ col_pre, col });
+      if (col_pre !== hoverLocation.col_pre || col !== hoverLocation.col) {
+        setHoverLocation({ col_pre, col });
+      }
     },
-    [context]
+    [
+      context.luckysheet_cols_change_size,
+      context.visibledatacolumn,
+      hoverLocation.col,
+      hoverLocation.col_pre,
+    ]
   );
 
   const onMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       setContext(
         produce((draftCtx) => {
-          handleColumnHeaderMouseDown(draftCtx, e.nativeEvent, e.currentTarget);
+          handleColumnHeaderMouseDown(
+            draftCtx,
+            e.nativeEvent,
+            containerRef.current!
+          );
         })
       );
     },

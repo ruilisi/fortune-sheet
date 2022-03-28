@@ -213,7 +213,7 @@ export default class Canvas {
       //   continue;
       // }
 
-      if (!this.sheetCtx.config?.rowhidden?.[r]) {
+      if (this.sheetCtx.config?.rowhidden?.[r] == null) {
         renderCtx.fillStyle = "#ffffff";
         renderCtx.fillRect(
           0,
@@ -260,8 +260,8 @@ export default class Canvas {
       // 行标题栏横线,horizen
       if (
         this.sheetCtx.config.rowhidden &&
-        _.isNil(this.sheetCtx.config.rowhidden[r]) &&
-        this.sheetCtx.config.rowhidden[r + 1]
+        this.sheetCtx.config.rowhidden[r] == null &&
+        this.sheetCtx.config.rowhidden[r + 1] != null
       ) {
         renderCtx.beginPath();
         renderCtx.moveTo(-1, end_r + offsetTop - 4 + bodrder05);
@@ -269,13 +269,11 @@ export default class Canvas {
           this.sheetCtx.rowHeaderWidth - 1,
           end_r + offsetTop - 4 + bodrder05
         );
-        // luckysheetTableContent.lineWidth = 1;
-        // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
         renderCtx.closePath();
         renderCtx.stroke();
       } else if (
-        _.isNil(this.sheetCtx.config.rowhidden) ||
-        _.isNil(this.sheetCtx.config.rowhidden[r])
+        this.sheetCtx.config.rowhidden == null ||
+        this.sheetCtx.config.rowhidden[r] == null
       ) {
         renderCtx.beginPath();
         renderCtx.moveTo(-1, end_r + offsetTop - 2 + bodrder05);
@@ -284,13 +282,14 @@ export default class Canvas {
           end_r + offsetTop - 2 + bodrder05
         );
 
-        // luckysheetTableContent.lineWidth = 1;
-        // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
         renderCtx.closePath();
         renderCtx.stroke();
       }
 
-      if (this.sheetCtx.config?.rowhidden?.[r - 1] && preEndR !== undefined) {
+      if (
+        this.sheetCtx.config?.rowhidden?.[r - 1] != null &&
+        preEndR !== undefined
+      ) {
         renderCtx.beginPath();
         renderCtx.moveTo(-1, preEndR + offsetTop + bodrder05);
         renderCtx.lineTo(
@@ -419,7 +418,7 @@ export default class Canvas {
       //   continue;
       // }
 
-      if (!this.sheetCtx.config?.colhidden?.[c]) {
+      if (this.sheetCtx.config?.colhidden?.[c] == null) {
         renderCtx.fillStyle = "#ffffff";
         renderCtx.fillRect(
           start_c + offsetLeft - 1,
@@ -454,8 +453,8 @@ export default class Canvas {
       // 列标题栏竖线 vertical
       if (
         this.sheetCtx.config.colhidden &&
-        this.sheetCtx.config.colhidden[c] &&
-        this.sheetCtx.config.colhidden[c + 1]
+        this.sheetCtx.config.colhidden[c] != null &&
+        this.sheetCtx.config.colhidden[c + 1] != null
       ) {
         renderCtx.beginPath();
         renderCtx.moveTo(end_c + offsetLeft - 4 + bodrder05, 0);
@@ -468,8 +467,8 @@ export default class Canvas {
         renderCtx.closePath();
         renderCtx.stroke();
       } else if (
-        _.isNil(this.sheetCtx.config.colhidden) ||
-        _.isNil(this.sheetCtx.config.colhidden[c])
+        this.sheetCtx.config.colhidden == null ||
+        this.sheetCtx.config.colhidden[c] == null
       ) {
         renderCtx.beginPath();
         renderCtx.moveTo(end_c + offsetLeft - 2 + bodrder05, 0);
@@ -484,15 +483,16 @@ export default class Canvas {
         renderCtx.stroke();
       }
 
-      if (this.sheetCtx.config?.colhidden?.[c - 1] && preEndC !== undefined) {
+      if (
+        this.sheetCtx.config?.colhidden?.[c - 1] != null &&
+        preEndC !== undefined
+      ) {
         renderCtx.beginPath();
         renderCtx.moveTo(preEndC + offsetLeft + bodrder05, 0);
         renderCtx.lineTo(
           preEndC + offsetLeft + bodrder05,
           this.sheetCtx.columnHeaderHeight - 2
         );
-        // luckysheetTableContent.lineWidth = 1;
-        // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
         renderCtx.closePath();
         renderCtx.stroke();
       }
@@ -507,9 +507,6 @@ export default class Canvas {
         end_c + offsetLeft - 1,
         this.sheetCtx.columnHeaderHeight - 2 + bodrder05
       );
-      // luckysheetTableContent.lineWidth = 1;
-
-      // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
       renderCtx.stroke();
       renderCtx.closePath();
 
@@ -750,7 +747,7 @@ export default class Canvas {
 
       const endY = this.sheetCtx.visibledatarow[r] - scrollHeight;
 
-      if (this.sheetCtx.config?.rowhidden?.[r]) {
+      if (this.sheetCtx.config?.rowhidden?.[r] != null) {
         continue;
       }
 
@@ -764,7 +761,7 @@ export default class Canvas {
 
         const endX = this.sheetCtx.visibledatacolumn[c] - scrollWidth;
 
-        if (this.sheetCtx.config?.colhidden?.[c]) {
+        if (this.sheetCtx.config?.colhidden?.[c] != null) {
           continue;
         }
 
@@ -1541,7 +1538,7 @@ export default class Canvas {
         //     continue;
         // }
 
-        if (this.sheetCtx.config?.colhidden?.[c]) {
+        if (this.sheetCtx.config?.colhidden?.[c] != null) {
           continue;
         }
 

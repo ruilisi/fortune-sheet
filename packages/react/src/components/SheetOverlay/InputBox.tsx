@@ -14,6 +14,7 @@ import React, {
   useMemo,
   useRef,
   useCallback,
+  useLayoutEffect,
 } from "react";
 import _ from "lodash";
 import produce from "immer";
@@ -48,17 +49,14 @@ const InputBox: React.FC = () => {
     firstSelection,
   ]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (firstSelection && context.luckysheetCellUpdate.length > 0) {
       const flowdata = getFlowdata(context);
       const row_index = firstSelection.row_focus!;
       const col_index = firstSelection.column_focus!;
       const cell = flowdata?.[row_index]?.[col_index];
-      if (!cell) {
-        return;
-      }
       let value = "";
-      if (!refs.globalCache.overwriteCell) {
+      if (cell && !refs.globalCache.overwriteCell) {
         if (isInlineStringCell(cell)) {
           value = getInlineStringHTML(row_index, col_index, flowdata);
         } else if (cell.f) {

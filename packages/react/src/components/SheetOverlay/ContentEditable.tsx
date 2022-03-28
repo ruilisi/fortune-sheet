@@ -33,6 +33,8 @@ class ContentEditable extends React.Component<ContentEditableProps> {
           innerRef?.(e);
         }}
         tabIndex={0}
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
         onInput={this.emitChange.bind(this)}
         onBlur={this.emitChange.bind(this)}
         contentEditable

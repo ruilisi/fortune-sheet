@@ -59,6 +59,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
           handleGlobalWheel(
             draftCtx,
             e,
+            refs.globalCache,
             refs.scrollbarX.current!,
             refs.scrollbarY.current!
           );

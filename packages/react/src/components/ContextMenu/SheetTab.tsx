@@ -1,7 +1,13 @@
 import locale from "@fortune-sheet/core/src/locale";
 import { Sheet } from "@fortune-sheet/core/src/types";
 import { deleteSheet } from "@fortune-sheet/core/src/modules/sheet";
-import React, { useContext, useRef, useEffect, useState } from "react";
+import React, {
+  useContext,
+  useRef,
+  useEffect,
+  useState,
+  useLayoutEffect,
+} from "react";
 import produce from "immer";
 import WorkbookContext from "../../context";
 import "./index.css";
@@ -24,10 +30,10 @@ const SheetTabContextMenu: React.FC<Props> = ({
 }) => {
   const { setContext } = useContext(WorkbookContext);
   const { sheetconfig } = locale();
-  const [position, setPosition] = useState({ x: -10000, y: -10000 });
+  const [position, setPosition] = useState({ x: -1, y: -1 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (rect) {
       setPosition({ x, y: y - rect.height });
@@ -50,6 +56,10 @@ const SheetTabContextMenu: React.FC<Props> = ({
   }, [onClose]);
 
   if (!sheet) return null;
+
+  if (position.x > -1 && position.y > -1) {
+    return null;
+  }
 
   return (
     <div

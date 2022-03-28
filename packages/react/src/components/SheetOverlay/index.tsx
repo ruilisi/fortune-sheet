@@ -52,16 +52,18 @@ const SheetOverlay: React.FC = () => {
 
   const cellAreaDoubleClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (e.target !== e.currentTarget) {
-        return;
-      }
       setContext(
         produce((draftCtx) => {
-          handleCellAreaDoubleClick(draftCtx, settings, e.nativeEvent);
+          handleCellAreaDoubleClick(
+            draftCtx,
+            settings,
+            e.nativeEvent,
+            refs.cellArea.current!
+          );
         })
       );
     },
-    [setContext, settings]
+    [refs.cellArea, setContext, settings]
   );
 
   const onMouseMove = useCallback(
