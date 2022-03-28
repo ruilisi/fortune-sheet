@@ -22,6 +22,7 @@ type Props = {
 const Sheet: React.FC<Props> = ({ data }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const placeholderRef = useRef<HTMLDivElement>(null);
   const { context, setContext, refs } = useContext(WorkbookContext);
 
   useEffect(() => {
@@ -29,7 +30,11 @@ const Sheet: React.FC<Props> = ({ data }) => {
       setContext(
         produce((draftCtx) => {
           updateContextWithSheetData(draftCtx, data);
-          updateContextWithCanvas(draftCtx, canvasRef.current!);
+          updateContextWithCanvas(
+            draftCtx,
+            canvasRef.current!,
+            placeholderRef.current!
+          );
         })
       );
     }
@@ -48,7 +53,11 @@ const Sheet: React.FC<Props> = ({ data }) => {
   useEffect(() => {
     setContext(
       produce((draftCtx) =>
-        updateContextWithCanvas(draftCtx, canvasRef.current!)
+        updateContextWithCanvas(
+          draftCtx,
+          canvasRef.current!,
+          placeholderRef.current!
+        )
       )
     );
   }, [setContext]);
@@ -100,6 +109,8 @@ const Sheet: React.FC<Props> = ({ data }) => {
 
   return (
     <div ref={containerRef} className="fortune-sheet-container">
+      {/* this is a placeholder div to help measure the empty space between toolbar and footer, directly measuring the canvas element is inaccurate, don't know why */}
+      <div ref={placeholderRef} className="fortune-sheet-canvas-placeholder" />
       <canvas className="fortune-sheet-canvas" ref={canvasRef} />
       <SheetOverlay />
     </div>

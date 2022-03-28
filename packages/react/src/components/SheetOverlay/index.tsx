@@ -425,34 +425,6 @@ const SheetOverlay: React.FC = () => {
                   className="luckysheet-cell-sheettable"
                   style={{ height: context.rh_height, width: context.ch_width }}
                 />
-                <div
-                  id="luckysheet-bottom-controll-row"
-                  className="luckysheet-bottom-controll-row"
-                  style={{ left: 0 }}
-                >
-                  <button
-                    id="luckysheet-bottom-add-row"
-                    className="btn btn-default"
-                  >
-                    添加
-                  </button>
-                  <input
-                    id="luckysheet-bottom-add-row-input"
-                    type="text"
-                    className="luckysheet-datavisual-config-input luckysheet-mousedown-cancel"
-                    placeholder="100"
-                  />
-                  <span style={{ fontSize: 14 }}>行</span>
-                  <span style={{ fontSize: 14, color: "#9c9c9c" }}>
-                    (在底部添加)
-                  </span>
-                  <button
-                    id="luckysheet-bottom-bottom-top"
-                    className="btn btn-default"
-                  >
-                    回到顶部
-                  </button>
-                </div>
               </div>
             </div>
           </div>

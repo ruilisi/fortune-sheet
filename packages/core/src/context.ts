@@ -449,11 +449,18 @@ export function updateContextWithSheetData(ctx: Context, data: any[][]) {
 
 export function updateContextWithCanvas(
   ctx: Context,
-  canvas: HTMLCanvasElement
+  canvas: HTMLCanvasElement,
+  placeholder: HTMLDivElement
 ) {
-  ctx.luckysheetTableContentHW = [canvas.clientWidth, canvas.clientHeight];
-  ctx.cellmainHeight = canvas.clientHeight - ctx.columnHeaderHeight;
+  ctx.luckysheetTableContentHW = [
+    placeholder.clientWidth,
+    placeholder.clientHeight,
+  ];
+  ctx.cellmainHeight = placeholder.clientHeight - ctx.columnHeaderHeight;
   ctx.cellmainWidth = canvas.clientWidth - ctx.rowHeaderWidth;
+
+  canvas.style.width = `${ctx.luckysheetTableContentHW[0]}px`;
+  canvas.style.height = `${ctx.luckysheetTableContentHW[1]}px`;
 
   canvas.width = Math.ceil(
     ctx.luckysheetTableContentHW[0] * ctx.devicePixelRatio
