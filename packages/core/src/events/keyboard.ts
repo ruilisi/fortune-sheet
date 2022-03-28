@@ -2,7 +2,7 @@ import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { updateCell, cancelNormalSelected } from "../modules/cell";
 import { handleFormulaInput } from "../modules/formula";
-import { copy, moveHighlightCell, selectionCache } from "../modules/selection";
+import { copy, deleteSelectedCellText, moveHighlightCell, selectionCache } from "../modules/selection";
 import { handleBold } from "../modules/toolbar";
 import { hasPartMC } from "../modules/validation";
 import { GlobalCache } from "../types";
@@ -558,16 +558,16 @@ export function handleGlobalKeyDown(
 
       // selectHightlightShow();
     } else if (kstr === "Delete" || kstr === "Backspace") {
-      if (imageCtrl.currentImgId != null) {
-        imageCtrl.removeImgItem();
-      } else {
-        $("#luckysheet-delete-text").click();
-      }
+      // if (imageCtrl.currentImgId != null) {
+      //   imageCtrl.removeImgItem();
+      // } else {
+      deleteSelectedCellText(ctx);
+      // }
 
       e.preventDefault();
-    } else if (kstr === "Backspace" && imageCtrl.currentImgId != null) {
-      imageCtrl.removeImgItem();
-      e.preventDefault();
+      // } else if (kstr === "Backspace" && imageCtrl.currentImgId != null) {
+      //   imageCtrl.removeImgItem();
+      //   e.preventDefault();
     } else if (
       kstr === "ArrowUp" ||
       kstr === "ArrowDown" ||

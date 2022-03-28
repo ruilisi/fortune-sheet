@@ -2,10 +2,12 @@ import _ from "lodash";
 import type { Sheet as SheetType } from "@fortune-sheet/core/src/types";
 import { Context, getFlowdata } from "../context";
 import { getCellValue, getStyleByCell, mergeBorder } from "./cell";
-import { formulaCache } from "./formula";
+import { delFunctionGroup, formulaCache } from "./formula";
 import clipboard from "./clipboard";
 import { getBorderInfoCompute } from "./border";
-import { replaceHtml } from "../utils";
+import { getSheetIndex, replaceHtml } from "../utils";
+import { hasPartMC } from "./validation";
+import locale from "../locale";
 
 export const selectionCache = {
   isPasteAction: false,
@@ -1011,4 +1013,100 @@ export function copy(ctx: Context) {
   ctx.iscopyself = true;
 
   clipboard.writeHtml(cpdata);
+}
+
+export function deleteSelectedCellText(ctx: Context) {
+  // if (
+  //   !checkProtectionLockedRangeList(
+  //     ctx.luckysheet_select_save,
+  //     ctx.currentSheetIndex
+  //   )
+  // ) {
+  //   return;
+  // }
+
+  // $("#luckysheet-rightclick-menu").hide();
+  // luckysheetContainerFocus();
+
+  if (ctx.allowEdit === false) {
+    return;
+  }
+
+  const selection = ctx.luckysheet_select_save;
+  if (selection && !_.isEmpty(selection)) {
+    const d = getFlowdata(ctx);
+    if (!d) return;
+
+    let has_PartMC = false;
+
+    for (let s = 0; s < selection.length; s += 1) {
+      const r1 = selection[s].row[0];
+      const r2 = selection[s].row[1];
+      const c1 = selection[s].column[0];
+      const c2 = selection[s].column[1];
+
+      if (hasPartMC(ctx, ctx.config, r1, r2, c1, c2)) {
+        has_PartMC = true;
+        break;
+      }
+    }
+
+    if (has_PartMC) {
+      const locale_drag = locale().drag;
+
+      if (isEditMode()) {
+        alert(locale_drag.noPartMerge);
+      } else {
+        tooltip.info(locale_drag.noPartMerge, "");
+      }
+
+      return;
+    }
+    const hyperlinkMap =
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)].hyperlink;
+
+    for (let s = 0; s < selection.length; s += 1) {
+      const r1 = selection[s].row[0];
+      const r2 = selection[s].row[1];
+      const c1 = selection[s].column[0];
+      const c2 = selection[s].column[1];
+
+      for (let r = r1; r <= r2; r += 1) {
+        for (let c = c1; c <= c2; c += 1) {
+          // if (pivotTable.isPivotRange(r, c)) {
+          //   continue;
+          // }
+
+          if (_.isPlainObject(d[r][c])) {
+            const cell = d[r][c]!;
+            delete cell.m;
+            delete cell.v;
+
+            if (cell.f != null) {
+              delete cell.f;
+              delFunctionGroup(ctx, r, c, ctx.currentSheetIndex);
+
+              delete cell.spl;
+            }
+
+            if (cell.ct != null && cell.ct.t === "inlineStr") {
+              delete cell.ct;
+            }
+          } else {
+            d[r][c] = null;
+          }
+          // 同步清除 hyperlink
+          if (hyperlinkMap && hyperlinkMap[`${r}_${c}`]) {
+            delete hyperlinkMap[`${r}_${c}`];
+          }
+        }
+      }
+    }
+
+    // jfrefreshgrid(d, ctx.luckysheet_select_save);
+
+    // // 清空编辑框的内容
+    // // 备注：在functionInputHanddler方法中会把该标签的内容拷贝到 #luckysheet-functionbox-cell
+    // $("#luckysheet-rich-text-editor").html("");
+  }
 }

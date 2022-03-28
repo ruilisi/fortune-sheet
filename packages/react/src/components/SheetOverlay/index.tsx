@@ -104,6 +104,11 @@ const SheetOverlay: React.FC = () => {
     refs.cellArea.current!.scrollTop = context.scrollTop;
   }, [context.scrollLeft, context.scrollTop, refs.cellArea]);
 
+  useEffect(() => {
+    // ensure keyboard events takes effect when selection changes
+    containerRef.current?.focus();
+  }, [context.luckysheet_select_save]);
+
   return (
     <div
       className="fortune-sheet-overlay"
