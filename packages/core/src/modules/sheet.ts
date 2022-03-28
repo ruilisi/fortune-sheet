@@ -11,10 +11,10 @@ function storeSheetParam(ctx: Context) {
   if (index == null) return;
   const file = ctx.luckysheetfile[index];
   file.config = ctx.config;
-  file.visibledatarow = ctx.visibledatarow;
-  file.visibledatacolumn = ctx.visibledatacolumn;
-  file.ch_width = ctx.ch_width;
-  file.rh_height = ctx.rh_height;
+  // file.visibledatarow = ctx.visibledatarow;
+  // file.visibledatacolumn = ctx.visibledatacolumn;
+  // file.ch_width = ctx.ch_width;
+  // file.rh_height = ctx.rh_height;
   file.luckysheet_select_save = ctx.luckysheet_select_save;
   file.luckysheet_selection_range = ctx.luckysheet_selection_range;
   file.zoomRatio = ctx.zoomRatio;
@@ -30,8 +30,11 @@ function storeSheetParamALL(ctx: Context) {
 export function changeSheet(
   ctx: Context,
   index: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isPivotInitial?: boolean,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isNewSheet?: boolean,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isCopySheet?: boolean
 ) {
   //   if (isEditMode()) {
@@ -183,7 +186,7 @@ export function handleSheetTabOnBlur(ctx: Context, editable: HTMLSpanElement) {
     txt.length > 31 ||
     txt.charAt(0) === "'" ||
     txt.charAt(txt.length - 1) === "'" ||
-    /[：\:\\\/？\?\*\[\]]+/.test(txt)
+    /[：:\\/？?*[\]]+/.test(txt)
   ) {
     // tooltip.info("", locale_sheetconfig.sheetNameSpecCharError);
     editable.innerText = oldtxt;

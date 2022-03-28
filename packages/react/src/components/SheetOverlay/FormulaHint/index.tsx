@@ -1,5 +1,4 @@
 import { formulaCache } from "@fortune-sheet/core/src/modules/formula";
-import _ from "lodash";
 import React, { useContext } from "react";
 import WorkbookContext from "../../../context";
 import "./index.css";
@@ -30,7 +29,7 @@ const FormulaHint: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
           </span>
           <span className="luckysheet-arguments-paren">(</span>
           <span className="luckysheet-arguments-parameter-holder">
-            {fn.p.map((param, i) => {
+            {fn.p.map((param: any, i: number) => {
               let { name } = param;
               if (param.repeat === "y") {
                 name += ", ...";
@@ -62,7 +61,7 @@ const FormulaHint: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
             </span>
             <span className="luckysheet-arguments-paren">(</span>
             <span className="luckysheet-arguments-parameter-holder">
-              {fn.p.map((param, i) => (
+              {fn.p.map((param: any, i: number) => (
                 <span
                   key={param.name}
                   className="luckysheet-arguments-help-parameter"
@@ -87,7 +86,7 @@ const FormulaHint: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
           </div>
         </div>
         <div className="luckysheet-formula-help-content-param">
-          {fn.p.map((param, i) => (
+          {fn.p.map((param: any) => (
             <div className="luckysheet-arguments-help-section" key={param.name}>
               <div className="luckysheet-arguments-help-section-title">
                 {param.name}

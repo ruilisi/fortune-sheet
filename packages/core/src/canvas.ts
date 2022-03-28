@@ -1,5 +1,5 @@
 import _ from "lodash";
-import defaultContext, { Context, getFlowdata } from "./context";
+import defaultContext, { getFlowdata } from "./context";
 import { getRealCellValue, normalizedAttr } from "./modules/cell";
 import {
   clearMeasureTextCache,
@@ -21,7 +21,7 @@ const defaultStyle = {
 };
 
 // 是否是纯数字
-function isRealNum(val: string | number) {
+function isRealNum(val: any) {
   return !Number.isNaN(Number(val));
 }
 
@@ -190,10 +190,6 @@ export default class Canvas {
       }
       end_r = this.sheetCtx.visibledatarow[r] - scrollHeight;
 
-      // 若超出绘制区域终止
-      // if(end_r > scrollHeight + drawHeight){
-      //     break;
-      // }
       const firstOffset = dataset_row_st === r ? -2 : 0;
       const lastOffset = dataset_row_ed === r ? -2 : 0;
       // 列标题单元格渲染前触发，return false 则不渲染该单元格
@@ -227,7 +223,6 @@ export default class Canvas {
         renderCtx.save(); // save scale before draw text
         renderCtx.scale(this.sheetCtx.zoomRatio, this.sheetCtx.zoomRatio);
         const textMetrics = getMeasureText(r + 1, renderCtx, this.sheetCtx);
-        // luckysheetTableContent.measureText(r + 1);
 
         const horizonAlignPos =
           (this.sheetCtx.rowHeaderWidth - textMetrics.width) / 2;
@@ -382,8 +377,6 @@ export default class Canvas {
     );
     renderCtx.clip();
 
-    // console.log(offsetLeft, 0, drawWidth, this.sheetCtx.columnHeaderHeight -1);
-
     let end_c;
     let start_c;
     const bodrder05 = 0.5; // Default 0.5
@@ -396,10 +389,6 @@ export default class Canvas {
       }
       end_c = this.sheetCtx.visibledatacolumn[c] - scrollWidth;
 
-      // 若超出绘制区域终止
-      // if(end_c > scrollWidth + drawWidth+1){
-      //     break;
-      // }
       const abc = indexToColumnChar(c);
       // 列标题单元格渲染前触发，return false 则不渲染该单元格
       // if (
@@ -433,7 +422,6 @@ export default class Canvas {
         renderCtx.scale(this.sheetCtx.zoomRatio, this.sheetCtx.zoomRatio);
 
         const textMetrics = getMeasureText(abc, renderCtx, this.sheetCtx);
-        // luckysheetTableContent.measureText(abc);
 
         const horizonAlignPos = Math.round(
           start_c + (end_c - start_c) / 2 + offsetLeft - textMetrics.width / 2
@@ -554,19 +542,9 @@ export default class Canvas {
       return;
     }
 
-    // const sheetFile = sheetmanage.getSheetByIndex();
-
-    // console.trace();
     clearTimeout(this.measureTextCacheTimeOut);
 
-    // //参数未定义处理
-    // if (_.isNil(scrollWidth)) {
-    //   scrollWidth = $("#luckysheet-cell-main").scrollLeft();
-    // }
-    // if (_.isNil(scrollHeight)) {
-    //   scrollHeight = $("#luckysheet-cell-main").scrollTop();
-    // }
-
+    // 参数未定义处理
     if (drawWidth === undefined) {
       [drawWidth] = this.sheetCtx.luckysheetTableContentHW;
     }
@@ -609,19 +587,6 @@ export default class Canvas {
     // }
     const renderCtx = this.canvasElement.getContext("2d");
     if (!renderCtx) return;
-
-    // renderCtx.save();
-    // renderCtx.scale(
-    //   this.sheetCtx.devicePixelRatio,
-    //   this.sheetCtx.devicePixelRatio
-    // );
-
-    // renderCtx.clearRect(
-    //   0,
-    //   0,
-    //   this.sheetCtx.renderCtxHW[0],
-    //   this.sheetCtx.renderCtxHW[1]
-    // );
 
     renderCtx.save();
     renderCtx.scale(
@@ -686,22 +651,8 @@ export default class Canvas {
     }
 
     // 表格渲染区域 起止行列坐标
-    // let rowStartY: number;
     const rowEndY = this.sheetCtx.visibledatarow[rowEnd];
-    // let colStartX: number;
     const colEndX = this.sheetCtx.visibledatacolumn[colEnd];
-
-    // if (rowStart === 0) {
-    //   rowStartY = 0;
-    // } else {
-    //   rowStartY = this.sheetCtx.visibledatarow[rowStart - 1];
-    // }
-
-    // if (colStart === 0) {
-    //   colStartX = 0;
-    // } else {
-    //   colStartX = this.sheetCtx.visibledatacolumn[colStart - 1];
-    // }
 
     // 表格canvas 初始化处理
     renderCtx.fillStyle = "#ffffff";
@@ -1392,14 +1343,8 @@ export default class Canvas {
       );
 
       Object.keys(borderInfoCompute).forEach((x) => {
-        // let bd_r = x.split("_")[0], bd_c = x.split("_")[1];
-
         const bdRow = Number(x.substring(0, x.indexOf("_")));
         const bdCol = Number(x.substring(x.indexOf("_") + 1));
-
-        // if(bd_r < rowStart || bd_r > rowEnd || bd_c < colStart || bd_c > colEnd){
-        //     continue;
-        // }
 
         if (borderOffset[`${bdRow}_${bdCol}`]) {
           const { startY } = borderOffset[`${bdRow}_${bdCol}`];
@@ -1533,11 +1478,6 @@ export default class Canvas {
       for (let c = 0; c < data[r].length; c += 1) {
         const cell = data[r][c];
 
-        // if(this.cellOverflowMapCache[r + '_' + c]!=null){
-        //     map[r + '_' + c] = this.cellOverflowMapCache[r + '_' + c];
-        //     continue;
-        // }
-
         if (this.sheetCtx.config?.colhidden?.[c] != null) {
           continue;
         }
@@ -1639,7 +1579,6 @@ export default class Canvas {
             edc = c;
           }
 
-          // if(((stc >= colStart && stc <= colEnd) || (edc >= colStart && edc <= colEnd)) && stc < edc){
           if ((stc <= colEnd || edc >= colStart) && stc < edc) {
             const item = {
               r,
@@ -1652,8 +1591,6 @@ export default class Canvas {
             }
 
             map[r][c] = item;
-
-            // this.cellOverflowMapCache[r + '_' + c] = item;
 
             hasCellOver = true;
           }
@@ -1693,6 +1630,7 @@ export default class Canvas {
     // const checksAF = alternateformat.checksAF(r, c, afCompute); // 交替颜色
     // const checksCF = conditionformat.checksCF(r, c, cfCompute); // 条件格式
     const flowdata = getFlowdata(this.sheetCtx);
+    if (!flowdata) return;
 
     const borderfix = getBorderFix(flowdata, r, c);
 
@@ -1903,9 +1841,9 @@ export default class Canvas {
     const space_height = 2; // 宽高方向 间隙
 
     // 水平对齐
-    const horizonAlign = normalizedAttr(flowdata, r, c, "ht");
+    const horizonAlign = Number(normalizedAttr(flowdata, r, c, "ht"));
     // 垂直对齐
-    const verticalAlign = normalizedAttr(flowdata, r, c, "vt");
+    const verticalAlign = Number(normalizedAttr(flowdata, r, c, "vt"));
 
     // 交替颜色
     // const checksAF = alternateformat.checksAF(r, c, afCompute);
@@ -2052,7 +1990,6 @@ export default class Canvas {
     }
     // 数据验证 复选框
     else if (dataVerification?.[`${r}_${c}`]?.type === "checkbox") {
-      /*
       const pos_x = startX + offsetLeft;
       const pos_y = startY + offsetTop + 1;
 
@@ -2062,17 +1999,17 @@ export default class Canvas {
       renderCtx.clip();
       renderCtx.scale(this.sheetCtx.zoomRatio, this.sheetCtx.zoomRatio);
 
-      const measureText = getMeasureText(value, renderCtx);
+      const measureText = getMeasureText(value, renderCtx, this.sheetCtx);
       const textMetrics = measureText.width + 14;
       const oneLineTextHeight =
         measureText.actualBoundingBoxDescent +
         measureText.actualBoundingBoxAscent;
 
       let horizonAlignPos = pos_x + space_width; // 默认为1，左对齐
-      if (horizonAlign === "0") {
+      if (horizonAlign === 0) {
         // 居中对齐
         horizonAlignPos = pos_x + cellWidth / 2 - textMetrics / 2;
-      } else if (horizonAlign === "2") {
+      } else if (horizonAlign === 2) {
         // 右对齐
         horizonAlignPos = pos_x + cellWidth - space_width - textMetrics;
       }
@@ -2085,13 +2022,13 @@ export default class Canvas {
       let verticalAlignPos_checkbox =
         verticalAlignPos_text - 13 * this.sheetCtx.zoomRatio;
 
-      if (verticalAlign === "0") {
+      if (verticalAlign === 0) {
         // 居中对齐
         verticalAlignPos_text = pos_y + verticalCellHeight / 2;
         renderCtx.textBaseline = "middle";
         verticalAlignPos_checkbox =
           verticalAlignPos_text - 6 * this.sheetCtx.zoomRatio;
-      } else if (verticalAlign === "1") {
+      } else if (verticalAlign === 1) {
         // 上对齐
         verticalAlignPos_text = pos_y + space_height;
         renderCtx.textBaseline = "top";
@@ -2126,7 +2063,6 @@ export default class Canvas {
       );
 
       renderCtx.restore();
-      */
     } else {
       // 若单元格有条件格式数据条
       if (
@@ -2276,14 +2212,14 @@ export default class Canvas {
         const _value = textInfo.values[0];
         let verticalAlignPos = pos_y + _value.top - textInfo.textHeightAll;
 
-        if (verticalAlign === "0") {
+        if (verticalAlign === 0) {
           // 居中对齐
           verticalAlignPos =
             pos_y + cellHeight / 2 - textInfo.textHeightAll / 2;
-        } else if (verticalAlign === "1") {
+        } else if (verticalAlign === 1) {
           // 上对齐
           verticalAlignPos = pos_y;
-        } else if (verticalAlign === "2") {
+        } else if (verticalAlign === 2) {
           // 下对齐
           verticalAlignPos -= textInfo.desc;
         }
@@ -2319,7 +2255,7 @@ export default class Canvas {
       if (
         (cell?.ct?.fa?.indexOf("[Red]") ?? -1) > -1 &&
         cell?.ct?.t === "n" &&
-        cell?.v < 0
+        (cell?.v as number) < 0
       ) {
         renderCtx.fillStyle = "#ff0000";
       }
@@ -2395,7 +2331,9 @@ export default class Canvas {
     scrollWidth: number,
     offsetLeft: number,
     offsetTop: number,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     afCompute: any,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     cfCompute: any
   ) {
     // 溢出单元格 起止行列坐标

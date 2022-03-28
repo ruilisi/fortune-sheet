@@ -3,7 +3,12 @@ import _ from "lodash";
 import { Parser } from "hot-formula-parser";
 import type { Selection } from "@fortune-sheet/core/src/types";
 import { Context, getFlowdata } from "../context";
-import { columnCharToIndex, escapeScriptTag, getSheetIndex, indexToColumnChar } from "../utils";
+import {
+  columnCharToIndex,
+  escapeScriptTag,
+  getSheetIndex,
+  indexToColumnChar,
+} from "../utils";
 import { getcellFormula, setCellValue } from "./cell";
 import { error } from "./validation";
 import { moveToEnd } from "./cursor";

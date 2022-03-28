@@ -1,5 +1,6 @@
 import _ from "lodash";
 import type { Context } from "../context";
+import { Cell } from "../types";
 import { normalizedCellAttr } from "./cell";
 import { isInlineStringCell } from "./inline-string";
 
@@ -328,7 +329,7 @@ export function drawLineInfo(
 // let measureTextCache = {}, measureTextCacheTimeOut = null;
 // option {cellWidth,cellHeight,space_width,space_height}
 export function getCellTextInfo(
-  cell: any,
+  cell: Cell,
   renderCtx: CanvasRenderingContext2D,
   sheetCtx: Context,
   option: any
@@ -409,7 +410,7 @@ export function getCellTextInfo(
   let underLine = "0";
   let fontSize = 11;
   let isInline = false;
-  let value;
+  let value: any;
   const inlineStringArr: {
     fontset: string;
     fc: string;
@@ -422,7 +423,7 @@ export function getCellTextInfo(
     measureText?: any;
   }[] = [];
   if (isInlineStringCell(cell)) {
-    const sharedStrings = cell.ct.s;
+    const sharedStrings = cell.ct!.s;
     let similarIndex = 0;
     for (let i = 0; i < sharedStrings.length; i += 1) {
       const shareCell = sharedStrings[i];
@@ -598,14 +599,6 @@ export function getCellTextInfo(
         }
 
         textH_all_Column[colIndex].push(item);
-        console.log(
-          "normal",
-          i,
-          colIndex,
-          shareCell,
-          preShareCell,
-          textH_all_Column
-        );
         preShareCell = shareCell;
       }
     } else {
@@ -875,13 +868,6 @@ export function getCellTextInfo(
           if (rt !== 0) {
             // rotate
             // console.log("all",anchor, i , str);
-            console.log(
-              height,
-              space_height,
-              cellHeight,
-              shareCells,
-              height + space_height > cellHeight
-            );
             if (
               height + space_height > cellHeight &&
               !_.isNil(text_all_split[splitIndex]) &&

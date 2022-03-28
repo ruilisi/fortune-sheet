@@ -729,6 +729,7 @@ export function extendSheet(
       );
     }
   } else {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type1 = "c";
 
     // 行高配置变动
@@ -911,28 +912,28 @@ export function extendSheet(
   file.luckysheet_alternateformat_save = newAFarr;
   file.dataVerification = newDataVerification;
   file.hyperlink = newHyperlink;
-  // if (file.index === ctx.currentSheetIndex) {
-  //   jfrefreshgrid_adRC(
-  //     d,
-  //     cfg,
-  //     "addRC",
-  //     {
-  //       index,
-  //       len: value,
-  //       direction,
-  //       rc: type1,
-  //       restore: false,
-  //     },
-  //     newCalcChain,
-  //     newFilterObj,
-  //     newCFarr,
-  //     newAFarr,
-  //     newFreezen,
-  //     newDataVerification,
-  //     newHyperlink
-  //   );
-  // } else {
-  // }
+  if (file.index === ctx.currentSheetIndex) {
+    ctx.config = cfg;
+    // jfrefreshgrid_adRC(
+    //   d,
+    //   cfg,
+    //   "addRC",
+    //   {
+    //     index,
+    //     len: value,
+    //     direction,
+    //     rc: type1,
+    //     restore: false,
+    //   },
+    //   newCalcChain,
+    //   newFilterObj,
+    //   newCFarr,
+    //   newAFarr,
+    //   newFreezen,
+    //   newDataVerification,
+    //   newHyperlink
+    // );
+  }
 
   let range = null;
   if (type === "row") {
@@ -1164,7 +1165,7 @@ export function deleteRowCol(
   const { filter_select } = file;
   const { filter } = file;
   let newFilterObj: any = null;
-  if (filter_select != null && JSON.stringify(filter_select) != "{}") {
+  if (!_.isEmpty(filter_select)) {
     newFilterObj = { filter_select: null, filter: null };
 
     let f_r1 = filter_select.row[0];
@@ -1263,11 +1264,7 @@ export function deleteRowCol(
               newFilterObj.filter = {};
             }
 
-            newFilterObj.filter[f_cindex - f_c1] = $.extend(
-              true,
-              {},
-              filter[k]
-            );
+            newFilterObj.filter[f_cindex - f_c1] = _.cloneDeep(filter[k]);
             newFilterObj.filter[f_cindex - f_c1].edc = f_c2;
           } else if (f_cindex > ed) {
             f_cindex -= slen;
@@ -1276,11 +1273,7 @@ export function deleteRowCol(
               newFilterObj.filter = {};
             }
 
-            newFilterObj.filter[f_cindex - f_c1] = $.extend(
-              true,
-              {},
-              filter[k]
-            );
+            newFilterObj.filter[f_cindex - f_c1] = _.cloneDeep(filter[k]);
             newFilterObj.filter[f_cindex - f_c1].cindex = f_cindex;
             newFilterObj.filter[f_cindex - f_c1].stc = f_c1;
             newFilterObj.filter[f_cindex - f_c1].edc = f_c2;
@@ -1528,13 +1521,13 @@ export function deleteRowCol(
       const c = Number(key.split("_")[1]);
       const item = dataVerification[key];
 
-      if (type == "row") {
+      if (type === "row") {
         if (r < st) {
           newDataVerification[`${r}_${c}`] = item;
         } else if (r > ed) {
           newDataVerification[`${r - slen}_${c}`] = item;
         }
-      } else if (type == "column") {
+      } else if (type === "column") {
         if (c < st) {
           newDataVerification[`${r}_${c}`] = item;
         } else if (c > ed) {
@@ -1695,6 +1688,7 @@ export function deleteRowCol(
       d.push(row);
     }
   } else {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type1 = "c";
 
     // 列宽配置变动
@@ -1819,29 +1813,21 @@ export function deleteRowCol(
   file.dataVerification = newDataVerification;
   file.hyperlink = newHyperlink;
 
-  // if (file.index === ctx.currentSheetIndex) {
-  //   jfrefreshgrid_adRC(
-  //     d,
-  //     cfg,
-  //     "delRC",
-  //     { index: st, len: ed - st + 1, rc: type1 },
-  //     newCalcChain,
-  //     newFilterObj,
-  //     newCFarr,
-  //     newAFarr,
-  //     newFreezen,
-  //     newDataVerification,
-  //     newHyperlink
-  //   );
-  // } else {
-  //   file.data = d;
-  //   file.config = cfg;
-  //   file.calcChain = newCalcChain;
-  //   file.filter = newFilterObj.filter;
-  //   file.filter_select = newFilterObj.filter_select;
-  //   file.luckysheet_conditionformat_save = newCFarr;
-  //   file.luckysheet_alternateformat_save = newAFarr;
-  //   file.dataVerification = newDataVerification;
-  //   file.hyperlink = newHyperlink;
-  // }
+  if (file.index === ctx.currentSheetIndex) {
+    ctx.config = cfg;
+    // jfrefreshgrid_adRC(
+    //   d,
+    //   cfg,
+    //   "delRC",
+    //   { index: st, len: ed - st + 1, rc: type1 },
+    //   newCalcChain,
+    //   newFilterObj,
+    //   newCFarr,
+    //   newAFarr,
+    //   newFreezen,
+    //   newDataVerification,
+    //   newHyperlink
+    // );
+  } else {
+  }
 }

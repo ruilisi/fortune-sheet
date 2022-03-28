@@ -1,4 +1,3 @@
-import produce from "immer";
 import _ from "lodash";
 import { normalizeSelection } from "./modules/selection";
 import { Sheet, Selection, Cell } from "./types";

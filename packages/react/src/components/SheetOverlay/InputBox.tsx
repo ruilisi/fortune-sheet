@@ -34,8 +34,10 @@ const InputBox: React.FC = () => {
 
   const inputBoxStyle = useMemo(() => {
     if (firstSelection && context.luckysheetCellUpdate.length > 0) {
+      const flowdata = getFlowdata(context);
+      if (!flowdata) return {};
       return getStyleByCell(
-        getFlowdata(context),
+        flowdata,
         firstSelection.row_focus!,
         firstSelection.column_focus!
       );
@@ -272,6 +274,7 @@ const InputBox: React.FC = () => {
       >
         <ContentEditable
           innerRef={(e) => {
+            // @ts-ignore
             inputRef.current = e;
             refs.cellInput.current = e;
           }}

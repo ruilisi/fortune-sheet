@@ -48,9 +48,9 @@ function checkDateTime(str: string) {
     return false;
   }
 
-  const year = RegExp.$1;
-  const month = RegExp.$2;
-  const day = RegExp.$3;
+  const year = Number(RegExp.$1);
+  const month = Number(RegExp.$2);
+  const day = Number(RegExp.$3);
 
   if (year < 1900) {
     return false;
@@ -68,7 +68,7 @@ function checkDateTime(str: string) {
     if (new Date(year, 1, 29).getDate() === 29 && day > 29) {
       return false;
     }
-    if (new Date(year, 1, 29).getDate() != 29 && day > 28) {
+    if (new Date(year, 1, 29).getDate() !== 29 && day > 28) {
       return false;
     }
   }

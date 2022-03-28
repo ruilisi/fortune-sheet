@@ -22,6 +22,7 @@ export type Cell = {
   spl?: any;
   bg?: string;
   lo?: number;
+  rt?: number;
   ps?: {
     left: number;
     top: number;
@@ -80,6 +81,12 @@ export type Sheet = {
   showGridLines?: boolean | number;
   pivotTable?: any;
   isPivotTable?: boolean;
+  filter?: any[];
+  filter_select?: any;
+  luckysheet_conditionformat_save?: any[];
+  luckysheet_alternateformat_save?: any[];
+  dataVerification?: any;
+  hyperlink?: any;
 };
 
 export type GlobalCache = {
