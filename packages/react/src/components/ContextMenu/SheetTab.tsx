@@ -1,6 +1,4 @@
-import locale from "@fortune-sheet/core/src/locale";
-import { Sheet } from "@fortune-sheet/core/src/types";
-import { deleteSheet } from "@fortune-sheet/core/src/modules/sheet";
+import { locale, Sheet, deleteSheet } from "@fortune-sheet/core";
 import React, {
   useContext,
   useRef,

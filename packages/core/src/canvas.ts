@@ -1,5 +1,5 @@
 import _ from "lodash";
-import defaultContext, { getFlowdata } from "./context";
+import { defaultContext, getFlowdata } from "./context";
 import { getRealCellValue, normalizedAttr } from "./modules/cell";
 import {
   clearMeasureTextCache,
@@ -105,7 +105,7 @@ function setLineDash(
   }
 }
 
-export default class Canvas {
+export class Canvas {
   canvasElement: HTMLCanvasElement;
 
   sheetCtx: ReturnType<typeof defaultContext>;
@@ -2195,14 +2195,16 @@ export default class Canvas {
       renderCtx.clip();
       renderCtx.scale(this.sheetCtx.zoomRatio, this.sheetCtx.zoomRatio);
 
-      const textInfo = getCellTextInfo(cell, renderCtx, this.sheetCtx, {
-        cellWidth,
-        cellHeight,
-        space_width,
-        space_height,
-        r,
-        c,
-      });
+      const textInfo = cell
+        ? getCellTextInfo(cell, renderCtx, this.sheetCtx, {
+            cellWidth,
+            cellHeight,
+            space_width,
+            space_height,
+            r,
+            c,
+          })
+        : undefined;
 
       // 若单元格有条件格式图标集
       if (checksCF?.icons && textInfo.type === "plain") {
@@ -2378,14 +2380,16 @@ export default class Canvas {
     renderCtx.clip();
     renderCtx.scale(this.sheetCtx.zoomRatio, this.sheetCtx.zoomRatio);
 
-    const textInfo = getCellTextInfo(cell, renderCtx, this.sheetCtx, {
-      cellWidth,
-      cellHeight,
-      space_width,
-      space_height,
-      r,
-      c,
-    });
+    const textInfo = cell
+      ? getCellTextInfo(cell, renderCtx, this.sheetCtx, {
+          cellWidth,
+          cellHeight,
+          space_width,
+          space_height,
+          r,
+          c,
+        })
+      : undefined;
 
     // 交替颜色
     // const checksAF = alternateformat.checksAF(r, c, afCompute);

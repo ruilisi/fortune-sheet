@@ -1,8 +1,7 @@
 import numeral from "numeral";
-import { isRealNum, valueIsError, isdatetime } from "./validation";
-import { getCellValue } from "./cell";
-import SSF from "./ssf";
 import _ from "lodash";
+import { isRealNum, valueIsError, isdatetime } from "./validation";
+import SSF from "./ssf";
 
 const XLMLFormatMap /* {[string]:string} */ = {
   "General Number": "General",

@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { Workbook } from "@fortune-sheet/react/src";
-import { Sheet } from "@fortune-sheet/core/src/types";
+import { Sheet } from "@fortune-sheet/core";
+import { Workbook } from "@fortune-sheet/react";
 import cell from "./data/cell";
 import formula from "./data/formula";
 import empty from "./data/empty";

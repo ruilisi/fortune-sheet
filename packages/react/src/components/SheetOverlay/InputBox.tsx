@@ -4,10 +4,13 @@ import {
   updateCell,
   getInlineStringHTML,
   getStyleByCell,
-} from "@fortune-sheet/core/src/modules/cell";
-import { isInlineStringCell } from "@fortune-sheet/core/src/modules/inline-string";
-import { moveToEnd } from "@fortune-sheet/core/src/modules/cursor";
-import { escapeScriptTag } from "@fortune-sheet/core/src/utils";
+  isInlineStringCell,
+  moveToEnd,
+  getFlowdata,
+  handleFormulaInput,
+  moveHighlightCell,
+  escapeScriptTag,
+} from "@fortune-sheet/core";
 import React, {
   useContext,
   useEffect,
@@ -19,9 +22,6 @@ import React, {
 } from "react";
 import _ from "lodash";
 import produce from "immer";
-import { getFlowdata } from "@fortune-sheet/core/src/context";
-import { handleFormulaInput } from "@fortune-sheet/core/src/modules/formula";
-import { moveHighlightCell } from "@fortune-sheet/core/src/modules/selection";
 import WorkbookContext from "../../context";
 import ContentEditable from "./ContentEditable";
 import FormulaSearch from "./FormulaSearch";

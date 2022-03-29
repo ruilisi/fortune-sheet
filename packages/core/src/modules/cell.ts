@@ -1,4 +1,4 @@
-import _, { flow } from "lodash";
+import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { Cell, CellMatrix, Range, Selection } from "../types";
 import { getSheetByIndex, getSheetIndex, rgbToHex } from "../utils";

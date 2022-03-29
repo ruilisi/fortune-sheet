@@ -9,4 +9,4 @@ function locale() {
   return localeObj[localStorage.getItem("lang") || "zh"];
 }
 
-export default locale;
+export { locale };

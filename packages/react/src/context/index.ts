@@ -1,7 +1,11 @@
 import React from "react";
-import defaultContext, { Context } from "@fortune-sheet/core/src/context";
-import { defaultSettings, Settings } from "@fortune-sheet/core/src/settings";
-import { GlobalCache } from "@fortune-sheet/core/src/types";
+import {
+  defaultContext,
+  Context,
+  defaultSettings,
+  Settings,
+  GlobalCache,
+} from "@fortune-sheet/core";
 
 type RefValues = {
   globalCache: GlobalCache;

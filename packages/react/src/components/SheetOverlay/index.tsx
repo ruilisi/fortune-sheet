@@ -7,7 +7,7 @@ import {
   handleContextMenu,
   handleOverlayMouseMove,
   handleOverlayMouseUp,
-} from "@fortune-sheet/core/src/events/mouse";
+} from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import ColumnHeader from "./ColumnHeader";
 import RowHeader from "./RowHeader";

@@ -144,7 +144,7 @@ export type Context = {
   defaultCell: Cell;
 };
 
-function defaultContext(): Context {
+export function defaultContext(): Context {
   return {
     container: null,
     loadingObj: {},
@@ -290,8 +290,6 @@ function defaultContext(): Context {
     },
   };
 }
-
-export default defaultContext;
 
 export function getFlowdata(ctx?: Context) {
   if (!ctx) return null;

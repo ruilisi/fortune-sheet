@@ -1,5 +1,5 @@
 import _ from "lodash";
-import type { Sheet as SheetType } from "@fortune-sheet/core/src/types";
+import type { Sheet as SheetType } from "../types";
 import { Context, getFlowdata } from "../context";
 import { getCellValue, getStyleByCell, mergeBorder } from "./cell";
 import { delFunctionGroup, formulaCache } from "./formula";
@@ -7,7 +7,7 @@ import clipboard from "./clipboard";
 import { getBorderInfoCompute } from "./border";
 import { getSheetIndex, replaceHtml } from "../utils";
 import { hasPartMC } from "./validation";
-import locale from "../locale";
+import { locale } from "../locale";
 
 export const selectionCache = {
   isPasteAction: false,

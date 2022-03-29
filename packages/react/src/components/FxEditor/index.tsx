@@ -1,14 +1,15 @@
-import { getFlowdata } from "@fortune-sheet/core/src/context";
 import {
+  getFlowdata,
   cancelNormalSelected,
   getCellValue,
   updateCell,
-} from "@fortune-sheet/core/src/modules/cell";
-import {
   getInlineStringNoStyle,
   isInlineStringCell,
-} from "@fortune-sheet/core/src/modules/inline-string";
-import { escapeScriptTag } from "@fortune-sheet/core/src/utils";
+  escapeScriptTag,
+  moveHighlightCell,
+  handleFormulaInput,
+  rangeHightlightselected,
+} from "@fortune-sheet/core";
 import React, {
   useContext,
   useState,
@@ -18,12 +19,7 @@ import React, {
 } from "react";
 import produce from "immer";
 import "./index.css";
-import { moveHighlightCell } from "@fortune-sheet/core/src/modules/selection";
 import _ from "lodash";
-import {
-  handleFormulaInput,
-  rangeHightlightselected,
-} from "@fortune-sheet/core/src/modules/formula";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
 import ContentEditable from "../SheetOverlay/ContentEditable";

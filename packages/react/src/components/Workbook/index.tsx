@@ -1,4 +1,17 @@
-import { defaultSettings, Settings } from "@fortune-sheet/core/src/settings";
+import {
+  defaultContext,
+  defaultSettings,
+  Settings,
+  Context,
+  getFlowdata,
+  initSheetIndex,
+  CellWithRowAndCol,
+  GlobalCache,
+  Sheet as SheetType,
+  handleGlobalKeyDown,
+  getSheetIndex,
+  handlePaste,
+} from "@fortune-sheet/core";
 import React, {
   useMemo,
   useState,
@@ -7,21 +20,8 @@ import React, {
   useRef,
 } from "react";
 import "./index.css";
-import defaultContext, {
-  Context,
-  getFlowdata,
-  initSheetIndex,
-} from "@fortune-sheet/core/src/context";
 import produce from "immer";
 import _, { assign } from "lodash";
-import {
-  CellWithRowAndCol,
-  GlobalCache,
-  Sheet as SheetType,
-} from "@fortune-sheet/core/src/types";
-import { handleGlobalKeyDown } from "@fortune-sheet/core/src/events/keyboard";
-import { getSheetIndex } from "@fortune-sheet/core/src/utils";
-import { handlePaste } from "@fortune-sheet/core/src/events/paste";
 import Sheet from "../Sheet";
 import WorkbookContext from "../../context";
 import Toolbar from "../Toolbar";

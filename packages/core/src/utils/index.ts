@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import { Context } from "../context";
-import locale from "../locale";
+import { locale } from "../locale";
 import { Sheet } from "../types";
 
 export function generateRandomSheetIndex() {

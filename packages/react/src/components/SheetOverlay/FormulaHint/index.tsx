@@ -1,4 +1,4 @@
-import { formulaCache } from "@fortune-sheet/core/src/modules/formula";
+import { formulaCache } from "@fortune-sheet/core";
 import React, { useContext } from "react";
 import WorkbookContext from "../../../context";
 import "./index.css";

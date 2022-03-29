@@ -1,9 +1,18 @@
 {
   "name": "@fortune-sheet/core",
   "version": "0.1.0",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": ["lib"],
   "repository": "https://github.com/ruilisi/fortune-sheet",
   "license": "MIT",
+  "scripts": {
+    "tsc": "tsc"
+  },
   "dependencies": {
     "dayjs": "^1.11.0",
     "hot-formula-parser": "^4.0.0",

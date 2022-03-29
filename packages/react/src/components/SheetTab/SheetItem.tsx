@@ -1,4 +1,4 @@
-import { Sheet } from "@fortune-sheet/core/src/types";
+import { Sheet, handleSheetTabOnBlur } from "@fortune-sheet/core";
 import React, {
   useContext,
   useState,
@@ -7,7 +7,6 @@ import React, {
   useCallback,
 } from "react";
 import produce from "immer";
-import { handleSheetTabOnBlur } from "@fortune-sheet/core/src/modules/sheet";
 import WorkbookContext from "../../context";
 import SheetTabContextMenu from "../ContextMenu/SheetTab";
 

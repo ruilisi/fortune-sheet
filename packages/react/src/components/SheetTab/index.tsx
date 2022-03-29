@@ -1,7 +1,6 @@
 import React, { useContext, useRef } from "react";
 import produce from "immer";
-import { updateCell } from "@fortune-sheet/core/src/modules/cell";
-import { addSheet } from "@fortune-sheet/core/src/modules/sheet";
+import { updateCell, addSheet } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
 import "./index.css";

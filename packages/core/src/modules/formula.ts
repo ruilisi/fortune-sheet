@@ -1,7 +1,7 @@
 import _ from "lodash";
 // @ts-ignore
 import { Parser } from "hot-formula-parser";
-import type { Selection } from "@fortune-sheet/core/src/types";
+import type { Selection } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
   columnCharToIndex,
@@ -12,7 +12,7 @@ import {
 import { getcellFormula, setCellValue } from "./cell";
 import { error } from "./validation";
 import { moveToEnd } from "./cursor";
-import locale from "../locale";
+import { locale } from "../locale";
 import { colors } from "./color";
 
 export const formulaCache: {

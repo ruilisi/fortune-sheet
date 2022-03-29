@@ -5,9 +5,9 @@ import {
   handleTextBackground,
   handleTextColor,
   handleTextSize,
-} from "@fortune-sheet/core/src/modules/toolbar";
-import { normalizedCellAttr } from "@fortune-sheet/core/src/modules/cell";
-import { getFlowdata } from "@fortune-sheet/core/src/context";
+  normalizedCellAttr,
+  getFlowdata,
+} from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import "./index.css";
 import Button from "./Button";

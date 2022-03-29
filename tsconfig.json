@@ -2,11 +2,31 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
+    "baseUrl": ".",
+    "outDir": "./lib",
+    "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "removeComments": true,
+    "noLib": false,
     "jsx": "react",
     "strict": true,
     "strictNullChecks": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "lib": ["es5", "dom"],
+    "paths": {
+      "@fortune-sheet/core": ["packages/core/src"],
+      "@fortune-sheet/react": ["packages/react/src"]
+    }
+  },
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/react" }
+  ],
+  "include": ["packages/*/src", "stories/"],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
 }

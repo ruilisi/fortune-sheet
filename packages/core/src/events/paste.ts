@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
-import locale from "../locale";
+import { locale } from "../locale";
 import { getdatabyselection, getQKBorder } from "../modules/cell";
 import { genarate } from "../modules/format";
 import { selectionCache } from "../modules/selection";

@@ -1,11 +1,12 @@
 import {
   colLocation,
   colLocationByIndex,
-} from "@fortune-sheet/core/src/modules/location";
-import {
   selectTitlesMap,
   selectTitlesRange,
-} from "@fortune-sheet/core/src/modules/selection";
+  handleColSizeHandleMouseDown,
+  handleColumnHeaderMouseDown,
+  handleContextMenu,
+} from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
   useContext,
@@ -15,11 +16,6 @@ import React, {
   useEffect,
 } from "react";
 import produce from "immer";
-import {
-  handleColSizeHandleMouseDown,
-  handleColumnHeaderMouseDown,
-  handleContextMenu,
-} from "@fortune-sheet/core/src/events/mouse";
 import WorkbookContext from "../../context";
 
 const ColumnHeader: React.FC = () => {

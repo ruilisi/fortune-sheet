@@ -2,7 +2,11 @@ import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { updateCell, cancelNormalSelected } from "../modules/cell";
 import { handleFormulaInput } from "../modules/formula";
-import { copy, deleteSelectedCellText, moveHighlightCell, selectionCache } from "../modules/selection";
+import {
+  deleteSelectedCellText,
+  moveHighlightCell,
+  selectionCache,
+} from "../modules/selection";
 import { handleBold } from "../modules/toolbar";
 import { hasPartMC } from "../modules/validation";
 import { GlobalCache } from "../types";

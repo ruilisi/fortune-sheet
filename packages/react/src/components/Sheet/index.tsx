@@ -1,17 +1,15 @@
 import React, { useRef, useEffect, useContext, useCallback } from "react";
-import { Canvas } from "@fortune-sheet/core/src";
-import "./index.css";
 import {
+  Canvas,
   updateContextWithCanvas,
   updateContextWithSheetData,
-} from "@fortune-sheet/core/src/context";
-import type { CellMatrix } from "@fortune-sheet/core/src/types";
-import {
   groupValuesRefresh,
   hasGroupValuesRefreshData,
-} from "@fortune-sheet/core/src/modules/formula";
+  handleGlobalWheel,
+} from "@fortune-sheet/core";
+import "./index.css";
+import type { CellMatrix } from "@fortune-sheet/core";
 import produce from "immer";
-import { handleGlobalWheel } from "@fortune-sheet/core/src/events/mouse";
 import WorkbookContext from "../../context";
 import SheetOverlay from "../SheetOverlay";
 

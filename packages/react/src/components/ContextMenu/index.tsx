@@ -1,13 +1,13 @@
-import { handleCopy } from "@fortune-sheet/core/src/events/copy";
-import locale from "@fortune-sheet/core/src/locale";
+import {
+  locale,
+  handleCopy,
+  handlePasteByClick,
+  deleteRowCol,
+  extendSheet,
+} from "@fortune-sheet/core";
 import _ from "lodash";
 import React, { useContext, useMemo, useRef, useLayoutEffect } from "react";
 import produce from "immer";
-import { handlePasteByClick } from "@fortune-sheet/core/src/events/paste";
-import {
-  deleteRowCol,
-  extendSheet,
-} from "@fortune-sheet/core/src/modules/rowcol";
 import WorkbookContext from "../../context";
 import "./index.css";
 import Menu from "./Menu";
