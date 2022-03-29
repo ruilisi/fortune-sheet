@@ -36,7 +36,7 @@ export type Cell = {
 export type CellWithRowAndCol = {
   r: number;
   c: number;
-  v: Cell;
+  v: Cell | null;
 };
 
 export type CellMatrix = (Cell | null)[][];

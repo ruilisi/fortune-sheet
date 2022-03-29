@@ -4,5 +4,5 @@ export * from "./settings";
 export * from "./events";
 export * from "./locale";
 export * from "./modules";
-export * from "./types.d";
 export * from "./utils";
+export * from "./types";

@@ -31,7 +31,7 @@ import ContextMenu from "../ContextMenu";
 import SVGDefines from "../SVGDefines";
 
 const Workbook: React.FC<
-  Settings & { onChange: (data: SheetType[]) => void }
+  Settings & { onChange?: (data: SheetType[]) => void }
 > = ({ onChange, ...props }) => {
   const [context, setContext] = useState(defaultContext());
   const cellInput = useRef<HTMLDivElement>(null);
@@ -41,7 +41,10 @@ const Workbook: React.FC<
   const cellArea = useRef<HTMLDivElement>(null);
   const workbookContainer = useRef<HTMLDivElement>(null);
   const globalCache = useRef<GlobalCache>({});
-  const mergedSettings = useMemo(() => assign(defaultSettings, props), [props]);
+  const mergedSettings = useMemo(
+    () => assign(defaultSettings, props) as Required<Settings>,
+    [props]
+  );
   const setContextValue = useCallback(
     <K extends keyof Context>(key: K, value: Context[K]) => {
       setContext(

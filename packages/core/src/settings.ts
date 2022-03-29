@@ -1,50 +1,50 @@
 import { Sheet } from "./types";
 
 export type Settings = {
-  column: number;
-  row: number;
-  allowCopy: boolean;
-  showtoolbar: boolean;
-  showinfobar: boolean;
-  showsheetbar: boolean;
-  showstatisticBar: boolean;
-  pointEdit: boolean;
-  pointEditUpdate: any;
-  pointEditZoom: number;
+  column?: number;
+  row?: number;
+  allowCopy?: boolean;
+  showtoolbar?: boolean;
+  showinfobar?: boolean;
+  showsheetbar?: boolean;
+  showstatisticBar?: boolean;
+  pointEdit?: boolean;
+  pointEditUpdate?: any;
+  pointEditZoom?: number;
   data: Sheet[];
-  config: any;
-  fullscreenmode: boolean;
-  devicePixelRatio: number;
-  allowEdit: boolean;
-  allowUpdate: boolean;
-  showConfigWindowResize: boolean;
-  enableAddRow: boolean;
-  enableAddBackTop: boolean;
-  autoFormatw: boolean;
-  accuracy?: number | string;
-  editMode: boolean;
-  beforeCreateDom?: () => void;
-  fireMousedown: any;
-  lang: string;
-  plugins: string[];
-  forceCalculation: boolean;
-  rowHeaderWidth: number;
-  columnHeaderHeight: number;
-  defaultColWidth: number;
-  defaultRowHeight: number;
-  defaultFontSize: number;
-  limitSheetNameLength: boolean;
-  defaultSheetNameMaxLength: number;
-  sheetFormulaBar: boolean;
-  showtoolbarConfig: string[];
-  showsheetbarConfig: any;
-  showstatisticBarConfig: any;
-  cellRightClickConfig: string[];
-  sheetRightClickConfig: any;
-  imageUpdateMethodConfig: any;
+  config?: any;
+  fullscreenmode?: boolean;
+  devicePixelRatio?: number;
+  allowEdit?: boolean;
+  allowUpdate?: boolean;
+  showConfigWindowResize?: boolean;
+  enableAddRow?: boolean;
+  enableAddBackTop?: boolean;
+  autoFormatw?: boolean;
+  accuracy?: number | string | null;
+  editMode?: boolean;
+  beforeCreateDom?: (() => void) | null;
+  fireMousedown?: any;
+  lang?: string;
+  plugins?: string[];
+  forceCalculation?: boolean;
+  rowHeaderWidth?: number;
+  columnHeaderHeight?: number;
+  defaultColWidth?: number;
+  defaultRowHeight?: number;
+  defaultFontSize?: number;
+  limitSheetNameLength?: boolean;
+  defaultSheetNameMaxLength?: number;
+  sheetFormulaBar?: boolean;
+  showtoolbarConfig?: string[];
+  showsheetbarConfig?: any;
+  showstatisticBarConfig?: any;
+  cellRightClickConfig?: string[];
+  sheetRightClickConfig?: any;
+  imageUpdateMethodConfig?: any;
 };
 
-export const defaultSettings: Settings = {
+export const defaultSettings: Required<Settings> = {
   column: 60, // 空表格默认的列数量
   row: 84, // 空表格默认的行数据量
   allowCopy: true, // 是否允许拷贝
@@ -65,9 +65,9 @@ export const defaultSettings: Settings = {
   enableAddRow: true, // 允许添加行
   enableAddBackTop: true, // 允许回到顶部
   autoFormatw: false, // 自动格式化超过4位数的数字为 亿万格式 例：true or "true" or "TRUE"
-  accuracy: undefined, // 设置传输来的数值的精确位数，小数点后n位 传参数为数字或数字字符串，例： "0" 或 0
+  accuracy: null, // 设置传输来的数值的精确位数，小数点后n位 传参数为数字或数字字符串，例： "0" 或 0
   editMode: false, // 是否为编辑模式
-  beforeCreateDom: undefined, // 表格创建之前的方法
+  beforeCreateDom: null, // 表格创建之前的方法
   fireMousedown: undefined, // 单元格数据下钻
   lang: "en", // language
   plugins: [], // plugins, e.g. ['chart']

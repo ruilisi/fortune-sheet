@@ -22,7 +22,7 @@ const WorkbookContext = React.createContext<{
   setContext: React.Dispatch<React.SetStateAction<Context>>;
   // eslint-disable-next-line
   setContextValue: <K extends keyof Context>(key: K, value: Context[K]) => void;
-  settings: Settings;
+  settings: Required<Settings>;
   refs: RefValues;
 }>({
   context: defaultContext(),
