@@ -1,5 +1,5 @@
 {
-  "name": "hot-formula-parser",
+  "name": "@fortune-sheet/formula-parser",
   "description": "Formula parser",
   "main": "dist/formula-parser.js",
   "homepage": "https://github.com/handsontable/formula-parser",

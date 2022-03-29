@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "dayjs": "^1.11.0",
-    "hot-formula-parser": "^4.0.0",
+    "@fortune-sheet/formula-parser": "^4.0.0",
     "immer": "^9.0.12",
     "lodash": "^4.17.21",
     "numeral": "^2.0.6",

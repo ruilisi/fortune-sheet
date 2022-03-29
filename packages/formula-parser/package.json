@@ -1,5 +1,5 @@
 {
-  "name": "hot-formula-parser",
+  "name": "@fortune-sheet/formula-parser",
   "version": "4.0.0",
   "description": "Formula parser",
   "main": "./src/index.js",
@@ -20,10 +20,6 @@
     "release": "generate-release",
     "postbuild": "node ./scripts/prepare-package"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/handsontable/formula-parser.git"
-  },
   "keywords": [
     "formula",
     "formulas",
@@ -34,10 +30,6 @@
   ],
   "author": "Handsoncode <hello@handsontable.com>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/handsontable/formula-parser/issues"
-  },
-  "homepage": "https://github.com/handsontable/formula-parser",
   "devDependencies": {
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",

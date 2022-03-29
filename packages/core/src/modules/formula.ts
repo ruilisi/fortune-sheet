@@ -1,6 +1,6 @@
 import _ from "lodash";
 // @ts-ignore
-import { Parser } from "hot-formula-parser";
+import { Parser } from "@fortune-sheet/formula-parser";
 import type { Selection } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
