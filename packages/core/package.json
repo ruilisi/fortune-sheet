@@ -1,10 +1,11 @@
 {
   "name": "@fortune-sheet/core",
   "version": "0.1.0",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
   "files": [
-    "lib"
+    "dist"
   ],
   "repository": "https://github.com/ruilisi/fortune-sheet",
   "license": "MIT",
