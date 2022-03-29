@@ -3,16 +3,11 @@
   "version": "0.1.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "repository": "https://github.com/ruilisi/fortune-sheet",
   "license": "MIT",
-  "scripts": {
-    "tsc": "tsc"
-  },
   "dependencies": {
     "dayjs": "^1.11.0",
     "@fortune-sheet/formula-parser": "^4.0.0",

@@ -1,19 +1,21 @@
 {
   "name": "@fortune-sheet/react",
   "version": "0.1.0",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": ["lib"],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.esm.js",
+  "files": [
+    "dist"
+  ],
   "repository": "https://github.com/ruilisi/fortune-sheet",
   "license": "MIT",
   "scripts": {
     "tsc": "tsc"
   },
   "dependencies": {
+    "@fortune-sheet/core": "^0.1.0",
+    "immer": "^9.0.12",
+    "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   }
