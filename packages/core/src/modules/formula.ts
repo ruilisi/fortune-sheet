@@ -1,7 +1,7 @@
 import _ from "lodash";
 // @ts-ignore
 import { Parser } from "@fortune-sheet/formula-parser";
-import type { Selection } from "../types";
+import type { Cell, Selection } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
   columnCharToIndex,
@@ -16,9 +16,9 @@ import { locale } from "../locale";
 import { colors } from "./color";
 
 export const formulaCache: {
-  func_selectedrange: Selection;
+  func_selectedrange: Selection | undefined;
 } & Record<string, any> = {
-  func_selectedrange: {},
+  func_selectedrange: undefined,
   rangedragged: () => {},
   rangeResizeObj: null,
   rangeResize: null,
@@ -30,12 +30,11 @@ export const formulaCache: {
   functionHTMLIndex: 0,
   functionRangeIndex: null,
   functionlistMap: {},
+  execFunctionExist: null,
+  execFunctionGlobalData: {},
 };
 
-let execFunctionGlobalData: any = {};
-let execFunctionExist: any = null;
 let formulaContainSheetList: any = {};
-const formulaContainCellList: any = {};
 let groupValuesRefreshData: any[] = [];
 let cellTextToIndexList: any = {};
 let operatorjson: any = null;
@@ -58,7 +57,7 @@ parser.on("callCellValue", (cellCoord: any, done: any) => {
   const flowdata = getFlowdata(currentContext);
   const index = currentContext?.currentSheetIndex;
   const cell =
-    execFunctionGlobalData[
+    formulaCache.execFunctionGlobalData[
       `${cellCoord.row.index}_${cellCoord.column.index}_${index}`
     ] || flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
   const v = cell?.ct?.t === "n" ? Number(cell?.v) : cell?.v;
@@ -85,7 +84,7 @@ parser.on(
         col += 1
       ) {
         const cell =
-          execFunctionGlobalData[`${row}_${col}_${index}`] ||
+          formulaCache.execFunctionGlobalData[`${row}_${col}_${index}`] ||
           flowdata?.[row]?.[col];
         const v = cell?.ct?.t === "n" ? Number(cell?.v) : cell?.v;
         colFragment.push(v);
@@ -180,6 +179,7 @@ function addToCellIndexList(txt: string, infoObj: any) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function addToSheetIndexList(
   ctx: Context,
   formulaTxt: string,
@@ -209,11 +209,7 @@ function addToSheetIndexList(
   formulaContainSheetList[formulaTxt][sheetIndex] = obIndex;
 }
 
-function getcellrange(
-  ctx: Context,
-  txt: string,
-  formulaIndex?: number | string
-) {
+function getcellrange(ctx: Context, txt: string, formulaIndex?: string) {
   if (_.isNil(txt) || txt.length === 0) {
     return null;
   }
@@ -241,13 +237,14 @@ function getcellrange(
     ) {
       sheettxt = sheettxt.substring(1, sheettxt.length - 1);
     }
-    for (const i in luckysheetfile) {
-      if (sheettxt === luckysheetfile[i].name) {
-        sheetIndex = luckysheetfile[i].index;
-        sheetdata = luckysheetfile[i].data;
-        break;
+    _.forEach(luckysheetfile, (f) => {
+      if (sheettxt === f.name) {
+        sheetIndex = f.index;
+        sheetdata = f.data;
+        return false;
       }
-    }
+      return true;
+    });
   } else {
     let i = formulaIndex;
     if (_.isNil(i)) {
@@ -323,12 +320,12 @@ function getcellrange(
 function isFunctionRangeSaveChange(
   ctx: Context,
   str: string,
-  r: number,
-  c: number,
+  r: number | null,
+  c: number | null,
   index: string,
   dynamicArray_compute?: any
 ) {
-  if (!_.isNil(r) && _.isNil(c)) {
+  if (r != null && c != null) {
     const range = getcellrange(ctx, _.trim(str), index);
     if (_.isNil(range)) {
       return;
@@ -374,6 +371,7 @@ function isFunctionRangeSaveChange(
       }
     }
   } else {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFunctionRangeSave ||= false;
   }
 }
@@ -405,8 +403,8 @@ function calPostfixExpression(cal: any[]) {
 function checkSpecialFunctionRange(
   ctx: Context,
   function_str: string,
-  r: number,
-  c: number,
+  r: number | null,
+  c: number | null,
   index: string,
   dynamicArray_compute?: any,
   cellRangeFunction?: any
@@ -451,8 +449,8 @@ function checkSpecialFunctionRange(
 function isFunctionRange(
   ctx: Context,
   txt: string,
-  r: number,
-  c: number,
+  r: number | null,
+  c: number | null,
   index: string,
   dynamicArray_compute: any,
   cellRangeFunction: any
@@ -476,7 +474,6 @@ function isFunctionRange(
   let i = 0;
   let str = "";
   let function_str = "";
-  const ispassby = true;
 
   const matchConfig = {
     bracket: 0,
@@ -532,7 +529,7 @@ function isFunctionRange(
       matchConfig.dquote === 0 &&
       matchConfig.braces === 0
     ) {
-      const bt = bracket.pop();
+      bracket.pop();
 
       if (bracket.length === 0) {
         // function_str += _this.isFunctionRange(str,r,c, index,dynamicArray_compute,cellRangeFunction) + ")";
@@ -605,6 +602,7 @@ function isFunctionRange(
         }
       } else {
         matchConfig.squote += 1;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         firstSQ = i;
       }
     } else if (
@@ -755,7 +753,6 @@ function isFunctionRange(
         ) {
           const arraytxt = regx.exec(str)?.[0];
           const arraystart = str.search(regx);
-          const alltxt = "";
 
           if (arraystart > 0) {
             endstr += str.substring(0, arraystart);
@@ -763,8 +760,8 @@ function isFunctionRange(
 
           endstr += `luckysheet_getarraydata('${arraytxt}')`;
 
-          if (arraystart + arraytxt.length < str.length) {
-            endstr += str.substring(arraystart + arraytxt.length, str.length);
+          if (arraystart + arraytxt!.length < str.length) {
+            endstr += str.substring(arraystart + arraytxt!.length, str.length);
           }
         } else {
           endstr = str;
@@ -1535,7 +1532,10 @@ function insertUpdateDynamicArray(ctx: Context, dynamicArrayItem: any) {
   }
 
   const { luckysheetfile } = ctx;
-  const file = luckysheetfile[getSheetIndex(ctx, index)];
+  const idx = getSheetIndex(ctx, index);
+  if (idx == null) return [];
+
+  const file = luckysheetfile[idx];
 
   let { dynamicArray } = file;
   if (_.isNil(dynamicArray)) {
@@ -1565,7 +1565,10 @@ export function groupValuesRefresh(ctx: Context) {
       //     continue;
       // }
 
-      const file = luckysheetfile[getSheetIndex(ctx, item.index)];
+      const idx = getSheetIndex(ctx, item.index);
+      if (idx == null) continue;
+
+      const file = luckysheetfile[idx];
       const { data } = file;
       if (_.isNil(data)) {
         continue;
@@ -1623,8 +1626,8 @@ export function execFunctionGroup(
   //   window.luckysheet_getSpecialReference = luckysheet_getSpecialReference;
   // }
 
-  if (_.isNil(execFunctionGlobalData)) {
-    execFunctionGlobalData = {};
+  if (_.isNil(formulaCache.execFunctionGlobalData)) {
+    formulaCache.execFunctionGlobalData = {};
   }
   // let luckysheetfile = getluckysheetfile();
   // let dynamicArray_compute = luckysheetfile[getSheetIndex(ctx.currentSheetIndex)_.isNil(]["dynamicArray_compute"]) ? {} : luckysheetfile[getSheetIndex(ctx.currentSheetIndex)]["dynamicArray_compute"];
@@ -1636,9 +1639,11 @@ export function execFunctionGroup(
   if (!_.isNil(value)) {
     // 此处setcellvalue 中this.execFunctionGroupData会保存想要更新的值，本函数结尾不要设为null,以备后续函数使用
     // setcellvalue(origin_r, origin_c, _this.execFunctionGroupData, value);
-    const cellCache = [[{ v: null }]];
+    const cellCache: Cell[][] = [[{ v: undefined }]];
     setCellValue(ctx, 0, 0, cellCache, value);
-    [[execFunctionGlobalData[`${origin_r}_${origin_c}_${index}`]]] = cellCache;
+    [
+      [formulaCache.execFunctionGlobalData[`${origin_r}_${origin_c}_${index}`]],
+    ] = cellCache;
   }
 
   // { "r": r, "c": c, "index": index, "func": func}
@@ -1655,22 +1660,25 @@ export function execFunctionGroup(
   // 把修改涉及的单元格存储为对象
   const updateValueOjects: any = {};
   const updateValueArray: any = [];
-  if (_.isNil(execFunctionExist)) {
+  if (_.isNil(formulaCache.execFunctionExist)) {
     const key = `r${origin_r}c${origin_c}i${index}`;
     updateValueOjects[key] = 1;
   } else {
-    for (let x = 0; x < execFunctionExist.length; x += 1) {
-      const cell = execFunctionExist[x];
+    for (let x = 0; x < formulaCache.execFunctionExist.length; x += 1) {
+      const cell = formulaCache.execFunctionExist[x];
       const key = `r${cell.r}c${cell.c}i${cell.i}`;
       updateValueOjects[key] = 1;
     }
   }
 
-  const arrayMatchCache: any = {};
+  const arrayMatchCache: Record<
+    string,
+    { key: string; r: number; c: number; sheetIndex: string }[]
+  > = {};
   const arrayMatch = (
     formulaArray: any,
-    formulaObjects: any,
-    updateValueOjects: any,
+    _formulaObjects: any,
+    _updateValueOjects: any,
     func: any
   ) => {
     for (let a = 0; a < formulaArray.length; a += 1) {
@@ -1689,8 +1697,8 @@ export function execFunctionGroup(
             const key = `r${r}c${c}i${range.sheetIndex}`;
             func(key, r, c, range.sheetIndex);
             if (
-              (formulaObjects && key in formulaObjects) ||
-              (updateValueOjects && key in updateValueOjects)
+              (_formulaObjects && key in _formulaObjects) ||
+              (_updateValueOjects && key in _updateValueOjects)
             ) {
               functionArr.push({
                 key,
@@ -1702,15 +1710,12 @@ export function execFunctionGroup(
           }
         }
 
-        if (formulaObjects || updateValueOjects) {
+        if (_formulaObjects || _updateValueOjects) {
           arrayMatchCache[cacheKey] = functionArr;
         }
       }
     }
   };
-
-  const existsChildFormulaMatch = {};
-  let ii = 0;
 
   // 创建公式缓存及其范围的缓存
   // console.time("1");
@@ -1762,20 +1767,20 @@ export function execFunctionGroup(
       const formulaTextArray = [];
       const sq_end_array = []; // 保存了配对的单引号在formulaTextArray的index索引。
       const calc_funcStr_length = calc_funcStr.length;
-      for (let i = 0; i < calc_funcStr_length; i += 1) {
-        const char = calc_funcStr.charAt(i);
+      for (let j = 0; j < calc_funcStr_length; j += 1) {
+        const char = calc_funcStr.charAt(j);
         if (char === "'" && dquote === -1) {
           // 如果是单引号开始
           if (squote === -1) {
-            if (point !== i) {
+            if (point !== j) {
               formulaTextArray.push(
                 ...calc_funcStr
-                  .substring(point, i)
-                  .split(/==|!=|<>|<=|>=|[,()=+-\/*%&\^><]/)
+                  .substring(point, j)
+                  .split(/==|!=|<>|<=|>=|[,()=+-/*%&^><]/)
               );
             }
-            squote = i;
-            point = i;
+            squote = j;
+            point = j;
           } // 单引号结束
           else {
             // if (squote === i - 1)//配对的单引号后第一个字符不能是单引号
@@ -1784,15 +1789,15 @@ export function execFunctionGroup(
             // }
             // 如果是''代表着输出'
             if (
-              i < calc_funcStr_length - 1 &&
-              calc_funcStr.charAt(i + 1) === "'"
+              j < calc_funcStr_length - 1 &&
+              calc_funcStr.charAt(j + 1) === "'"
             ) {
-              i += 1;
+              j += 1;
             } else {
               // 如果下一个字符不是'代表单引号结束
               // if (calc_funcStr.charAt(i - 1) === "'") {//配对的单引号后最后一个字符不能是单引号
               //    ;//到此处说明公式错误
-              point = i + 1;
+              point = j + 1;
               formulaTextArray.push(calc_funcStr.substring(squote, point));
               sq_end_array.push(formulaTextArray.length - 1);
               squote = -1;
@@ -1808,25 +1813,25 @@ export function execFunctionGroup(
         if (char === '"' && squote === -1) {
           // 如果是双引号开始
           if (dquote === -1) {
-            if (point !== i) {
+            if (point !== j) {
               formulaTextArray.push(
                 ...calc_funcStr
-                  .substring(point, i)
-                  .split(/==|!=|<>|<=|>=|[,()=+-\/*%&\^><]/)
+                  .substring(point, j)
+                  .split(/==|!=|<>|<=|>=|[,()=+-/*%&^><]/)
               );
             }
-            dquote = i;
-            point = i;
+            dquote = j;
+            point = j;
           } else {
             // 如果是""代表着输出"
             if (
-              i < calc_funcStr_length - 1 &&
-              calc_funcStr.charAt(i + 1) === '"'
+              j < calc_funcStr_length - 1 &&
+              calc_funcStr.charAt(j + 1) === '"'
             ) {
-              i += 1;
+              j += 1;
             } else {
               // 双引号结束
-              point = i + 1;
+              point = j + 1;
               formulaTextArray.push(calc_funcStr.substring(dquote, point));
               dquote = -1;
             }
@@ -1837,21 +1842,21 @@ export function execFunctionGroup(
         formulaTextArray.push(
           ...calc_funcStr
             .substring(point, calc_funcStr_length)
-            .split(/==|!=|<>|<=|>=|[,()=+-\/*%&\^><]/)
+            .split(/==|!=|<>|<=|>=|[,()=+-/*%&^><]/)
         );
       }
       // 拼接所有配对单引号及之后一个单元格内容，例如["'1-2'","!A1"]拼接为["'1-2'!A1"]
-      for (let i = sq_end_array.length - 1; i >= 0; i -= 1) {
-        if (sq_end_array[i] !== formulaTextArray.length - 1) {
-          formulaTextArray[sq_end_array[i]] +=
-            formulaTextArray[sq_end_array[i] + 1];
-          formulaTextArray.splice(sq_end_array[i] + 1, 1);
+      for (let j = sq_end_array.length - 1; j >= 0; j -= 1) {
+        if (sq_end_array[j] !== formulaTextArray.length - 1) {
+          formulaTextArray[sq_end_array[j]] +=
+            formulaTextArray[sq_end_array[j] + 1];
+          formulaTextArray.splice(sq_end_array[j] + 1, 1);
         }
       }
       // 至此=SUM('1-2'!A1:A2&"'1-2'!A2")由原来的["","SUM","'1","2'!A1:A2","",""'1","2'!A2""]更正为["","SUM","","'1-2'!A1:A2","","",""'1-2'!A2""]
 
-      for (let i = 0; i < formulaTextArray.length; i += 1) {
-        const t = formulaTextArray[i];
+      for (let j = 0; j < formulaTextArray.length; j += 1) {
+        const t = formulaTextArray[j];
         if (t.length <= 1) {
           continue;
         }
@@ -1963,8 +1968,6 @@ export function execFunctionGroup(
       }
     });
 
-    ii += 1;
-
     if (cacheStack.length === 0) {
       formulaRunList.push(formulaObject);
       existsFormulaRunList[formulaObject.key] = 1;
@@ -1987,7 +1990,6 @@ export function execFunctionGroup(
       continue;
     }
 
-    window.luckysheet_getcelldata_cache = null;
     const { calc_funcStr } = formulaCell;
 
     const v = execfunction(
@@ -2008,7 +2010,7 @@ export function execFunctionGroup(
     });
 
     // _this.execFunctionGroupData[u.r][u.c] = value;
-    execFunctionGlobalData[
+    formulaCache.execFunctionGlobalData[
       `${formulaCell.r}_${formulaCell.c}_${formulaCell.index}`
     ] = {
       v: v[1],
@@ -2018,7 +2020,7 @@ export function execFunctionGroup(
   // console.log(formulaRunList);
   // console.timeEnd("4");
 
-  execFunctionExist = null;
+  formulaCache.execFunctionExist = null;
 }
 
 function findrangeindex(v: string, vp: string) {
@@ -2227,6 +2229,7 @@ function findrangeindex(v: string, vp: string) {
   return null;
 }
 
+/*
 export function createRangeHightlight() {
   const $span = $("#luckysheet-rich-text-editor").find(
     "span.luckysheet-formula-functionrange-cell"
@@ -2279,6 +2282,7 @@ export function createRangeHightlight() {
     "#luckysheet-formula-functionrange .luckysheet-formula-functionrange-highlight"
   ).show();
 }
+*/
 
 function setCaretPosition(textDom: HTMLElement, children: number, pos: number) {
   try {
@@ -2385,8 +2389,10 @@ function getrangeseleciton() {
   if (!currSelection) return null;
   const { anchorNode, anchorOffset } = currSelection;
 
+  if (!anchorNode) return null;
+
   if (
-    anchorNode?.parentNode?.nodeName?.toLowerCase() === "span" &&
+    anchorNode.parentNode?.nodeName?.toLowerCase() === "span" &&
     anchorOffset !== 0
   ) {
     let txt = _.trim(anchorNode.textContent || "");
@@ -2397,18 +2403,19 @@ function getrangeseleciton() {
     }
     return anchorNode.parentNode;
   }
+  const anchorElement = anchorNode as HTMLElement;
   if (
-    anchorNode.id === "luckysheet-rich-text-editor" ||
-    anchorNode.id === "luckysheet-functionbox-cell"
+    anchorElement.id === "luckysheet-rich-text-editor" ||
+    anchorElement.id === "luckysheet-functionbox-cell"
   ) {
-    let txt = _.trim(anchor.find("span").last().text());
+    let txt = _.trim(_.last(anchorElement.querySelectorAll("span"))?.innerText);
 
-    if (txt.length === 0 && anchor.find("span").length > 1) {
-      const ahr = anchor.find("span");
-      txt = $.trim(ahr.eq(ahr.length - 2).text());
-      return ahr;
+    if (txt.length === 0 && anchorElement.querySelectorAll("span").length > 1) {
+      const ahr = anchorElement.querySelectorAll("span");
+      txt = _.trim(ahr[ahr.length - 2].innerText);
+      return ahr?.[0];
     }
-    return anchor.find("span").last();
+    return _.last(anchorElement.querySelectorAll("span"));
   }
   if (
     anchorNode?.parentElement?.id === "luckysheet-rich-text-editor" ||
@@ -2503,6 +2510,7 @@ function helpFunctionExe($editer: HTMLDivElement, currSelection: Node) {
     let $cur = null;
     let exceptIndex = [-1, -1];
 
+    // eslint-disable-next-line no-plusplus
     while (--i > 0) {
       $cur = $span[i];
 
@@ -2559,7 +2567,9 @@ export function rangeHightlightselected(ctx: Context, $editor: HTMLDivElement) {
   //   $(currSelection).closest(".luckysheet-formula-functionrange-cell").length ==
   //   0
   // ) {
-  const currText = _.trim(currSelection.textContent);
+  if (!currSelection) return;
+
+  const currText = _.trim(currSelection.textContent || "");
   if (currText?.match(/^[a-zA-Z_]+$/)) {
     searchFunction(ctx, currText.toUpperCase());
     ctx.functionHint = null;
@@ -2865,6 +2875,7 @@ export function handleFormulaInput(
         formulaCache.functionRangeIndex = [
           _.indexOf(
             currSelection.anchorNode?.parentNode?.parentNode?.childNodes,
+            // @ts-ignore
             currSelection.anchorNode?.parentNode
           ),
           currSelection.anchorOffset,
@@ -3283,6 +3294,283 @@ export function functionStrChange(
           stindex,
           step
         );
+      } else {
+        function_str += _.trim(str);
+      }
+    }
+
+    i += 1;
+  }
+
+  return function_str;
+}
+
+function updateparam(orient: string, txt: string, step: number) {
+  const val = txt.split("!");
+  let rangetxt;
+  let prefix = "";
+
+  if (val.length > 1) {
+    [, rangetxt] = val;
+    prefix = `${val[0]}!`;
+  } else {
+    [rangetxt] = val;
+  }
+
+  if (rangetxt.indexOf(":") === -1) {
+    let row = parseInt(rangetxt.replace(/[^0-9]/g, ""), 10);
+    let col = columnCharToIndex(rangetxt.replace(/[^A-Za-z]/g, ""));
+    const freezonFuc = isfreezonFuc(rangetxt);
+    const $row = freezonFuc[0] ? "$" : "";
+    const $col = freezonFuc[1] ? "$" : "";
+
+    if (orient === "u" && !freezonFuc[0]) {
+      row -= step;
+    } else if (orient === "r" && !freezonFuc[1]) {
+      col += step;
+    } else if (orient === "l" && !freezonFuc[1]) {
+      col -= step;
+    } else if (orient === "d" && !freezonFuc[0]) {
+      row += step;
+    }
+
+    if (!Number.isNaN(row) && !Number.isNaN(col)) {
+      return prefix + $col + indexToColumnChar(col) + $row + row;
+    }
+    if (!Number.isNaN(row)) {
+      return prefix + $row + row;
+    }
+    if (!Number.isNaN(col)) {
+      return prefix + $col + indexToColumnChar(col);
+    }
+    return txt;
+  }
+  rangetxt = rangetxt.split(":");
+  const row = [];
+  const col = [];
+
+  row[0] = parseInt(rangetxt[0].replace(/[^0-9]/g, ""), 10);
+  row[1] = parseInt(rangetxt[1].replace(/[^0-9]/g, ""), 10);
+  if (row[0] > row[1]) {
+    return txt;
+  }
+
+  col[0] = columnCharToIndex(rangetxt[0].replace(/[^A-Za-z]/g, ""));
+  col[1] = columnCharToIndex(rangetxt[1].replace(/[^A-Za-z]/g, ""));
+  if (col[0] > col[1]) {
+    return txt;
+  }
+
+  const freezonFuc0 = isfreezonFuc(rangetxt[0]);
+  const freezonFuc1 = isfreezonFuc(rangetxt[1]);
+  const $row0 = freezonFuc0[0] ? "$" : "";
+  const $col0 = freezonFuc0[1] ? "$" : "";
+  const $row1 = freezonFuc1[0] ? "$" : "";
+  const $col1 = freezonFuc1[1] ? "$" : "";
+
+  if (orient === "u") {
+    if (!freezonFuc0[0]) {
+      row[0] -= step;
+    }
+
+    if (!freezonFuc1[0]) {
+      row[1] -= step;
+    }
+  } else if (orient === "r") {
+    if (!freezonFuc0[1]) {
+      col[0] += step;
+    }
+
+    if (!freezonFuc1[1]) {
+      col[1] += step;
+    }
+  } else if (orient === "l") {
+    if (!freezonFuc0[1]) {
+      col[0] -= step;
+    }
+
+    if (!freezonFuc1[1]) {
+      col[1] -= step;
+    }
+  } else if (orient === "d") {
+    if (!freezonFuc0[0]) {
+      row[0] += step;
+    }
+
+    if (!freezonFuc1[0]) {
+      row[1] += step;
+    }
+  }
+
+  if (row[0] < 0 || col[0] < 0) {
+    return error.r;
+  }
+
+  if (Number.isNaN(col[0]) && Number.isNaN(col[1])) {
+    return `${prefix + $row0 + row[0]}:${$row1}${row[1]}`;
+  }
+  if (Number.isNaN(row[0]) && Number.isNaN(row[1])) {
+    return `${
+      prefix + $col0 + indexToColumnChar(col[0])
+    }:${$col1}${indexToColumnChar(col[1])}`;
+  }
+  return `${
+    prefix + $col0 + indexToColumnChar(col[0]) + $row0 + row[0]
+  }:${$col1}${indexToColumnChar(col[1])}${$row1}${row[1]}`;
+}
+
+function downparam(txt: string, step: number) {
+  return updateparam("d", txt, step);
+}
+
+function upparam(txt: string, step: number) {
+  return updateparam("u", txt, step);
+}
+
+function leftparam(txt: string, step: number) {
+  return updateparam("l", txt, step);
+}
+
+function rightparam(txt: string, step: number) {
+  return updateparam("r", txt, step);
+}
+
+export function functionCopy(
+  ctx: Context,
+  txt: string,
+  mode: string,
+  step: number
+) {
+  if (operatorjson == null) {
+    const arr = operator.split("|");
+    const op: any = {};
+
+    for (let i = 0; i < arr.length; i += 1) {
+      op[arr[i].toString()] = 1;
+    }
+
+    operatorjson = op;
+  }
+
+  if (mode == null) {
+    mode = "down";
+  }
+
+  if (step == null) {
+    step = 1;
+  }
+
+  if (txt.substring(0, 1) === "=") {
+    txt = txt.substring(1);
+  }
+
+  const funcstack = txt.split("");
+  let i = 0;
+  let str = "";
+  let function_str = "";
+
+  const matchConfig = {
+    bracket: 0,
+    comma: 0,
+    squote: 0,
+    dquote: 0,
+  };
+
+  while (i < funcstack.length) {
+    const s = funcstack[i];
+
+    if (s === "(" && matchConfig.dquote === 0) {
+      matchConfig.bracket += 1;
+
+      if (str.length > 0) {
+        function_str += `${str}(`;
+      } else {
+        function_str += "(";
+      }
+
+      str = "";
+    } else if (s === ")" && matchConfig.dquote === 0) {
+      matchConfig.bracket -= 1;
+      function_str += `${functionCopy(ctx, str, mode, step)})`;
+      str = "";
+    } else if (s === '"' && matchConfig.squote === 0) {
+      if (matchConfig.dquote > 0) {
+        function_str += `${str}"`;
+        matchConfig.dquote -= 1;
+        str = "";
+      } else {
+        matchConfig.dquote += 1;
+        str += '"';
+      }
+    } else if (s === "," && matchConfig.dquote === 0) {
+      function_str += `${functionCopy(ctx, str, mode, step)},`;
+      str = "";
+    } else if (s === "&" && matchConfig.dquote === 0) {
+      if (str.length > 0) {
+        function_str += `${functionCopy(ctx, str, mode, step)}&`;
+        str = "";
+      } else {
+        function_str += "&";
+      }
+    } else if (s in operatorjson && matchConfig.dquote === 0) {
+      let s_next = "";
+
+      if (i + 1 < funcstack.length) {
+        s_next = funcstack[i + 1];
+      }
+
+      let p = i - 1;
+      let s_pre = null;
+
+      if (p >= 0) {
+        do {
+          s_pre = funcstack[p];
+          p -= 1;
+        } while (p >= 0 && s_pre === " ");
+      }
+
+      if (s + s_next in operatorjson) {
+        if (str.length > 0) {
+          function_str += functionCopy(ctx, str, mode, step) + s + s_next;
+          str = "";
+        } else {
+          function_str += s + s_next;
+        }
+
+        i += 1;
+      } else if (
+        !/[^0-9]/.test(s_next) &&
+        s === "-" &&
+        (s_pre === "(" ||
+          s_pre == null ||
+          s_pre === "," ||
+          s_pre === " " ||
+          s_pre in operatorjson)
+      ) {
+        str += s;
+      } else {
+        if (str.length > 0) {
+          function_str += functionCopy(ctx, str, mode, step) + s;
+          str = "";
+        } else {
+          function_str += s;
+        }
+      }
+    } else {
+      str += s;
+    }
+
+    if (i === funcstack.length - 1) {
+      if (iscelldata(_.trim(str))) {
+        if (mode === "down") {
+          function_str += downparam(_.trim(str), step);
+        } else if (mode === "up") {
+          function_str += upparam(_.trim(str), step);
+        } else if (mode === "left") {
+          function_str += leftparam(_.trim(str), step);
+        } else if (mode === "right") {
+          function_str += rightparam(_.trim(str), step);
+        }
       } else {
         function_str += _.trim(str);
       }

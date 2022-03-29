@@ -3,6 +3,7 @@ import { Context, getFlowdata } from "../context";
 import { updateCell, cancelNormalSelected } from "../modules/cell";
 import { handleFormulaInput } from "../modules/formula";
 import {
+  copy,
   deleteSelectedCellText,
   moveHighlightCell,
   selectionCache,
@@ -18,14 +19,14 @@ function handleGlobalEnter(
   cellInput: HTMLDivElement,
   e: KeyboardEvent
 ) {
-  const flowdata = getFlowdata(ctx);
+  // const flowdata = getFlowdata(ctx);
   if ((e.altKey || e.metaKey) && ctx.luckysheetCellUpdate.length > 0) {
     const last =
       ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1];
     if (last && !_.isNil(last.row_focus) && !_.isNil(last.column_focus)) {
-      const row_index = last.row_focus;
-      const col_index = last.column_focus;
-      enterKeyControll(flowdata?.[row_index]?.[col_index]);
+      // const row_index = last.row_focus;
+      // const col_index = last.column_focus;
+      // enterKeyControll(flowdata?.[row_index]?.[col_index]);
     }
     e.preventDefault();
   } else if (ctx.luckysheetCellUpdate.length > 0) {
@@ -96,6 +97,7 @@ function handleBatchSelectionWithArrowKey(ctx: Context, e: KeyboardEvent) {
     return;
   }
   switch (e.key) {
+    /*
     case "ArrowUp":
       luckysheetMoveHighlightRange2("up", "rangeOfSelect");
       break;
@@ -108,6 +110,7 @@ function handleBatchSelectionWithArrowKey(ctx: Context, e: KeyboardEvent) {
     case "ArrowRight":
       luckysheetMoveHighlightRange2("right", "rangeOfSelect");
       break;
+  */
     default:
       break;
   }
@@ -138,7 +141,7 @@ function handleWithCtrlOrMetaKey(
 
       const row_index = last.row_focus!;
       const col_index = last.column_focus!;
-      updateCell(ctx, row_index, col_index, cellInput, flowdata, true);
+      updateCell(ctx, row_index, col_index, cellInput, flowdata);
 
       const value = getNowDateTime(2);
       cellInput.innerHTML = value;
@@ -156,21 +159,21 @@ function handleWithCtrlOrMetaKey(
     // luckysheetactiveCell();
     e.stopPropagation();
     return;
-  } else if (e.key === "f") {
-    // Ctrl + F  查找
-    searchReplace.createDialog(0);
-    searchReplace.init();
+    // } else if (e.key === "f") {
+    //   // Ctrl + F  查找
+    //   searchReplace.createDialog(0);
+    //   searchReplace.init();
 
-    $("#luckysheet-search-replace #searchInput input").focus();
-  } else if (e.key === "h") {
-    // Ctrl + H  替换
-    searchReplace.createDialog(1);
-    searchReplace.init();
+    //   $("#luckysheet-search-replace #searchInput input").focus();
+    // } else if (e.key === "h") {
+    //   // Ctrl + H  替换
+    //   searchReplace.createDialog(1);
+    //   searchReplace.init();
 
-    $("#luckysheet-search-replace #searchInput input").focus();
-  } else if (e.key === "i") {
-    // Ctrl + I  斜体
-    $("#luckysheet-icon-italic").click();
+    //   $("#luckysheet-search-replace #searchInput input").focus();
+    // } else if (e.key === "i") {
+    //   // Ctrl + I  斜体
+    //   $("#luckysheet-icon-italic").click();
   } else if (e.key === "v") {
     // Ctrl + V  粘贴
     // if (isEditMode()) {
@@ -199,11 +202,12 @@ function handleWithCtrlOrMetaKey(
   } else if (e.key === "x") {
     // Ctrl + X  剪切
     // 复制时存在格式刷状态，取消格式刷
-    if (menuButton.luckysheetPaintModelOn) {
-      menuButton.cancelPaintModel();
-    }
+    // if (menuButton.luckysheetPaintModelOn) {
+    //   menuButton.cancelPaintModel();
+    // }
 
-    if (ctx.luckysheet_select_save.length === 0) {
+    const selection = ctx.luckysheet_select_save;
+    if (!selection || _.isEmpty(selection)) {
       return;
     }
 
@@ -211,13 +215,13 @@ function handleWithCtrlOrMetaKey(
     if (ctx.config.merge != null) {
       let has_PartMC = false;
 
-      for (let s = 0; s < ctx.luckysheet_select_save.length; s++) {
-        const r1 = ctx.luckysheet_select_save[s].row[0];
-        const r2 = ctx.luckysheet_select_save[s].row[1];
-        const c1 = ctx.luckysheet_select_save[s].column[0];
-        const c2 = ctx.luckysheet_select_save[s].column[1];
+      for (let s = 0; s < selection.length; s += 1) {
+        const r1 = selection[s].row[0];
+        const r2 = selection[s].row[1];
+        const c1 = selection[s].column[0];
+        const c2 = selection[s].column[1];
 
-        has_PartMC = hasPartMC(ctx.config, r1, r2, c1, c2);
+        has_PartMC = hasPartMC(ctx, ctx.config, r1, r2, c1, c2);
 
         if (has_PartMC) {
           break;
@@ -225,33 +229,33 @@ function handleWithCtrlOrMetaKey(
       }
 
       if (has_PartMC) {
-        if (luckysheetConfigsetting.editMode) {
-          alert(_locale_drag.noMerge);
-        } else {
-          tooltip.info(_locale_drag.noMerge, "");
-        }
+        // if (luckysheetConfigsetting.editMode) {
+        //   alert(_locale_drag.noMerge);
+        // } else {
+        //   tooltip.info(_locale_drag.noMerge, "");
+        // }
         return;
       }
     }
 
     // 多重选区时 提示
-    if (ctx.luckysheet_select_save.length > 1) {
-      if (isEditMode()) {
-        alert(locale_drag.noMulti);
-      } else {
-        tooltip.info(locale_drag.noMulti, "");
-      }
+    if (selection.length > 1) {
+      // if (isEditMode()) {
+      //   alert(locale_drag.noMulti);
+      // } else {
+      //   tooltip.info(locale_drag.noMulti, "");
+      // }
       return;
     }
 
-    selection.copy(event);
+    copy(ctx);
 
     ctx.luckysheet_paste_iscut = true;
-    luckysheetactiveCell();
+    // luckysheetactiveCell();
 
-    event.stopPropagation();
+    e.stopPropagation();
     return;
-  } else if (e.key === "z") {
+  } /* else if (e.key === "z") {
     // Ctrl + Z  撤销
     controlHistory.redo(event);
     luckysheetactiveCell();
@@ -345,6 +349,7 @@ function handleWithCtrlOrMetaKey(
     // $(document).trigger("mouseup");
     $("#luckysheet-left-top").click();
   }
+  */
 
   e.preventDefault();
 }
@@ -358,10 +363,11 @@ function handleShiftWithArrowKey(ctx: Context, e: KeyboardEvent) {
   }
 
   ctx.luckysheet_shiftpositon = _.cloneDeep(
-    ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1]
+    ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1]
   );
   ctx.luckysheet_shiftkeydown = true;
 
+  /*
   if (
     $("#luckysheet-singleRange-dialog").is(":visible") ||
     $("#luckysheet-multiRange-dialog").is(":visible")
@@ -386,6 +392,7 @@ function handleShiftWithArrowKey(ctx: Context, e: KeyboardEvent) {
     default:
       break;
   }
+  */
   e.preventDefault();
 }
 
@@ -524,7 +531,8 @@ export function handleGlobalKeyDown(
     }
 
     const last =
-      ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
+      ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1];
+    if (!last) return;
 
     const row_index = last.row_focus;
     const col_index = last.column_focus;
@@ -598,14 +606,14 @@ export function handleGlobalKeyDown(
     ) {
       if (
         String.fromCharCode(kcode) != null &&
-        ctx.luckysheet_select_save.length > 0 && // $("#luckysheet-cell-selected").is(":visible") &&
+        !_.isEmpty(ctx.luckysheet_select_save) && // $("#luckysheet-cell-selected").is(":visible") &&
         kstr !== "CapsLock" &&
         kstr !== "Win" &&
         kcode !== 18
       ) {
         // 激活输入框，并将按键输入到输入框
         const last =
-          ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
+          ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1];
 
         const row_index = last.row_focus;
         const col_index = last.column_focus;

@@ -87,6 +87,8 @@ export type Sheet = {
   luckysheet_alternateformat_save?: any[];
   dataVerification?: any;
   hyperlink?: any;
+  dynamicArray_compute?: any;
+  dynamicArray?: any[];
 };
 
 export type GlobalCache = {

@@ -14,15 +14,12 @@ import {
   isInlineStringCell,
   isInlineStringCT,
 } from "./inline-string";
-import { colLocationByIndex } from "./location";
-import { getCellTextInfo } from "./text";
 import { isRealNull, isRealNum, valueIsError } from "./validation";
 
 // TODO put these in context ref
-let rangestart = false;
-let rangedrag_column_start = false;
-let rangedrag_row_start = false;
-const rangetosheet: number | undefined = undefined;
+// let rangestart = false;
+// let rangedrag_column_start = false;
+// let rangedrag_row_start = false;
 
 export function normalizedCellAttr(cell: Cell, attr: keyof Cell): any {
   const tf = { bl: 1, it: 1, ff: 1, cl: 1, un: 1 };
@@ -256,7 +253,9 @@ export function setCellValue(
           const v_p = Math.round(cell.v * 1000000000) / 1000000000;
           if (_.isNil(cell.ct)) {
             const mask = genarate(v_p);
-            cell.m = mask[0].toString();
+            if (mask != null) {
+              cell.m = mask[0].toString();
+            }
           } else {
             const mask = update(cell.ct.fa!, v_p);
             cell.m = mask.toString();
@@ -309,15 +308,18 @@ export function setCellValue(
         cell.ct = { fa: "General", t: "n" };
         if (cell.v === Infinity || cell.v === -Infinity) {
           cell.m = cell.v.toString();
-        } else {
-          const mask = genarate(cell.v);
-          cell.m = mask[0].toString();
+        } else if (cell.v != null) {
+          const mask = genarate(cell.v as string);
+          if (mask) {
+            cell.m = mask[0].toString();
+          }
         }
       } else {
         const mask = genarate(vupdate);
-
-        cell.m = mask[0].toString();
-        [, cell.ct, cell.v] = mask;
+        if (mask) {
+          cell.m = mask[0].toString();
+          [, cell.ct, cell.v] = mask;
+        }
       }
     }
   }
@@ -617,6 +619,7 @@ export function mergeMoveMain(
   return [columnseleted, rowseleted, top, height, left, width];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function canceFunctionrangeSelected(ctx: Context) {
   // $("#luckysheet-formula-functionrange-select").hide();
   // $("#luckysheet-row-count-show, #luckysheet-column-count-show").hide();
@@ -633,9 +636,9 @@ export function cancelNormalSelected(ctx: Context) {
   // $("#luckysheet-input-box-index").hide();
   // $("#luckysheet-wa-functionbox-cancel, #luckysheet-wa-functionbox-confirm").removeClass("luckysheet-wa-calculate-active");
 
-  rangestart = false;
-  rangedrag_column_start = false;
-  rangedrag_row_start = false;
+  // rangestart = false;
+  // rangedrag_column_start = false;
+  // rangedrag_row_start = false;
 }
 
 export function updateCell(
@@ -643,8 +646,7 @@ export function updateCell(
   r: number,
   c: number,
   $input: HTMLDivElement,
-  value?: any,
-  isRefresh = true
+  value?: any
 ) {
   let inputText = $input.innerText;
   const inputHtml = $input.innerHTML;
@@ -680,7 +682,7 @@ export function updateCell(
   let curv = flowdata[r][c];
 
   // ctx.old value for hook function
-  const oldValue = JSON.stringify(curv);
+  // const oldValue = JSON.stringify(curv);
 
   const isPrevInline = isInlineStringCell(curv);
   let isCurInline =
@@ -844,7 +846,7 @@ export function updateCell(
         // from API setCellValue,luckysheet.setCellValue(0, 0, {f: "=sum(D1)", bg:"#0188fb"}),value is an object, so get attribute f as value
         else {
           Object.keys(value).forEach((attr) => {
-            curv[attr] = value[attr];
+            curv![attr as keyof Cell] = value[attr];
           });
         }
       } else {
@@ -920,6 +922,7 @@ export function updateCell(
             value.spl = v[3].data;
           }
         } else if (v.length === 4 && v[3].type === "dynamicArrayItem") {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           dynamicArrayItem = v[3].data;
         }
       } else {
@@ -931,6 +934,7 @@ export function updateCell(
     } else {
       delFunctionGroup(ctx, r, c);
       execFunctionGroup(ctx, r, c, value);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       isRunExecFunction = false;
     }
   }
@@ -1343,6 +1347,7 @@ export function getQKBorder(width: string, type: string, color: string) {
  * @param cfg 配置
  * @returns 计算后的配置
  */
+/*
 export function rowlenByRange(
   ctx: Context,
   d: CellMatrix,
@@ -1437,6 +1442,7 @@ export function rowlenByRange(
 
   return cfg_clone;
 }
+*/
 
 export function getdatabyselection(
   ctx: Context,
@@ -1457,8 +1463,8 @@ export function getdatabyselection(
   let d;
   let cfg;
   if (sheetIndex != null && sheetIndex !== ctx.currentSheetIndex) {
-    d = ctx.luckysheetfile[getSheetIndex(ctx, sheetIndex)].data;
-    cfg = ctx.luckysheetfile[getSheetIndex(ctx, sheetIndex)].config;
+    d = ctx.luckysheetfile[getSheetIndex(ctx, sheetIndex)!].data;
+    cfg = ctx.luckysheetfile[getSheetIndex(ctx, sheetIndex)!].config;
   } else {
     d = getFlowdata(ctx);
     cfg = ctx.config;
@@ -1467,10 +1473,9 @@ export function getdatabyselection(
   const data = [];
 
   for (let r = range.row[0]; r <= range.row[1]; r += 1) {
-    if (d[r] == null) {
+    if (d?.[r] == null) {
       continue;
     }
-
     if (cfg.rowhidden != null && cfg.rowhidden[r] != null) {
       continue;
     }

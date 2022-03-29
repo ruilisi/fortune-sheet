@@ -7,7 +7,6 @@ import clipboard from "./clipboard";
 import { getBorderInfoCompute } from "./border";
 import { getSheetIndex, replaceHtml } from "../utils";
 import { hasPartMC } from "./validation";
-import { locale } from "../locale";
 
 export const selectionCache = {
   isPasteAction: false,
@@ -291,6 +290,7 @@ export function moveHighlightCell(
     // TODO formula.fucntionboxshow(row_index, col_index);
   } else if (type === "rangeOfFormula") {
     const last = formulaCache.func_selectedrange;
+    if (!last) return;
 
     let curR;
     if (_.isNil(last.row_focus)) {
@@ -623,7 +623,8 @@ export function copy(ctx: Context) {
       // eslint-disable-next-line no-template-curly-in-string
       let column = '<td ${span} style="${style}">';
 
-      if (!_.isNil(d[r]) && !_.isNil(d[r][c])) {
+      const cell = d[r]?.[c];
+      if (cell != null) {
         let style = "";
         let span = "";
 
@@ -656,9 +657,9 @@ export function copy(ctx: Context) {
         const reg = /^(w|W)((0?)|(0\.0+))$/;
         let c_value;
         if (
-          !_.isNil(d[r][c].ct) &&
-          !_.isNil(d[r][c].ct.fa) &&
-          d[r][c].ct.fa.match(reg)
+          !_.isNil(cell.ct) &&
+          !_.isNil(cell.ct.fa) &&
+          cell.ct.fa.match(reg)
         ) {
           c_value = getCellValue(r, c, d);
         } else {
@@ -670,19 +671,19 @@ export function copy(ctx: Context) {
           return `${_.kebabCase(key)}:${_.isNumber(v) ? `${v}px` : v};`;
         }).join("");
 
-        if (d[r]?.[c]?.mc) {
-          if ("rs" in d[r][c].mc) {
-            span = `rowspan="${d[r][c].mc.rs}" colspan="${d[r][c].mc.cs}"`;
+        if (cell.mc) {
+          if ("rs" in cell.mc) {
+            span = `rowspan="${cell.mc.rs}" colspan="${cell.mc.cs}"`;
 
             // 边框
             if (borderInfoCompute && borderInfoCompute[`${r}_${c}`]) {
-              const bl_obj = { color: {}, style: {} };
-              const br_obj = { color: {}, style: {} };
-              const bt_obj = { color: {}, style: {} };
-              const bb_obj = { color: {}, style: {} };
+              const bl_obj: any = { color: {}, style: {} };
+              const br_obj: any = { color: {}, style: {} };
+              const bt_obj: any = { color: {}, style: {} };
+              const bb_obj: any = { color: {}, style: {} };
 
-              for (let bd_r = r; bd_r < r + d[r][c].mc.rs; bd_r += 1) {
-                for (let bd_c = c; bd_c < c + d[r][c].mc.cs; bd_c += 1) {
+              for (let bd_r = r; bd_r < r + cell.mc.rs!; bd_r += 1) {
+                for (let bd_c = c; bd_c < c + cell.mc.cs!; bd_c += 1) {
                   if (
                     bd_r === r &&
                     borderInfoCompute[`${bd_r}_${bd_c}`] &&
@@ -695,18 +696,18 @@ export function copy(ctx: Context) {
                     if (_.isNil(bt_obj.style[linetype])) {
                       bt_obj.style[linetype] = 1;
                     } else {
-                      bt_obj.style[linetype] = bt_obj.style[linetype] + 1;
+                      bt_obj.style[linetype] += 1;
                     }
 
                     if (_.isNil(bt_obj.color[bcolor])) {
                       bt_obj.color[bcolor] = 1;
                     } else {
-                      bt_obj.color[bcolor] = bt_obj.color[bcolor] + 1;
+                      bt_obj.color[bcolor] += 1;
                     }
                   }
 
                   if (
-                    bd_r === r + d[r][c].mc.rs - 1 &&
+                    bd_r === r + cell.mc.rs! - 1 &&
                     borderInfoCompute[`${bd_r}_${bd_c}`] &&
                     borderInfoCompute[`${bd_r}_${bd_c}`].b
                   ) {
@@ -717,13 +718,13 @@ export function copy(ctx: Context) {
                     if (_.isNil(bb_obj.style[linetype])) {
                       bb_obj.style[linetype] = 1;
                     } else {
-                      bb_obj.style[linetype] = bb_obj.style[linetype] + 1;
+                      bb_obj.style[linetype] += 1;
                     }
 
                     if (_.isNil(bb_obj.color[bcolor])) {
                       bb_obj.color[bcolor] = 1;
                     } else {
-                      bb_obj.color[bcolor] = bb_obj.color[bcolor] + 1;
+                      bb_obj.color[bcolor] += 1;
                     }
                   }
 
@@ -738,18 +739,18 @@ export function copy(ctx: Context) {
                     if (_.isNil(bl_obj.style[linetype])) {
                       bl_obj.style[linetype] = 1;
                     } else {
-                      bl_obj.style[linetype] = bl_obj.style[linetype] + 1;
+                      bl_obj.style[linetype] += 1;
                     }
 
                     if (_.isNil(bl_obj.color[bcolor])) {
                       bl_obj.color[bcolor] = 1;
                     } else {
-                      bl_obj.color[bcolor] = bl_obj.color[bcolor] + 1;
+                      bl_obj.color[bcolor] += 1;
                     }
                   }
 
                   if (
-                    bd_c === c + d[r][c].mc.cs - 1 &&
+                    bd_c === c + cell.mc.cs! - 1 &&
                     borderInfoCompute[`${bd_r}_${bd_c}`] &&
                     borderInfoCompute[`${bd_r}_${bd_c}`].r
                   ) {
@@ -760,20 +761,20 @@ export function copy(ctx: Context) {
                     if (_.isNil(br_obj.style[linetype])) {
                       br_obj.style[linetype] = 1;
                     } else {
-                      br_obj.style[linetype] = br_obj.style[linetype] + 1;
+                      br_obj.style[linetype] += 1;
                     }
 
                     if (_.isNil(br_obj.color[bcolor])) {
                       br_obj.color[bcolor] = 1;
                     } else {
-                      br_obj.color[bcolor] = br_obj.color[bcolor] + 1;
+                      br_obj.color[bcolor] += 1;
                     }
                   }
                 }
               }
 
-              const rowlen = d[r][c].mc.rs;
-              const collen = d[r][c].mc.cs;
+              const rowlen = cell.mc.rs!;
+              const collen = cell.mc.cs!;
 
               if (JSON.stringify(bl_obj).length > 23) {
                 let bl_color = null;
@@ -1052,18 +1053,18 @@ export function deleteSelectedCellText(ctx: Context) {
     }
 
     if (has_PartMC) {
-      const locale_drag = locale().drag;
+      // const locale_drag = locale().drag;
 
-      if (isEditMode()) {
-        alert(locale_drag.noPartMerge);
-      } else {
-        tooltip.info(locale_drag.noPartMerge, "");
-      }
+      // if (isEditMode()) {
+      //   alert(locale_drag.noPartMerge);
+      // } else {
+      //   tooltip.info(locale_drag.noPartMerge, "");
+      // }
 
       return;
     }
     const hyperlinkMap =
-      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)].hyperlink;
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!].hyperlink;
 
     for (let s = 0; s < selection.length; s += 1) {
       const r1 = selection[s].row[0];
@@ -1109,4 +1110,35 @@ export function deleteSelectedCellText(ctx: Context) {
     // // 备注：在functionInputHanddler方法中会把该标签的内容拷贝到 #luckysheet-functionbox-cell
     // $("#luckysheet-rich-text-editor").html("");
   }
+}
+
+// 选区是否重叠
+export function selectIsOverlap(ctx: Context, range?: any) {
+  if (range == null) {
+    range = ctx.luckysheet_select_save;
+  }
+  range = _.cloneDeep(range);
+
+  let overlap = false;
+  const map: any = {};
+
+  for (let s = 0; s < range.length; s += 1) {
+    const str_r = range[s].row[0];
+    const end_r = range[s].row[1];
+    const str_c = range[s].column[0];
+    const end_c = range[s].column[1];
+
+    for (let r = str_r; r <= end_r; r += 1) {
+      for (let c = str_c; c <= end_c; c += 1) {
+        if (`${r}_${c}` in map) {
+          overlap = true;
+          break;
+        } else {
+          map[`${r}_${c}`] = 0;
+        }
+      }
+    }
+  }
+
+  return overlap;
 }

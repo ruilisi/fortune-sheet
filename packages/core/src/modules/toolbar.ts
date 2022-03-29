@@ -1,12 +1,9 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { Cell, CellMatrix } from "../types";
-import { isAllSelectedCellsInStatus, rowlenByRange } from "./cell";
+import { isAllSelectedCellsInStatus } from "./cell";
 import { is_date, update } from "./format";
-import {
-  inlineStyleAffectAttribute,
-  updateInlineStringFormatOutside,
-} from "./inline-string";
+import { updateInlineStringFormatOutside } from "./inline-string";
 import { isRealNum } from "./validation";
 
 type ToolbarItemClickHandler = (
@@ -176,24 +173,24 @@ function updateFormat(
     return;
   }
 
-  if (attr in inlineStyleAffectAttribute) {
-    if (ctx.luckysheetCellUpdate.length > 0) {
-      const value = $input.innerText;
-      if (value.substring(0, 1) !== "=") {
-        const cell =
-          d[ctx.luckysheetCellUpdate[0]][ctx.luckysheetCellUpdate[1]];
-        updateInlineStringFormat(
-          cell,
-          attr,
-          foucsStatus,
-          luckysheetformula.rangeResizeTo
-        );
-        // return;
-      }
-    }
-  }
+  // if (attr in inlineStyleAffectAttribute) {
+  //   if (ctx.luckysheetCellUpdate.length > 0) {
+  //     const value = $input.innerText;
+  //     if (value.substring(0, 1) !== "=") {
+  //       const cell =
+  //         d[ctx.luckysheetCellUpdate[0]][ctx.luckysheetCellUpdate[1]];
+  //       updateInlineStringFormat(
+  //         cell,
+  //         attr,
+  //         foucsStatus,
+  //         luckysheetformula.rangeResizeTo
+  //       );
+  //       // return;
+  //     }
+  //   }
+  // }
 
-  let cfg = _.cloneDeep(ctx.config);
+  const cfg = _.cloneDeep(ctx.config);
   if (_.isNil(cfg.rowlen)) {
     cfg.rowlen = {};
   }

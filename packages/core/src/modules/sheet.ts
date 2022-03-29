@@ -20,7 +20,7 @@ function storeSheetParam(ctx: Context) {
   file.zoomRatio = ctx.zoomRatio;
 }
 
-function storeSheetParamALL(ctx: Context) {
+export function storeSheetParamALL(ctx: Context) {
   storeSheetParam(ctx);
   const index = getSheetIndex(ctx, ctx.currentSheetIndex);
   if (index == null) return;

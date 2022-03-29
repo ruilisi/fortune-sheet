@@ -1831,3 +1831,29 @@ export function deleteRowCol(
   } else {
   }
 }
+
+// 计算表格行高数组
+export function computeRowlenArr(ctx: Context, rowHeight: number, cfg: any) {
+  const rowlenArr = [];
+  let rh_height = 0;
+
+  for (let i = 0; i < rowHeight; i += 1) {
+    let rowlen = ctx.defaultrowlen;
+
+    if (cfg.rowlen != null && cfg.rowlen[i] != null) {
+      rowlen = cfg.rowlen[i];
+    }
+
+    if (cfg.rowhidden != null && cfg.rowhidden[i] != null) {
+      rowlen = cfg.rowhidden[i];
+      rowlenArr.push(rh_height);
+      continue;
+    } else {
+      rh_height += rowlen + 1;
+    }
+
+    rowlenArr.push(rh_height); // 行的临时长度分布
+  }
+
+  return rowlenArr;
+}

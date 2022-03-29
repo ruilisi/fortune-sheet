@@ -1018,6 +1018,8 @@ export function handleCellAreaMouseDown(
   //     column_focus: col_index,
   //   });
   // } else {
+
+  // eslint-disable-next-line prefer-const
   selection = [
     {
       left: col_pre,
@@ -1749,7 +1751,6 @@ function mouseRender(
     // if (y < 0) {
     //   return false;
     // }
-
     // const row_location = rowLocation(y);
     // const row = row_location[1];
     // const row_pre = row_location[0];
@@ -1757,24 +1758,20 @@ function mouseRender(
     // const col_index = ctx.visibledatacolumn.length - 1;
     // const col = ctx.visibledatacolumn[col_index];
     // const col_pre = 0;
-
     // const last = $.extend(
     //   true,
     //   {},
     //   ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1]
     // );
-
     // let top = 0;
     // let height = 0;
     // let rowseleted = [];
     // if (last.top > row_pre) {
     //   top = row_pre;
     //   height = last.top + last.height - row_pre;
-
     //   if (last.row[1] > last.row_focus) {
     //     last.row[1] = last.row_focus;
     //   }
-
     //   rowseleted = [row_index, last.row[1]];
     // } else if (last.top == row_pre) {
     //   top = row_pre;
@@ -1783,21 +1780,15 @@ function mouseRender(
     // } else {
     //   top = last.top;
     //   height = row - last.top - 1;
-
     //   if (last.row[0] < last.row_focus) {
     //     last.row[0] = last.row_focus;
     //   }
-
     //   rowseleted = [last.row[0], row_index];
     // }
-
     // last.row = rowseleted;
-
     // last.top_move = top;
     // last.height_move = height;
-
     // ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1] = last;
-
     // selectHightlightShow();
     // clearTimeout(ctx.countfuncTimeout);
     // ctx.countfuncTimeout = setTimeout(function () {
@@ -1809,7 +1800,6 @@ function mouseRender(
     // if (x < 0) {
     //   return false;
     // }
-
     // const row_index = ctx.visibledatarow.length - 1;
     // const row = ctx.visibledatarow[row_index];
     // const row_pre = 0;
@@ -1817,24 +1807,20 @@ function mouseRender(
     // const col = col_location[1];
     // const col_pre = col_location[0];
     // const col_index = col_location[2];
-
     // const last = $.extend(
     //   true,
     //   {},
     //   ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1]
     // );
-
     // let left = 0;
     // let width = 0;
     // let columnseleted = [];
     // if (last.left > col_pre) {
     //   left = col_pre;
     //   width = last.left + last.width - col_pre;
-
     //   if (last.column[1] > last.column_focus) {
     //     last.column[1] = last.column_focus;
     //   }
-
     //   columnseleted = [col_index, last.column[1]];
     // } else if (last.left == col_pre) {
     //   left = col_pre;
@@ -1843,27 +1829,22 @@ function mouseRender(
     // } else {
     //   left = last.left;
     //   width = col - last.left - 1;
-
     //   if (last.column[0] < last.column_focus) {
     //     last.column[0] = last.column_focus;
     //   }
-
     //   columnseleted = [last.column[0], col_index];
     // }
-
     // last.column = columnseleted;
-
     // last.left_move = left;
     // last.width_move = width;
-
     // ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1] = last;
-
     // selectHightlightShow();
     // clearTimeout(ctx.countfuncTimeout);
     // ctx.countfuncTimeout = setTimeout(function () {
     //   countfunc();
     // }, 500);
   } else if (ctx.luckysheet_cell_selected_move) {
+    /*
     const mouse = mouseposition(event.pageX, event.pageY);
 
     const scrollLeft = $("#luckysheet-cell-main").scrollLeft();
@@ -1879,11 +1860,11 @@ function mouseRender(
       ctx.statisticBarHeight;
     const winW = $(window).width() + scrollLeft;
 
-    const row_location = rowLocation(y);
+    const row_location = rowLocation(y, ctx.visibledatarow);
     let row = row_location[1];
     let row_pre = row_location[0];
     const row_index = row_location[2];
-    const col_location = colLocation(x);
+    const col_location = colLocation(x, ctx.visibledatarow);
     let col = col_location[1];
     let col_pre = col_location[0];
     const col_index = col_location[2];
@@ -1951,7 +1932,9 @@ function mouseRender(
       height: row - row_pre - 2,
       display: "block",
     });
+    */
   } else if (ctx.luckysheet_cell_selected_extend) {
+    /*
     const mouse = mouseposition(event.pageX, event.pageY);
     const scrollLeft = $("#luckysheet-cell-main").scrollLeft() - 5;
     const scrollTop = $("#luckysheet-cell-main").scrollTop() - 5;
@@ -2064,6 +2047,7 @@ function mouseRender(
       height,
       display: "block",
     });
+    */
   } else if (ctx.luckysheet_cols_change_size) {
     // 调整列宽拖动
     const x = e.pageX - rect.left - ctx.rowHeaderWidth + container.scrollLeft;
@@ -4010,8 +3994,9 @@ export function handleOverlayMouseUp(
 
     // config
     ctx.config = cfg;
-    ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)].config =
-      ctx.config;
+    const idx = getSheetIndex(ctx, ctx.currentSheetIndex);
+    if (idx == null) return;
+    ctx.luckysheetfile[idx].config = ctx.config;
 
     // server.saveParam("cg", ctx.currentSheetIndex, cfg.rowlen, {
     //   k: "rowlen",
@@ -4118,8 +4103,9 @@ export function handleOverlayMouseUp(
 
     // config
     ctx.config = cfg;
-    ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)].config =
-      ctx.config;
+    const idx = getSheetIndex(ctx, ctx.currentSheetIndex);
+    if (idx == null) return;
+    ctx.luckysheetfile[idx].config = ctx.config;
 
     // server.saveParam("cg", ctx.currentSheetIndex, cfg.columnlen, {
     //   k: "columnlen",
@@ -4145,6 +4131,7 @@ export function handleOverlayMouseUp(
 
   // 改变选择框的位置并替换目标单元格
   if (ctx.luckysheet_cell_selected_move) {
+    /*
     $("#luckysheet-cell-selected-move").hide();
 
     ctx.luckysheet_cell_selected_move = false;
@@ -4455,6 +4442,7 @@ export function handleOverlayMouseUp(
     ctx.countfuncTimeout = setTimeout(function () {
       countfunc();
     }, 500);
+    */
   }
 
   /*
@@ -4471,6 +4459,7 @@ export function handleOverlayMouseUp(
 
   // 选区下拉
   if (ctx.luckysheet_cell_selected_extend) {
+    /*
     ctx.luckysheet_cell_selected_extend = false;
     $("#luckysheet-cell-selected-extend").hide();
 
@@ -4701,6 +4690,7 @@ export function handleOverlayMouseUp(
     ctx.countfuncTimeout = setTimeout(function () {
       countfunc();
     }, 500);
+    */
   }
 }
 
@@ -4724,7 +4714,6 @@ export function handleRowHeaderMouseDown(
   // }
 
   const rect = container.getBoundingClientRect();
-  const x = e.pageX - rect.left + ctx.scrollLeft;
   const y = e.pageY - rect.top + ctx.scrollTop;
 
   const row_location = rowLocation(y, ctx.visibledatarow);
@@ -5012,37 +5001,37 @@ export function handleRowHeaderMouseDown(
         return;
       }
 
-      let top = 0;
-      let height = 0;
-      let rowseleted = [];
+      let _top = 0;
+      let _height = 0;
+      let _rowseleted = [];
       if (last.top > row_pre) {
-        top = row_pre;
-        height = last.top + last.height - row_pre;
+        _top = row_pre;
+        _height = last.top + last.height - row_pre;
 
         if (last.row[1] > last.row_focus) {
           last.row[1] = last.row_focus;
         }
 
-        rowseleted = [row_index, last.row[1]];
-      } else if (last.top == row_pre) {
-        top = row_pre;
-        height = last.top + last.height - row_pre;
-        rowseleted = [row_index, last.row[0]];
+        _rowseleted = [row_index, last.row[1]];
+      } else if (last.top === row_pre) {
+        _top = row_pre;
+        _height = last.top + last.height - row_pre;
+        _rowseleted = [row_index, last.row[0]];
       } else {
-        top = last.top;
-        height = row - last.top - 1;
+        _top = last.top;
+        _height = row - last.top - 1;
 
         if (last.row[0] < last.row_focus) {
           last.row[0] = last.row_focus;
         }
 
-        rowseleted = [last.row[0], row_index];
+        _rowseleted = [last.row[0], row_index];
       }
 
-      last.row = rowseleted;
+      last.row = _rowseleted;
 
-      last.top_move = top;
-      last.height_move = height;
+      last.top_move = _top;
+      last.height_move = _height;
 
       ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1] =
         last;
@@ -5372,9 +5361,9 @@ export function handleColumnHeaderMouseDown(
         ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1]
       ); // 选区最后一个
 
-      let left = 0;
-      let width = 0;
-      let columnseleted = [];
+      let _left = 0;
+      let _width = 0;
+      let _columnseleted = [];
 
       if (
         !last ||
@@ -5386,33 +5375,33 @@ export function handleColumnHeaderMouseDown(
       }
 
       if (last.left > col_pre) {
-        left = col_pre;
-        width = last.left + last.width - col_pre;
+        _left = col_pre;
+        _width = last.left + last.width - col_pre;
 
         if (last.column[1] > last.column_focus) {
           last.column[1] = last.column_focus;
         }
 
-        columnseleted = [col_index, last.column[1]];
-      } else if (last.left == col_pre) {
-        left = col_pre;
-        width = last.left + last.width - col_pre;
-        columnseleted = [col_index, last.column[0]];
+        _columnseleted = [col_index, last.column[1]];
+      } else if (last.left === col_pre) {
+        _left = col_pre;
+        _width = last.left + last.width - col_pre;
+        _columnseleted = [col_index, last.column[0]];
       } else {
-        left = last.left;
-        width = col - last.left - 1;
+        _left = last.left;
+        _width = col - last.left - 1;
 
         if (last.column[0] < last.column_focus) {
           last.column[0] = last.column_focus;
         }
 
-        columnseleted = [last.column[0], col_index];
+        _columnseleted = [last.column[0], col_index];
       }
 
-      last.column = columnseleted;
+      last.column = _columnseleted;
 
-      last.left_move = left;
-      last.width_move = width;
+      last.left_move = _left;
+      last.width_move = _width;
 
       ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1] =
         last;

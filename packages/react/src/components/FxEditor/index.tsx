@@ -136,6 +136,7 @@ const FxEditor: React.FC = () => {
                 e.stopPropagation();
                 break;
               }
+              /*
               case "F4": {
                 formula.setfreezonFuc(event);
                 e.preventDefault();
@@ -180,6 +181,7 @@ const FxEditor: React.FC = () => {
                 e.stopPropagation();
                 break;
               }
+              */
               case "ArrowLeft": {
                 rangeHightlightselected(draftCtx, refs.fxInput.current!);
                 break;

@@ -1,7 +1,6 @@
 import {
   cancelNormalSelected,
   getCellValue,
-  updateCell,
   getInlineStringHTML,
   getStyleByCell,
   isInlineStringCell,
@@ -110,8 +109,6 @@ const InputBox: React.FC = () => {
       //   return;
       // }
 
-      const { ctrlKey, shiftKey } = e;
-
       setContext(
         produce((draftCtx) => {
           if (e.key === "Escape" && draftCtx.luckysheetCellUpdate.length > 0) {
@@ -137,24 +134,24 @@ const InputBox: React.FC = () => {
             e.key === "Tab" &&
             draftCtx.luckysheetCellUpdate.length > 0
           ) {
-            if (
-              $("#luckysheet-formula-search-c").is(":visible") &&
-              formula.searchFunctionCell != null
-            ) {
-              formula.searchFunctionEnter(
-                $("#luckysheet-formula-search-c").find(
-                  ".luckysheet-formula-search-item-active"
-                )
-              );
-            } else {
-              updateCell(
-                draftCtx,
-                draftCtx.luckysheetCellUpdate[0],
-                draftCtx.luckysheetCellUpdate[1],
-                refs.cellInput.current!
-              );
-              moveHighlightCell(draftCtx, "right", 1, "rangeOfSelect");
-            }
+            // if (
+            //   $("#luckysheet-formula-search-c").is(":visible") &&
+            //   formula.searchFunctionCell != null
+            // ) {
+            //   formula.searchFunctionEnter(
+            //     $("#luckysheet-formula-search-c").find(
+            //       ".luckysheet-formula-search-item-active"
+            //     )
+            //   );
+            // } else {
+            //   updateCell(
+            //     draftCtx,
+            //     draftCtx.luckysheetCellUpdate[0],
+            //     draftCtx.luckysheetCellUpdate[1],
+            //     refs.cellInput.current!
+            //   );
+            //   moveHighlightCell(draftCtx, "right", 1, "rangeOfSelect");
+            // }
 
             e.preventDefault();
           } else if (
@@ -163,7 +160,7 @@ const InputBox: React.FC = () => {
           ) {
             // formula.setfreezonFuc(event);
             e.preventDefault();
-          } else if (
+          } /* else if (
             e.key === "ArrowUp" &&
             draftCtx.luckysheetCellUpdate.length > 0
           ) {
@@ -183,11 +180,11 @@ const InputBox: React.FC = () => {
             draftCtx.luckysheetCellUpdate.length > 0
           ) {
             formulaMoveEvent("right", ctrlKey, shiftKey, event);
-          }
+          } */
         })
       );
     },
-    [refs.cellInput, setContext]
+    [setContext]
   );
 
   const onChange = useCallback(() => {

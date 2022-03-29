@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { Context } from "../context";
-import { copy } from "../modules/selection";
+import { copy, selectIsOverlap } from "../modules/selection";
 import { hasPartMC } from "../modules/validation";
 
 export function handleCopy(ctx: Context) {
@@ -37,11 +37,11 @@ export function handleCopy(ctx: Context) {
     }
 
     if (has_PartMC) {
-      if (isEditMode()) {
-        alert(locale_drag.noMerge);
-      } else {
-        tooltip.info(locale_drag.noMerge, "");
-      }
+      // if (isEditMode()) {
+      //   alert(locale_drag.noMerge);
+      // } else {
+      //   tooltip.info(locale_drag.noMerge, "");
+      // }
       return;
     }
   }
@@ -110,12 +110,12 @@ export function handleCopy(ctx: Context) {
       }
     }
 
-    if ((!isSameRow && !isSameCol) || selectIsOverlap()) {
-      if (isEditMode()) {
-        alert(locale_drag.noMulti);
-      } else {
-        tooltip.info(locale_drag.noMulti, "");
-      }
+    if ((!isSameRow && !isSameCol) || selectIsOverlap(ctx)) {
+      // if (isEditMode()) {
+      //   alert(locale_drag.noMulti);
+      // } else {
+      //   tooltip.info(locale_drag.noMulti, "");
+      // }
       return;
     }
   }

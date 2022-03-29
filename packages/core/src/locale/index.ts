@@ -3,6 +3,7 @@ import zh from "./zh";
 import es from "./es";
 import zh_tw from "./zh_tw";
 
+// @ts-ignore
 const localeObj: Record<string, typeof zh> = { en, zh, es, zh_tw };
 
 function locale() {
