@@ -99,7 +99,10 @@ module.exports = {
 	},
 	plugins: {
 		'sitemap': {
-			hostname: 'https://ruilisi.github.io/fortune-sheet-demo/'
+			hostname: 'https://ruilisi.github.io/fortune-sheet-demo/',
+			dateFormatter: val => {
+				return new Date().toISOString()
+			}
 		},
 		'vuepress-plugin-code-copy': true,
 		'seo': {
