@@ -255,6 +255,45 @@ export function handleUnderline(ctx: Context, cellInput: HTMLDivElement) {
   toggleAttr(ctx, cellInput, "un");
 }
 
+export function handleHorizontalAlign(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  value: string
+) {
+  setAttr(ctx, cellInput, "ht", value);
+}
+
+export function handleVerticalAlign(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  value: string
+) {
+  setAttr(ctx, cellInput, "vt", value);
+}
+
+export function handleClearFormat(ctx: Context) {
+  const flowdata = getFlowdata(ctx);
+  if (!flowdata) return;
+
+  _.forEach(ctx.luckysheet_select_save, (selection) => {
+    const [row_st, row_ed] = selection.row;
+    const [col_st, col_ed] = selection.column;
+
+    for (let r = row_st; r <= row_ed; r += 1) {
+      if (!_.isNil(ctx.config.rowhidden) && !_.isNil(ctx.config.rowhidden[r])) {
+        continue;
+      }
+
+      for (let c = col_st; c <= col_ed; c += 1) {
+        const cell = flowdata[r][c];
+        if (!cell) continue;
+
+        flowdata[r][c] = _.pick(cell, "v", "m", "mc", "f", "ct");
+      }
+    }
+  });
+}
+
 export function handleTextColor(
   ctx: Context,
   cellInput: HTMLDivElement,
@@ -284,6 +323,19 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
   italic: handleItalic,
   "strike-through": handleStrikeThrough,
   underline: handleUnderline,
+  "align-left": (ctx: Context, cellInput: HTMLDivElement) =>
+    handleHorizontalAlign(ctx, cellInput, "left"),
+  "align-center": (ctx: Context, cellInput: HTMLDivElement) =>
+    handleHorizontalAlign(ctx, cellInput, "center"),
+  "align-right": (ctx: Context, cellInput: HTMLDivElement) =>
+    handleHorizontalAlign(ctx, cellInput, "right"),
+  "align-top": (ctx: Context, cellInput: HTMLDivElement) =>
+    handleVerticalAlign(ctx, cellInput, "top"),
+  "align-mid": (ctx: Context, cellInput: HTMLDivElement) =>
+    handleVerticalAlign(ctx, cellInput, "middle"),
+  "align-bottom": (ctx: Context, cellInput: HTMLDivElement) =>
+    handleVerticalAlign(ctx, cellInput, "bottom"),
+  "clear-format": handleClearFormat,
 };
 
 export function getToolbarItemClickHandler(name: string) {
