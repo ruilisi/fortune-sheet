@@ -8,6 +8,7 @@
 // 配置项
 const settings = {
     data: [{ name: 'Sheet1', celldata: [{ r: 0, c: 0, v: null }] }], // 表格数据
+    onChange: (data) => {}, // onChange 事件
     lang: 'zh' // 设定表格语言
     // 更多其他设置...
 }
@@ -34,6 +35,7 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 
 - 语言 [lang](#lang)
 - 工作表配置 [data](#data)
+- 工作表onChange事件 [onChange](#onChange)
 - 列数 [column](#column)
 - 行数 [row](#row)
 - 亿万格式 [autoFormatw](#autoFormatw)
@@ -69,6 +71,12 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 - 类型：Array
 - 默认值：undefined
 - 作用：详细参数设置参见[工作表配置](/zh/guide/sheet.html)
+
+------------
+### onChange
+- 类型: Function
+- 默认值: undefined
+- 当`data`改变时触发
 
 ------------
 ### column

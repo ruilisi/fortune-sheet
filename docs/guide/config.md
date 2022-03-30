@@ -8,6 +8,7 @@ Below is a simple configuration example:
 // Configuration item
 const settings = {
      data: [{ name: 'Sheet1', celldata: [{ r: 0, c: 0, v: null }] }], // sheet data
+     onChange: (data) => {}, // onChange event
      lang:'zh' // set language
      // More other settings...
 }
@@ -33,6 +34,7 @@ The following are all supported setting parameters
 
 - Language [lang](#lang)
 - Worksheet configuration [data](#data)
+- Worksheet onChange event [onChange](#onChange)
 - Number of columns [column](#column)
 - Number of rows [row](#row)
 - Billion format [autoFormatw](#autoFormatw)
@@ -65,6 +67,12 @@ The following are all supported setting parameters
 - Type: Array
 - Default: undefined
 - For detailed parameter settings, please refer to [worksheet configuration](/guide/sheet.html)
+
+------------
+### onChange
+- Type: Function
+- Default: undefined
+- Emitted when workbook `data` has changed
 
 ------------
 ### column
