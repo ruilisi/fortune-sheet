@@ -82,7 +82,10 @@ const Workbook: React.FC<
     setContext(
       produce((draftCtx) => {
         if (_.isEmpty(draftCtx.luckysheetfile)) {
-          draftCtx.luckysheetfile = mergedSettings.data;
+          // mergedSettings.data at this time may be immutable, causing following modifications to fail,
+          // clone it to make it mutable
+          // TODO do not clone it
+          draftCtx.luckysheetfile = _.cloneDeep(mergedSettings.data);
         }
         draftCtx.defaultcolumnNum = mergedSettings.column;
         draftCtx.defaultrowNum = mergedSettings.row;
