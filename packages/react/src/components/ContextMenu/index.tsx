@@ -105,15 +105,13 @@ const ContextMenu: React.FC = () => {
         : ["top", "bottom"].map((dir) => (
             <Menu
               key={`add-row-${dir}`}
-              onClick={(e) => {
+              onClick={(e, container) => {
                 setContext(
                   produce((draftCtx) => {
                     const position =
                       draftCtx.luckysheet_select_save?.[0]?.row?.[0];
                     if (position == null) return;
-                    const countStr = (e.target as HTMLDivElement).querySelector(
-                      "input"
-                    )?.value;
+                    const countStr = container.querySelector("input")?.value;
                     if (countStr == null) return;
                     const count = parseInt(countStr, 10);
                     if (count < 1) return;
