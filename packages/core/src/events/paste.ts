@@ -239,7 +239,7 @@ function pasteHandlerOfCutPaste(
   }
   if (!copyRange) return;
 
-  const cfg = ctx.config;
+  const cfg = ctx.config || {};
   if (cfg.merge == null) {
     cfg.merge = {};
   }

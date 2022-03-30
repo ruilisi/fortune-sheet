@@ -37,7 +37,7 @@ const ColumnHeader: React.FC = () => {
       }
       const x =
         e.pageX -
-        containerRef.current!.getBoundingClientRect().top +
+        containerRef.current!.getBoundingClientRect().left +
         containerRef.current!.scrollLeft;
       const col_location = colLocation(x, context.visibledatacolumn);
       const [col_pre, col] = col_location;

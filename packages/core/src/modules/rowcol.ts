@@ -45,7 +45,7 @@ export function extendSheet(
   if (!d) return;
 
   value = Math.floor(value);
-  const cfg = file.config;
+  const cfg = file.config || {};
 
   // 合并单元格配置变动
   if (cfg.merge == null) {
@@ -1044,7 +1044,7 @@ export function deleteRowCol(
   }
 
   const slen = ed - st + 1;
-  const cfg = file.config;
+  const cfg = file.config || {};
 
   // 合并单元格配置变动
   if (cfg.merge == null) {
