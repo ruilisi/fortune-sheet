@@ -2,6 +2,8 @@
 <h1 align="center">FortuneSheet</h1>
 <p align="center">FortuneSheet is an online spreedsheet component library that provides out-of-the-box features just like Excel</p>
 
+English | [简体中文](./README-zh.md)
+
 ## Purpose
 
 The goal of `FortuneSheet` is to make a feature-rich, easy-to-configure online spreedsheet that you can use out-of-the-box.
@@ -37,7 +39,7 @@ This project is in the state of early development, APIs may have significant cha
 - **Cells**: multiple selection, merge cells
 - **Row & column**: insert, delete rows or columns
 - **Operation**: copy, paste, cut, hot key
-- **Formulas & Functions**: Built-in, remote and custom formulas
+- **Formulas & Functions**: Built-in formulas
 
 ## TODOs
 - **Formatting**: conditional formatting, fonts
@@ -47,6 +49,7 @@ This project is in the state of early development, APIs may have significant cha
 - **Tables**: filter, sort
 - **Enhanced functions**: Pivot tables, charts, comments, cooperative editing, insert picture, matrix calculations, screenshots, copying to other formats, EXCEL import and export, etc.
 - Vue support.
+- Tests.
 
 
 ## Documentation
@@ -56,11 +59,11 @@ See detailed documentation at [fortune-sheet-doc](https://ruilisi.github.io/fort
 ## Get started (react)
 
 ### Download and install the library
-```
+```shell
 yarn add @fortune-sheet/react
 ```
 or using npm:
-```
+```shell
 npm install @fortune-sheet/react
 ```
 
@@ -86,34 +89,29 @@ import { Workbook } from "@fortune-sheet/react";
 import "@fortune-sheet/react/dist/index.css"
 
 ReactDOM.render(
-  <Workbook
-    data={[
-      {
-        name: "demo",
-        index: "demo",
-      },
-    ]}
-  />,
+  <Workbook data={[{ name: "Sheet1" }]} />,
   document.getElementById('root')
 );
 ```
 ## Contributing
 Expected workflow is: Fork -> Patch -> Push -> Pull Request
 
+Please make sure to read the [Contributing Guide](https://ruilisi.github.io/fortune-sheet-docs/guide/contribute.html) before making a pull request.
+
 
 ## Development
 ### Installation
-```
+```shell
 yarn
 ```
 
 ### Development
-```
+```shell
 yarn dev
 ```
 
 ### Packaging
-```
+```shell
 yarn build
 ```
 

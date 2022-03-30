@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "dev": "vuepress dev .",
+    "build": "vuepress build ."
+  },
+  "devDependencies": {
+    "vuepress": "^1.9.7",
+    "vuepress-plugin-code-copy": "^1.0.6",
+    "vuepress-plugin-seo": "^0.2.0",
+    "vuepress-plugin-sitemap": "^2.3.1"
+  }
+}

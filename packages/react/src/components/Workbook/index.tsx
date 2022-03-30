@@ -104,7 +104,7 @@ const Workbook: React.FC<
         if (sheetIdx == null) {
           if ((draftCtx.luckysheetfile?.length ?? 0) > 0) {
             sheetIdx = 0;
-            draftCtx.currentSheetIndex = draftCtx.luckysheetfile[0].index;
+            draftCtx.currentSheetIndex = draftCtx.luckysheetfile[0].index!;
           }
         }
         if (sheetIdx == null) return;
@@ -192,6 +192,9 @@ const Workbook: React.FC<
           }
         } else {
           draftCtx.showGridLines = true;
+        }
+        if (!_.isNil(mergedSettings.lang)) {
+          localStorage.setItem("lang", mergedSettings.lang);
         }
       })
     );

@@ -65,7 +65,7 @@ export type Sheet = {
   order?: number;
   data?: CellMatrix;
   celldata?: CellWithRowAndCol[];
-  index: string;
+  index?: string;
   zoomRatio?: number;
   column?: number;
   row?: number;

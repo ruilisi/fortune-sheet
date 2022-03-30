@@ -417,11 +417,11 @@ export function initSheetIndex(ctx: Context) {
       ctx.luckysheetfile[0].status = 1;
     }
   }
-  ctx.currentSheetIndex = ctx.luckysheetfile[0].index;
+  ctx.currentSheetIndex = ctx.luckysheetfile[0].index!;
 
   for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
     if (ctx.luckysheetfile[i].status === 1) {
-      ctx.currentSheetIndex = ctx.luckysheetfile[i].index;
+      ctx.currentSheetIndex = ctx.luckysheetfile[i].index!;
       break;
     }
   }

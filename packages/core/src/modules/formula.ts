@@ -1654,7 +1654,7 @@ export function execFunctionGroup(
   const sheetData: any = {};
   for (let i = 0; i < sheets.length; i += 1) {
     const sheet = sheets[i];
-    sheetData[sheet.index] = sheet.data;
+    sheetData[sheet.index!] = sheet.data;
   }
 
   // 把修改涉及的单元格存储为对象
