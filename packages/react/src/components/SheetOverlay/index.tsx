@@ -105,8 +105,8 @@ const SheetOverlay: React.FC = () => {
   }, [context.scrollLeft, context.scrollTop, refs.cellArea]);
 
   useEffect(() => {
-    // ensure keyboard events takes effect when selection changes
-    containerRef.current?.focus();
+    // ensure cell input is always focused to accept first key stroke on cell
+    refs.cellInput.current?.focus();
   }, [context.luckysheet_select_save]);
 
   return (

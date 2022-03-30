@@ -17,7 +17,6 @@ import React, {
   useRef,
   useCallback,
   useLayoutEffect,
-  useState,
 } from "react";
 import _ from "lodash";
 import produce from "immer";
@@ -31,7 +30,6 @@ const InputBox: React.FC = () => {
   const inputRef = useRef<HTMLDivElement>(null);
   const lastKeyDownEventRef = useRef<React.KeyboardEvent<HTMLDivElement>>();
   const firstSelection = context.luckysheet_select_save?.[0];
-  const [focused, setFocused] = useState(false);
 
   const inputBoxStyle = useMemo(() => {
     if (firstSelection && context.luckysheetCellUpdate.length > 0) {
@@ -244,16 +242,13 @@ const InputBox: React.FC = () => {
     <div
       className="luckysheet-input-box"
       style={
-        firstSelection
+        firstSelection && !_.isEmpty(context.luckysheetCellUpdate)
           ? {
               left: firstSelection.left_move,
               top: firstSelection.top_move,
-              display:
-                firstSelection && context.luckysheetCellUpdate.length > 0
-                  ? "block"
-                  : "none",
+              display: "block",
             }
-          : { display: "none" }
+          : { left: -10000, top: -10000, display: "block" }
       }
     >
       <div
@@ -279,11 +274,9 @@ const InputBox: React.FC = () => {
           aria-autocomplete="list"
           onChange={onChange}
           onKeyDown={onKeyDown}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
         />
       </div>
-      {focused && (
+      {document.activeElement === inputRef.current && (
         <>
           <FormulaSearch
             style={{
