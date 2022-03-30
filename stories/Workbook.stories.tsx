@@ -34,5 +34,5 @@ Formula.args = { data: [formula] };
 export const Empty = Template.bind({});
 Empty.args = { data: [empty] };
 
-export const All = Template.bind({});
-All.args = { data: [cell, formula] };
+export const Tabs = Template.bind({});
+Tabs.args = { data: [cell, formula] };

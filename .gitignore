@@ -134,3 +134,6 @@ dist
 /.vscode
 **/**/lib/**
 **/**/es/**
+
+# storybook
+/storybook-static
