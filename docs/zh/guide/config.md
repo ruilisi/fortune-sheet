@@ -22,11 +22,11 @@ const settings = {
 针对个性化的需求，除了允许配置信息栏（[showinfobar](#showinfobar)）、工具栏（[showtoolbar](#showtoolbar)）、底部sheet页（[showsheetbar](#showsheetbar)）、底部计数栏（[showstatisticBar](#showstatisticBar)）之外，
 FortuneSheet开放了更细致的自定义配置选项，分别有
 
-- 自定义工具栏（[showtoolbarConfig](#showtoolbarConfig)）
-- 自定义底部sheet页（[showsheetbarConfig](#showsheetbarConfig)）
-- 自定义计数栏（[showstatisticBarConfig](#showstatisticBarConfig)）
-- 自定义单元格右键菜单（[cellRightClickConfig](#cellRightClickConfig)）
-- 自定义底部sheet页右击菜单（[sheetRightClickConfig](#sheetRightClickConfig)）
+- 自定义工具栏（[showtoolbarConfig](#showtoolbarconfig)）
+- 自定义底部sheet页（[showsheetbarConfig](#showsheetbarconfig)）
+- 自定义计数栏（[showstatisticBarConfig](#showstatisticbarconfig)）
+- 自定义单元格右键菜单（[cellRightClickConfig](#cellrightclickconfig)）
+- 自定义底部sheet页右击菜单（[sheetRightClickConfig](#sheetrightclickconfig)）
 
 
 ## 配置项
@@ -35,31 +35,31 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 
 - 语言 [lang](#lang)
 - 工作表配置 [data](#data)
-- 工作表onChange事件 [onChange](#onChange)
+- 工作表onChange事件 [onChange](#onchange)
 - 列数 [column](#column)
 - 行数 [row](#row)
-- 亿万格式 [autoFormatw](#autoFormatw)
+- 亿万格式 [autoFormatw](#autoformatw)
 - 精度 [accuracy](#accuracy)
-- 允许复制 [allowCopy](#allowCopy)
+- 允许复制 [allowCopy](#allowcopy)
 - 工具栏 [showtoolbar](#showtoolbar)
-- 自定义工具栏[showtoolbarConfig](#showtoolbarConfig)
+- 自定义工具栏[showtoolbarConfig](#showtoolbarconfig)
 - 信息栏 [showinfobar](#showinfobar)
 - 底部sheet页 [showsheetbar](#showsheetbar)
-- 自定义底部sheet页 [showsheetbarConfig](#showsheetbarConfig)
-- 底部计数栏 [showstatisticBar](#showstatisticBar)
-- 自定义计数栏 [showstatisticBarConfig](#showstatisticBarConfig)
-- 允许添加行 [enableAddRow](#enableAddRow)
-- 默认添加行的数目 [addRowCount](#addRowCount)
-- 比例 [devicePixelRatio](#devicePixelRatio)
-- 自动缩进界面 [showConfigWindowResize](#showConfigWindowResize)
-- 自定义单元格右键菜单 [cellRightClickConfig](#cellRightClickConfig)
-- 自定义sheet页右击菜单 [sheetRightClickConfig](#sheetRightClickConfig)
-- 行标题区域的宽度 [rowHeaderWidth](#rowHeaderWidth)
-- 列标题区域的高度 [columnHeaderHeight](#columnHeaderHeight)
-- 是否显示公式栏 [sheetFormulaBar](#sheetFormulaBar)
-- 初始化默认字体大小 [defaultFontSize](#defaultFontSize)
-- 是否限制工作表名长度 [limitSheetNameLength](#limitSheetNameLength)
-- 默认允许工作表名的最大长度 [defaultSheetNameMaxLength](#defaultSheetNameMaxLength)
+- 自定义底部sheet页 [showsheetbarConfig](#showsheetbarconfig)
+- 底部计数栏 [showstatisticBar](#showstatisticbar)
+- 自定义计数栏 [showstatisticBarConfig](#showstatisticbarconfig)
+- 允许添加行 [enableAddRow](#enableaddrow)
+- 默认添加行的数目 [addRowCount](#addrowcount)
+- 比例 [devicePixelRatio](#devicepixelratio)
+- 自动缩进界面 [showConfigWindowResize](#showconfigwindowresize)
+- 自定义单元格右键菜单 [cellRightClickConfig](#cellrightclickconfig)
+- 自定义sheet页右击菜单 [sheetRightClickConfig](#sheetrightclickconfig)
+- 行标题区域的宽度 [rowHeaderWidth](#rowheaderwidth)
+- 列标题区域的高度 [columnHeaderHeight](#columnheaderheight)
+- 是否显示公式栏 [sheetFormulaBar](#sheetformulabar)
+- 初始化默认字体大小 [defaultFontSize](#defaultfontsize)
+- 是否限制工作表名长度 [limitSheetNameLength](#limitsheetnamelength)
+- 默认允许工作表名的最大长度 [defaultSheetNameMaxLength](#defaultsheetnamemaxlength)
 
 ### lang
 - 类型：String
