@@ -54,7 +54,7 @@ This project is in the state of early development, APIs may have significant cha
 
 ## Documentation
 
-See detailed documentation at [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-doc/)
+See detailed documentation at [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-docs/)
 
 ## Get started (react)
 

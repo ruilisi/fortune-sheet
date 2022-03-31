@@ -54,7 +54,7 @@
 
 ## 文档
 
-请参考详细文档 [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-doc/)
+请参考详细文档 [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-docs/)
 
 ## 快速开始 (react)
 
