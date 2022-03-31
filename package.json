@@ -14,7 +14,8 @@
     "build-storybook": "build-storybook",
     "tsc": "tsc --noEmit",
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./packages",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "publish": "lerna publish --registry 'https://registry.npmjs.org'"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",
