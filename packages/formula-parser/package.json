@@ -67,5 +67,8 @@
       "**/*.{js}",
       "!src/grammar-parser/**"
     ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
