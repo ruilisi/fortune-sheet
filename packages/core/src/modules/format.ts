@@ -61,7 +61,7 @@ function parseDate(str: string | Date, fixdate?: number) {
   return out;
 }
 
-export function genarate(value: string | number) {
+export function genarate(value: string | number | boolean) {
   // 万 单位格式增加！！！
   let m: string | null = null;
   let ct: any = {};
