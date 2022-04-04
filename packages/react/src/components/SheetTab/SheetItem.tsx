@@ -6,7 +6,6 @@ import React, {
   useRef,
   useCallback,
 } from "react";
-import produce from "immer";
 import WorkbookContext from "../../context";
 import SheetTabContextMenu from "../ContextMenu/SheetTab";
 
@@ -15,7 +14,7 @@ type Props = {
 };
 
 const SheetItem: React.FC<Props> = ({ sheet }) => {
-  const { context, setContext, setContextValue } = useContext(WorkbookContext);
+  const { context, setContext } = useContext(WorkbookContext);
   const [editing, setEditing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const editable = useRef<HTMLSpanElement>(null);
@@ -53,11 +52,9 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
   }, [editing]);
 
   const onBlur = useCallback(() => {
-    setContext(
-      produce((draftCtx) => {
-        handleSheetTabOnBlur(draftCtx, editable.current!);
-      })
-    );
+    setContext((draftCtx) => {
+      handleSheetTabOnBlur(draftCtx, editable.current!);
+    });
     setEditing(false);
   }, [setContext]);
 
@@ -71,7 +68,9 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
           : ""
       }`}
       onClick={() => {
-        setContextValue("currentSheetIndex", sheet.index);
+        setContext((draftCtx) => {
+          draftCtx.currentSheetIndex = sheet.index!;
+        });
       }}
       onContextMenu={(e) => {
         const rect = containerRef.current!.getBoundingClientRect();

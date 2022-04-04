@@ -9,7 +9,6 @@ import {
 } from "@fortune-sheet/core";
 import "./index.css";
 import type { CellMatrix } from "@fortune-sheet/core";
-import produce from "immer";
 import WorkbookContext from "../../context";
 import SheetOverlay from "../SheetOverlay";
 
@@ -25,16 +24,14 @@ const Sheet: React.FC<Props> = ({ data }) => {
 
   useEffect(() => {
     function resize() {
-      setContext(
-        produce((draftCtx) => {
-          updateContextWithSheetData(draftCtx, data);
-          updateContextWithCanvas(
-            draftCtx,
-            canvasRef.current!,
-            placeholderRef.current!
-          );
-        })
-      );
+      setContext((draftCtx) => {
+        updateContextWithSheetData(draftCtx, data);
+        updateContextWithCanvas(
+          draftCtx,
+          canvasRef.current!,
+          placeholderRef.current!
+        );
+      });
     }
     window.addEventListener("resize", resize);
     return () => {
@@ -43,30 +40,24 @@ const Sheet: React.FC<Props> = ({ data }) => {
   }, [data, setContext]);
 
   useEffect(() => {
-    setContext(
-      produce((draftCtx) => updateContextWithSheetData(draftCtx, data))
-    );
+    setContext((draftCtx) => updateContextWithSheetData(draftCtx, data));
   }, [context.config?.rowlen, context.config?.columnlen, data, setContext]);
 
   useEffect(() => {
-    setContext(
-      produce((draftCtx) =>
-        updateContextWithCanvas(
-          draftCtx,
-          canvasRef.current!,
-          placeholderRef.current!
-        )
+    setContext((draftCtx) =>
+      updateContextWithCanvas(
+        draftCtx,
+        canvasRef.current!,
+        placeholderRef.current!
       )
     );
   }, [setContext]);
 
   useEffect(() => {
     if (hasGroupValuesRefreshData()) {
-      setContext(
-        produce((draftCtx) => {
-          groupValuesRefresh(draftCtx);
-        })
-      );
+      setContext((draftCtx) => {
+        groupValuesRefresh(draftCtx);
+      });
     }
   }, [context.luckysheetfile, context.currentSheetIndex, setContext]);
 
@@ -82,17 +73,15 @@ const Sheet: React.FC<Props> = ({ data }) => {
 
   const onWheel = useCallback(
     (e: WheelEvent) => {
-      setContext(
-        produce((draftCtx) => {
-          handleGlobalWheel(
-            draftCtx,
-            e,
-            refs.globalCache,
-            refs.scrollbarX.current!,
-            refs.scrollbarY.current!
-          );
-        })
-      );
+      setContext((draftCtx) => {
+        handleGlobalWheel(
+          draftCtx,
+          e,
+          refs.globalCache,
+          refs.scrollbarX.current!,
+          refs.scrollbarY.current!
+        );
+      });
     },
     [refs.globalCache, refs.scrollbarX, refs.scrollbarY, setContext]
   );

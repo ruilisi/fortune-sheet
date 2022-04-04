@@ -20,7 +20,7 @@ import React, {
   useRef,
 } from "react";
 import "./index.css";
-import produce from "immer";
+import { enablePatches, produceWithPatches } from "immer";
 import _, { assign } from "lodash";
 import Sheet from "../Sheet";
 import WorkbookContext from "../../context";
@@ -29,6 +29,8 @@ import FxEditor from "../FxEditor";
 import SheetTab from "../SheetTab";
 import ContextMenu from "../ContextMenu";
 import SVGDefines from "../SVGDefines";
+
+enablePatches();
 
 const Workbook: React.FC<
   Settings & { onChange?: (data: SheetType[]) => void }
@@ -45,21 +47,21 @@ const Workbook: React.FC<
     () => assign(defaultSettings, props) as Required<Settings>,
     [props]
   );
-  const setContextValue = useCallback(
-    <K extends keyof Context>(key: K, value: Context[K]) => {
-      setContext(
-        produce((draftCtx) => {
-          draftCtx[key] = value;
-        })
-      );
+
+  const setContextWithProduce = useCallback(
+    (recipe: (ctx: Context) => void) => {
+      setContext((ctx_) => {
+        const [result] = produceWithPatches(ctx_, recipe);
+        return result;
+      });
     },
     []
   );
+
   const providerValue = useMemo(
     () => ({
       context,
-      setContext,
-      setContextValue,
+      setContext: setContextWithProduce,
       settings: mergedSettings,
       refs: {
         globalCache: globalCache.current,
@@ -71,7 +73,7 @@ const Workbook: React.FC<
         workbookContainer,
       },
     }),
-    [context, mergedSettings, setContextValue]
+    [context, mergedSettings, setContextWithProduce]
   );
 
   useEffect(() => {
@@ -79,129 +81,126 @@ const Workbook: React.FC<
   }, [context.luckysheetfile, onChange]);
 
   useEffect(() => {
-    setContext(
-      produce((draftCtx) => {
-        if (_.isEmpty(draftCtx.luckysheetfile)) {
-          // mergedSettings.data at this time may be immutable, causing following modifications to fail,
-          // clone it to make it mutable
-          // TODO do not clone it
-          draftCtx.luckysheetfile = _.cloneDeep(mergedSettings.data);
+    setContextWithProduce((draftCtx) => {
+      if (_.isEmpty(draftCtx.luckysheetfile)) {
+        // mergedSettings.data at this time may be immutable, causing following modifications to fail,
+        // clone it to make it mutable
+        // TODO do not clone it
+        draftCtx.luckysheetfile = _.cloneDeep(mergedSettings.data);
+      }
+      draftCtx.defaultcolumnNum = mergedSettings.column;
+      draftCtx.defaultrowNum = mergedSettings.row;
+      draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
+      draftCtx.fullscreenmode = mergedSettings.fullscreenmode;
+      draftCtx.lang = mergedSettings.lang;
+      draftCtx.allowEdit = mergedSettings.allowEdit;
+      draftCtx.limitSheetNameLength = mergedSettings.limitSheetNameLength;
+      draftCtx.defaultSheetNameMaxLength =
+        mergedSettings.defaultSheetNameMaxLength;
+      // draftCtx.fontList = mergedSettings.fontList;
+      if (_.isEmpty(draftCtx.currentSheetIndex)) {
+        initSheetIndex(draftCtx);
+      }
+      let sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
+      if (sheetIdx == null) {
+        if ((draftCtx.luckysheetfile?.length ?? 0) > 0) {
+          sheetIdx = 0;
+          draftCtx.currentSheetIndex = draftCtx.luckysheetfile[0].index!;
         }
-        draftCtx.defaultcolumnNum = mergedSettings.column;
-        draftCtx.defaultrowNum = mergedSettings.row;
-        draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
-        draftCtx.fullscreenmode = mergedSettings.fullscreenmode;
-        draftCtx.lang = mergedSettings.lang;
-        draftCtx.allowEdit = mergedSettings.allowEdit;
-        draftCtx.limitSheetNameLength = mergedSettings.limitSheetNameLength;
-        draftCtx.defaultSheetNameMaxLength =
-          mergedSettings.defaultSheetNameMaxLength;
-        // draftCtx.fontList = mergedSettings.fontList;
-        if (_.isEmpty(draftCtx.currentSheetIndex)) {
-          initSheetIndex(draftCtx);
-        }
-        let sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
-        if (sheetIdx == null) {
-          if ((draftCtx.luckysheetfile?.length ?? 0) > 0) {
-            sheetIdx = 0;
-            draftCtx.currentSheetIndex = draftCtx.luckysheetfile[0].index!;
-          }
-        }
-        if (sheetIdx == null) return;
+      }
+      if (sheetIdx == null) return;
 
-        const sheet = draftCtx.luckysheetfile?.[sheetIdx];
-        if (!sheet) return;
+      const sheet = draftCtx.luckysheetfile?.[sheetIdx];
+      if (!sheet) return;
 
-        const cellData = sheet.celldata;
-        let { data } = sheet;
-        // expand cell data
-        if (_.isEmpty(data)) {
-          const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
-          const lastCol = _.maxBy(cellData, "c");
-          const lastRowNum = lastRow?.r || draftCtx.defaultrowNum;
-          const lastColNum = lastCol?.c || draftCtx.defaultcolumnNum;
-          if (lastRowNum && lastColNum) {
-            const expandedData: SheetType["data"] = _.times(
-              lastRowNum + 1,
-              () => _.times(lastColNum + 1, () => null)
-            );
-            cellData?.forEach((d) => {
-              // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
-              expandedData[d.r][d.c] = d.v;
-            });
-            sheet.data = expandedData;
-            data = expandedData;
-          }
+      const cellData = sheet.celldata;
+      let { data } = sheet;
+      // expand cell data
+      if (_.isEmpty(data)) {
+        const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
+        const lastCol = _.maxBy(cellData, "c");
+        const lastRowNum = lastRow?.r || draftCtx.defaultrowNum;
+        const lastColNum = lastCol?.c || draftCtx.defaultcolumnNum;
+        if (lastRowNum && lastColNum) {
+          const expandedData: SheetType["data"] = _.times(lastRowNum + 1, () =>
+            _.times(lastColNum + 1, () => null)
+          );
+          cellData?.forEach((d) => {
+            // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
+            expandedData[d.r][d.c] = d.v;
+          });
+          sheet.data = expandedData;
+          data = expandedData;
         }
+      }
 
+      if (
+        _.isEmpty(draftCtx.luckysheet_select_save) &&
+        !_.isEmpty(sheet.luckysheet_select_save)
+      ) {
+        draftCtx.luckysheet_select_save = sheet.luckysheet_select_save;
+      }
+      if (draftCtx.luckysheet_select_save?.length === 0) {
         if (
-          _.isEmpty(draftCtx.luckysheet_select_save) &&
-          !_.isEmpty(sheet.luckysheet_select_save)
+          data?.[0]?.[0]?.mc &&
+          !_.isNil(data?.[0]?.[0]?.mc?.rs) &&
+          !_.isNil(data?.[0]?.[0]?.mc?.cs)
         ) {
-          draftCtx.luckysheet_select_save = sheet.luckysheet_select_save;
-        }
-        if (draftCtx.luckysheet_select_save?.length === 0) {
-          if (
-            data?.[0]?.[0]?.mc &&
-            !_.isNil(data?.[0]?.[0]?.mc?.rs) &&
-            !_.isNil(data?.[0]?.[0]?.mc?.cs)
-          ) {
-            draftCtx.luckysheet_select_save = [
-              {
-                row: [0, data[0][0].mc.rs - 1],
-                column: [0, data[0][0].mc.cs - 1],
-              },
-            ];
-          } else {
-            draftCtx.luckysheet_select_save = [
-              {
-                row: [0, 0],
-                column: [0, 0],
-              },
-            ];
-          }
-        }
-
-        draftCtx.luckysheet_selection_range = _.isNil(
-          sheet.luckysheet_selection_range
-        )
-          ? []
-          : sheet.luckysheet_selection_range;
-        draftCtx.config = _.isNil(sheet.config) ? {} : sheet.config;
-
-        draftCtx.zoomRatio = _.isNil(sheet.zoomRatio) ? 1 : sheet.zoomRatio;
-
-        if (!_.isNil(sheet.defaultRowHeight)) {
-          draftCtx.defaultrowlen = Number(sheet.defaultRowHeight);
+          draftCtx.luckysheet_select_save = [
+            {
+              row: [0, data[0][0].mc.rs - 1],
+              column: [0, data[0][0].mc.cs - 1],
+            },
+          ];
         } else {
-          draftCtx.defaultrowlen = mergedSettings.defaultRowHeight;
+          draftCtx.luckysheet_select_save = [
+            {
+              row: [0, 0],
+              column: [0, 0],
+            },
+          ];
         }
+      }
 
-        if (!_.isNil(sheet.defaultColWidth)) {
-          draftCtx.defaultcollen = Number(sheet.defaultColWidth);
-        } else {
-          draftCtx.defaultcollen = mergedSettings.defaultColWidth;
-        }
+      draftCtx.luckysheet_selection_range = _.isNil(
+        sheet.luckysheet_selection_range
+      )
+        ? []
+        : sheet.luckysheet_selection_range;
+      draftCtx.config = _.isNil(sheet.config) ? {} : sheet.config;
 
-        if (!_.isNil(sheet.showGridLines)) {
-          const { showGridLines } = sheet;
-          if (showGridLines === 0 || showGridLines === false) {
-            draftCtx.showGridLines = false;
-          } else {
-            draftCtx.showGridLines = true;
-          }
+      draftCtx.zoomRatio = _.isNil(sheet.zoomRatio) ? 1 : sheet.zoomRatio;
+
+      if (!_.isNil(sheet.defaultRowHeight)) {
+        draftCtx.defaultrowlen = Number(sheet.defaultRowHeight);
+      } else {
+        draftCtx.defaultrowlen = mergedSettings.defaultRowHeight;
+      }
+
+      if (!_.isNil(sheet.defaultColWidth)) {
+        draftCtx.defaultcollen = Number(sheet.defaultColWidth);
+      } else {
+        draftCtx.defaultcollen = mergedSettings.defaultColWidth;
+      }
+
+      if (!_.isNil(sheet.showGridLines)) {
+        const { showGridLines } = sheet;
+        if (showGridLines === 0 || showGridLines === false) {
+          draftCtx.showGridLines = false;
         } else {
           draftCtx.showGridLines = true;
         }
-        if (!_.isNil(mergedSettings.lang)) {
-          localStorage.setItem("lang", mergedSettings.lang);
-        }
-      })
-    );
+      } else {
+        draftCtx.showGridLines = true;
+      }
+      if (!_.isNil(mergedSettings.lang)) {
+        localStorage.setItem("lang", mergedSettings.lang);
+      }
+    });
   }, [
     mergedSettings.data,
     context.currentSheetIndex,
-    context.luckysheetfile?.length,
+    context.luckysheetfile.length,
     mergedSettings.defaultRowHeight,
     mergedSettings.defaultColWidth,
     mergedSettings.column,
@@ -212,11 +211,12 @@ const Workbook: React.FC<
     mergedSettings.allowEdit,
     mergedSettings.limitSheetNameLength,
     mergedSettings.defaultSheetNameMaxLength,
+    setContextWithProduce,
   ]);
 
-  const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
-    setContext(
-      produce((draftCtx) => {
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      setContextWithProduce((draftCtx) => {
         handleGlobalKeyDown(
           draftCtx,
           cellInput.current!,
@@ -224,17 +224,19 @@ const Workbook: React.FC<
           e.nativeEvent,
           globalCache.current!
         );
-      })
-    );
-  }, []);
+      });
+    },
+    [setContextWithProduce]
+  );
 
-  const onPaste = useCallback((e: ClipboardEvent) => {
-    setContext(
-      produce((draftCtx) => {
+  const onPaste = useCallback(
+    (e: ClipboardEvent) => {
+      setContextWithProduce((draftCtx) => {
         handlePaste(draftCtx, e);
-      })
-    );
-  }, []);
+      });
+    },
+    [setContextWithProduce]
+  );
 
   useEffect(() => {
     document.addEventListener("paste", onPaste);
@@ -270,7 +272,9 @@ const Workbook: React.FC<
         {!_.isEmpty(context.contextMenu) && (
           <div
             onMouseDown={() => {
-              setContextValue("contextMenu", undefined);
+              setContextWithProduce((draftCtx) => {
+                draftCtx.contextMenu = undefined;
+              });
             }}
             onMouseMove={(e) => e.stopPropagation()}
             onMouseUp={(e) => e.stopPropagation()}

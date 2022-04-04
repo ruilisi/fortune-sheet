@@ -1,6 +1,5 @@
 import React, { useContext, useCallback, useRef, useEffect } from "react";
 import "./index.css";
-import produce from "immer";
 import {
   handleCellAreaDoubleClick,
   handleCellAreaMouseDown,
@@ -20,81 +19,71 @@ const SheetOverlay: React.FC = () => {
 
   const cellAreaMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      setContext(
-        produce((draftCtx) => {
-          handleCellAreaMouseDown(
-            draftCtx,
-            e.nativeEvent,
-            refs.cellInput.current!,
-            refs.cellArea.current!
-          );
-        })
-      );
+      setContext((draftCtx) => {
+        handleCellAreaMouseDown(
+          draftCtx,
+          e.nativeEvent,
+          refs.cellInput.current!,
+          refs.cellArea.current!
+        );
+      });
     },
     [refs.cellArea, refs.cellInput, setContext]
   );
 
   const cellAreaContextMenu = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      setContext(
-        produce((draftCtx) => {
-          handleContextMenu(
-            draftCtx,
-            settings,
-            e.nativeEvent,
-            refs.workbookContainer.current!
-          );
-        })
-      );
+      setContext((draftCtx) => {
+        handleContextMenu(
+          draftCtx,
+          settings,
+          e.nativeEvent,
+          refs.workbookContainer.current!
+        );
+      });
     },
     [refs.workbookContainer, setContext, settings]
   );
 
   const cellAreaDoubleClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      setContext(
-        produce((draftCtx) => {
-          handleCellAreaDoubleClick(
-            draftCtx,
-            settings,
-            e.nativeEvent,
-            refs.cellArea.current!
-          );
-        })
-      );
+      setContext((draftCtx) => {
+        handleCellAreaDoubleClick(
+          draftCtx,
+          settings,
+          e.nativeEvent,
+          refs.cellArea.current!
+        );
+      });
     },
     [refs.cellArea, setContext, settings]
   );
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      setContext(
-        produce((draftCtx) => {
-          handleOverlayMouseMove(
-            draftCtx,
-            e.nativeEvent,
-            refs.scrollbarX.current!,
-            refs.scrollbarY.current!,
-            containerRef.current!
-          );
-        })
-      );
+      setContext((draftCtx) => {
+        handleOverlayMouseMove(
+          draftCtx,
+          e.nativeEvent,
+          refs.scrollbarX.current!,
+          refs.scrollbarY.current!,
+          containerRef.current!
+        );
+      });
     },
     [refs.scrollbarX, refs.scrollbarY, setContext]
   );
 
   const onMouseUp = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      setContext(
-        produce((draftCtx) => {
-          handleOverlayMouseUp(
-            draftCtx,
-            settings,
-            e.nativeEvent,
-            containerRef.current!
-          );
-        })
-      );
+      setContext((draftCtx) => {
+        handleOverlayMouseUp(
+          draftCtx,
+          settings,
+          e.nativeEvent,
+          containerRef.current!
+        );
+      });
     },
     [setContext, settings]
   );

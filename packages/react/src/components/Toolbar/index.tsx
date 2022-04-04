@@ -1,5 +1,4 @@
 import React, { useContext, useCallback, useRef } from "react";
-import produce from "immer";
 import {
   getToolbarItemClickHandler,
   handleTextBackground,
@@ -32,13 +31,11 @@ const Toolbar: React.FC = () => {
       }
       if (["text-color", "text-background"].includes(name)) {
         const pick = (color: string) => {
-          setContext(
-            produce((draftCtx) =>
-              (name === "text-color" ? handleTextColor : handleTextBackground)(
-                draftCtx,
-                refs.cellInput.current!,
-                color
-              )
+          setContext((draftCtx) =>
+            (name === "text-color" ? handleTextColor : handleTextBackground)(
+              draftCtx,
+              refs.cellInput.current!,
+              color
             )
           );
           if (name === "text-color") {
@@ -103,13 +100,11 @@ const Toolbar: React.FC = () => {
                   <Option
                     key={num}
                     onClick={() => {
-                      setContext(
-                        produce((draftContext) =>
-                          handleTextSize(
-                            draftContext,
-                            refs.cellInput.current!,
-                            num
-                          )
+                      setContext((draftContext) =>
+                        handleTextSize(
+                          draftContext,
+                          refs.cellInput.current!,
+                          num
                         )
                       );
                       setOpen(false);
@@ -129,14 +124,12 @@ const Toolbar: React.FC = () => {
           tooltip={name}
           key={name}
           onClick={() =>
-            setContext(
-              produce((draftCtx) => {
-                getToolbarItemClickHandler(name)?.(
-                  draftCtx,
-                  refs.cellInput.current!
-                );
-              })
-            )
+            setContext((draftCtx) => {
+              getToolbarItemClickHandler(name)?.(
+                draftCtx,
+                refs.cellInput.current!
+              );
+            })
           }
         />
       );

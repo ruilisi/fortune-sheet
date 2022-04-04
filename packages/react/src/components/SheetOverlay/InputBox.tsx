@@ -19,7 +19,6 @@ import React, {
   useLayoutEffect,
 } from "react";
 import _ from "lodash";
-import produce from "immer";
 import WorkbookContext from "../../context";
 import ContentEditable from "./ContentEditable";
 import FormulaSearch from "./FormulaSearch";
@@ -107,58 +106,54 @@ const InputBox: React.FC = () => {
       //   return;
       // }
 
-      setContext(
-        produce((draftCtx) => {
-          if (e.key === "Escape" && draftCtx.luckysheetCellUpdate.length > 0) {
-            cancelNormalSelected(draftCtx);
-            moveHighlightCell(draftCtx, "down", 0, "rangeOfSelect");
-            e.preventDefault();
-          } else if (
-            e.key === "Enter" &&
-            draftCtx.luckysheetCellUpdate.length > 0
-          ) {
-            // if (
-            //   $("#luckysheet-formula-search-c").is(":visible") &&
-            //   formula.searchFunctionCell != null
-            // ) {
-            //   formula.searchFunctionEnter(
-            //     $("#luckysheet-formula-search-c").find(
-            //       ".luckysheet-formula-search-item-active"
-            //     )
-            //   );
-            //   event.preventDefault();
-            // }
-          } else if (
-            e.key === "Tab" &&
-            draftCtx.luckysheetCellUpdate.length > 0
-          ) {
-            // if (
-            //   $("#luckysheet-formula-search-c").is(":visible") &&
-            //   formula.searchFunctionCell != null
-            // ) {
-            //   formula.searchFunctionEnter(
-            //     $("#luckysheet-formula-search-c").find(
-            //       ".luckysheet-formula-search-item-active"
-            //     )
-            //   );
-            // } else {
-            //   updateCell(
-            //     draftCtx,
-            //     draftCtx.luckysheetCellUpdate[0],
-            //     draftCtx.luckysheetCellUpdate[1],
-            //     refs.cellInput.current!
-            //   );
-            //   moveHighlightCell(draftCtx, "right", 1, "rangeOfSelect");
-            // }
+      setContext((draftCtx) => {
+        if (e.key === "Escape" && draftCtx.luckysheetCellUpdate.length > 0) {
+          cancelNormalSelected(draftCtx);
+          moveHighlightCell(draftCtx, "down", 0, "rangeOfSelect");
+          e.preventDefault();
+        } else if (
+          e.key === "Enter" &&
+          draftCtx.luckysheetCellUpdate.length > 0
+        ) {
+          // if (
+          //   $("#luckysheet-formula-search-c").is(":visible") &&
+          //   formula.searchFunctionCell != null
+          // ) {
+          //   formula.searchFunctionEnter(
+          //     $("#luckysheet-formula-search-c").find(
+          //       ".luckysheet-formula-search-item-active"
+          //     )
+          //   );
+          //   event.preventDefault();
+          // }
+        } else if (
+          e.key === "Tab" &&
+          draftCtx.luckysheetCellUpdate.length > 0
+        ) {
+          // if (
+          //   $("#luckysheet-formula-search-c").is(":visible") &&
+          //   formula.searchFunctionCell != null
+          // ) {
+          //   formula.searchFunctionEnter(
+          //     $("#luckysheet-formula-search-c").find(
+          //       ".luckysheet-formula-search-item-active"
+          //     )
+          //   );
+          // } else {
+          //   updateCell(
+          //     draftCtx,
+          //     draftCtx.luckysheetCellUpdate[0],
+          //     draftCtx.luckysheetCellUpdate[1],
+          //     refs.cellInput.current!
+          //   );
+          //   moveHighlightCell(draftCtx, "right", 1, "rangeOfSelect");
+          // }
 
-            e.preventDefault();
-          } else if (
-            e.key === "F4" &&
-            draftCtx.luckysheetCellUpdate.length > 0
-          ) {
-            // formula.setfreezonFuc(event);
-            e.preventDefault();
-          } /* else if (
+          e.preventDefault();
+        } else if (e.key === "F4" && draftCtx.luckysheetCellUpdate.length > 0) {
+          // formula.setfreezonFuc(event);
+          e.preventDefault();
+        } /* else if (
             e.key === "ArrowUp" &&
             draftCtx.luckysheetCellUpdate.length > 0
           ) {
@@ -179,8 +174,7 @@ const InputBox: React.FC = () => {
           ) {
             formulaMoveEvent("right", ctrlKey, shiftKey, event);
           } */
-        })
-      );
+      });
     },
     [setContext]
   );
@@ -213,28 +207,26 @@ const InputBox: React.FC = () => {
       kcode === 46 ||
       (e.ctrlKey && kcode === 86)
     ) {
-      setContext(
-        produce((draftCtx) => {
-          // if(event.target.id!="luckysheet-input-box" && event.target.id!="luckysheet-rich-text-editor"){
-          handleFormulaInput(
-            draftCtx,
-            refs.fxInput.current!,
-            refs.cellInput.current!,
-            kcode
-          );
-          // formula.functionInputHanddler(
-          //   $("#luckysheet-functionbox-cell"),
-          //   $("#luckysheet-rich-text-editor"),
-          //   kcode
-          // );
-          // setCenterInputPosition(
-          //   draftCtx.luckysheetCellUpdate[0],
-          //   draftCtx.luckysheetCellUpdate[1],
-          //   draftCtx.flowdata
-          // );
-          // }
-        })
-      );
+      setContext((draftCtx) => {
+        // if(event.target.id!="luckysheet-input-box" && event.target.id!="luckysheet-rich-text-editor"){
+        handleFormulaInput(
+          draftCtx,
+          refs.fxInput.current!,
+          refs.cellInput.current!,
+          kcode
+        );
+        // formula.functionInputHanddler(
+        //   $("#luckysheet-functionbox-cell"),
+        //   $("#luckysheet-rich-text-editor"),
+        //   kcode
+        // );
+        // setCenterInputPosition(
+        //   draftCtx.luckysheetCellUpdate[0],
+        //   draftCtx.luckysheetCellUpdate[1],
+        //   draftCtx.flowdata
+        // );
+        // }
+      });
     }
   }, [refs.cellInput, refs.fxInput, setContext]);
 

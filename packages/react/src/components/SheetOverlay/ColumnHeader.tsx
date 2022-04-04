@@ -15,7 +15,6 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import produce from "immer";
 import WorkbookContext from "../../context";
 
 const ColumnHeader: React.FC = () => {
@@ -55,15 +54,13 @@ const ColumnHeader: React.FC = () => {
 
   const onMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      setContext(
-        produce((draftCtx) => {
-          handleColumnHeaderMouseDown(
-            draftCtx,
-            e.nativeEvent,
-            containerRef.current!
-          );
-        })
-      );
+      setContext((draftCtx) => {
+        handleColumnHeaderMouseDown(
+          draftCtx,
+          e.nativeEvent,
+          containerRef.current!
+        );
+      });
     },
     [setContext]
   );
@@ -77,16 +74,14 @@ const ColumnHeader: React.FC = () => {
 
   const onColSizeHandleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      setContext(
-        produce((draftCtx) => {
-          handleColSizeHandleMouseDown(
-            draftCtx,
-            e.nativeEvent,
-            containerRef.current!,
-            refs.cellArea.current!
-          );
-        })
-      );
+      setContext((draftCtx) => {
+        handleColSizeHandleMouseDown(
+          draftCtx,
+          e.nativeEvent,
+          containerRef.current!,
+          refs.cellArea.current!
+        );
+      });
       e.stopPropagation();
     },
     [refs.cellArea, setContext]
@@ -94,16 +89,14 @@ const ColumnHeader: React.FC = () => {
 
   const onContextMenu = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      setContext(
-        produce((draftCtx) => {
-          handleContextMenu(
-            draftCtx,
-            settings,
-            e.nativeEvent,
-            refs.workbookContainer.current!
-          );
-        })
-      );
+      setContext((draftCtx) => {
+        handleContextMenu(
+          draftCtx,
+          settings,
+          e.nativeEvent,
+          refs.workbookContainer.current!
+        );
+      });
     },
     [refs.workbookContainer, setContext, settings]
   );

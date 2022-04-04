@@ -6,7 +6,6 @@ import React, {
   useState,
   useLayoutEffect,
 } from "react";
-import produce from "immer";
 import WorkbookContext from "../../context";
 import "./index.css";
 import Menu from "./Menu";
@@ -68,12 +67,10 @@ const SheetTabContextMenu: React.FC<Props> = ({
     >
       <Menu
         onClick={() => {
-          setContext(
-            produce((draftCtx) => {
-              deleteSheet(draftCtx, sheet.index);
-              onClose?.();
-            })
-          );
+          setContext((draftCtx) => {
+            deleteSheet(draftCtx, sheet.index!);
+            onClose?.();
+          });
         }}
       >
         {sheetconfig.delete}

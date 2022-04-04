@@ -11,6 +11,7 @@ export default {
 } as ComponentMeta<typeof Workbook>;
 
 const Template: ComponentStory<typeof Workbook> = ({
+  // eslint-disable-next-line react/prop-types
   data: data0,
   ...args
 }) => {
@@ -26,13 +27,16 @@ const Template: ComponentStory<typeof Workbook> = ({
 };
 
 export const Basic = Template.bind({});
+// @ts-ignore
 Basic.args = { data: [cell] };
 
 export const Formula = Template.bind({});
+// @ts-ignore
 Formula.args = { data: [formula] };
 
 export const Empty = Template.bind({});
 Empty.args = { data: [empty] };
 
 export const Tabs = Template.bind({});
+// @ts-ignore
 Tabs.args = { data: [cell, formula] };

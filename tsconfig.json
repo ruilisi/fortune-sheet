@@ -19,7 +19,6 @@
       "@fortune-sheet/react": ["packages/react/src"]
     }
   },
-  "references": [{ "path": "./packages/core" }, { "path": "./packages/react" }],
   "include": ["packages/*/src", "stories/"],
   "exclude": [
     "node_modules",

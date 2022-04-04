@@ -17,7 +17,6 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import produce from "immer";
 import "./index.css";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -65,21 +64,19 @@ const FxEditor: React.FC = () => {
   const onFocus = useCallback(() => {
     if ((context.luckysheet_select_save?.length ?? 0) > 0) {
       setFocused(true);
-      setContext(
-        produce((draftCtx) => {
-          const last =
-            draftCtx.luckysheet_select_save![
-              draftCtx.luckysheet_select_save!.length - 1
-            ];
+      setContext((draftCtx) => {
+        const last =
+          draftCtx.luckysheet_select_save![
+            draftCtx.luckysheet_select_save!.length - 1
+          ];
 
-          const row_index = last.row_focus;
-          const col_index = last.column_focus;
+        const row_index = last.row_focus;
+        const col_index = last.column_focus;
 
-          draftCtx.luckysheetCellUpdate = [row_index, col_index];
-          refs.globalCache.doNotFocus = true;
-          // formula.rangeResizeTo = $("#luckysheet-functionbox-cell");
-        })
-      );
+        draftCtx.luckysheetCellUpdate = [row_index, col_index];
+        refs.globalCache.doNotFocus = true;
+        // formula.rangeResizeTo = $("#luckysheet-functionbox-cell");
+      });
     }
   }, [context.luckysheet_select_save, refs.globalCache, setContext]);
 
@@ -90,53 +87,52 @@ const FxEditor: React.FC = () => {
       //   return;
       // }
       lastKeyDownEventRef.current = e;
-      setContext(
-        produce((draftCtx) => {
-          if (context.luckysheetCellUpdate.length > 0) {
-            switch (e.key) {
-              case "Enter": {
-                // if (
-                //   $("#luckysheet-formula-search-c").is(":visible") &&
-                //   formula.searchFunctionCell != null
-                // ) {
-                //   formula.searchFunctionEnter(
-                //     $("#luckysheet-formula-search-c").find(
-                //       ".luckysheet-formula-search-item-active"
-                //     )
-                //   );
-                // } else {
-                const lastCellUpdate = _.clone(draftCtx.luckysheetCellUpdate);
-                updateCell(
-                  draftCtx,
-                  draftCtx.luckysheetCellUpdate[0],
-                  draftCtx.luckysheetCellUpdate[1],
-                  refs.fxInput.current!
-                );
-                draftCtx.luckysheet_select_save = [
-                  {
-                    row: [lastCellUpdate[0], lastCellUpdate[0]],
-                    column: [lastCellUpdate[1], lastCellUpdate[1]],
-                    row_focus: lastCellUpdate[0],
-                    column_focus: lastCellUpdate[1],
-                  },
-                ];
-                moveHighlightCell(draftCtx, "down", 1, "rangeOfSelect");
-                // $("#luckysheet-rich-text-editor").focus();
-                // }
-                e.preventDefault();
-                e.stopPropagation();
-                break;
-              }
-              case "Escape": {
-                cancelNormalSelected(draftCtx);
-                moveHighlightCell(draftCtx, "down", 0, "rangeOfSelect");
-                // $("#luckysheet-functionbox-cell").blur();
-                // $("#luckysheet-rich-text-editor").focus();
-                e.preventDefault();
-                e.stopPropagation();
-                break;
-              }
-              /*
+      setContext((draftCtx) => {
+        if (context.luckysheetCellUpdate.length > 0) {
+          switch (e.key) {
+            case "Enter": {
+              // if (
+              //   $("#luckysheet-formula-search-c").is(":visible") &&
+              //   formula.searchFunctionCell != null
+              // ) {
+              //   formula.searchFunctionEnter(
+              //     $("#luckysheet-formula-search-c").find(
+              //       ".luckysheet-formula-search-item-active"
+              //     )
+              //   );
+              // } else {
+              const lastCellUpdate = _.clone(draftCtx.luckysheetCellUpdate);
+              updateCell(
+                draftCtx,
+                draftCtx.luckysheetCellUpdate[0],
+                draftCtx.luckysheetCellUpdate[1],
+                refs.fxInput.current!
+              );
+              draftCtx.luckysheet_select_save = [
+                {
+                  row: [lastCellUpdate[0], lastCellUpdate[0]],
+                  column: [lastCellUpdate[1], lastCellUpdate[1]],
+                  row_focus: lastCellUpdate[0],
+                  column_focus: lastCellUpdate[1],
+                },
+              ];
+              moveHighlightCell(draftCtx, "down", 1, "rangeOfSelect");
+              // $("#luckysheet-rich-text-editor").focus();
+              // }
+              e.preventDefault();
+              e.stopPropagation();
+              break;
+            }
+            case "Escape": {
+              cancelNormalSelected(draftCtx);
+              moveHighlightCell(draftCtx, "down", 0, "rangeOfSelect");
+              // $("#luckysheet-functionbox-cell").blur();
+              // $("#luckysheet-rich-text-editor").focus();
+              e.preventDefault();
+              e.stopPropagation();
+              break;
+            }
+            /*
               case "F4": {
                 formula.setfreezonFuc(event);
                 e.preventDefault();
@@ -182,20 +178,19 @@ const FxEditor: React.FC = () => {
                 break;
               }
               */
-              case "ArrowLeft": {
-                rangeHightlightselected(draftCtx, refs.fxInput.current!);
-                break;
-              }
-              case "ArrowRight": {
-                rangeHightlightselected(draftCtx, refs.fxInput.current!);
-                break;
-              }
-              default:
-                break;
+            case "ArrowLeft": {
+              rangeHightlightselected(draftCtx, refs.fxInput.current!);
+              break;
             }
+            case "ArrowRight": {
+              rangeHightlightselected(draftCtx, refs.fxInput.current!);
+              break;
+            }
+            default:
+              break;
           }
-        })
-      );
+        }
+      });
     },
     [context.luckysheetCellUpdate.length, refs.fxInput, setContext]
   );
@@ -222,16 +217,14 @@ const FxEditor: React.FC = () => {
       kcode === 46 ||
       (e.ctrlKey && kcode === 86)
     ) {
-      setContext(
-        produce((draftCtx) => {
-          handleFormulaInput(
-            draftCtx,
-            refs.cellInput.current!,
-            refs.fxInput.current!,
-            kcode
-          );
-        })
-      );
+      setContext((draftCtx) => {
+        handleFormulaInput(
+          draftCtx,
+          refs.cellInput.current!,
+          refs.fxInput.current!,
+          kcode
+        );
+      });
     }
   }, [refs.cellInput, refs.fxInput, setContext]);
 

@@ -7,7 +7,6 @@ import {
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, { useContext, useMemo, useRef, useLayoutEffect } from "react";
-import produce from "immer";
 import WorkbookContext from "../../context";
 import "./index.css";
 import Menu from "./Menu";
@@ -24,12 +23,10 @@ const ContextMenu: React.FC = () => {
         <Menu
           key="copy"
           onClick={() => {
-            setContext(
-              produce((draftCtx) => {
-                handleCopy(draftCtx);
-                draftCtx.contextMenu = undefined;
-              })
-            );
+            setContext((draftCtx) => {
+              handleCopy(draftCtx);
+              draftCtx.contextMenu = undefined;
+            });
           }}
         >
           {rightclick.copy}
@@ -39,12 +36,10 @@ const ContextMenu: React.FC = () => {
         <Menu
           key="paste"
           onClick={() => {
-            setContext(
-              produce((draftCtx) => {
-                handlePasteByClick(draftCtx);
-                draftCtx.contextMenu = undefined;
-              })
-            );
+            setContext((draftCtx) => {
+              handlePasteByClick(draftCtx);
+              draftCtx.contextMenu = undefined;
+            });
           }}
         >
           {rightclick.paste}
@@ -56,28 +51,26 @@ const ContextMenu: React.FC = () => {
             <Menu
               key={`add-col-${dir}`}
               onClick={(e) => {
-                setContext(
-                  produce((draftCtx) => {
-                    const position =
-                      draftCtx.luckysheet_select_save?.[0]?.column?.[0];
-                    if (position == null) return;
-                    const countStr = (e.target as HTMLDivElement).querySelector(
-                      "input"
-                    )?.value;
-                    if (countStr == null) return;
-                    const count = parseInt(countStr, 10);
-                    if (count < 1) return;
-                    extendSheet(
-                      draftCtx,
-                      "column",
-                      position,
-                      count,
-                      dir === "left" ? "lefttop" : "rightbottom",
-                      draftCtx.currentSheetIndex
-                    );
-                    draftCtx.contextMenu = undefined;
-                  })
-                );
+                setContext((draftCtx) => {
+                  const position =
+                    draftCtx.luckysheet_select_save?.[0]?.column?.[0];
+                  if (position == null) return;
+                  const countStr = (e.target as HTMLDivElement).querySelector(
+                    "input"
+                  )?.value;
+                  if (countStr == null) return;
+                  const count = parseInt(countStr, 10);
+                  if (count < 1) return;
+                  extendSheet(
+                    draftCtx,
+                    "column",
+                    position,
+                    count,
+                    dir === "left" ? "lefttop" : "rightbottom",
+                    draftCtx.currentSheetIndex
+                  );
+                  draftCtx.contextMenu = undefined;
+                });
               }}
             >
               <>
@@ -106,26 +99,24 @@ const ContextMenu: React.FC = () => {
             <Menu
               key={`add-row-${dir}`}
               onClick={(e, container) => {
-                setContext(
-                  produce((draftCtx) => {
-                    const position =
-                      draftCtx.luckysheet_select_save?.[0]?.row?.[0];
-                    if (position == null) return;
-                    const countStr = container.querySelector("input")?.value;
-                    if (countStr == null) return;
-                    const count = parseInt(countStr, 10);
-                    if (count < 1) return;
-                    extendSheet(
-                      draftCtx,
-                      "row",
-                      position,
-                      count,
-                      dir === "top" ? "lefttop" : "rightbottom",
-                      draftCtx.currentSheetIndex
-                    );
-                    draftCtx.contextMenu = undefined;
-                  })
-                );
+                setContext((draftCtx) => {
+                  const position =
+                    draftCtx.luckysheet_select_save?.[0]?.row?.[0];
+                  if (position == null) return;
+                  const countStr = container.querySelector("input")?.value;
+                  if (countStr == null) return;
+                  const count = parseInt(countStr, 10);
+                  if (count < 1) return;
+                  extendSheet(
+                    draftCtx,
+                    "row",
+                    position,
+                    count,
+                    dir === "top" ? "lefttop" : "rightbottom",
+                    draftCtx.currentSheetIndex
+                  );
+                  draftCtx.contextMenu = undefined;
+                });
               }}
             >
               <>
@@ -154,12 +145,10 @@ const ContextMenu: React.FC = () => {
           onClick={() => {
             if (!selection) return;
             const [st_index, ed_index] = selection.column;
-            setContext(
-              produce((draftCtx) => {
-                deleteRowCol(draftCtx, "column", st_index, ed_index);
-                draftCtx.contextMenu = undefined;
-              })
-            );
+            setContext((draftCtx) => {
+              deleteRowCol(draftCtx, "column", st_index, ed_index);
+              draftCtx.contextMenu = undefined;
+            });
           }}
         >
           {rightclick.deleteSelected}
@@ -172,12 +161,10 @@ const ContextMenu: React.FC = () => {
           onClick={() => {
             if (!selection) return;
             const [st_index, ed_index] = selection.row;
-            setContext(
-              produce((draftCtx) => {
-                deleteRowCol(draftCtx, "row", st_index, ed_index);
-                draftCtx.contextMenu = undefined;
-              })
-            );
+            setContext((draftCtx) => {
+              deleteRowCol(draftCtx, "row", st_index, ed_index);
+              draftCtx.contextMenu = undefined;
+            });
           }}
         >
           {rightclick.deleteSelected}
@@ -214,12 +201,10 @@ const ContextMenu: React.FC = () => {
       hasOverflow = true;
     }
     if (hasOverflow) {
-      setContext(
-        produce((draftCtx) => {
-          draftCtx.contextMenu.x = left;
-          draftCtx.contextMenu.y = top;
-        })
-      );
+      setContext((draftCtx) => {
+        draftCtx.contextMenu.x = left;
+        draftCtx.contextMenu.y = top;
+      });
     }
   }, [contextMenu, setContext]);
 

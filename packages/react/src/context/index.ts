@@ -19,15 +19,13 @@ type RefValues = {
 
 const WorkbookContext = React.createContext<{
   context: Context;
-  setContext: React.Dispatch<React.SetStateAction<Context>>;
+  setContext: (recipe: (ctx: Context) => void) => void;
   // eslint-disable-next-line
-  setContextValue: <K extends keyof Context>(key: K, value: Context[K]) => void;
   settings: Required<Settings>;
   refs: RefValues;
 }>({
   context: defaultContext(),
   setContext: () => {},
-  setContextValue: () => {},
   settings: defaultSettings,
   refs: {
     globalCache: {},

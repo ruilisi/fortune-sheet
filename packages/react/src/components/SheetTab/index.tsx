@@ -1,5 +1,4 @@
 import React, { useContext, useRef } from "react";
-import produce from "immer";
 import { updateCell, addSheet } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
@@ -21,19 +20,17 @@ const SheetTab: React.FC = () => {
         <div
           className="fortune-sheettab-button"
           onClick={() => {
-            setContext(
-              produce((draftCtx) => {
-                if (draftCtx.luckysheetCellUpdate.length > 0) {
-                  updateCell(
-                    draftCtx,
-                    draftCtx.luckysheetCellUpdate[0],
-                    draftCtx.luckysheetCellUpdate[1],
-                    refs.cellInput.current!
-                  );
-                }
-                addSheet(draftCtx);
-              })
-            );
+            setContext((draftCtx) => {
+              if (draftCtx.luckysheetCellUpdate.length > 0) {
+                updateCell(
+                  draftCtx,
+                  draftCtx.luckysheetCellUpdate[0],
+                  draftCtx.luckysheetCellUpdate[1],
+                  refs.cellInput.current!
+                );
+              }
+              addSheet(draftCtx);
+            });
           }}
         >
           <SVGIcon name="plus" width={16} height={16} />
