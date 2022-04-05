@@ -1,14 +1,19 @@
 
 <h1 align="center">FortuneSheet</h1>
 <p align="center">FortuneSheet is an online spreedsheet component library that provides out-of-the-box features just like Excel</p>
-<p align="center">
-  <a href="https://drone.ruilisi.com/ruilisi/fortune-sheet" title="Build Status">
-    <img src="https://drone.ruilisi.com/api/badges/ruilisi/fortune-sheet/status.svg?ref=refs/heads/master">
-  </a>
-</p>
+
+<div align="center">
+
+[![Build Status](https://drone.ruilisi.com/api/badges/ruilisi/fortune-sheet/status.svg)](https://drone.ruilisi.com/ruilisi/fortune-sheet)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet?ref=badge_shield)
+[![Known Vulnerabilities](https://snyk.io/test/github/ruilisi/fortune-sheet/badge.svg)](https://snyk.io/test/github/ruilisi/fortune-sheet)
+[![Build with father](https://img.shields.io/badge/build%20with-father-028fe4.svg)](https://github.com/umijs/father/)
+[![lerna](https://img.shields.io/badge/maintained%20by-xiemala-cc00ff.svg)](https://xiemala.com/)
+
+</div>
 
 
-<p align="center">English | [简体中文](./README-zh.md)</p>
+English | [简体中文](./README-zh.md)
 
 ## Purpose
 
