@@ -1,8 +1,14 @@
 
 <h1 align="center">FortuneSheet</h1>
 <p align="center">FortuneSheet is an online spreedsheet component library that provides out-of-the-box features just like Excel</p>
+<p align="center">
+  <a href="https://drone.ruilisi.com/ruilisi/fortune-sheet" title="Build Status">
+    <img src="https://drone.ruilisi.com/api/badges/ruilisi/fortune-sheet/status.svg?ref=refs/heads/master">
+  </a>
+</p>
 
-English | [简体中文](./README-zh.md)
+
+<p align="center">English | [简体中文](./README-zh.md)</p>
 
 ## Purpose
 

@@ -1,0 +1,62 @@
+---
+kind: pipeline
+type: kubernetes
+name: default
+
+platform:
+  os: linux
+  arch: arm64
+
+volumes:
+  - name: drone-cache-volume
+    host:
+      path: /var/lib/cache
+
+steps:
+  - name: restore-cache
+    image: docker.mirrors.ustc.edu.cn/meltwater/drone-cache:dev
+    settings:
+      backend: 'filesystem'
+      restore: true
+      cache_key: '{{ .Repo.Name }}_{{ checksum "yarn.lock" }}'
+      mount:
+        - node_modules
+    volumes:
+      - name: drone-cache-volume
+        path: /tmp/cache
+  - name: install-pkgs
+    image: docker.mirrors.ustc.edu.cn/library/node:16.13-alpine
+    commands:
+      - yarn install --prod false --pure-lockfile --cache-folder /tmp/cache/yarn-cache
+  - name: lint
+    image: docker.mirrors.ustc.edu.cn/library/node:16.13-alpine
+    commands:
+      - yarn lint
+    depends_on:
+      - install-pkgs
+  - name: tsc
+    image: docker.mirrors.ustc.edu.cn/library/node:16.13-alpine
+    commands:
+      - yarn tsc
+    depends_on:
+      - install-pkgs
+  - name: test
+    image: docker.mirrors.ustc.edu.cn/library/node:16.13-alpine
+    commands:
+      - yarn test
+    depends_on:
+      - install-pkgs
+  - name: rebuild-cache
+    image: docker.mirrors.ustc.edu.cn/meltwater/drone-cache:dev
+    pull: never
+    settings:
+      backend: 'filesystem'
+      rebuild: true
+      cache_key: '{{ .Repo.Name }}_{{ checksum "yarn.lock" }}'
+      mount:
+        - node_modules
+    volumes:
+      - name: drone-cache-volume
+        path: /tmp/cache
+    depends_on:
+      - install-pkgs
