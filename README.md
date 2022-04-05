@@ -1,10 +1,11 @@
-
 <h1 align="center">FortuneSheet</h1>
 <p align="center">FortuneSheet is an online spreedsheet component library that provides out-of-the-box features just like Excel</p>
 
 English | [简体中文](./README-zh.md)
 
 ## Purpose
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet?ref=badge_shield)
+
 
 The goal of `FortuneSheet` is to make a feature-rich, easy-to-configure online spreedsheet that you can use out-of-the-box.
 
@@ -117,3 +118,5 @@ yarn build
 
 ## License
 This project is licensed under the MIT License. See [MIT](http://opensource.org/licenses/MIT) for the full license text.
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet?ref=badge_large)
