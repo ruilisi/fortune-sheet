@@ -2,6 +2,16 @@
 <h1 align="center">FortuneSheet</h1>
 <p align="center">FortuneSheet是一款类似Excel的开箱即用的在线表格组件。</p>
 
+<div align="center">
+
+[![Build Status](https://drone.ruilisi.com/api/badges/ruilisi/fortune-sheet/status.svg)](https://drone.ruilisi.com/ruilisi/fortune-sheet)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet?ref=badge_shield)
+[![Known Vulnerabilities](https://snyk.io/test/github/ruilisi/fortune-sheet/badge.svg)](https://snyk.io/test/github/ruilisi/fortune-sheet)
+[![Build with father](https://img.shields.io/badge/build%20with-father-028fe4.svg)](https://github.com/umijs/father/)
+[![lerna](https://img.shields.io/badge/maintained%20by-xiemala-cc00ff.svg)](https://xiemala.com/)
+
+</div>
+
 [English](./README.md) | 简体中文
 
 ## 目的
@@ -41,15 +51,31 @@
 - **操作体验**：复制、粘贴、剪切，快捷键
 - **公式和函数**：内置公式
 
-## 开发计划
-- **格式设置**：条件格式，字体
-- **单元格**：拖拽，下拉填充，查找和替换，定位，数据验证
-- **行和列操作**：隐藏、冻结，文本分列
-- **操作体验**：撤销、格式刷，选区拖拽
-- **表格操作**：筛选，排序
-- **增强功能**：数据透视表，图表，评论，共享编辑，插入图片，矩阵计算，截图，复制到其他格式，EXCEL导入及导出等
-- 支持Vue
-- 测试
+## 开发路线
+- 支持协同编辑和后端存储.
+- 支持撤销/重做.
+- 增加测试代码.
+- 更多基础功能:
+  - 下拉填充
+  - 字体
+  - 格式刷
+  - 评论
+  - 插入图片
+  - 更多工具栏按钮
+- Excel 导入和导出.
+- 支持Vue.
+- 更多功能:
+  - 筛选，排序
+  - 条件格式
+  - 拖拽
+  - 查找和替换
+  - 定位
+  - 数据验证
+  - 隐藏、冻结，文本分列
+- 更多高级功能:
+  - 数据透视表
+  - 图表
+  - 截图
 
 
 ## 文档

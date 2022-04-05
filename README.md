@@ -52,16 +52,31 @@ This project is in the state of early development, APIs may have significant cha
 - **Operation**: copy, paste, cut, hot key
 - **Formulas & Functions**: Built-in formulas
 
-## TODOs
-- **Formatting**: conditional formatting, fonts
-- **Cells**: drag and drop, fill handle, find and replace, location, data verification
-- **Row & column**: hide, freeze, and split text
-- **Operation**: undo, redo, format painter, drag and drop selection
-- **Tables**: filter, sort
-- **Enhanced functions**: Pivot tables, charts, comments, cooperative editing, insert picture, matrix calculations, screenshots, copying to other formats, EXCEL import and export, etc.
-- Vue support.
-- Tests.
-
+## Roadmap
+- Support cooperative editing with backend storage.
+- Support undo/redo.
+- Add tests.
+- More basic features:
+  - fill handle
+  - fonts
+  - format painter
+  - comments
+  - insert images
+  - more toolbar buttons
+- Excel import and export.
+- Support Vue.
+- More features:
+  - filter, sort
+  - conditional formatting
+  - drag and drop
+  - find and replace
+  - location
+  - data verification
+  - hide, freeze, and split text
+- More advanced features:
+  - pivot tables
+  - charts
+  - screenshots
 
 ## Documentation
 
