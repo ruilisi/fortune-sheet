@@ -1,0 +1,11 @@
+node_modules
+dist
+/.vscode
+lib
+es
+.github
+scripts
+webpack.config.js
+
+# formula-parser
+packages/formula-parser

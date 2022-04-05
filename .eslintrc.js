@@ -31,6 +31,7 @@ module.exports = {
     "no-console": [1, { allow: ["warn", "error"] }],
     "no-lonely-if": 0,
     "no-new-func": 0,
+    "no-template-curly-in-string": 0,
     "jsx-a11y/no-static-element-interactions": 0,
     "jsx-a11y/no-noninteractive-tabindex": 0,
     "jsx-a11y/click-events-have-key-events": 0,

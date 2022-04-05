@@ -15,6 +15,7 @@ const ScrollBar: React.FC<Props> = ({ axis }) => {
     } else {
       refs.scrollbarY.current!.scrollTop = context.scrollTop;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [axis === "x" ? context.scrollLeft : context.scrollTop]);
 
   return (

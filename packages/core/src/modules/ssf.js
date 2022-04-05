@@ -1,3 +1,4 @@
+/* eslint-disable */
 var SSF = {};
 const make_ssf = function make_ssf(SSF) {
   SSF.version = "0.11.2";
