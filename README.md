@@ -23,6 +23,8 @@ This project is originated from [Luckysheet](https://github.com/mengshukeji/Luck
 
 We aim to make FortuneSheet powerful yet easy to maintain.
 
+## Online demo
+
 Take a look at the online demo at [fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/)
 
 ## Attention

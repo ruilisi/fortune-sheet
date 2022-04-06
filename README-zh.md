@@ -22,6 +22,8 @@
 
 我们的目标是让`FortuneSheet`越来越强大，同时易于维护。
 
+## 在线样例
+
 项目的在线Demo：[fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/)
 
 ## 注意
