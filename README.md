@@ -1,3 +1,6 @@
+<p align="center">
+  <img align="center" src="logo.png" width="150px" height="150px" />
+</p>
 <h1 align="center">FortuneSheet</h1>
 <p align="center">FortuneSheet is an online spreedsheet component library that provides out-of-the-box features just like Excel</p>
 
@@ -7,7 +10,7 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet?ref=badge_shield)
 [![Known Vulnerabilities](https://snyk.io/test/github/ruilisi/fortune-sheet/badge.svg)](https://snyk.io/test/github/ruilisi/fortune-sheet)
 [![Build with father](https://img.shields.io/badge/build%20with-father-028fe4.svg)](https://github.com/umijs/father/)
-[![lerna](https://img.shields.io/badge/maintained%20by-xiemala-cc00ff.svg)](https://xiemala.com/)
+[![xiemala](https://img.shields.io/badge/maintained%20by-xiemala-cc00ff.svg)](https://xiemala.com/)
 
 </div>
 
@@ -15,8 +18,6 @@
 English | [简体中文](./README-zh.md)
 
 ## Purpose
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet?ref=badge_shield)
-
 
 The goal of `FortuneSheet` is to make a feature-rich, easy-to-configure online spreedsheet that you can use out-of-the-box.
 
