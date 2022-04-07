@@ -9,10 +9,7 @@ type Props = {
 };
 
 const Button: React.FC<Props> = ({ tooltip, onClick, iconId, disabled }) => {
-  const style: CSSProperties = {
-    userSelect: "none",
-    opacity: disabled ? 0.3 : 1,
-  };
+  const style: CSSProperties = { userSelect: "none" };
   return (
     <div
       className="fortune-toolbar-button"
@@ -21,7 +18,8 @@ const Button: React.FC<Props> = ({ tooltip, onClick, iconId, disabled }) => {
       role="button"
       style={style}
     >
-      <SVGIcon name={iconId} />
+      <SVGIcon name={iconId} style={disabled ? { opacity: 0.3 } : {}} />
+      {tooltip && <div className="fortune-tooltip">{tooltip}</div>}
     </div>
   );
 };

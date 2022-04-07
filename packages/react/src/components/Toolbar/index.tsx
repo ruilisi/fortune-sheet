@@ -157,7 +157,7 @@ const Toolbar: React.FC = () => {
         />
       );
     },
-    [cell, refs.cellInput, refs.globalCache, setContext]
+    [cell, handleRedo, handleUndo, refs.cellInput, refs.globalCache, setContext]
   );
 
   return (

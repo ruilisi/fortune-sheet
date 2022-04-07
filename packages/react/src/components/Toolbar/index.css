@@ -112,3 +112,20 @@
   margin: 1px;
   cursor: pointer;
 }
+
+.fortune-tooltip {
+  visibility: hidden;
+  background-color: #666;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 6px;
+  font-size: 12px;
+  position: absolute;
+  z-index: 1;
+  top: 40px;
+}
+
+.fortune-toolbar-button:hover .fortune-tooltip {
+  visibility: visible;
+}
