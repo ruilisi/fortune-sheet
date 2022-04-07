@@ -23,12 +23,16 @@ const WorkbookContext = React.createContext<{
   // eslint-disable-next-line
   settings: Required<Settings>;
   refs: RefValues;
+  handleUndo: () => void;
+  handleRedo: () => void;
 }>({
   context: defaultContext(),
   setContext: () => {},
   settings: defaultSettings,
+  handleUndo: () => {},
+  handleRedo: () => {},
   refs: {
-    globalCache: {},
+    globalCache: { undoList: [], redoList: [] },
     cellInput: React.createRef<HTMLDivElement | null>(),
     fxInput: React.createRef<HTMLDivElement | null>(),
     scrollbarX: React.createRef<HTMLDivElement | null>(),

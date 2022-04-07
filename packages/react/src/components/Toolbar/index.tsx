@@ -16,7 +16,8 @@ import ColorPicker from "./ColorPicker";
 import Select, { Option } from "./Select";
 
 const Toolbar: React.FC = () => {
-  const { context, setContext, refs, settings } = useContext(WorkbookContext);
+  const { context, setContext, refs, settings, handleUndo, handleRedo } =
+    useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const firstSelection = context.luckysheet_select_save?.[0];
   const flowdata = getFlowdata(context);
@@ -116,6 +117,28 @@ const Toolbar: React.FC = () => {
               </Select>
             )}
           </Combo>
+        );
+      }
+      if (name === "undo") {
+        return (
+          <Button
+            iconId={name}
+            tooltip={name}
+            key={name}
+            disabled={refs.globalCache.undoList.length === 0}
+            onClick={() => handleUndo()}
+          />
+        );
+      }
+      if (name === "redo") {
+        return (
+          <Button
+            iconId={name}
+            tooltip={name}
+            key={name}
+            disabled={refs.globalCache.redoList.length === 0}
+            onClick={() => handleRedo()}
+          />
         );
       }
       return (

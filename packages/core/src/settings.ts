@@ -81,6 +81,8 @@ export const defaultSettings: Required<Settings> = {
   defaultSheetNameMaxLength: 31, // 默认工作表名称的最大长度
   sheetFormulaBar: true, // 是否显示公式栏
   showtoolbarConfig: [
+    "undo",
+    "redo",
     "format-painter",
     "clear-format",
     "|",

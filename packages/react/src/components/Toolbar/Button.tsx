@@ -5,10 +5,14 @@ type Props = {
   tooltip: string;
   iconId: string;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  disabled?: boolean;
 };
 
-const Button: React.FC<Props> = ({ tooltip, onClick, iconId }) => {
-  const style: CSSProperties = { userSelect: "none" };
+const Button: React.FC<Props> = ({ tooltip, onClick, iconId, disabled }) => {
+  const style: CSSProperties = {
+    userSelect: "none",
+    opacity: disabled ? 0.3 : 1,
+  };
   return (
     <div
       className="fortune-toolbar-button"

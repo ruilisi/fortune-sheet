@@ -120,7 +120,9 @@ function handleWithCtrlOrMetaKey(
   ctx: Context,
   e: KeyboardEvent,
   cellInput: HTMLDivElement,
-  fxInput: HTMLDivElement
+  fxInput: HTMLDivElement,
+  handleUndo: () => void,
+  handleRedo: () => void
 ) {
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
@@ -255,19 +257,17 @@ function handleWithCtrlOrMetaKey(
 
     e.stopPropagation();
     return;
-  } /* else if (e.key === "z") {
+  } else if (e.key === "z") {
     // Ctrl + Z  撤销
-    controlHistory.redo(event);
-    luckysheetactiveCell();
-    event.stopPropagation();
+    handleUndo();
+    e.stopPropagation();
     return;
   } else if (e.key === "y") {
     // Ctrl + Y  重做
-    controlHistory.undo(event);
-    luckysheetactiveCell();
-    event.stopPropagation();
+    handleRedo();
+    e.stopPropagation();
     return;
-  } else if (e.key === "ArrowUp") {
+  } /* else if (e.key === "ArrowUp") {
     // Ctrl + up  调整单元格
     if (
       parseInt($inputbox.css("top")) > 0 ||
@@ -431,7 +431,9 @@ export function handleGlobalKeyDown(
   cellInput: HTMLDivElement,
   fxInput: HTMLDivElement,
   e: KeyboardEvent,
-  cache: GlobalCache
+  cache: GlobalCache,
+  handleUndo: () => void,
+  handleRedo: () => void
 ) {
   const kcode = e.keyCode;
   const kstr = e.key;
@@ -548,7 +550,14 @@ export function handleGlobalKeyDown(
     e.preventDefault();
   } else {
     if (e.ctrlKey || e.metaKey) {
-      handleWithCtrlOrMetaKey(ctx, e, cellInput, fxInput);
+      handleWithCtrlOrMetaKey(
+        ctx,
+        e,
+        cellInput,
+        fxInput,
+        handleUndo,
+        handleRedo
+      );
       return;
     }
     if (

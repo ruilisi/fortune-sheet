@@ -11,6 +11,7 @@ import {
   handleGlobalKeyDown,
   getSheetIndex,
   handlePaste,
+  filterPatch,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -20,7 +21,7 @@ import React, {
   useRef,
 } from "react";
 import "./index.css";
-import { enablePatches, produceWithPatches } from "immer";
+import { applyPatches, enablePatches, produceWithPatches } from "immer";
 import _, { assign } from "lodash";
 import Sheet from "../Sheet";
 import WorkbookContext from "../../context";
@@ -42,27 +43,65 @@ const Workbook: React.FC<
   const scrollbarY = useRef<HTMLDivElement>(null);
   const cellArea = useRef<HTMLDivElement>(null);
   const workbookContainer = useRef<HTMLDivElement>(null);
-  const globalCache = useRef<GlobalCache>({});
+  const globalCache = useRef<GlobalCache>({ undoList: [], redoList: [] });
   const mergedSettings = useMemo(
     () => assign(defaultSettings, props) as Required<Settings>,
     [props]
   );
 
   const setContextWithProduce = useCallback(
-    (recipe: (ctx: Context) => void) => {
+    (recipe: (ctx: Context) => void, noHistory = false) => {
       setContext((ctx_) => {
-        const [result] = produceWithPatches(ctx_, recipe);
+        const [result, patches, inversePatches] = produceWithPatches(
+          ctx_,
+          recipe
+        );
+        if (patches.length > 0 && !noHistory) {
+          const filteredPatches = filterPatch(patches);
+          const filteredInversePatches = filterPatch(inversePatches);
+          if (filteredInversePatches.length > 0) {
+            globalCache.current.undoList.push({
+              patches: filteredPatches,
+              inversePatches: filteredInversePatches,
+            });
+            globalCache.current.redoList = [];
+          }
+        }
         return result;
       });
     },
     []
   );
 
+  const handleUndo = useCallback(() => {
+    const history = globalCache.current.undoList.pop();
+    if (history) {
+      setContext((ctx_) => {
+        const newContext = applyPatches(ctx_, history.inversePatches);
+        globalCache.current.redoList.push(history);
+        return newContext;
+      });
+    }
+  }, []);
+
+  const handleRedo = useCallback(() => {
+    const history = globalCache.current.redoList.pop();
+    if (history) {
+      setContext((ctx_) => {
+        const newContext = applyPatches(ctx_, history.patches);
+        globalCache.current.undoList.push(history);
+        return newContext;
+      });
+    }
+  }, []);
+
   const providerValue = useMemo(
     () => ({
       context,
       setContext: setContextWithProduce,
       settings: mergedSettings,
+      handleUndo,
+      handleRedo,
       refs: {
         globalCache: globalCache.current,
         cellInput,
@@ -73,7 +112,7 @@ const Workbook: React.FC<
         workbookContainer,
       },
     }),
-    [context, mergedSettings, setContextWithProduce]
+    [context, handleRedo, handleUndo, mergedSettings, setContextWithProduce]
   );
 
   useEffect(() => {
@@ -196,7 +235,7 @@ const Workbook: React.FC<
       if (!_.isNil(mergedSettings.lang)) {
         localStorage.setItem("lang", mergedSettings.lang);
       }
-    });
+    }, true);
   }, [
     mergedSettings.data,
     context.currentSheetIndex,
@@ -222,11 +261,13 @@ const Workbook: React.FC<
           cellInput.current!,
           fxInput.current!,
           e.nativeEvent,
-          globalCache.current!
+          globalCache.current!,
+          handleUndo,
+          handleRedo
         );
       });
     },
-    [setContextWithProduce]
+    [handleRedo, handleUndo, setContextWithProduce]
   );
 
   const onPaste = useCallback(

@@ -1,3 +1,5 @@
+import { Patch } from "immer";
+
 export type CellStyle = {
   bl?: number;
   it?: number;
@@ -91,6 +93,11 @@ export type Sheet = {
   dynamicArray?: any[];
 };
 
+export type History = {
+  patches: Patch[];
+  inversePatches: Patch[];
+};
+
 export type GlobalCache = {
   overwriteCell?: boolean;
   doNotFocus?: boolean;
@@ -98,6 +105,8 @@ export type GlobalCache = {
   recentBackgroundColor?: string;
   visibleColumnsUnique?: number[];
   visibleRowsUnique?: number[];
+  undoList: History[];
+  redoList: History[];
 };
 
 export type Range = { row: number[]; column: number[] }[];

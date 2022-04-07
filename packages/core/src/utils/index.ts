@@ -4,6 +4,8 @@ import { Context } from "../context";
 import { locale } from "../locale";
 import { Sheet } from "../types";
 
+export * from "./patch";
+
 export function generateRandomSheetIndex() {
   return uuidv4();
 }
