@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
+// import { locale } from "../locale";
 import { Cell, CellMatrix } from "../types";
 import { getSheetIndex } from "../utils";
 import { isAllSelectedCellsInStatus, normalizedAttr } from "./cell";
@@ -8,6 +9,7 @@ import {
   isInlineStringCT,
   updateInlineStringFormatOutside,
 } from "./inline-string";
+import { selectionCopyShow } from "./selection";
 import { hasPartMC, isRealNum } from "./validation";
 
 type ToolbarItemClickHandler = (
@@ -503,6 +505,35 @@ function setAttr(
   updateFormat(ctx, cellInput, flowdata, attr, value);
 }
 
+export function cancelPaintModel(ctx: Context) {
+  // let _this = this;
+  // $("#luckysheet-sheettable_0").removeClass("luckysheetPaintCursor");
+  if (ctx.luckysheet_copy_save === null) return;
+  if (ctx.luckysheet_copy_save?.dataSheetIndex === ctx.currentSheetIndex) {
+    ctx.luckysheet_selection_range = [];
+    selectionCopyShow(ctx.luckysheet_selection_range, ctx);
+  } else {
+    if (!ctx.luckysheet_copy_save) return;
+    const sheetIndex = getSheetIndex(
+      ctx,
+      ctx.luckysheet_copy_save.dataSheetIndex
+    );
+    if (!sheetIndex) return;
+    // ctx.luckysheetfile[getSheetIndex(ctx.luckysheet_copy_save["dataSheetIndex"])].luckysheet_selection_range = [];
+    ctx.luckysheetfile[sheetIndex].luckysheet_selection_range = [];
+  }
+
+  ctx.luckysheet_copy_save = {
+    dataSheetIndex: "",
+    copyRange: [{ row: [0], column: [0] }],
+    RowlChange: false,
+    HasMC: false,
+  };
+
+  ctx.luckysheetPaintModelOn = false;
+  // $("#luckysheetpopover").fadeOut(200,function(){
+  //     $("#luckysheetpopover").remove();
+}
 export function handleCurrencyFormat(ctx: Context, cellInput: HTMLDivElement) {
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
@@ -729,6 +760,116 @@ export function handleVerticalAlign(
   setAttr(ctx, cellInput, "vt", value);
 }
 
+export function handleFormatPainter(ctx: Context) {
+  //   if (!checkIsAllowEdit()) {
+  //     tooltip.info("", locale().pivotTable.errorNotAllowEdit);
+  //     return
+  // }
+
+  // e.stopPropagation();
+
+  // let _locale = locale();
+  // let locale_paint = _locale.paint;
+
+  if (
+    ctx.luckysheet_select_save == null ||
+    ctx.luckysheet_select_save.length === 0
+  ) {
+    // if(isEditMode()){
+    //     alert(locale_paint.tipSelectRange);
+    // }
+    // else{
+    //     tooltip.info("",locale_paint.tipSelectRange);
+    // }
+    return;
+  }
+  if (ctx.luckysheet_select_save.length > 1) {
+    // if(isEditMode()){
+    //     alert(locale_paint.tipNotMulti);
+    // }
+    // else{
+    //     tooltip.info("",locale_paint.tipNotMulti);
+    // }
+    return;
+  }
+
+  // *增加了对选区范围是否为部分合并单元格的校验，如果为部分合并单元格，就阻止格式刷的下一步
+  // TODO 这里也可以改为：判断到是合并单元格的一部分后，格式刷执行黏贴格式后删除范围单元格的 mc 值
+
+  let has_PartMC = false;
+
+  const r1 = ctx.luckysheet_select_save[0].row[0];
+  const r2 = ctx.luckysheet_select_save[0].row[1];
+
+  const c1 = ctx.luckysheet_select_save[0].column[0];
+  const c2 = ctx.luckysheet_select_save[0].column[1];
+
+  has_PartMC = hasPartMC(ctx, ctx.config, r1, r2, c1, c2);
+
+  if (has_PartMC) {
+    // *提示后中止下一步
+    // tooltip.info('无法对部分合并单元格执行此操作', '');
+    return;
+  }
+
+  // tooltip.popover("<i class='fa fa-paint-brush'></i> "+locale_paint.start+"", "topCenter", true, null, locale_paint.end,function(){
+  cancelPaintModel(ctx);
+  // });
+
+  // $("#luckysheet-sheettable_0").addClass("luckysheetPaintCursor");
+
+  ctx.luckysheet_selection_range = [
+    {
+      row: ctx.luckysheet_select_save[0].row,
+      column: ctx.luckysheet_select_save[0].column,
+    },
+  ];
+
+  selectionCopyShow(ctx.luckysheet_selection_range, ctx);
+  let RowlChange = false;
+  let HasMC = false;
+
+  for (
+    let r = ctx.luckysheet_select_save[0].row[0];
+    r <= ctx.luckysheet_select_save[0].row[1];
+    r += 1
+  ) {
+    if (ctx.config.rowhidden != null && ctx.config.rowhidden[r] != null) {
+      continue;
+    }
+
+    if (ctx.config.rowlen != null && r in ctx.config.rowlen) {
+      RowlChange = true;
+    }
+
+    for (
+      let c = ctx.luckysheet_select_save[0].column[0];
+      c <= ctx.luckysheet_select_save[0].column[1];
+      c += 1
+    ) {
+      const flowdata = getFlowdata(ctx);
+      if (!flowdata) return;
+      const cell = flowdata[r][c];
+      if (cell != null && cell.mc != null && cell.mc.rs != null) {
+        HasMC = true;
+      }
+    }
+  }
+  ctx.luckysheet_copy_save = {
+    dataSheetIndex: ctx.currentSheetIndex,
+    copyRange: [
+      {
+        row: ctx.luckysheet_select_save[0].row,
+        column: ctx.luckysheet_select_save[0].column,
+      },
+    ],
+    RowlChange,
+    HasMC,
+  };
+
+  ctx.luckysheetPaintModelOn = true;
+  ctx.luckysheetPaintSingle = true;
+}
 export function handleClearFormat(ctx: Context) {
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
@@ -920,6 +1061,7 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
   "align-bottom": (ctx: Context, cellInput: HTMLDivElement) =>
     handleVerticalAlign(ctx, cellInput, "bottom"),
   "clear-format": handleClearFormat,
+  "format-painter": handleFormatPainter,
 };
 
 export function getToolbarItemClickHandler(name: string) {

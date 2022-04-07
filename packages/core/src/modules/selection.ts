@@ -1,12 +1,18 @@
-import _ from "lodash";
+import _, { isPlainObject } from "lodash";
 import type { Sheet as SheetType } from "../types";
 import { Context, getFlowdata } from "../context";
-import { getCellValue, getStyleByCell, mergeBorder } from "./cell";
+import {
+  getCellValue,
+  getdatabyselection,
+  getStyleByCell,
+  mergeBorder,
+} from "./cell";
 import { delFunctionGroup, formulaCache } from "./formula";
 import clipboard from "./clipboard";
 import { getBorderInfoCompute } from "./border";
 import { getSheetIndex, replaceHtml } from "../utils";
 import { hasPartMC } from "./validation";
+import { update } from "./format";
 
 export const selectionCache = {
   isPasteAction: false,
@@ -144,6 +150,365 @@ export function selectTitlesRange(map: Record<string, number>) {
   return rangeArr;
 }
 
+export function pasteHandlerOfPaintModel(
+  ctx: Context,
+  copyRange: Context["luckysheet_copy_save"]
+) {
+  // if (!checkProtectionLockedRangeList(Store.luckysheet_select_save, Store.currentSheetIndex)) {
+  //   return;
+  // }
+  const cfg = ctx.config;
+  if (cfg.merge == null) {
+    cfg.merge = {};
+  }
+
+  if (!copyRange) return;
+  // 复制范围
+  const copyHasMC = copyRange.HasMC;
+  // let copyRowlChange = copyRange["RowlChange"];
+  const copySheetIndex = copyRange.dataSheetIndex;
+
+  const c_r1 = copyRange.copyRange[0].row[0];
+  const c_r2 = copyRange.copyRange[0].row[1];
+  const c_c1 = copyRange.copyRange[0].column[0];
+  const c_c2 = copyRange.copyRange[0].column[1];
+
+  const copyData = _.cloneDeep(
+    getdatabyselection(
+      ctx,
+      { row: [c_r1, c_r2], column: [c_c1, c_c2] },
+      copySheetIndex
+    )
+  );
+
+  // 应用范围
+  if (!ctx.luckysheet_select_save) return;
+  const last =
+    ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
+  const minh = last.row[0];
+  let maxh = last.row[1]; // 应用范围首尾行
+  const minc = last.column[0];
+  let maxc = last.column[1]; // 应用范围首尾列
+
+  const copyh = copyData.length;
+  const copyc = copyData[0].length;
+
+  if (minh === maxh && minc === maxc) {
+    // 应用范围是一个单元格，自动增加到复制范围大小 (若自动增加的范围包含部分合并单元格，则提示)
+    let has_PartMC = false;
+    if (cfg.merge != null) {
+      has_PartMC = hasPartMC(
+        ctx,
+        cfg,
+        minh,
+        minh + copyh - 1,
+        minc,
+        minc + copyc - 1
+      );
+    }
+
+    if (has_PartMC) {
+      // if (isEditMode()) {
+      //   alert("不能对合并单元格做部分更改");
+      // }
+      // else {
+      //   tooltip.info('<i class="fa fa-exclamation-triangle"></i>提示', "不能对合并单元格做部分更改");
+      // }
+      return;
+    }
+
+    maxh = minh + copyh - 1;
+    maxc = minc + copyc - 1;
+  }
+
+  const timesH = Math.ceil((maxh - minh + 1) / copyh); // 复制行 组数
+  const timesC = Math.ceil((maxc - minc + 1) / copyc); // 复制列 组数
+
+  // let d = editor.deepCopyFlowData(Store.flowdata);//取数据
+  const flowdata = getFlowdata(ctx); // 取数据
+  if (flowdata == null) return;
+  const cellMaxLength = flowdata[0].length;
+  const rowMaxLength = flowdata.length;
+
+  const borderInfoCompute = getBorderInfoCompute(ctx, copySheetIndex);
+  const c_dataVerification =
+    _.cloneDeep(
+      ctx.luckysheetfile[getSheetIndex(ctx, copySheetIndex)!].dataVerification
+    ) || {};
+  let dataVerification = null;
+
+  let mth = 0;
+  let mtc = 0;
+  let maxcellCahe = 0;
+  let maxrowCache = 0;
+  for (let th = 1; th <= timesH; th += 1) {
+    for (let tc = 1; tc <= timesC; tc += 1) {
+      mth = minh + (th - 1) * copyh;
+      mtc = minc + (tc - 1) * copyc;
+
+      maxrowCache =
+        minh + th * copyh > rowMaxLength ? rowMaxLength : minh + th * copyh;
+      if (maxrowCache > maxh + 1) {
+        maxrowCache = maxh + 1;
+      }
+
+      maxcellCahe =
+        minc + tc * copyc > cellMaxLength ? cellMaxLength : minc + tc * copyc;
+      if (maxcellCahe > maxc + 1) {
+        maxcellCahe = maxc + 1;
+      }
+
+      const offsetMC: any = {};
+      for (let h = mth; h < maxrowCache; h += 1) {
+        if (!h) return;
+        if (flowdata[h] == null) return;
+        let x: any[] = [];
+        x = flowdata[h];
+
+        for (let c = mtc; c < maxcellCahe; c += 1) {
+          if (borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`]) {
+            const bd_obj = {
+              rangeType: "cell",
+              value: {
+                row_index: h,
+                col_index: c,
+                l: borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`].l,
+                r: borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`].r,
+                t: borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`].t,
+                b: borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`].b,
+              },
+            };
+
+            if (cfg.borderInfo == null) {
+              cfg.borderInfo = [];
+            }
+
+            cfg.borderInfo.push(bd_obj);
+          } else if (borderInfoCompute[`${h}_${c}`]) {
+            const bd_obj = {
+              rangeType: "cell",
+              value: {
+                row_index: h,
+                col_index: c,
+                l: null,
+                r: null,
+                t: null,
+                b: null,
+              },
+            };
+
+            if (cfg.borderInfo == null) {
+              cfg.borderInfo = [];
+            }
+
+            cfg.borderInfo.push(bd_obj);
+          }
+
+          // 数据验证 复制
+          if (c_dataVerification[`${c_r1 + h - mth}_${c_c1 + c - mtc}`]) {
+            if (dataVerification == null) {
+              dataVerification = _.cloneDeep(
+                ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!]
+                  .dataVerification
+              );
+            }
+
+            dataVerification[`${h}_${c}`] =
+              c_dataVerification[`${c_r1 + h - mth}_${c_c1 + c - mtc}`];
+          }
+
+          if (isPlainObject(x[c]) && x[c].mc) {
+            if (x[c].mc.rs) {
+              delete cfg.merge[`${x[c].mc.r}_${x[c].mc.c}`];
+            }
+            delete x[c].mc;
+          }
+
+          let value: any = null;
+          if (copyData[h - mth] != null && copyData[h - mth][c - mtc] != null) {
+            value = copyData[h - mth][c - mtc];
+          }
+
+          if (value != null) {
+            delete value.v;
+            delete value.m;
+            delete value.f;
+            delete value.spl;
+
+            if (value.ct && value.ct.t === "inlineStr") {
+              delete value.ct;
+            }
+            if (isPlainObject(x[c])) {
+              if (x[c].ct && x[c].ct.t === "inlineStr") {
+                delete value.ct;
+              } else {
+                const format = [
+                  "bg",
+                  "fc",
+                  "ct",
+                  "ht",
+                  "vt",
+                  "bl",
+                  "it",
+                  "cl",
+                  "un",
+                  "fs",
+                  "ff",
+                  "tb",
+                ];
+                format.forEach((item) => {
+                  Reflect.deleteProperty(x[c], item);
+                });
+              }
+            } else {
+              x[c] = { v: x[c] };
+            }
+            x[c] = _.assign(value, x[c]);
+            if (x[c].ct && x[c].ct.t === "inlineStr") {
+              x[c].ct.s.forEach((item: any) => _.assign(value, item));
+            }
+
+            if (copyHasMC && x[c].mc) {
+              if (x[c].mc.rs != null) {
+                x[c].mc.r = h;
+                if (x[c].mc.rs + h >= maxrowCache) {
+                  x[c].mc.rs = maxrowCache - h;
+                }
+
+                x[c].mc.c = c;
+                if (x[c].mc.cs + c >= maxcellCahe) {
+                  x[c].mc.cs = maxcellCahe - c;
+                }
+
+                cfg.merge[`${x[c]!.mc!.r}_${x[c]!.mc!.c}`] = x[c].mc;
+
+                offsetMC[`${value.mc!.r}_${value.mc!.c}`] = [
+                  x[c]!.mc!.r,
+                  x[c]!.mc!.c,
+                ];
+              } else {
+                x[c] = {
+                  mc: {
+                    r: offsetMC[`${value.mc!.r}_${value.mc!.c}`][0],
+                    c: offsetMC[`${value.mc!.r}_${value.mc!.c}`][1],
+                  },
+                };
+              }
+            }
+
+            if (x[c].v != null) {
+              if (value.ct != null && value.ct.fa != null) {
+                const mask = update(value.ct.fa, x[c].v);
+                x[c].m = mask;
+              }
+            }
+          }
+        }
+        flowdata[h] = x;
+      }
+    }
+  }
+
+  const currFile =
+    ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!];
+  currFile.config = cfg;
+  currFile.dataVerification = dataVerification;
+
+  // 复制范围 是否有 条件格式
+  // let cdformat = null;
+  // const copyIndex = getSheetIndex(ctx, copySheetIndex)
+  // if (!copyIndex) return;
+  // let ruleArr = _.cloneDeep(ctx.luckysheetfile[copyIndex]["luckysheet_conditionformat_save"]);
+
+  // if (ruleArr != null && ruleArr.length > 0) {
+  //   const currentIndex = getSheetIndex(ctx, ctx.currentSheetIndex)
+  //   if (!currentIndex) return;
+  //   cdformat = _.cloneDeep(ctx.luckysheetfile[currentIndex]["luckysheet_conditionformat_save"]);
+
+  //   for (let i = 0; i < ruleArr.length; i++) {
+  //     let cdformat_cellrange = ruleArr[i].cellrange;
+  //     let emptyRange: any[] = [];
+
+  // for (let j = 0; j < cdformat_cellrange.length; j++) {
+  //   let range = conditionformat.CFSplitRange(
+  //     cdformat_cellrange[j],
+  //     { "row": [c_r1, c_r2], "column": [c_c1, c_c2] },
+  //     { "row": [minh, maxh], "column": [minc, maxc] },
+  //     "operatePart"
+  //   );
+
+  //   if (range.length > 0) {
+  //     emptyRange = emptyRange.concat(range);
+  //   }
+  // }
+
+  // if (emptyRange.length > 0) {
+  //   ruleArr[i].cellrange = [{ "row": [minh, maxh], "column": [minc, maxc] }];
+  //   cdformat.push(ruleArr[i]);
+  // }
+}
+// }
+
+// last["row"] = [minh, maxh];
+// last["column"] = [minc, maxc];
+
+// if (copyRowlChange) {
+//   cfg = rowlenByRange(flowdata, minh, maxh, cfg);
+
+//   let allParam = {
+//     "cfg": cfg,
+//     "RowlChange": true,
+//     "cdformat": cdformat,
+//     "dataVerification": dataVerification
+//   }
+//   jfrefreshgrid(flowdata, ctx.luckysheet_select_save, allParam);
+// }
+// else {
+//   // 选区格式刷存在超出边界的情况
+//   if (maxh >= flowdata.length) {
+//     maxh = flowdata.length - 1;
+//   }
+//   cfg = rowlenByRange(flowdata, minh, maxh, cfg); //更新行高
+//   let allParam = {
+//     "cfg": cfg,
+//     "RowlChange": true,
+//     "cdformat": cdformat,
+//     "dataVerification": dataVerification
+//   }
+//   jfrefreshgrid(flowdata, ctx.luckysheet_select_save, allParam);
+
+//   selectHightlightShow();
+// }
+// }
+export function selectionCopyShow(range: any, ctx: Context) {
+  // $("#luckysheet-selection-copy").empty();
+
+  if (range == null) {
+    range = ctx.luckysheet_selection_range;
+  }
+  range = JSON.parse(JSON.stringify(range));
+
+  // if (range.length > 0) {
+  //     for (let s = 0; s < range.length; s++) {
+  //         let r1 = range[s].row[0], r2 = range[s].row[1];
+  //         let c1 = range[s].column[0], c2 = range[s].column[1];
+
+  //         let row = ctx.visibledatarow[r2],
+  //             row_pre = r1 - 1 == -1 ? 0 : ctx.visibledatarow[r1 - 1];
+  //         let col = ctx.visibledatacolumn[c2],
+  //             col_pre = c1 - 1 == -1 ? 0 : ctx.visibledatacolumn[c1 - 1];
+
+  //         let copyDomHtml = '<div class="luckysheet-selection-copy" style="display: block; left: ' + col_pre + 'px; width: ' + (col - col_pre - 1) + 'px; top: ' + row_pre + 'px; height: ' + (row - row_pre - 1) + 'px;">' +
+  //             '<div class="luckysheet-selection-copy-top luckysheet-copy"></div>' +
+  //             '<div class="luckysheet-selection-copy-right luckysheet-copy"></div>' +
+  //             '<div class="luckysheet-selection-copy-bottom luckysheet-copy"></div>' +
+  //             '<div class="luckysheet-selection-copy-left luckysheet-copy"></div>' +
+  //             '<div class="luckysheet-selection-copy-hc"></div>' +
+  //             '</div>';
+  //         $("#luckysheet-selection-copy").append(copyDomHtml);
+  //     }
+  // }
+}
 export function moveHighlightCell(
   ctx: Context,
   postion: "down" | "right",

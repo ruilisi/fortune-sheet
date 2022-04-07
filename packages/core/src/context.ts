@@ -127,6 +127,9 @@ export type Context = {
   fontList: any[];
   defaultFontSize: number;
 
+  luckysheetPaintModelOn: boolean;
+  luckysheetPaintSingle: boolean;
+
   currentSheetView: string;
 
   // cooperative editing
@@ -261,6 +264,9 @@ export function defaultContext(): Context {
 
     fontList: [],
     defaultFontSize: 10,
+
+    luckysheetPaintModelOn: false,
+    luckysheetPaintSingle: false,
 
     currentSheetView: "viewNormal",
 

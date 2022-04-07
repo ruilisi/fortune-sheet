@@ -11,7 +11,11 @@ import {
   checkProtectionAllSelected,
   checkProtectionSelectLockedOrUnLockedCells,
 } from "../modules/protection";
-import { normalizeSelection } from "../modules/selection";
+import {
+  normalizeSelection,
+  pasteHandlerOfPaintModel,
+} from "../modules/selection";
+import { cancelPaintModel } from "../modules/toolbar";
 import { Settings } from "../settings";
 import { GlobalCache, Selection } from "../types";
 import { getSheetIndex } from "../utils";
@@ -3573,13 +3577,13 @@ export function handleOverlayMouseUp(
     //   countfunc();
     // }, 0);
     // 格式刷
-    // if (menuButton.luckysheetPaintModelOn) {
-    //   selection.pasteHandlerOfPaintModel(ctx.luckysheet_copy_save);
-    //   if (menuButton.luckysheetPaintSingle) {
-    //     // 单次 格式刷
-    //     menuButton.cancelPaintModel();
-    //   }
-    // }
+    if (ctx.luckysheetPaintModelOn) {
+      pasteHandlerOfPaintModel(ctx, ctx.luckysheet_copy_save);
+      if (ctx.luckysheetPaintSingle) {
+        // 单次 格式刷
+        cancelPaintModel(ctx);
+      }
+    }
   }
 
   ctx.luckysheet_select_status = false;
