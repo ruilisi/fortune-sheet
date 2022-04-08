@@ -24,11 +24,12 @@ const SheetOverlay: React.FC = () => {
           draftCtx,
           e.nativeEvent,
           refs.cellInput.current!,
-          refs.cellArea.current!
+          refs.cellArea.current!,
+          refs.fxInput.current!
         );
       });
     },
-    [refs.cellArea, refs.cellInput, setContext]
+    [refs.cellArea, refs.cellInput, refs.fxInput, setContext]
   );
 
   const cellAreaContextMenu = useCallback(

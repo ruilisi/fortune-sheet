@@ -21,6 +21,8 @@ const RowHeader: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
   const rowChangeSizeRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const fxInputRef = useRef<HTMLDivElement>(null);
+  const cellInputRef = useRef<HTMLDivElement>(null);
   const [hoverLocation, setHoverLocation] = useState({
     row: -1,
     row_pre: -1,
@@ -58,7 +60,9 @@ const RowHeader: React.FC = () => {
         handleRowHeaderMouseDown(
           draftCtx,
           e.nativeEvent,
-          containerRef.current!
+          containerRef.current!,
+          cellInputRef.current!,
+          fxInputRef.current!
         );
       });
     },

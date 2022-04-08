@@ -150,7 +150,8 @@ const Toolbar: React.FC = () => {
             setContext((draftCtx) => {
               getToolbarItemClickHandler(name)?.(
                 draftCtx,
-                refs.cellInput.current!
+                refs.cellInput.current!,
+                refs.globalCache
               );
             })
           }

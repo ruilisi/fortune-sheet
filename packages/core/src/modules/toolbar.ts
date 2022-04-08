@@ -1,20 +1,41 @@
-import _ from "lodash";
+import _, { isPlainObject } from "lodash";
 import { Context, getFlowdata } from "../context";
 // import { locale } from "../locale";
-import { Cell, CellMatrix } from "../types";
+import { Cell, CellMatrix, GlobalCache } from "../types";
 import { getSheetIndex } from "../utils";
-import { isAllSelectedCellsInStatus, normalizedAttr } from "./cell";
+import {
+  getRangetxt,
+  isAllSelectedCellsInStatus,
+  normalizedAttr,
+  setCellValue,
+} from "./cell";
+import { colors } from "./color";
 import { genarate, is_date, update } from "./format";
+import {
+  execfunction,
+  execFunctionGroup,
+  formulaCache,
+  israngeseleciton,
+  rangeSetValue,
+  setCaretPosition,
+} from "./formula";
 import {
   isInlineStringCT,
   updateInlineStringFormatOutside,
 } from "./inline-string";
+import { colLocationByIndex, rowLocationByIndex } from "./location";
 import { selectionCopyShow } from "./selection";
-import { hasPartMC, isRealNum } from "./validation";
+import {
+  hasPartMC,
+  isdatatypemulti,
+  isRealNull,
+  isRealNum,
+} from "./validation";
 
 type ToolbarItemClickHandler = (
   ctx: Context,
-  cellInput: HTMLDivElement
+  cellInput: HTMLDivElement,
+  cache?: GlobalCache
 ) => void;
 
 function updateFormatCell(
@@ -503,6 +524,586 @@ function setAttr(
   if (!flowdata) return;
 
   updateFormat(ctx, cellInput, flowdata, attr, value);
+}
+// @ts-ignore
+function checkNoNullValue(cell) {
+  let v = cell;
+  if (isPlainObject(v)) {
+    v = v.v;
+  }
+
+  if (
+    !isRealNull(v) &&
+    isdatatypemulti(v).num &&
+    (cell.ct == null ||
+      cell.ct.t == null ||
+      cell.ct.t === "n" ||
+      cell.ct.t === "g")
+  ) {
+    return true;
+  }
+
+  return false;
+}
+// @ts-ignore
+function checkNoNullValueAll(cell) {
+  let v = cell;
+  if (isPlainObject(v)) {
+    v = v.v;
+  }
+
+  if (!isRealNull(v)) {
+    return true;
+  }
+
+  return false;
+}
+// @ts-ignore
+function getNoNullValue(d, st_x, ed, type: string) {
+  // const _this = this;
+  // let hasValueSum = 0;
+  let hasValueStart = null;
+  let nullNum = 0;
+  let nullTime = 0;
+
+  for (let r = ed - 1; r >= 0; r -= 1) {
+    let cell;
+    if (type === "c") {
+      cell = d[st_x][r];
+    } else {
+      cell = d[r][st_x];
+    }
+
+    if (checkNoNullValue(cell)) {
+      // hasValueSum += 1;
+      hasValueStart = r;
+    } else if (cell == null || cell.v == null || cell.v === "") {
+      nullNum += 1;
+
+      if (nullNum >= 40) {
+        if (nullTime <= 0) {
+          nullTime = 1;
+        } else {
+          break;
+        }
+      }
+    } else {
+      break;
+    }
+  }
+
+  return hasValueStart;
+}
+
+function activeFormulaInput(
+  cellInput: HTMLDivElement,
+  ctx: Context,
+  row_index: number,
+  col_index: number,
+  rowh: any,
+  columnh: any,
+  formula: string,
+  cache: GlobalCache,
+  isnull?: boolean
+) {
+  if (isnull == null) {
+    isnull = false;
+  }
+
+  ctx.luckysheetCellUpdate = [row_index, col_index];
+  cache.doNotUpdateCell = true;
+  if (isnull) {
+    const formulaTxt = `<span dir="auto" class="luckysheet-formula-text-color">=</span><span dir="auto" class="luckysheet-formula-text-color">${formula.toUpperCase()}</span><span dir="auto" class="luckysheet-formula-text-color">(</span><span dir="auto" class="luckysheet-formula-text-color">)</span>`;
+
+    cellInput.innerHTML = formulaTxt;
+
+    const spanList = cellInput.querySelectorAll("span");
+    setCaretPosition(spanList[spanList.length - 2], 0, 1);
+
+    return;
+  }
+
+  const row_pre = rowLocationByIndex(rowh[0], ctx.visibledatarow)[0];
+  const row = rowLocationByIndex(rowh[1], ctx.visibledatarow)[1];
+  const col_pre = colLocationByIndex(columnh[0], ctx.visibledatacolumn)[0];
+  const col = colLocationByIndex(columnh[1], ctx.visibledatacolumn)[1];
+
+  const formulaTxt = `<span dir="auto" class="luckysheet-formula-text-color">=</span><span dir="auto" class="luckysheet-formula-text-color">${formula.toUpperCase()}</span><span dir="auto" class="luckysheet-formula-text-color">(</span><span class="luckysheet-formula-functionrange-cell" rangeindex="0" dir="auto" style="color:${
+    colors[0]
+  };">${getRangetxt(
+    ctx,
+    ctx.currentSheetIndex,
+    { row: rowh, column: columnh },
+    ctx.currentSheetIndex
+  )}</span><span dir="auto" class="luckysheet-formula-text-color">)</span>`;
+  cellInput.innerHTML = formulaTxt;
+
+  israngeseleciton();
+  formulaCache.rangestart = true;
+  formulaCache.rangedrag_column_start = false;
+  formulaCache.rangedrag_row_start = false;
+  formulaCache.rangechangeindex = 0;
+  rangeSetValue(ctx, { row: rowh, column: columnh });
+  formulaCache.func_selectedrange = {
+    left: col_pre,
+    width: col - col_pre - 1,
+    top: row_pre,
+    height: row - row_pre - 1,
+    left_move: col_pre,
+    width_move: col - col_pre - 1,
+    top_move: row_pre,
+    height_move: row - row_pre - 1,
+    row: [row_index, row_index],
+    column: [col_index, col_index],
+  };
+
+  // $("#luckysheet-formula-functionrange-select")
+  //   .css({
+  //     left: col_pre,
+  //     width: col - col_pre - 1,
+  //     top: row_pre,
+  //     height: row - row_pre - 1,
+  //   })
+  //   .show(); TODO！！！
+
+  // $("#luckysheet-formula-help-c").hide();
+}
+
+function backFormulaInput(
+  d: CellMatrix,
+  r: number,
+  c: number,
+  rowh: any,
+  columnh: any,
+  formula: string,
+  ctx: Context
+) {
+  // const _this = this;
+
+  const f = `=${formula.toUpperCase()}(${getRangetxt(
+    ctx,
+    ctx.currentSheetIndex,
+    { row: rowh, column: columnh },
+    ctx.currentSheetIndex
+  )})`;
+  const v = execfunction(ctx, f, r, c);
+  const value = { v: v[1], f: v[2] };
+  setCellValue(ctx, r, c, d, value);
+  formulaCache.execFunctionExist.push({
+    r,
+    c,
+    i: ctx.currentSheetIndex,
+  });
+
+  // server.historyParam(d, ctx.currentSheetIndex, {
+  //   row: [r, r],
+  //   column: [c, c],
+  // }); 目前没有server
+}
+
+function singleFormulaInput(
+  cellInput: HTMLDivElement,
+  ctx: Context,
+  d: CellMatrix,
+  _index: number,
+  fix: number,
+  st_m: number,
+  ed_m: number,
+  formula: string,
+  type: string,
+  cache: GlobalCache,
+  noNum?: boolean,
+  noNull?: boolean
+) {
+  // const _this = this;
+
+  if (type == null) {
+    type = "r";
+  }
+
+  if (noNum == null) {
+    noNum = true;
+  }
+
+  if (noNull == null) {
+    noNull = true;
+  }
+
+  let isNull = true;
+  let isNum = false;
+
+  for (let c = st_m; c <= ed_m; c += 1) {
+    let cell = null;
+
+    if (type === "c") {
+      cell = d[c][fix];
+    } else {
+      cell = d[fix][c];
+    }
+
+    if (checkNoNullValue(cell)) {
+      isNull = false;
+      isNum = true;
+    } else if (checkNoNullValueAll(cell)) {
+      isNull = false;
+    }
+  }
+
+  if (isNull && noNull) {
+    let st_r_r = getNoNullValue(d, _index, fix, type);
+
+    if (st_r_r == null) {
+      if (type === "c") {
+        activeFormulaInput(
+          cellInput,
+          ctx,
+          _index,
+          fix,
+          null,
+          null,
+          formula,
+          cache,
+          true
+        );
+      } else {
+        activeFormulaInput(
+          cellInput,
+          ctx,
+          fix,
+          _index,
+          null,
+          null,
+          formula,
+          cache,
+          true
+        );
+      }
+    } else {
+      if (_index === st_m) {
+        for (let c = st_m; c <= ed_m; c += 1) {
+          st_r_r = getNoNullValue(d, c, fix, type);
+
+          if (st_r_r == null) {
+            break;
+          }
+
+          if (type === "c") {
+            backFormulaInput(
+              d,
+              c,
+              fix,
+              [c, c],
+              [st_r_r, fix - 1],
+              formula,
+              ctx
+            );
+          } else {
+            backFormulaInput(
+              d,
+              fix,
+              c,
+              [st_r_r, fix - 1],
+              [c, c],
+              formula,
+              ctx
+            );
+          }
+        }
+      } else {
+        for (let c = ed_m; c >= st_m; c -= 1) {
+          st_r_r = getNoNullValue(d, c, fix, type);
+
+          if (st_r_r == null) {
+            break;
+          }
+
+          if (type === "c") {
+            backFormulaInput(
+              d,
+              c,
+              fix,
+              [c, c],
+              [st_r_r, fix - 1],
+              formula,
+              ctx
+            );
+          } else {
+            backFormulaInput(
+              d,
+              fix,
+              c,
+              [st_r_r, fix - 1],
+              [c, c],
+              formula,
+              ctx
+            );
+          }
+        }
+      }
+    }
+    return false;
+  }
+  if (isNum && noNum) {
+    let cell = null;
+
+    if (type === "c") {
+      cell = d[ed_m + 1][fix];
+    } else {
+      cell = d[fix][ed_m + 1];
+    }
+
+    /* 备注：在搜寻的时候排除自己以解决单元格函数引用自己的问题 */
+    if (cell != null && cell.v != null && cell.v.toString().length > 0) {
+      let c = ed_m + 1;
+
+      if (type === "c") {
+        cell = d[ed_m + 1][fix];
+      } else {
+        cell = d[fix][ed_m + 1];
+      }
+
+      while (cell != null && cell.v != null && cell.v.toString().length > 0) {
+        c += 1;
+        let len = null;
+
+        if (type === "c") {
+          len = d.length;
+        } else {
+          len = d[0].length;
+        }
+
+        if (c >= len) {
+          return false;
+        }
+
+        if (type === "c") {
+          cell = d[c][fix];
+        } else {
+          cell = d[fix][c];
+        }
+      }
+
+      if (type === "c") {
+        backFormulaInput(d, c, fix, [st_m, ed_m], [fix, fix], formula, ctx);
+      } else {
+        backFormulaInput(d, fix, c, [fix, fix], [st_m, ed_m], formula, ctx);
+      }
+    } else {
+      if (type === "c") {
+        backFormulaInput(
+          d,
+          ed_m + 1,
+          fix,
+          [st_m, ed_m],
+          [fix, fix],
+          formula,
+          ctx
+        );
+      } else {
+        backFormulaInput(
+          d,
+          fix,
+          ed_m + 1,
+          [fix, fix],
+          [st_m, ed_m],
+          formula,
+          ctx
+        );
+      }
+    }
+    return false;
+  }
+  return true;
+}
+function autoSelectionFormula(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  formula: string,
+  cache: GlobalCache
+) {
+  // const d = editor.deepCopyFlowData(Store.flowdata);
+  const flowdata = getFlowdata(ctx);
+  if (flowdata == null) return;
+  // const nullfindnum = 40;
+  let isfalse = true;
+  formulaCache.execFunctionExist = [];
+
+  function execFormulaInput_c(
+    d: CellMatrix,
+    st_r: number,
+    ed_r: number,
+    st_c: number,
+    ed_c: number,
+    _formula: string
+  ) {
+    const st_c_c = getNoNullValue(d, st_r, ed_c, "c");
+
+    if (st_c_c == null) {
+      activeFormulaInput(
+        cellInput,
+        ctx,
+        st_r,
+        st_c,
+        null,
+        null,
+        _formula,
+        cache,
+        true
+      );
+    } else {
+      activeFormulaInput(
+        cellInput,
+        ctx,
+        st_r,
+        st_c,
+        [st_r, ed_r],
+        [st_c_c, ed_c - 1],
+        _formula,
+        cache
+      );
+    }
+  }
+
+  function execFormulaInput(
+    d: CellMatrix,
+    st_r: number,
+    ed_r: number,
+    st_c: number,
+    ed_c: number,
+    _formula: string
+  ) {
+    const st_r_c = getNoNullValue(d, st_c, ed_r, "r");
+
+    if (st_r_c == null) {
+      execFormulaInput_c(d, st_r, ed_r, st_c, ed_c, _formula);
+    } else {
+      activeFormulaInput(
+        cellInput,
+        ctx,
+        st_r,
+        st_c,
+        [st_r_c, ed_r - 1],
+        [st_c, ed_c],
+        _formula,
+        cache
+      );
+    }
+  }
+  if (!ctx.luckysheet_select_save) return;
+
+  for (let s = 0; s < ctx.luckysheet_select_save.length; s += 1) {
+    const st_r = ctx.luckysheet_select_save[s].row[0];
+    const ed_r = ctx.luckysheet_select_save[s].row[1];
+    const st_c = ctx.luckysheet_select_save[s].column[0];
+    const ed_c = ctx.luckysheet_select_save[s].column[1];
+    const row_index = ctx.luckysheet_select_save[s].row_focus;
+    const col_index = ctx.luckysheet_select_save[s].column_focus;
+
+    if (st_r === ed_r && st_c === ed_c) {
+      if (ed_r - 1 < 0 && ed_c - 1 < 0) {
+        activeFormulaInput(
+          cellInput,
+          ctx,
+          st_r,
+          st_c,
+          null,
+          null,
+          formula,
+          cache,
+          true
+        );
+        return;
+      }
+
+      if (ed_r - 1 >= 0 && checkNoNullValue(flowdata[ed_r - 1][st_c])) {
+        execFormulaInput(flowdata, st_r, ed_r, st_c, ed_c, formula);
+      } else if (ed_c - 1 >= 0 && checkNoNullValue(flowdata[st_r][ed_c - 1])) {
+        execFormulaInput_c(flowdata, st_r, ed_r, st_c, ed_c, formula);
+      } else {
+        execFormulaInput(flowdata, st_r, ed_r, st_c, ed_c, formula);
+      }
+    } else if (st_r === ed_r) {
+      isfalse = singleFormulaInput(
+        cellInput,
+        ctx,
+        flowdata,
+        col_index!,
+        st_r,
+        st_c,
+        ed_c,
+        formula,
+        "r",
+        cache
+      );
+    } else if (st_c === ed_c) {
+      isfalse = singleFormulaInput(
+        cellInput,
+        ctx,
+        flowdata,
+        row_index!,
+        st_c,
+        st_r,
+        ed_r,
+        formula,
+        "c",
+        cache
+      );
+    } else {
+      let r_false = true;
+      for (let r = st_r; r <= ed_r; r += 1) {
+        r_false =
+          singleFormulaInput(
+            cellInput,
+            ctx,
+            flowdata,
+            col_index!,
+            r,
+            st_c,
+            ed_c,
+            formula,
+            "r",
+            cache,
+            true,
+            false
+          ) && r_false;
+      }
+
+      let c_false = true;
+      for (let c = st_c; c <= ed_c; c += 1) {
+        c_false =
+          singleFormulaInput(
+            cellInput,
+            ctx,
+            flowdata,
+            row_index!,
+            c,
+            st_r,
+            ed_r,
+            formula,
+            "c",
+            cache,
+            true,
+            false
+          ) && c_false;
+      }
+
+      isfalse = !!r_false && !!c_false;
+    }
+
+    isfalse = isfalse && isfalse;
+  }
+
+  if (!isfalse) {
+    formulaCache.execFunctionExist.reverse();
+    // @ts-ignore
+    execFunctionGroup(ctx, null, null, null, null, flowdata);
+    // jfrefreshgrid(d, Store.luckysheet_select_save);
+
+    clearTimeout(ctx.jfcountfuncTimeout);
+    // ctx.jfcountfuncTimeout = setTimeout(function () {
+    //   countfunc();
+    // }, 500);  TODO:MAYBE!
+  }
 }
 
 export function cancelPaintModel(ctx: Context) {
@@ -1037,6 +1638,13 @@ export function handleTextSize(
   setAttr(ctx, cellInput, "fs", size);
 }
 
+export function handleSum(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  cache?: GlobalCache
+) {
+  autoSelectionFormula(ctx, cellInput, "SUM", cache!);
+}
 const handlerMap: Record<string, ToolbarItemClickHandler> = {
   "currency-format": handleCurrencyFormat,
   "percentage-format": handlePercentageFormat,
@@ -1062,6 +1670,7 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
     handleVerticalAlign(ctx, cellInput, "bottom"),
   "clear-format": handleClearFormat,
   "format-painter": handleFormatPainter,
+  "formula-sum": handleSum,
 };
 
 export function getToolbarItemClickHandler(name: string) {

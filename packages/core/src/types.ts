@@ -101,6 +101,7 @@ export type History = {
 export type GlobalCache = {
   overwriteCell?: boolean;
   doNotFocus?: boolean;
+  doNotUpdateCell?: boolean;
   recentTextColor?: string;
   recentBackgroundColor?: string;
   visibleColumnsUnique?: number[];
@@ -109,4 +110,5 @@ export type GlobalCache = {
   redoList: History[];
 };
 
-export type Range = { row: number[]; column: number[] }[];
+export type SingleRange = { row: number[]; column: number[] };
+export type Range = SingleRange[];

@@ -51,6 +51,10 @@ const InputBox: React.FC = () => {
 
   useLayoutEffect(() => {
     if (firstSelection && context.luckysheetCellUpdate.length > 0) {
+      if (refs.globalCache.doNotUpdateCell) {
+        delete refs.globalCache.doNotUpdateCell;
+        return;
+      }
       const flowdata = getFlowdata(context);
       const row_index = firstSelection.row_focus!;
       const col_index = firstSelection.column_focus!;

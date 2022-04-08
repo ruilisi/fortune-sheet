@@ -1,7 +1,12 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
-import { Cell, CellMatrix, Range, Selection } from "../types";
-import { getSheetByIndex, getSheetIndex, rgbToHex } from "../utils";
+import { Cell, CellMatrix, Range, Selection, SingleRange } from "../types";
+import {
+  getSheetByIndex,
+  getSheetIndex,
+  indexToColumnChar,
+  rgbToHex,
+} from "../utils";
 import { genarate, update } from "./format";
 import {
   delFunctionGroup,
@@ -474,7 +479,7 @@ function mergeMove(
   mc: any,
   columnseleted: number[],
   rowseleted: number[],
-  s: Selection,
+  s: Partial<Selection>,
   top: number,
   height: number,
   left: number,
@@ -560,7 +565,7 @@ export function mergeMoveMain(
   ctx: Context,
   columnseleted: number[],
   rowseleted: number[],
-  s: Selection,
+  s: Partial<Selection>,
   top: number,
   height: number,
   left: number,
@@ -641,6 +646,7 @@ export function cancelNormalSelected(ctx: Context) {
   // rangedrag_row_start = false;
 }
 
+// formula.updatecell
 export function updateCell(
   ctx: Context,
   r: number,
@@ -1124,6 +1130,59 @@ export function getFlattenedRange(ctx: Context, range?: Range) {
     }
   });
   return result;
+}
+
+export function getRangetxt(
+  ctx: Context,
+  sheetIndex: string,
+  range: SingleRange,
+  currentIndex: string
+) {
+  let sheettxt = "";
+
+  if (currentIndex == null) {
+    currentIndex = ctx.currentSheetIndex;
+  }
+
+  if (sheetIndex !== currentIndex) {
+    // sheet名字包含'的，引用时应该替换为''
+    const index = getSheetIndex(ctx, sheetIndex);
+    if (index == null) return "";
+    sheettxt = ctx.luckysheetfile[index].name.replace(/'/g, "''");
+    // 如果包含除a-z、A-Z、0-9、下划线等以外的字符那么就用单引号包起来
+    if (
+      // eslint-disable-next-line no-misleading-character-class
+      /^[:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD][:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\-.0-9\u00B7\u0300-\u036F\u203F-\u2040]*$/.test(
+        sheettxt
+      )
+    ) {
+      sheettxt += "!";
+    } else {
+      sheettxt = `'${sheettxt}'!`;
+    }
+  }
+
+  const row0 = range.row[0];
+  const row1 = range.row[1];
+  const column0 = range.column[0];
+  const column1 = range.column[1];
+
+  if (row0 == null && row1 == null) {
+    return `${sheettxt + indexToColumnChar(column0)}:${indexToColumnChar(
+      column1
+    )}`;
+  }
+  if (column0 == null && column1 == null) {
+    return `${sheettxt + (row0 + 1)}:${row1 + 1}`;
+  }
+
+  if (column0 === column1 && row0 === row1) {
+    return sheettxt + indexToColumnChar(column0) + (row0 + 1);
+  }
+
+  return `${
+    sheettxt + indexToColumnChar(column0) + (row0 + 1)
+  }:${indexToColumnChar(column1)}${row1 + 1}`;
 }
 
 export function isAllSelectedCellsInStatus(

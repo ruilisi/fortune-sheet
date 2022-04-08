@@ -19,6 +19,8 @@ export const formulaCache: {
   func_selectedrange: Selection | undefined;
 } & Record<string, any> = {
   func_selectedrange: undefined,
+  data_parm_index: 0,
+  rangechangeindex: null,
   rangedragged: () => {},
   rangeResizeObj: null,
   rangeResize: null,
@@ -27,6 +29,11 @@ export const formulaCache: {
   rangeResizeWinH: null,
   rangeResizeWinW: null,
   rangeResizeTo: null,
+  rangeSetValueTo: null,
+  rangestart: false,
+  rangetosheet: null,
+  rangedrag_column_start: false,
+  rangedrag_row_start: false,
   functionHTMLIndex: 0,
   functionRangeIndex: null,
   functionlistMap: {},
@@ -2284,7 +2291,11 @@ export function createRangeHightlight() {
 }
 */
 
-function setCaretPosition(textDom: HTMLElement, children: number, pos: number) {
+export function setCaretPosition(
+  textDom: HTMLElement,
+  children: number,
+  pos: number
+) {
   try {
     const el = textDom;
     const range = document.createRange();
@@ -3138,6 +3149,124 @@ function functionStrChange_range(
   return "";
 }
 
+export function israngeseleciton(istooltip?: boolean) {
+  // istooltip疑似无用
+  // const _this = this;
+
+  if (operatorjson == null) {
+    const arr = operator.split("|");
+    const op = {};
+
+    for (let i = 0; i < arr.length; i += 1) {
+      _.set(op, arr[i].toString(), 1);
+    }
+
+    operatorjson = op;
+  }
+
+  if (istooltip == null) {
+    istooltip = false;
+  }
+
+  const currSelection = window.getSelection();
+  if (currSelection == null) return false;
+  let anchor = currSelection.anchorNode;
+  if (!anchor?.textContent) return false;
+  const { anchorOffset } = currSelection;
+  const anchorElement = anchor as HTMLElement;
+  const parentElement = anchor.parentNode as HTMLElement;
+  if (
+    anchor?.parentNode?.nodeName.toLowerCase() === "span" &&
+    anchorOffset !== 0
+  ) {
+    let txt = _.trim(anchor.textContent);
+    let lasttxt = "";
+
+    if (txt.length === 0 && anchor.parentNode.previousSibling) {
+      const ahr = anchor.parentNode.previousSibling;
+      txt = _.trim(ahr.textContent || "");
+      lasttxt = txt.substring(txt.length - 1, 1);
+      formulaCache.rangeSetValueTo = ahr;
+    } else {
+      lasttxt = txt.substring(anchorOffset - 1, 1);
+      formulaCache.rangeSetValueTo = anchor.parentNode;
+    }
+
+    if (
+      (istooltip && (lasttxt === "(" || lasttxt === ",")) ||
+      (!istooltip &&
+        (lasttxt === "(" ||
+          lasttxt === "," ||
+          lasttxt === "=" ||
+          lasttxt in operatorjson ||
+          lasttxt === "&"))
+    ) {
+      return true;
+    }
+  } else if (
+    anchorElement.id === "luckysheet-rich-text-editor" ||
+    anchorElement.id === "luckysheet-functionbox-cell"
+  ) {
+    let txt = _.trim(_.last(anchorElement.querySelectorAll("span"))?.innerText);
+
+    formulaCache.rangeSetValueTo = _.last(
+      anchorElement.querySelectorAll("span")
+    );
+
+    if (txt.length === 0 && anchorElement.querySelectorAll("span").length > 1) {
+      const ahr = anchorElement.querySelectorAll("span");
+      txt = _.trim(ahr[ahr.length - 2].innerText);
+
+      txt = _.trim(ahr[ahr.length - 2].innerText);
+      formulaCache.rangeSetValueTo = ahr;
+    }
+
+    const lasttxt = txt.substring(txt.length - 1, 1);
+
+    if (
+      (istooltip && (lasttxt === "(" || lasttxt === ",")) ||
+      (!istooltip &&
+        (lasttxt === "(" ||
+          lasttxt === "," ||
+          lasttxt === "=" ||
+          lasttxt in operatorjson ||
+          lasttxt === "&"))
+    ) {
+      return true;
+    }
+  } else if (
+    parentElement.id === "luckysheet-rich-text-editor" ||
+    parentElement.id === "luckysheet-functionbox-cell" ||
+    anchorOffset === 0
+  ) {
+    if (anchorOffset === 0) {
+      anchor = anchor.parentNode;
+    }
+    if (!anchor) return false;
+    if (anchor.previousSibling?.textContent == null) return false;
+    if (anchor.previousSibling) {
+      const txt = _.trim(anchor.previousSibling.textContent);
+      const lasttxt = txt.substring(txt.length - 1, 1);
+
+      formulaCache.rangeSetValueTo = anchor.previousSibling;
+
+      if (
+        (istooltip && (lasttxt === "(" || lasttxt === ",")) ||
+        (!istooltip &&
+          (lasttxt === "(" ||
+            lasttxt === "," ||
+            lasttxt === "=" ||
+            lasttxt in operatorjson ||
+            lasttxt === "&"))
+      ) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 export function functionStrChange(
   txt: string,
   type: string,
@@ -3304,7 +3433,174 @@ export function functionStrChange(
 
   return function_str;
 }
+export function rangeSetValue(ctx: Context, selected: any) {
+  // const _this = this;
 
+  // let range = "";
+  const rf = selected.row[0];
+  const cf = selected.column[0];
+  if (ctx.config.merge != null && `${rf}_${cf}` in ctx.config.merge) {
+    // range = getRangetxt(
+    //   ctx,
+    //   ctx.currentSheetIndex,
+    //   {
+    //     column: [cf, cf],
+    //     row: [rf, rf],
+    //   },
+    //   formulaCache.rangetosheet
+    // );
+  } else {
+    // range = getRangetxt(
+    //   ctx,
+    //   ctx.currentSheetIndex,
+    //   selected,
+    //   formulaCache.rangetosheet
+    // );
+  }
+
+  // let $editor;
+
+  // if (
+  //   formulaCache.rangestart ||
+  //   formulaCache.rangedrag_column_start ||
+  //   formulaCache.rangedrag_row_start
+  // )
+  // {
+  //   if (
+  //     $("#luckysheet-search-formula-parm").is(":visible") ||
+  //     $("#luckysheet-search-formula-parm-select").is(":visible")
+  //   ) {
+  //     // 公式参数框选取范围
+  //     $editor = $("#luckysheet-rich-text-editor");
+  //     $("#luckysheet-search-formula-parm-select-input").val(range);
+  //     $("#luckysheet-search-formula-parm .parmBox")
+  //       .eq(formulaCache.data_parm_index)
+  //       .find(".txt input")
+  //       .val(range);
+
+  //     // 参数对应值显示
+  //     const txtdata = luckysheet_getcelldata(range).data;
+  //     if (txtdata instanceof Array) {
+  //       // 参数为多个单元格选区
+  //       const txtArr = [];
+
+  //       for (let i = 0; i < txtdata.length; i += 1) {
+  //         for (let j = 0; j < txtdata[i].length; j += 1) {
+  //           if (txtdata[i][j] == null) {
+  //             txtArr.push(null);
+  //           } else {
+  //             txtArr.push(txtdata[i][j].v);
+  //           }
+  //         }
+  //       }
+
+  //       $("#luckysheet-search-formula-parm .parmBox")
+  //         .eq(formulaCache.data_parm_index)
+  //         .find(".val")
+  //         .text(` = {${txtArr.join(",")}}`);
+  //     } else {
+  //       // 参数为单个单元格选区
+  //       $("#luckysheet-search-formula-parm .parmBox")
+  //         .eq(formulaCache.data_parm_index)
+  //         .find(".val")
+  //         .text(` = {${txtdata.v}}`);
+  //     }
+
+  //     // 计算结果显示
+  //     let isVal = true; // 参数不为空
+  //     const parmValArr = []; // 参数值集合
+  //     let lvi = -1; // 最后一个有值的参数索引
+  //     $("#luckysheet-search-formula-parm .parmBox").each(function (i, e) {
+  //       const parmtxt = $(e).find(".txt input").val();
+  //       if (
+  //         parmtxt === "" &&
+  //         $(e).find(".txt input").attr("data_parm_require") === "m"
+  //       ) {
+  //         isVal = false;
+  //       }
+  //       if (parmtxt !== "") {
+  //         lvi = i;
+  //       }
+  //     });
+
+  // 单元格显示
+  //     let functionHtmlTxt;
+  //     if (lvi === -1) {
+  //       functionHtmlTxt = `=${$(
+  //         "#luckysheet-search-formula-parm .luckysheet-modal-dialog-title-text"
+  //       ).text()}()`;
+  //     } else if (lvi === 0) {
+  //       functionHtmlTxt = `=${$(
+  //         "#luckysheet-search-formula-parm .luckysheet-modal-dialog-title-text"
+  //       ).text()}(${$("#luckysheet-search-formula-parm .parmBox")
+  //         .eq(0)
+  //         .find(".txt input")
+  //         .val()})`;
+  //     } else {
+  //       for (let j = 0; j <= lvi; j += 1) {
+  //         parmValArr.push(
+  //           $("#luckysheet-search-formula-parm .parmBox")
+  //             .eq(j)
+  //             .find(".txt input")
+  //             .val()
+  //         );
+  //       }
+  //       functionHtmlTxt = `=${$(
+  //         "#luckysheet-search-formula-parm .luckysheet-modal-dialog-title-text"
+  //       ).text()}(${parmValArr.join(",")})`;
+  //     }
+
+  //     const function_str = functionHTMLGenerate(functionHtmlTxt);
+  //     $("#luckysheet-rich-text-editor").html(function_str);
+  //     $("#luckysheet-functionbox-cell").html(
+  //       $("#luckysheet-rich-text-editor").html()
+  //     );
+
+  //     if (isVal) {
+  //       // 公式计算
+  //       const fp = _.trim(
+  //         functionParserExe($("#luckysheet-rich-text-editor").text())
+  //       );
+  //       const result = new Function(`return ${fp}`)();
+  //       $("#luckysheet-search-formula-parm .result span").text(result);
+  //     }
+  //   } else {
+  //     const currSelection = window.getSelection();
+  //     const anchorOffset = currSelection!.anchorNode;
+  //     $editor = $(anchorOffset).closest("div");
+
+  //     const $span = $editor
+  //       .find(`span[rangeindex='${formulaCache.rangechangeindex}']`)
+  //       .html(range);
+
+  //     setCaretPosition($span.get(0), 0, range.length);
+  //   }
+  // } else {
+  //   const function_str = `<span class="luckysheet-formula-functionrange-cell" rangeindex="${formulaCache.functionHTMLIndex}" dir="auto" style="color:${colors[functionHTMLIndex]};">${range}</span>`;
+  //   const $t = $(function_str).insertAfter(formulaCache.rangeSetValueTo);
+  //   formulaCache.rangechangeindex = formulaCache.functionHTMLIndex;
+  //   $editor = $(formulaCache.rangeSetValueTo).closest("div");
+
+  //   setCaretPosition(
+  //     $editor
+  //       .find(`span[rangeindex='${formulaCache.rangechangeindex}']`)
+  //       .get(0),
+  //     0,
+  //     range.length
+  //   );
+  //   formulaCache.functionHTMLIndex += 1;
+  // }
+
+  // if ($editor.attr("id") === "luckysheet-rich-text-editor") {
+  //   $("#luckysheet-functionbox-cell").html(
+  //     $("#luckysheet-rich-text-editor").html()
+  //   );
+  // } else {
+  //   $("#luckysheet-rich-text-editor").html(
+  //     $("#luckysheet-functionbox-cell").html()
+  //   );
+  // }
+}
 function updateparam(orient: string, txt: string, step: number) {
   const val = txt.split("!");
   let rangetxt;
