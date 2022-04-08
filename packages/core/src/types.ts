@@ -112,3 +112,10 @@ export type GlobalCache = {
 
 export type SingleRange = { row: number[]; column: number[] };
 export type Range = SingleRange[];
+
+export type Op = {
+  op: "replace" | "remove" | "add";
+  index?: string;
+  path: (string | number)[];
+  value?: any;
+};

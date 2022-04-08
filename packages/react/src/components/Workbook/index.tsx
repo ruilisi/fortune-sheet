@@ -12,6 +12,9 @@ import {
   getSheetIndex,
   handlePaste,
   filterPatch,
+  patchToOp,
+  Op,
+  opToPatch,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -19,9 +22,10 @@ import React, {
   useCallback,
   useEffect,
   useRef,
+  useImperativeHandle,
 } from "react";
 import "./index.css";
-import { applyPatches, enablePatches, produceWithPatches } from "immer";
+import { applyPatches, enablePatches, Patch, produceWithPatches } from "immer";
 import _, { assign } from "lodash";
 import Sheet from "../Sheet";
 import WorkbookContext from "../../context";
@@ -33,310 +37,342 @@ import SVGDefines from "../SVGDefines";
 
 enablePatches();
 
-const Workbook: React.FC<
-  Settings & { onChange?: (data: SheetType[]) => void }
-> = ({ onChange, ...props }) => {
-  const [context, setContext] = useState(defaultContext());
-  const cellInput = useRef<HTMLDivElement>(null);
-  const fxInput = useRef<HTMLDivElement>(null);
-  const scrollbarX = useRef<HTMLDivElement>(null);
-  const scrollbarY = useRef<HTMLDivElement>(null);
-  const cellArea = useRef<HTMLDivElement>(null);
-  const workbookContainer = useRef<HTMLDivElement>(null);
-  const globalCache = useRef<GlobalCache>({ undoList: [], redoList: [] });
-  const mergedSettings = useMemo(
-    () => assign(defaultSettings, props) as Required<Settings>,
-    [props]
-  );
+export type WorkbookInstance = {
+  applyOp: (ops: Op[]) => void;
+};
 
-  const setContextWithProduce = useCallback(
-    (recipe: (ctx: Context) => void, noHistory = false) => {
+type AdditionalProps = {
+  onChange?: (data: SheetType[]) => void;
+  onOp?: (op: Patch[]) => void;
+};
+
+const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
+  ({ onChange, onOp, ...props }, ref) => {
+    const [context, setContext] = useState(defaultContext());
+    const cellInput = useRef<HTMLDivElement>(null);
+    const fxInput = useRef<HTMLDivElement>(null);
+    const scrollbarX = useRef<HTMLDivElement>(null);
+    const scrollbarY = useRef<HTMLDivElement>(null);
+    const cellArea = useRef<HTMLDivElement>(null);
+    const workbookContainer = useRef<HTMLDivElement>(null);
+    const globalCache = useRef<GlobalCache>({ undoList: [], redoList: [] });
+    const mergedSettings = useMemo(
+      () => assign(defaultSettings, props) as Required<Settings>,
+      [props]
+    );
+
+    const applyOp = useCallback((ops: Op[]) => {
       setContext((ctx_) => {
-        const [result, patches, inversePatches] = produceWithPatches(
-          ctx_,
-          recipe
-        );
-        if (patches.length > 0 && !noHistory) {
-          const filteredPatches = filterPatch(patches);
-          const filteredInversePatches = filterPatch(inversePatches);
-          if (filteredInversePatches.length > 0) {
-            globalCache.current.undoList.push({
-              patches: filteredPatches,
-              inversePatches: filteredInversePatches,
-            });
-            globalCache.current.redoList = [];
+        const patches = opToPatch(ctx_, ops);
+        const newContext = applyPatches(ctx_, patches);
+        return newContext;
+      });
+    }, []);
+
+    const emitOp = useCallback(
+      (ctx: Context, patches: Patch[]) => {
+        if (onOp) {
+          onOp(patchToOp(ctx, patches));
+        }
+      },
+      [onOp]
+    );
+
+    useImperativeHandle(ref, () => ({ applyOp }));
+
+    const setContextWithProduce = useCallback(
+      (recipe: (ctx: Context) => void, noHistory = false) => {
+        setContext((ctx_) => {
+          const [result, patches, inversePatches] = produceWithPatches(
+            ctx_,
+            recipe
+          );
+          if (patches.length > 0 && !noHistory) {
+            const filteredPatches = filterPatch(patches);
+            const filteredInversePatches = filterPatch(inversePatches);
+            if (filteredInversePatches.length > 0) {
+              globalCache.current.undoList.push({
+                patches: filteredPatches,
+                inversePatches: filteredInversePatches,
+              });
+              globalCache.current.redoList = [];
+              emitOp(result, filteredPatches);
+            }
+          }
+          return result;
+        });
+      },
+      [emitOp]
+    );
+
+    const handleUndo = useCallback(() => {
+      const history = globalCache.current.undoList.pop();
+      if (history) {
+        setContext((ctx_) => {
+          const newContext = applyPatches(ctx_, history.inversePatches);
+          globalCache.current.redoList.push(history);
+          emitOp(newContext, history.inversePatches);
+          return newContext;
+        });
+      }
+    }, [emitOp]);
+
+    const handleRedo = useCallback(() => {
+      const history = globalCache.current.redoList.pop();
+      if (history) {
+        setContext((ctx_) => {
+          const newContext = applyPatches(ctx_, history.patches);
+          globalCache.current.undoList.push(history);
+          emitOp(newContext, history.patches);
+          return newContext;
+        });
+      }
+    }, [emitOp]);
+
+    const providerValue = useMemo(
+      () => ({
+        context,
+        setContext: setContextWithProduce,
+        settings: mergedSettings,
+        handleUndo,
+        handleRedo,
+        refs: {
+          globalCache: globalCache.current,
+          cellInput,
+          fxInput,
+          scrollbarX,
+          scrollbarY,
+          cellArea,
+          workbookContainer,
+        },
+      }),
+      [context, handleRedo, handleUndo, mergedSettings, setContextWithProduce]
+    );
+
+    useEffect(() => {
+      onChange?.(context.luckysheetfile);
+    }, [context.luckysheetfile, onChange]);
+
+    useEffect(() => {
+      setContextWithProduce((draftCtx) => {
+        if (_.isEmpty(draftCtx.luckysheetfile)) {
+          // mergedSettings.data at this time may be immutable, causing following modifications to fail,
+          // clone it to make it mutable
+          // TODO do not clone it
+          draftCtx.luckysheetfile = _.cloneDeep(mergedSettings.data);
+        }
+        draftCtx.defaultcolumnNum = mergedSettings.column;
+        draftCtx.defaultrowNum = mergedSettings.row;
+        draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
+        draftCtx.fullscreenmode = mergedSettings.fullscreenmode;
+        draftCtx.lang = mergedSettings.lang;
+        draftCtx.allowEdit = mergedSettings.allowEdit;
+        draftCtx.limitSheetNameLength = mergedSettings.limitSheetNameLength;
+        draftCtx.defaultSheetNameMaxLength =
+          mergedSettings.defaultSheetNameMaxLength;
+        // draftCtx.fontList = mergedSettings.fontList;
+        if (_.isEmpty(draftCtx.currentSheetIndex)) {
+          initSheetIndex(draftCtx);
+        }
+        let sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
+        if (sheetIdx == null) {
+          if ((draftCtx.luckysheetfile?.length ?? 0) > 0) {
+            sheetIdx = 0;
+            draftCtx.currentSheetIndex = draftCtx.luckysheetfile[0].index!;
           }
         }
-        return result;
-      });
-    },
-    []
-  );
+        if (sheetIdx == null) return;
 
-  const handleUndo = useCallback(() => {
-    const history = globalCache.current.undoList.pop();
-    if (history) {
-      setContext((ctx_) => {
-        const newContext = applyPatches(ctx_, history.inversePatches);
-        globalCache.current.redoList.push(history);
-        return newContext;
-      });
-    }
-  }, []);
+        const sheet = draftCtx.luckysheetfile?.[sheetIdx];
+        if (!sheet) return;
 
-  const handleRedo = useCallback(() => {
-    const history = globalCache.current.redoList.pop();
-    if (history) {
-      setContext((ctx_) => {
-        const newContext = applyPatches(ctx_, history.patches);
-        globalCache.current.undoList.push(history);
-        return newContext;
-      });
-    }
-  }, []);
-
-  const providerValue = useMemo(
-    () => ({
-      context,
-      setContext: setContextWithProduce,
-      settings: mergedSettings,
-      handleUndo,
-      handleRedo,
-      refs: {
-        globalCache: globalCache.current,
-        cellInput,
-        fxInput,
-        scrollbarX,
-        scrollbarY,
-        cellArea,
-        workbookContainer,
-      },
-    }),
-    [context, handleRedo, handleUndo, mergedSettings, setContextWithProduce]
-  );
-
-  useEffect(() => {
-    onChange?.(context.luckysheetfile);
-  }, [context.luckysheetfile, onChange]);
-
-  useEffect(() => {
-    setContextWithProduce((draftCtx) => {
-      if (_.isEmpty(draftCtx.luckysheetfile)) {
-        // mergedSettings.data at this time may be immutable, causing following modifications to fail,
-        // clone it to make it mutable
-        // TODO do not clone it
-        draftCtx.luckysheetfile = _.cloneDeep(mergedSettings.data);
-      }
-      draftCtx.defaultcolumnNum = mergedSettings.column;
-      draftCtx.defaultrowNum = mergedSettings.row;
-      draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
-      draftCtx.fullscreenmode = mergedSettings.fullscreenmode;
-      draftCtx.lang = mergedSettings.lang;
-      draftCtx.allowEdit = mergedSettings.allowEdit;
-      draftCtx.limitSheetNameLength = mergedSettings.limitSheetNameLength;
-      draftCtx.defaultSheetNameMaxLength =
-        mergedSettings.defaultSheetNameMaxLength;
-      // draftCtx.fontList = mergedSettings.fontList;
-      if (_.isEmpty(draftCtx.currentSheetIndex)) {
-        initSheetIndex(draftCtx);
-      }
-      let sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
-      if (sheetIdx == null) {
-        if ((draftCtx.luckysheetfile?.length ?? 0) > 0) {
-          sheetIdx = 0;
-          draftCtx.currentSheetIndex = draftCtx.luckysheetfile[0].index!;
+        const cellData = sheet.celldata;
+        let { data } = sheet;
+        // expand cell data
+        if (_.isEmpty(data)) {
+          const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
+          const lastCol = _.maxBy(cellData, "c");
+          const lastRowNum = lastRow?.r || draftCtx.defaultrowNum;
+          const lastColNum = lastCol?.c || draftCtx.defaultcolumnNum;
+          if (lastRowNum && lastColNum) {
+            const expandedData: SheetType["data"] = _.times(
+              lastRowNum + 1,
+              () => _.times(lastColNum + 1, () => null)
+            );
+            cellData?.forEach((d) => {
+              // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
+              expandedData[d.r][d.c] = d.v;
+            });
+            sheet.data = expandedData;
+            data = expandedData;
+          }
         }
-      }
-      if (sheetIdx == null) return;
 
-      const sheet = draftCtx.luckysheetfile?.[sheetIdx];
-      if (!sheet) return;
-
-      const cellData = sheet.celldata;
-      let { data } = sheet;
-      // expand cell data
-      if (_.isEmpty(data)) {
-        const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
-        const lastCol = _.maxBy(cellData, "c");
-        const lastRowNum = lastRow?.r || draftCtx.defaultrowNum;
-        const lastColNum = lastCol?.c || draftCtx.defaultcolumnNum;
-        if (lastRowNum && lastColNum) {
-          const expandedData: SheetType["data"] = _.times(lastRowNum + 1, () =>
-            _.times(lastColNum + 1, () => null)
-          );
-          cellData?.forEach((d) => {
-            // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
-            expandedData[d.r][d.c] = d.v;
-          });
-          sheet.data = expandedData;
-          data = expandedData;
-        }
-      }
-
-      if (
-        _.isEmpty(draftCtx.luckysheet_select_save) &&
-        !_.isEmpty(sheet.luckysheet_select_save)
-      ) {
-        draftCtx.luckysheet_select_save = sheet.luckysheet_select_save;
-      }
-      if (draftCtx.luckysheet_select_save?.length === 0) {
         if (
-          data?.[0]?.[0]?.mc &&
-          !_.isNil(data?.[0]?.[0]?.mc?.rs) &&
-          !_.isNil(data?.[0]?.[0]?.mc?.cs)
+          _.isEmpty(draftCtx.luckysheet_select_save) &&
+          !_.isEmpty(sheet.luckysheet_select_save)
         ) {
-          draftCtx.luckysheet_select_save = [
-            {
-              row: [0, data[0][0].mc.rs - 1],
-              column: [0, data[0][0].mc.cs - 1],
-            },
-          ];
-        } else {
-          draftCtx.luckysheet_select_save = [
-            {
-              row: [0, 0],
-              column: [0, 0],
-            },
-          ];
+          draftCtx.luckysheet_select_save = sheet.luckysheet_select_save;
         }
-      }
+        if (draftCtx.luckysheet_select_save?.length === 0) {
+          if (
+            data?.[0]?.[0]?.mc &&
+            !_.isNil(data?.[0]?.[0]?.mc?.rs) &&
+            !_.isNil(data?.[0]?.[0]?.mc?.cs)
+          ) {
+            draftCtx.luckysheet_select_save = [
+              {
+                row: [0, data[0][0].mc.rs - 1],
+                column: [0, data[0][0].mc.cs - 1],
+              },
+            ];
+          } else {
+            draftCtx.luckysheet_select_save = [
+              {
+                row: [0, 0],
+                column: [0, 0],
+              },
+            ];
+          }
+        }
 
-      draftCtx.luckysheet_selection_range = _.isNil(
-        sheet.luckysheet_selection_range
-      )
-        ? []
-        : sheet.luckysheet_selection_range;
-      draftCtx.config = _.isNil(sheet.config) ? {} : sheet.config;
+        draftCtx.luckysheet_selection_range = _.isNil(
+          sheet.luckysheet_selection_range
+        )
+          ? []
+          : sheet.luckysheet_selection_range;
+        draftCtx.config = _.isNil(sheet.config) ? {} : sheet.config;
 
-      draftCtx.zoomRatio = _.isNil(sheet.zoomRatio) ? 1 : sheet.zoomRatio;
+        draftCtx.zoomRatio = _.isNil(sheet.zoomRatio) ? 1 : sheet.zoomRatio;
 
-      if (!_.isNil(sheet.defaultRowHeight)) {
-        draftCtx.defaultrowlen = Number(sheet.defaultRowHeight);
-      } else {
-        draftCtx.defaultrowlen = mergedSettings.defaultRowHeight;
-      }
+        if (!_.isNil(sheet.defaultRowHeight)) {
+          draftCtx.defaultrowlen = Number(sheet.defaultRowHeight);
+        } else {
+          draftCtx.defaultrowlen = mergedSettings.defaultRowHeight;
+        }
 
-      if (!_.isNil(sheet.defaultColWidth)) {
-        draftCtx.defaultcollen = Number(sheet.defaultColWidth);
-      } else {
-        draftCtx.defaultcollen = mergedSettings.defaultColWidth;
-      }
+        if (!_.isNil(sheet.defaultColWidth)) {
+          draftCtx.defaultcollen = Number(sheet.defaultColWidth);
+        } else {
+          draftCtx.defaultcollen = mergedSettings.defaultColWidth;
+        }
 
-      if (!_.isNil(sheet.showGridLines)) {
-        const { showGridLines } = sheet;
-        if (showGridLines === 0 || showGridLines === false) {
-          draftCtx.showGridLines = false;
+        if (!_.isNil(sheet.showGridLines)) {
+          const { showGridLines } = sheet;
+          if (showGridLines === 0 || showGridLines === false) {
+            draftCtx.showGridLines = false;
+          } else {
+            draftCtx.showGridLines = true;
+          }
         } else {
           draftCtx.showGridLines = true;
         }
-      } else {
-        draftCtx.showGridLines = true;
-      }
-      if (!_.isNil(mergedSettings.lang)) {
-        localStorage.setItem("lang", mergedSettings.lang);
-      }
-    }, true);
-  }, [
-    mergedSettings.data,
-    context.currentSheetIndex,
-    context.luckysheetfile.length,
-    mergedSettings.defaultRowHeight,
-    mergedSettings.defaultColWidth,
-    mergedSettings.column,
-    mergedSettings.row,
-    mergedSettings.defaultFontSize,
-    mergedSettings.fullscreenmode,
-    mergedSettings.lang,
-    mergedSettings.allowEdit,
-    mergedSettings.limitSheetNameLength,
-    mergedSettings.defaultSheetNameMaxLength,
-    setContextWithProduce,
-  ]);
+        if (!_.isNil(mergedSettings.lang)) {
+          localStorage.setItem("lang", mergedSettings.lang);
+        }
+      }, true);
+    }, [
+      mergedSettings.data,
+      context.currentSheetIndex,
+      context.luckysheetfile.length,
+      mergedSettings.defaultRowHeight,
+      mergedSettings.defaultColWidth,
+      mergedSettings.column,
+      mergedSettings.row,
+      mergedSettings.defaultFontSize,
+      mergedSettings.fullscreenmode,
+      mergedSettings.lang,
+      mergedSettings.allowEdit,
+      mergedSettings.limitSheetNameLength,
+      mergedSettings.defaultSheetNameMaxLength,
+      setContextWithProduce,
+    ]);
 
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      setContextWithProduce((draftCtx) => {
-        handleGlobalKeyDown(
-          draftCtx,
-          cellInput.current!,
-          fxInput.current!,
-          e.nativeEvent,
-          globalCache.current!,
-          handleUndo,
-          handleRedo
-        );
-      });
-    },
-    [handleRedo, handleUndo, setContextWithProduce]
-  );
+    const onKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLDivElement>) => {
+        setContextWithProduce((draftCtx) => {
+          handleGlobalKeyDown(
+            draftCtx,
+            cellInput.current!,
+            fxInput.current!,
+            e.nativeEvent,
+            globalCache.current!,
+            handleUndo,
+            handleRedo
+          );
+        });
+      },
+      [handleRedo, handleUndo, setContextWithProduce]
+    );
 
-  const onPaste = useCallback(
-    (e: ClipboardEvent) => {
-      setContextWithProduce((draftCtx) => {
-        handlePaste(draftCtx, e);
-      });
-    },
-    [setContextWithProduce]
-  );
+    const onPaste = useCallback(
+      (e: ClipboardEvent) => {
+        setContextWithProduce((draftCtx) => {
+          handlePaste(draftCtx, e);
+        });
+      },
+      [setContextWithProduce]
+    );
 
-  useEffect(() => {
-    document.addEventListener("paste", onPaste);
-    return () => {
-      document.removeEventListener("paste", onPaste);
-    };
-  }, [onPaste]);
+    useEffect(() => {
+      document.addEventListener("paste", onPaste);
+      return () => {
+        document.removeEventListener("paste", onPaste);
+      };
+    }, [onPaste]);
 
-  if (!context.luckysheetfile) {
-    return null;
-  }
+    if (!context.luckysheetfile) {
+      return null;
+    }
 
-  const sheetData = getFlowdata(context);
-  if (!sheetData) {
-    return null;
-  }
+    const sheetData = getFlowdata(context);
+    if (!sheetData) {
+      return null;
+    }
 
-  return (
-    <WorkbookContext.Provider value={providerValue}>
-      <div
-        className="fortune-container"
-        ref={workbookContainer}
-        onKeyDown={onKeyDown}
-      >
-        <SVGDefines />
-        <div className="fortune-workarea">
-          <Toolbar />
-          <FxEditor />
+    return (
+      <WorkbookContext.Provider value={providerValue}>
+        <div
+          className="fortune-container"
+          ref={workbookContainer}
+          onKeyDown={onKeyDown}
+        >
+          <SVGDefines />
+          <div className="fortune-workarea">
+            <Toolbar />
+            <FxEditor />
+          </div>
+          <Sheet data={sheetData} />
+          <SheetTab />
+          <ContextMenu />
+          {!_.isEmpty(context.contextMenu) && (
+            <div
+              onMouseDown={() => {
+                setContextWithProduce((draftCtx) => {
+                  draftCtx.contextMenu = undefined;
+                });
+              }}
+              onMouseMove={(e) => e.stopPropagation()}
+              onMouseUp={(e) => e.stopPropagation()}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              className="fortune-popover-backdrop"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                zIndex: 1003, // should below .fortune-context-menu
+                height: "100%",
+                width: "100%",
+              }}
+            />
+          )}
         </div>
-        <Sheet data={sheetData} />
-        <SheetTab />
-        <ContextMenu />
-        {!_.isEmpty(context.contextMenu) && (
-          <div
-            onMouseDown={() => {
-              setContextWithProduce((draftCtx) => {
-                draftCtx.contextMenu = undefined;
-              });
-            }}
-            onMouseMove={(e) => e.stopPropagation()}
-            onMouseUp={(e) => e.stopPropagation()}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-            className="fortune-popover-backdrop"
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              zIndex: 1003, // should below .fortune-context-menu
-              height: "100%",
-              width: "100%",
-            }}
-          />
-        )}
-      </div>
-    </WorkbookContext.Provider>
-  );
-};
+      </WorkbookContext.Provider>
+    );
+  }
+);
 
 export default Workbook;
