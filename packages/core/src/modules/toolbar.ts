@@ -264,7 +264,7 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
               delete cell.mc;
               delete cfg.merge[`${mc_r}_${mc_c}`];
 
-              fv[`${mc_r}_${mc_c}`] = _.cloneDeep(cell);
+              fv[`${mc_r}_${mc_c}`] = _.cloneDeep(cell) || {};
             } else {
               // let cell_clone = fv[mc_r + "_" + mc_c];
               const cell_clone = JSON.parse(
@@ -332,7 +332,7 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
                 delete cell.mc;
                 delete cfg.merge[`${mc_r}_${mc_c}`];
 
-                fv[`${mc_r}_${mc_c}`] = _.cloneDeep(cell);
+                fv[`${mc_r}_${mc_c}`] = _.cloneDeep(cell) || {};
               } else {
                 // let cell_clone = fv[mc_r + "_" + mc_c];
                 const cell_clone = JSON.parse(
@@ -378,7 +378,7 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
                   cell.f != null) &&
                 !isfirst
               ) {
-                fv = _.cloneDeep(cell);
+                fv = _.cloneDeep(cell) || {};
                 isfirst = true;
               }
 
@@ -410,7 +410,7 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
                 (!_.isEmpty(cell.v) || cell.f != null) &&
                 !isfirst
               ) {
-                fv = _.cloneDeep(cell);
+                fv = _.cloneDeep(cell) || {};
                 isfirst = true;
               }
 
@@ -442,7 +442,7 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
                 (!_.isEmpty(cell.v) || cell.f != null) &&
                 !isfirst
               ) {
-                fv = _.cloneDeep(cell);
+                fv = _.cloneDeep(cell) || {};
                 isfirst = true;
               }
 
@@ -473,8 +473,8 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
       sheetIndex: ctx.currentSheetIndex,
       data: getFlowdata(ctx),
       curData: d,
-      range: _.cloneDeep(ctx.luckysheet_select_save),
-      config: _.cloneDeep(ctx.config),
+      range: _.cloneDeep(ctx.luckysheet_select_save) || [],
+      config: _.cloneDeep(ctx.config) || {},
       curConfig: cfg,
     });
   }
@@ -940,7 +940,7 @@ export function handleBorderAll(ctx: Context) {
     style = "1";
   }
 
-  const cfg = _.cloneDeep(ctx.config);
+  const cfg = _.cloneDeep(ctx.config) || {};
   if (cfg.borderInfo == null) {
     cfg.borderInfo = [];
   }
@@ -950,7 +950,7 @@ export function handleBorderAll(ctx: Context) {
     borderType: type,
     color,
     style,
-    range: _.cloneDeep(ctx.luckysheet_select_save),
+    range: _.cloneDeep(ctx.luckysheet_select_save) || [],
   };
 
   cfg.borderInfo.push(borderInfo);
