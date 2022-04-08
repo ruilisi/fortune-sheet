@@ -16,7 +16,8 @@
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./packages",
     "postinstall": "patch-package",
     "publish": "lerna publish --registry 'https://registry.npmjs.org'",
-    "test": "jest"
+    "test": "jest",
+    "test:cov": "jest --coverage"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",
