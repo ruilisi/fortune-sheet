@@ -10,11 +10,13 @@ export default {
 
 const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
   const [data, setData] = useState<Sheet[]>();
-  const wsRef = useRef(new WebSocket("ws://localhost:8081/ws"));
+  const wsRef = useRef<WebSocket>();
   const workbookRef = useRef<WorkbookInstance>(null);
 
   useEffect(() => {
-    const socket = wsRef.current;
+    const socket = new WebSocket("ws://localhost:8081/ws");
+    wsRef.current = socket;
+
     socket.onopen = () => {
       socket.send(JSON.stringify({ req: "getData" }));
     };
@@ -30,6 +32,7 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
 
   const onOp = useCallback((op: Patch[]) => {
     const socket = wsRef.current;
+    if (!socket) return;
     socket.send(JSON.stringify({ req: "op", data: op }));
   }, []);
 

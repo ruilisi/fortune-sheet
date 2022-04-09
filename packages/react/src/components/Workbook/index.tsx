@@ -192,8 +192,11 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         if (_.isEmpty(data)) {
           const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
           const lastCol = _.maxBy(cellData, "c");
-          const lastRowNum = lastRow?.r || draftCtx.defaultrowNum;
-          const lastColNum = lastCol?.c || draftCtx.defaultcolumnNum;
+          const lastRowNum = Math.max(lastRow?.r ?? 0, draftCtx.defaultrowNum);
+          const lastColNum = Math.max(
+            lastCol?.c ?? 0,
+            draftCtx.defaultcolumnNum
+          );
           if (lastRowNum && lastColNum) {
             const expandedData: SheetType["data"] = _.times(
               lastRowNum + 1,

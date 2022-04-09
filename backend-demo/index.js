@@ -3,6 +3,7 @@ const express = require("express");
 const { MongoClient } = require("mongodb");
 const SocketServer = require("ws").Server;
 const uuid = require("uuid");
+const { applyOp } = require("./op");
 
 const defaultData = {
   name: "Demo",
@@ -80,8 +81,8 @@ wss.on("connection", (ws) => {
         })
       );
     } else if (msg.req === "op") {
+      await applyOp(client.db(dbName).collection(collectionName), msg.data);
       broadcastToOthers(ws.id, data.toString());
-      console.info(msg.data);
     }
   });
 
