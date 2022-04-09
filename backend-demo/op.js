@@ -57,6 +57,8 @@ async function applyOp(collection, ops) {
       } else {
         collection.updateOne(filter, updater, options);
       }
+    } else if (path.length === 2 && path[0] === "data" && _.isNumber(path[1])) {
+      // entire row operation
     } else if (path[0] !== "data") {
       if (op.op === "remove") {
         collection.updateOne(filter, {

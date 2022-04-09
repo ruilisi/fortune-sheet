@@ -249,7 +249,7 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
   //   tooltip.info("", locale().pivotTable.errorNotAllowEdit);
   //   return;
   // }
-  const cfg = _.cloneDeep(ctx.config);
+  const cfg = ctx.config;
   if (cfg.merge == null) {
     cfg.merge = {};
   }
@@ -288,9 +288,7 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
               fv[`${mc_r}_${mc_c}`] = _.cloneDeep(cell) || {};
             } else {
               // let cell_clone = fv[mc_r + "_" + mc_c];
-              const cell_clone = JSON.parse(
-                JSON.stringify(fv[`${mc_r}_${mc_c}`])
-              );
+              const cell_clone = _.cloneDeep(fv[`${mc_r}_${mc_c}`]);
 
               delete cell_clone.v;
               delete cell_clone.m;
@@ -356,9 +354,7 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
                 fv[`${mc_r}_${mc_c}`] = _.cloneDeep(cell) || {};
               } else {
                 // let cell_clone = fv[mc_r + "_" + mc_c];
-                const cell_clone = JSON.parse(
-                  JSON.stringify(fv[`${mc_r}_${mc_c}`])
-                );
+                const cell_clone = _.cloneDeep(fv[`${mc_r}_${mc_c}`]);
 
                 delete cell_clone.v;
                 delete cell_clone.m;
@@ -486,22 +482,6 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
       }
     }
   }
-
-  if (ctx.clearjfundo) {
-    ctx.jfundo.length = 0;
-    ctx.jfredo.push({
-      type: "mergeChange",
-      sheetIndex: ctx.currentSheetIndex,
-      data: getFlowdata(ctx),
-      curData: d,
-      range: _.cloneDeep(ctx.luckysheet_select_save) || [],
-      config: _.cloneDeep(ctx.config) || {},
-      curConfig: cfg,
-    });
-  }
-
-  ctx.clearjfundo = false;
-  ctx.clearjfundo = true;
 }
 
 function toggleAttr(ctx: Context, cellInput: HTMLDivElement, attr: keyof Cell) {
@@ -1501,6 +1481,7 @@ export function handleTextBackground(
 ) {
   setAttr(ctx, cellInput, "bg", color);
 }
+
 export function handleBorderAll(ctx: Context) {
   // *如果禁止前台编辑，则中止下一步操作
   // if (!checkIsAllowEdit()) {
@@ -1533,7 +1514,7 @@ export function handleBorderAll(ctx: Context) {
     style = "1";
   }
 
-  const cfg = _.cloneDeep(ctx.config) || {};
+  const cfg = ctx.config;
   if (cfg.borderInfo == null) {
     cfg.borderInfo = [];
   }
@@ -1548,28 +1529,13 @@ export function handleBorderAll(ctx: Context) {
 
   cfg.borderInfo.push(borderInfo);
 
-  if (ctx.clearjfundo) {
-    ctx.jfundo.length = 0;
-
-    // const redo = [];
-
-    // redo.type = "borderChange";
-
-    // redo.config = $.extend(true, {}, Store.config);
-    // redo.curconfig = $.extend(true, {}, cfg);
-
-    // redo.sheetIndex = Store.currentSheetIndex;
-
-    // ctx.jfredo.push(redo);
-  }
-
   // server.saveParam("cg", ctx.currentSheetIndex, cfg.borderInfo, {
   //   k: "borderInfo",
   // });
 
-  ctx.config = cfg;
   const index = getSheetIndex(ctx, ctx.currentSheetIndex);
-  if (!index) return;
+  if (index == null) return;
+
   ctx.luckysheetfile[index].config = ctx.config;
 
   // setTimeout(function () {
