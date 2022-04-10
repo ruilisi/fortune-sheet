@@ -375,7 +375,7 @@ function pasteHandlerOfCutPaste(
 
   const offsetMC: any = {};
   for (let h = minh; h <= maxh; h += 1) {
-    const x = _.clone(d[h]);
+    const x = d[h];
 
     for (let c = minc; c <= maxc; c += 1) {
       if (borderInfoCompute[`${c_r1 + h - minh}_${c_c1 + c - minc}`]) {
@@ -887,7 +887,7 @@ function pasteHandlerOfCopyPaste(
 
       const offsetMC: any = {};
       for (let h = mth; h < maxrowCache; h += 1) {
-        const x = _.clone(d[h]);
+        const x = d[h];
 
         for (let c = mtc; c < maxcellCahe; c += 1) {
           if (borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`]) {
