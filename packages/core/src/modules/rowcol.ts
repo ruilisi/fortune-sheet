@@ -8,19 +8,23 @@ import { functionStrChange } from "./formula";
  * 增加行列
  * @param {string} type 行或列 ['row', 'column'] 之一
  * @param {number} index 插入的位置 index
- * @param {number} value 插入 多少 行（列）
+ * @param {number} count 插入 多少 行（列）
  * @param {string} direction 哪个方向插入 ['lefttop','rightbottom'] 之一
  * @param {string | number} sheetIndex 操作的 sheet 的 index 属性
  * @returns
  */
-export function extendSheet(
+export function insertRowCol(
   ctx: Context,
-  type: "row" | "column",
-  index: number,
-  value: number,
-  direction: "lefttop" | "rightbottom",
-  sheetIndex: string
+  op: {
+    type: "row" | "column";
+    index: number;
+    count: number;
+    direction: "lefttop" | "rightbottom";
+    sheetIndex: string;
+  }
 ) {
+  let { count, sheetIndex } = op;
+  const { type, index, direction } = op;
   sheetIndex = sheetIndex || ctx.currentSheetIndex;
 
   // if (
@@ -44,7 +48,7 @@ export function extendSheet(
   const d = file.data;
   if (!d) return;
 
-  value = Math.floor(value);
+  count = Math.floor(count);
   const cfg = file.config || {};
 
   // 合并单元格配置变动
@@ -61,23 +65,23 @@ export function extendSheet(
 
     if (type === "row") {
       if (index < r) {
-        merge_new[`${r + value}_${c}`] = { r: r + value, c, rs, cs };
+        merge_new[`${r + count}_${c}`] = { r: r + count, c, rs, cs };
       } else if (index === r) {
         if (direction === "lefttop") {
-          merge_new[`${r + value}_${c}`] = {
-            r: r + value,
+          merge_new[`${r + count}_${c}`] = {
+            r: r + count,
             c,
             rs,
             cs,
           };
         } else {
-          merge_new[`${r}_${c}`] = { r, c, rs: rs + value, cs };
+          merge_new[`${r}_${c}`] = { r, c, rs: rs + count, cs };
         }
       } else if (index < r + rs - 1) {
-        merge_new[`${r}_${c}`] = { r, c, rs: rs + value, cs };
+        merge_new[`${r}_${c}`] = { r, c, rs: rs + count, cs };
       } else if (index === r + rs - 1) {
         if (direction === "lefttop") {
-          merge_new[`${r}_${c}`] = { r, c, rs: rs + value, cs };
+          merge_new[`${r}_${c}`] = { r, c, rs: rs + count, cs };
         } else {
           merge_new[`${r}_${c}`] = { r, c, rs, cs };
         }
@@ -86,28 +90,28 @@ export function extendSheet(
       }
     } else if (type === "column") {
       if (index < c) {
-        merge_new[`${r}_${c + value}`] = {
+        merge_new[`${r}_${c + count}`] = {
           r,
-          c: c + value,
+          c: c + count,
           rs,
           cs,
         };
       } else if (index === c) {
         if (direction === "lefttop") {
-          merge_new[`${r}_${c + value}`] = {
+          merge_new[`${r}_${c + count}`] = {
             r,
-            c: c + value,
+            c: c + count,
             rs,
             cs,
           };
         } else {
-          merge_new[`${r}_${c}`] = { r, c, rs, cs: cs + value };
+          merge_new[`${r}_${c}`] = { r, c, rs, cs: cs + count };
         }
       } else if (index < c + cs - 1) {
-        merge_new[`${r}_${c}`] = { r, c, rs, cs: cs + value };
+        merge_new[`${r}_${c}`] = { r, c, rs, cs: cs + count };
       } else if (index === c + cs - 1) {
         if (direction === "lefttop") {
-          merge_new[`${r}_${c}`] = { r, c, rs, cs: cs + value };
+          merge_new[`${r}_${c}`] = { r, c, rs, cs: cs + count };
         } else {
           merge_new[`${r}_${c}`] = { r, c, rs, cs };
         }
@@ -136,7 +140,7 @@ export function extendSheet(
           "row",
           direction,
           index,
-          value
+          count
         )}`;
 
         if (d[calc_r]?.[calc_c]?.f === calc_funcStr) {
@@ -145,11 +149,11 @@ export function extendSheet(
 
         if (direction === "lefttop") {
           if (calc_r >= index) {
-            calc.r += value;
+            calc.r += count;
           }
         } else if (direction === "rightbottom") {
           if (calc_r > index) {
-            calc.r += value;
+            calc.r += count;
           }
         }
 
@@ -161,7 +165,7 @@ export function extendSheet(
           "col",
           direction,
           index,
-          value
+          count
         )}`;
 
         if (d[calc_r]?.[calc_c]?.f === calc_funcStr) {
@@ -170,11 +174,11 @@ export function extendSheet(
 
         if (direction === "lefttop") {
           if (calc_c >= index) {
-            calc.c += value;
+            calc.c += count;
           }
         } else if (direction === "rightbottom") {
           if (calc_c > index) {
-            calc.c += value;
+            calc.c += count;
           }
         }
 
@@ -198,20 +202,20 @@ export function extendSheet(
     if (type === "row") {
       if (f_r1 < index) {
         if (f_r2 === index && direction === "lefttop") {
-          f_r2 += value;
+          f_r2 += count;
         } else if (f_r2 > index) {
-          f_r2 += value;
+          f_r2 += count;
         }
       } else if (f_r1 === index) {
         if (direction === "lefttop") {
-          f_r1 += value;
-          f_r2 += value;
+          f_r1 += count;
+          f_r2 += count;
         } else if (direction === "rightbottom" && f_r2 > index) {
-          f_r2 += value;
+          f_r2 += count;
         }
       } else {
-        f_r1 += value;
-        f_r2 += value;
+        f_r1 += count;
+        f_r2 += count;
       }
 
       if (filter != null) {
@@ -227,12 +231,12 @@ export function extendSheet(
               f_rowhidden_new[n] = 0;
             } else if (n === index) {
               if (direction === "lefttop") {
-                f_rowhidden_new[n + value] = 0;
+                f_rowhidden_new[n + count] = 0;
               } else if (direction === "rightbottom") {
                 f_rowhidden_new[n] = 0;
               }
             } else {
-              f_rowhidden_new[n + value] = 0;
+              f_rowhidden_new[n + count] = 0;
             }
           });
           newFilterObj.filter[k] = _.cloneDeep(filter[k]);
@@ -244,20 +248,20 @@ export function extendSheet(
     } else if (type === "column") {
       if (f_c1 < index) {
         if (f_c2 === index && direction === "lefttop") {
-          f_c2 += value;
+          f_c2 += count;
         } else if (f_c2 > index) {
-          f_c2 += value;
+          f_c2 += count;
         }
       } else if (f_c1 === index) {
         if (direction === "lefttop") {
-          f_c1 += value;
-          f_c2 += value;
+          f_c1 += count;
+          f_c2 += count;
         } else if (direction === "rightbottom" && f_c2 > index) {
-          f_c2 += value;
+          f_c2 += count;
         }
       } else {
-        f_c1 += value;
-        f_c2 += value;
+        f_c1 += count;
+        f_c2 += count;
       }
 
       if (filter != null) {
@@ -267,9 +271,9 @@ export function extendSheet(
           let f_cindex = filter[k].cindex;
 
           if (f_cindex === index && direction === "lefttop") {
-            f_cindex += value;
+            f_cindex += count;
           } else if (f_cindex > index) {
-            f_cindex += value;
+            f_cindex += count;
           }
 
           newFilterObj.filter[f_cindex - f_c1] = _.cloneDeep(filter[k]);
@@ -313,38 +317,38 @@ export function extendSheet(
         if (type === "row") {
           if (CFr1 < index) {
             if (CFr2 === index && direction === "lefttop") {
-              CFr2 += value;
+              CFr2 += count;
             } else if (CFr2 > index) {
-              CFr2 += value;
+              CFr2 += count;
             }
           } else if (CFr1 === index) {
             if (direction === "lefttop") {
-              CFr1 += value;
-              CFr2 += value;
+              CFr1 += count;
+              CFr2 += count;
             } else if (direction === "rightbottom" && CFr2 > index) {
-              CFr2 += value;
+              CFr2 += count;
             }
           } else {
-            CFr1 += value;
-            CFr2 += value;
+            CFr1 += count;
+            CFr2 += count;
           }
         } else if (type === "column") {
           if (CFc1 < index) {
             if (CFc2 === index && direction === "lefttop") {
-              CFc2 += value;
+              CFc2 += count;
             } else if (CFc2 > index) {
-              CFc2 += value;
+              CFc2 += count;
             }
           } else if (CFc1 === index) {
             if (direction === "lefttop") {
-              CFc1 += value;
-              CFc2 += value;
+              CFc1 += count;
+              CFc2 += count;
             } else if (direction === "rightbottom" && CFc2 > index) {
-              CFc2 += value;
+              CFc2 += count;
             }
           } else {
-            CFc1 += value;
-            CFc2 += value;
+            CFc1 += count;
+            CFc2 += count;
           }
         }
 
@@ -373,38 +377,38 @@ export function extendSheet(
       if (type === "row") {
         if (AFr1 < index) {
           if (AFr2 === index && direction === "lefttop") {
-            AFr2 += value;
+            AFr2 += count;
           } else if (AFr2 > index) {
-            AFr2 += value;
+            AFr2 += count;
           }
         } else if (AFr1 === index) {
           if (direction === "lefttop") {
-            AFr1 += value;
-            AFr2 += value;
+            AFr1 += count;
+            AFr2 += count;
           } else if (direction === "rightbottom" && AFr2 > index) {
-            AFr2 += value;
+            AFr2 += count;
           }
         } else {
-          AFr1 += value;
-          AFr2 += value;
+          AFr1 += count;
+          AFr2 += count;
         }
       } else if (type === "column") {
         if (AFc1 < index) {
           if (AFc2 === index && direction === "lefttop") {
-            AFc2 += value;
+            AFc2 += count;
           } else if (AFc2 > index) {
-            AFc2 += value;
+            AFc2 += count;
           }
         } else if (AFc1 === index) {
           if (direction === "lefttop") {
-            AFc1 += value;
-            AFc2 += value;
+            AFc1 += count;
+            AFc2 += count;
           } else if (direction === "rightbottom" && AFc2 > index) {
-            AFc2 += value;
+            AFc2 += count;
           }
         } else {
-          AFc1 += value;
-          AFc2 += value;
+          AFc1 += count;
+          AFc2 += count;
         }
       }
 
@@ -481,18 +485,18 @@ export function extendSheet(
 
       if (type === "row") {
         if (index < r) {
-          newDataVerification[`${r + value}_${c}`] = item;
+          newDataVerification[`${r + count}_${c}`] = item;
         } else if (index === r) {
           if (direction === "lefttop") {
-            newDataVerification[`${r + value}_${c}`] = item;
+            newDataVerification[`${r + count}_${c}`] = item;
 
-            for (let i = 0; i < value; i += 1) {
+            for (let i = 0; i < count; i += 1) {
               newDataVerification[`${r + i}_${c}`] = item;
             }
           } else {
             newDataVerification[`${r}_${c}`] = item;
 
-            for (let i = 0; i < value; i += 1) {
+            for (let i = 0; i < count; i += 1) {
               newDataVerification[`${r + i + 1}_${c}`] = item;
             }
           }
@@ -501,18 +505,18 @@ export function extendSheet(
         }
       } else if (type === "column") {
         if (index < c) {
-          newDataVerification[`${r}_${c + value}`] = item;
+          newDataVerification[`${r}_${c + count}`] = item;
         } else if (index === c) {
           if (direction === "lefttop") {
-            newDataVerification[`${r}_${c + value}`] = item;
+            newDataVerification[`${r}_${c + count}`] = item;
 
-            for (let i = 0; i < value; i += 1) {
+            for (let i = 0; i < count; i += 1) {
               newDataVerification[`${r}_${c + i}`] = item;
             }
           } else {
             newDataVerification[`${r}_${c}`] = item;
 
-            for (let i = 0; i < value; i += 1) {
+            for (let i = 0; i < count; i += 1) {
               newDataVerification[`${r}_${c + i + 1}`] = item;
             }
           }
@@ -534,10 +538,10 @@ export function extendSheet(
 
       if (type === "row") {
         if (index < r) {
-          newHyperlink[`${r + value}_${c}`] = item;
+          newHyperlink[`${r + count}_${c}`] = item;
         } else if (index === r) {
           if (direction === "lefttop") {
-            newHyperlink[`${r + value}_${c}`] = item;
+            newHyperlink[`${r + count}_${c}`] = item;
           } else {
             newHyperlink[`${r}_${c}`] = item;
           }
@@ -546,10 +550,10 @@ export function extendSheet(
         }
       } else if (type === "column") {
         if (index < c) {
-          newHyperlink[`${r}_${c + value}`] = item;
+          newHyperlink[`${r}_${c + count}`] = item;
         } else if (index === c) {
           if (direction === "lefttop") {
-            newHyperlink[`${r}_${c + value}`] = item;
+            newHyperlink[`${r}_${c + count}`] = item;
           } else {
             newHyperlink[`${r}_${c}`] = item;
           }
@@ -575,12 +579,12 @@ export function extendSheet(
           rowlen_new[r] = cfg.rowlen[r];
         } else if (r === index) {
           if (direction === "lefttop") {
-            rowlen_new[r + value] = cfg.rowlen[r];
+            rowlen_new[r + count] = cfg.rowlen[r];
           } else if (direction === "rightbottom") {
             rowlen_new[r] = cfg.rowlen[r];
           }
         } else {
-          rowlen_new[r + value] = cfg.rowlen[r];
+          rowlen_new[r + count] = cfg.rowlen[r];
         }
       });
 
@@ -598,12 +602,12 @@ export function extendSheet(
           rowhidden_new[r] = cfg.rowhidden[r];
         } else if (r === index) {
           if (direction === "lefttop") {
-            rowhidden_new[r + value] = cfg.rowhidden[r];
+            rowhidden_new[r + count] = cfg.rowhidden[r];
           } else if (direction === "rightbottom") {
             rowhidden_new[r] = cfg.rowhidden[r];
           }
         } else {
-          rowhidden_new[r + value] = cfg.rowhidden[r];
+          rowhidden_new[r + count] = cfg.rowhidden[r];
         }
       });
 
@@ -638,17 +642,17 @@ export function extendSheet(
 
             if (direction === "lefttop") {
               if (index <= bd_r1) {
-                bd_r1 += value;
-                bd_r2 += value;
+                bd_r1 += count;
+                bd_r2 += count;
               } else if (index <= bd_r2) {
-                bd_r2 += value;
+                bd_r2 += count;
               }
             } else {
               if (index < bd_r1) {
-                bd_r1 += value;
-                bd_r2 += value;
+                bd_r1 += count;
+                bd_r2 += count;
               } else if (index < bd_r2) {
-                bd_r2 += value;
+                bd_r2 += count;
               }
             }
 
@@ -682,11 +686,11 @@ export function extendSheet(
 
           if (direction === "lefttop") {
             if (index <= row_index) {
-              row_index += value;
+              row_index += count;
             }
           } else {
             if (index < row_index) {
-              row_index += value;
+              row_index += count;
             }
           }
 
@@ -699,7 +703,7 @@ export function extendSheet(
     }
 
     const arr = [];
-    for (let r = 0; r < value; r += 1) {
+    for (let r = 0; r < count; r += 1) {
       arr.push(JSON.stringify(row));
       // 同步拷贝 type 为 cell 类型的边框
       if (cellBorderConfig.length) {
@@ -743,12 +747,12 @@ export function extendSheet(
           columnlen_new[c] = cfg.columnlen[c];
         } else if (c === index) {
           if (direction === "lefttop") {
-            columnlen_new[c + value] = cfg.columnlen[c];
+            columnlen_new[c + count] = cfg.columnlen[c];
           } else if (direction === "rightbottom") {
             columnlen_new[c] = cfg.columnlen[c];
           }
         } else {
-          columnlen_new[c + value] = cfg.columnlen[c];
+          columnlen_new[c + count] = cfg.columnlen[c];
         }
       });
 
@@ -766,12 +770,12 @@ export function extendSheet(
           colhidden_new[c] = cfg.colhidden[c];
         } else if (c === index) {
           if (direction === "lefttop") {
-            colhidden_new[c + value] = cfg.colhidden[c];
+            colhidden_new[c + count] = cfg.colhidden[c];
           } else if (direction === "rightbottom") {
             colhidden_new[c] = cfg.colhidden[c];
           }
         } else {
-          colhidden_new[c + value] = cfg.colhidden[c];
+          colhidden_new[c + count] = cfg.colhidden[c];
         }
       });
 
@@ -806,17 +810,17 @@ export function extendSheet(
 
             if (direction === "lefttop") {
               if (index <= bd_c1) {
-                bd_c1 += value;
-                bd_c2 += value;
+                bd_c1 += count;
+                bd_c2 += count;
               } else if (index <= bd_c2) {
-                bd_c2 += value;
+                bd_c2 += count;
               }
             } else {
               if (index < bd_c1) {
-                bd_c1 += value;
-                bd_c2 += value;
+                bd_c1 += count;
+                bd_c2 += count;
               } else if (index < bd_c2) {
-                bd_c2 += value;
+                bd_c2 += count;
               }
             }
 
@@ -850,11 +854,11 @@ export function extendSheet(
 
           if (direction === "lefttop") {
             if (index <= col_index) {
-              col_index += value;
+              col_index += count;
             }
           } else {
             if (index < col_index) {
-              col_index += value;
+              col_index += count;
             }
           }
 
@@ -868,7 +872,7 @@ export function extendSheet(
 
     // 处理相关的 type 为 cell 类型的边框
     if (cellBorderConfig.length) {
-      for (let i = 0; i < value; i += 1) {
+      for (let i = 0; i < count; i += 1) {
         const cellBorderConfigCopy = _.cloneDeep(cellBorderConfig);
         cellBorderConfigCopy.forEach((item) => {
           if (direction === "rightbottom") {
@@ -886,7 +890,7 @@ export function extendSheet(
     for (let r = 0; r < d.length; r += 1) {
       const row = d[r];
 
-      for (let i = 0; i < value; i += 1) {
+      for (let i = 0; i < count; i += 1) {
         if (direction === "lefttop") {
           if (index === 0) {
             row.unshift(col[r]);
@@ -939,18 +943,18 @@ export function extendSheet(
   if (type === "row") {
     if (direction === "lefttop") {
       range = [
-        { row: [index, index + value - 1], column: [0, d[0].length - 1] },
+        { row: [index, index + count - 1], column: [0, d[0].length - 1] },
       ];
     } else {
       range = [
-        { row: [index + 1, index + value], column: [0, d[0].length - 1] },
+        { row: [index + 1, index + count], column: [0, d[0].length - 1] },
       ];
     }
   } else {
     if (direction === "lefttop") {
-      range = [{ row: [0, d.length - 1], column: [index, index + value - 1] }];
+      range = [{ row: [0, d.length - 1], column: [index, index + count - 1] }];
     } else {
-      range = [{ row: [0, d.length - 1], column: [index + 1, index + value] }];
+      range = [{ row: [0, d.length - 1], column: [index + 1, index + count] }];
     }
   }
 
@@ -984,11 +988,15 @@ export function extendSheet(
 
 export function deleteRowCol(
   ctx: Context,
-  type: "row" | "column",
-  st: number,
-  ed: number,
-  sheetIndex?: string
+  op: {
+    type: "row" | "column";
+    start: number;
+    end: number;
+    sheetIndex?: string;
+  }
 ) {
+  const { type } = op;
+  let { start, end, sheetIndex } = op;
   sheetIndex = sheetIndex || ctx.currentSheetIndex;
 
   // if (
@@ -1013,37 +1021,37 @@ export function deleteRowCol(
   const d = file.data;
   if (!d) return;
 
-  if (st < 0) {
-    st = 0;
+  if (start < 0) {
+    start = 0;
   }
 
-  if (ed < 0) {
-    ed = 0;
+  if (end < 0) {
+    end = 0;
   }
 
   if (type === "row") {
-    if (st > d.length - 1) {
-      st = d.length - 1;
+    if (start > d.length - 1) {
+      start = d.length - 1;
     }
 
-    if (ed > d.length - 1) {
-      ed = d.length - 1;
+    if (end > d.length - 1) {
+      end = d.length - 1;
     }
   } else {
-    if (st > d[0].length - 1) {
-      st = d[0].length - 1;
+    if (start > d[0].length - 1) {
+      start = d[0].length - 1;
     }
 
-    if (ed > d[0].length - 1) {
-      ed = d[0].length - 1;
+    if (end > d[0].length - 1) {
+      end = d[0].length - 1;
     }
   }
 
-  if (st > ed) {
+  if (start > end) {
     return;
   }
 
-  const slen = ed - st + 1;
+  const slen = end - start + 1;
   const cfg = file.config || {};
 
   // 合并单元格配置变动
@@ -1059,45 +1067,45 @@ export function deleteRowCol(
     const { cs } = mc;
 
     if (type === "row") {
-      if (r < st) {
-        if (r + rs - 1 < st) {
+      if (r < start) {
+        if (r + rs - 1 < start) {
           merge_new[`${r}_${c}`] = { r, c, rs, cs };
-        } else if (r + rs - 1 >= st && r + rs - 1 < ed) {
-          merge_new[`${r}_${c}`] = { r, c, rs: st - r, cs };
-        } else if (r + rs - 1 >= ed) {
+        } else if (r + rs - 1 >= start && r + rs - 1 < end) {
+          merge_new[`${r}_${c}`] = { r, c, rs: start - r, cs };
+        } else if (r + rs - 1 >= end) {
           merge_new[`${r}_${c}`] = { r, c, rs: rs - slen, cs };
         }
-      } else if (r >= st && r <= ed) {
-        if (r + rs - 1 > ed) {
-          merge_new[`${st}_${c}`] = {
-            r: st,
+      } else if (r >= start && r <= end) {
+        if (r + rs - 1 > end) {
+          merge_new[`${start}_${c}`] = {
+            r: start,
             c,
-            rs: r + rs - 1 - ed,
+            rs: r + rs - 1 - end,
             cs,
           };
         }
-      } else if (r > ed) {
+      } else if (r > end) {
         merge_new[`${r - slen}_${c}`] = { r: r - slen, c, rs, cs };
       }
     } else if (type === "column") {
-      if (c < st) {
-        if (c + cs - 1 < st) {
+      if (c < start) {
+        if (c + cs - 1 < start) {
           merge_new[`${r}_${c}`] = { r, c, rs, cs };
-        } else if (c + cs - 1 >= st && c + cs - 1 < ed) {
-          merge_new[`${r}_${c}`] = { r, c, rs, cs: st - c };
-        } else if (c + cs - 1 >= ed) {
+        } else if (c + cs - 1 >= start && c + cs - 1 < end) {
+          merge_new[`${r}_${c}`] = { r, c, rs, cs: start - c };
+        } else if (c + cs - 1 >= end) {
           merge_new[`${r}_${c}`] = { r, c, rs, cs: cs - slen };
         }
-      } else if (c >= st && c <= ed) {
-        if (c + cs - 1 > ed) {
-          merge_new[`${r}_${st}`] = {
+      } else if (c >= start && c <= end) {
+        if (c + cs - 1 > end) {
+          merge_new[`${r}_${start}`] = {
             r,
-            c: st,
+            c: start,
             rs,
-            cs: c + cs - 1 - ed,
+            cs: c + cs - 1 - end,
           };
         }
-      } else if (c > ed) {
+      } else if (c > end) {
         merge_new[`${r}_${c - slen}`] = { r, c: c - slen, rs, cs };
       }
     }
@@ -1116,13 +1124,13 @@ export function deleteRowCol(
       const calc_funcStr = getcellFormula(ctx, calc_r, calc_c, calc_i);
 
       if (type === "row") {
-        if (calc_r < st || calc_r > ed) {
+        if (calc_r < start || calc_r > end) {
           const functionStr = `=${functionStrChange(
             calc_funcStr,
             "del",
             "row",
             null,
-            st,
+            start,
             slen
           )}`;
 
@@ -1130,20 +1138,20 @@ export function deleteRowCol(
             d[calc_r]![calc_c]!.f = functionStr;
           }
 
-          if (calc_r > ed) {
+          if (calc_r > end) {
             calc.r = calc_r - slen;
           }
 
           newCalcChain.push(calc);
         }
       } else if (type === "column") {
-        if (calc_c < st || calc_c > ed) {
+        if (calc_c < start || calc_c > end) {
           const functionStr = `=${functionStrChange(
             calc_funcStr,
             "del",
             "col",
             null,
-            st,
+            start,
             slen
           )}`;
 
@@ -1151,7 +1159,7 @@ export function deleteRowCol(
             d[calc_r]![calc_c]!.f = functionStr;
           }
 
-          if (calc_c > ed) {
+          if (calc_c > end) {
             calc.c = calc_c - slen;
           }
 
@@ -1174,7 +1182,7 @@ export function deleteRowCol(
     let f_c2 = filter_select.column[1];
 
     if (type === "row") {
-      if (f_r1 > ed) {
+      if (f_r1 > end) {
         f_r1 -= slen;
         f_r2 -= slen;
 
@@ -1182,10 +1190,10 @@ export function deleteRowCol(
           row: [f_r1, f_r2],
           column: [f_c1, f_c2],
         };
-      } else if (f_r1 < st) {
-        if (f_r2 < st) {
-        } else if (f_r2 <= ed) {
-          f_r2 = st - 1;
+      } else if (f_r1 < start) {
+        if (f_r2 < start) {
+        } else if (f_r2 <= end) {
+          f_r2 = start - 1;
         } else {
           f_r2 -= slen;
         }
@@ -1203,9 +1211,9 @@ export function deleteRowCol(
           _.forEach(f_rowhidden, (v1, nstr) => {
             const n = parseFloat(nstr);
 
-            if (n < st) {
+            if (n < start) {
               f_rowhidden_new[n] = 0;
-            } else if (n > ed) {
+            } else if (n > end) {
               f_rowhidden_new[n - slen] = 0;
             }
           });
@@ -1223,7 +1231,7 @@ export function deleteRowCol(
         });
       }
     } else if (type === "column") {
-      if (f_c1 > ed) {
+      if (f_c1 > end) {
         f_c1 -= slen;
         f_c2 -= slen;
 
@@ -1231,10 +1239,10 @@ export function deleteRowCol(
           row: [f_r1, f_r2],
           column: [f_c1, f_c2],
         };
-      } else if (f_c1 < st) {
-        if (f_c2 < st) {
-        } else if (f_c2 <= ed) {
-          f_c2 = st - 1;
+      } else if (f_c1 < start) {
+        if (f_c2 < start) {
+        } else if (f_c2 <= end) {
+          f_c2 = start - 1;
         } else {
           f_c2 -= slen;
         }
@@ -1244,8 +1252,8 @@ export function deleteRowCol(
           column: [f_c1, f_c2],
         };
       } else {
-        if (f_c2 > ed) {
-          f_c1 = st;
+        if (f_c2 > end) {
+          f_c1 = start;
           f_c2 -= slen;
 
           newFilterObj.filter_select = {
@@ -1259,14 +1267,14 @@ export function deleteRowCol(
         _.forEach(filter, (v, k) => {
           let f_cindex = filter[k].cindex;
 
-          if (f_cindex < st) {
+          if (f_cindex < start) {
             if (newFilterObj.filter == null) {
               newFilterObj.filter = {};
             }
 
             newFilterObj.filter[f_cindex - f_c1] = _.cloneDeep(filter[k]);
             newFilterObj.filter[f_cindex - f_c1].edc = f_c2;
-          } else if (f_cindex > ed) {
+          } else if (f_cindex > end) {
             f_cindex -= slen;
 
             if (newFilterObj.filter == null) {
@@ -1311,20 +1319,20 @@ export function deleteRowCol(
         let CFc2 = cf_range[j].column[1];
 
         if (type === "row") {
-          if (!(CFr1 >= st && CFr2 <= ed)) {
-            if (CFr1 > ed) {
+          if (!(CFr1 >= start && CFr2 <= end)) {
+            if (CFr1 > end) {
               CFr1 -= slen;
               CFr2 -= slen;
-            } else if (CFr1 < st) {
-              if (CFr2 < st) {
-              } else if (CFr2 <= ed) {
-                CFr2 = st - 1;
+            } else if (CFr1 < start) {
+              if (CFr2 < start) {
+              } else if (CFr2 <= end) {
+                CFr2 = start - 1;
               } else {
                 CFr2 -= slen;
               }
             } else {
-              if (CFr2 > ed) {
-                CFr1 = st;
+              if (CFr2 > end) {
+                CFr1 = start;
                 CFr2 -= slen;
               }
             }
@@ -1332,20 +1340,20 @@ export function deleteRowCol(
             cf_new_range.push({ row: [CFr1, CFr2], column: [CFc1, CFc2] });
           }
         } else if (type === "column") {
-          if (!(CFc1 >= st && CFc2 <= ed)) {
-            if (CFc1 > ed) {
+          if (!(CFc1 >= start && CFc2 <= end)) {
+            if (CFc1 > end) {
               CFc1 -= slen;
               CFc2 -= slen;
-            } else if (CFc1 < st) {
-              if (CFc2 < st) {
-              } else if (CFc2 <= ed) {
-                CFc2 = st - 1;
+            } else if (CFc1 < start) {
+              if (CFc2 < start) {
+              } else if (CFc2 <= end) {
+                CFc2 = start - 1;
               } else {
                 CFc2 -= slen;
               }
             } else {
-              if (CFc2 > ed) {
-                CFc1 = st;
+              if (CFc2 > end) {
+                CFc1 = start;
                 CFc2 -= slen;
               }
             }
@@ -1375,22 +1383,22 @@ export function deleteRowCol(
       let AFc2 = AFarr[i].cellrange.column[1];
 
       if (type === "row") {
-        if (!(AFr1 >= st && AFr2 <= ed)) {
+        if (!(AFr1 >= start && AFr2 <= end)) {
           const af = _.clone(AFarr[i]);
 
-          if (AFr1 > ed) {
+          if (AFr1 > end) {
             AFr1 -= slen;
             AFr2 -= slen;
-          } else if (AFr1 < st) {
-            if (AFr2 < st) {
-            } else if (AFr2 <= ed) {
-              AFr2 = st - 1;
+          } else if (AFr1 < start) {
+            if (AFr2 < start) {
+            } else if (AFr2 <= end) {
+              AFr2 = start - 1;
             } else {
               AFr2 -= slen;
             }
           } else {
-            if (AFr2 > ed) {
-              AFr1 = st;
+            if (AFr2 > end) {
+              AFr1 = start;
               AFr2 -= slen;
             }
           }
@@ -1400,22 +1408,22 @@ export function deleteRowCol(
           newAFarr.push(af);
         }
       } else if (type === "column") {
-        if (!(AFc1 >= st && AFc2 <= ed)) {
+        if (!(AFc1 >= start && AFc2 <= end)) {
           const af = _.clone(AFarr[i]);
 
-          if (AFc1 > ed) {
+          if (AFc1 > end) {
             AFc1 -= slen;
             AFc2 -= slen;
-          } else if (AFc1 < st) {
-            if (AFc2 < st) {
-            } else if (AFc2 <= ed) {
-              AFc2 = st - 1;
+          } else if (AFc1 < start) {
+            if (AFc2 < start) {
+            } else if (AFc2 <= end) {
+              AFc2 = start - 1;
             } else {
               AFc2 -= slen;
             }
           } else {
-            if (AFc2 > ed) {
-              AFc1 = st;
+            if (AFc2 > end) {
+              AFc1 = start;
               AFc2 -= slen;
             }
           }
@@ -1522,15 +1530,15 @@ export function deleteRowCol(
       const item = dataVerification[key];
 
       if (type === "row") {
-        if (r < st) {
+        if (r < start) {
           newDataVerification[`${r}_${c}`] = item;
-        } else if (r > ed) {
+        } else if (r > end) {
           newDataVerification[`${r - slen}_${c}`] = item;
         }
       } else if (type === "column") {
-        if (c < st) {
+        if (c < start) {
           newDataVerification[`${r}_${c}`] = item;
-        } else if (c > ed) {
+        } else if (c > end) {
           newDataVerification[`${r}_${c - slen}`] = item;
         }
       }
@@ -1547,15 +1555,15 @@ export function deleteRowCol(
       const item = hyperlink[key];
 
       if (type === "row") {
-        if (r < st) {
+        if (r < start) {
           newHyperlink[`${r}_${c}`] = item;
-        } else if (r > ed) {
+        } else if (r > end) {
           newHyperlink[`${r - slen}_${c}`] = item;
         }
       } else if (type === "column") {
-        if (c < st) {
+        if (c < start) {
           newHyperlink[`${r}_${c}`] = item;
-        } else if (c > ed) {
+        } else if (c > end) {
           newHyperlink[`${r}_${c - slen}`] = item;
         }
       }
@@ -1575,9 +1583,9 @@ export function deleteRowCol(
     const rowlen_new: any = {};
     _.forEach(cfg.rowlen, (v, rstr) => {
       const r = parseFloat(rstr);
-      if (r < st) {
+      if (r < start) {
         rowlen_new[r] = cfg.rowlen[r];
-      } else if (r > ed) {
+      } else if (r > end) {
         rowlen_new[r - slen] = cfg.rowlen[r];
       }
     });
@@ -1592,9 +1600,9 @@ export function deleteRowCol(
     const rowhidden_new: any = {};
     _.forEach(cfg.rowhidden, (v, rstr) => {
       const r = parseFloat(rstr);
-      if (r < st) {
+      if (r < start) {
         rowhidden_new[r] = cfg.rowhidden[r];
-      } else if (r > ed) {
+      } else if (r > end) {
         rowhidden_new[r - slen] = cfg.rowhidden[r];
       }
     });
@@ -1617,7 +1625,7 @@ export function deleteRowCol(
             let bd_r1 = borderRange[j].row[0];
             let bd_r2 = borderRange[j].row[1];
 
-            for (let r = st; r <= ed; r += 1) {
+            for (let r = start; r <= end; r += 1) {
               if (r < borderRange[j].row[0]) {
                 bd_r1 -= 1;
                 bd_r2 -= 1;
@@ -1648,10 +1656,10 @@ export function deleteRowCol(
         } else if (rangeType === "cell") {
           const { row_index } = cfg.borderInfo[i].value;
 
-          if (row_index < st) {
+          if (row_index < start) {
             borderInfo.push(cfg.borderInfo[i]);
-          } else if (row_index > ed) {
-            cfg.borderInfo[i].value.row_index = row_index - (ed - st + 1);
+          } else if (row_index > end) {
+            cfg.borderInfo[i].value.row_index = row_index - (end - start + 1);
             borderInfo.push(cfg.borderInfo[i]);
           }
         }
@@ -1677,7 +1685,7 @@ export function deleteRowCol(
     // }
 
     // 删除选中行
-    d.splice(st, slen);
+    d.splice(start, slen);
 
     // 删除多少行，增加多少行空白行
     for (let r = 0; r < slen; r += 1) {
@@ -1699,9 +1707,9 @@ export function deleteRowCol(
     const columnlen_new: any = {};
     _.forEach(cfg.columnlen, (v, cstr) => {
       const c = parseFloat(cstr);
-      if (c < st) {
+      if (c < start) {
         columnlen_new[c] = cfg.columnlen[c];
-      } else if (c > ed) {
+      } else if (c > end) {
         columnlen_new[c - slen] = cfg.columnlen[c];
       }
     });
@@ -1716,9 +1724,9 @@ export function deleteRowCol(
     const colhidden_new: any = {};
     _.forEach(cfg.colhidden, (v, cstr) => {
       const c = parseFloat(cstr);
-      if (c < st) {
+      if (c < start) {
         colhidden_new[c] = cfg.colhidden[c];
-      } else if (c > ed) {
+      } else if (c > end) {
         colhidden_new[c - slen] = cfg.colhidden[c];
       }
     });
@@ -1741,7 +1749,7 @@ export function deleteRowCol(
             let bd_c1 = borderRange[j].column[0];
             let bd_c2 = borderRange[j].column[1];
 
-            for (let c = st; c <= ed; c += 1) {
+            for (let c = start; c <= end; c += 1) {
               if (c < borderRange[j].column[0]) {
                 bd_c1 -= 1;
                 bd_c2 -= 1;
@@ -1772,10 +1780,10 @@ export function deleteRowCol(
         } else if (rangeType === "cell") {
           const { col_index } = cfg.borderInfo[i].value;
 
-          if (col_index < st) {
+          if (col_index < start) {
             borderInfo.push(cfg.borderInfo[i]);
-          } else if (col_index > ed) {
-            cfg.borderInfo[i].value.col_index = col_index - (ed - st + 1);
+          } else if (col_index > end) {
+            cfg.borderInfo[i].value.col_index = col_index - (end - start + 1);
             borderInfo.push(cfg.borderInfo[i]);
           }
         }
@@ -1794,7 +1802,7 @@ export function deleteRowCol(
       const row = _.clone(d[r]);
 
       // 删除选中列
-      row.splice(st, slen);
+      row.splice(start, slen);
 
       d[r] = row.concat(addcol);
     }

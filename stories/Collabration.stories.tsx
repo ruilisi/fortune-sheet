@@ -1,8 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { Sheet } from "@fortune-sheet/core";
+import { Sheet, Op } from "@fortune-sheet/core";
 import { Workbook, WorkbookInstance } from "@fortune-sheet/react";
-import { Patch } from "immer";
 
 export default {
   component: Workbook,
@@ -30,7 +29,7 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
     };
   }, []);
 
-  const onOp = useCallback((op: Patch[]) => {
+  const onOp = useCallback((op: Op[]) => {
     const socket = wsRef.current;
     if (!socket) return;
     socket.send(JSON.stringify({ req: "op", data: op }));

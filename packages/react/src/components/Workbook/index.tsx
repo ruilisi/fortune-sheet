@@ -15,6 +15,9 @@ import {
   patchToOp,
   Op,
   opToPatch,
+  inverseRowColOptions,
+  insertRowCol,
+  deleteRowCol,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -25,10 +28,15 @@ import React, {
   useImperativeHandle,
 } from "react";
 import "./index.css";
-import { applyPatches, enablePatches, Patch, produceWithPatches } from "immer";
+import produce, {
+  applyPatches,
+  enablePatches,
+  Patch,
+  produceWithPatches,
+} from "immer";
 import _, { assign } from "lodash";
 import Sheet from "../Sheet";
-import WorkbookContext from "../../context";
+import WorkbookContext, { SetContextOptions } from "../../context";
 import Toolbar from "../Toolbar";
 import FxEditor from "../FxEditor";
 import SheetTab from "../SheetTab";
@@ -43,7 +51,7 @@ export type WorkbookInstance = {
 
 type AdditionalProps = {
   onChange?: (data: SheetType[]) => void;
-  onOp?: (op: Patch[]) => void;
+  onOp?: (op: Op[]) => void;
 };
 
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
@@ -63,16 +71,28 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
 
     const applyOp = useCallback((ops: Op[]) => {
       setContext((ctx_) => {
-        const patches = opToPatch(ctx_, ops);
+        const [patches, rowcolOps] = opToPatch(ctx_, ops);
+        if (rowcolOps.length > 0) {
+          const [rowcolOp] = rowcolOps;
+          if (rowcolOp.op === "insertRowCol") {
+            ctx_ = produce(ctx_, (draftCtx) => {
+              insertRowCol(draftCtx, rowcolOp.value);
+            });
+          } else if (rowcolOp.op === "deleteRowCol") {
+            ctx_ = produce(ctx_, (draftCtx) => {
+              deleteRowCol(draftCtx, rowcolOp.value);
+            });
+          }
+        }
         const newContext = applyPatches(ctx_, patches);
         return newContext;
       });
     }, []);
 
     const emitOp = useCallback(
-      (ctx: Context, patches: Patch[]) => {
+      (ctx: Context, patches: Patch[], options?: SetContextOptions) => {
         if (onOp) {
-          onOp(patchToOp(ctx, patches));
+          onOp(patchToOp(ctx, patches, options));
         }
       },
       [onOp]
@@ -81,22 +101,23 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     useImperativeHandle(ref, () => ({ applyOp }));
 
     const setContextWithProduce = useCallback(
-      (recipe: (ctx: Context) => void, noHistory = false) => {
+      (recipe: (ctx: Context) => void, options: SetContextOptions = {}) => {
         setContext((ctx_) => {
           const [result, patches, inversePatches] = produceWithPatches(
             ctx_,
             recipe
           );
-          if (patches.length > 0 && !noHistory) {
+          if (patches.length > 0 && !options.noHistory) {
             const filteredPatches = filterPatch(patches);
             const filteredInversePatches = filterPatch(inversePatches);
             if (filteredInversePatches.length > 0) {
               globalCache.current.undoList.push({
                 patches: filteredPatches,
                 inversePatches: filteredInversePatches,
+                options,
               });
               globalCache.current.redoList = [];
-              emitOp(result, filteredPatches);
+              emitOp(result, filteredPatches, options);
             }
           }
           return result;
@@ -111,7 +132,11 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         setContext((ctx_) => {
           const newContext = applyPatches(ctx_, history.inversePatches);
           globalCache.current.redoList.push(history);
-          emitOp(newContext, history.inversePatches);
+          const inversedOptions = inverseRowColOptions(history.options);
+          if (inversedOptions?.insertRowColOp) {
+            inversedOptions.restoreDeletedCells = true;
+          }
+          emitOp(newContext, history.inversePatches, inversedOptions);
           return newContext;
         });
       }
@@ -123,7 +148,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         setContext((ctx_) => {
           const newContext = applyPatches(ctx_, history.patches);
           globalCache.current.undoList.push(history);
-          emitOp(newContext, history.patches);
+          emitOp(newContext, history.patches, history.options);
           return newContext;
         });
       }
@@ -154,126 +179,132 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     }, [context.luckysheetfile, onChange]);
 
     useEffect(() => {
-      setContextWithProduce((draftCtx) => {
-        if (_.isEmpty(draftCtx.luckysheetfile)) {
-          // mergedSettings.data at this time may be immutable, causing following modifications to fail,
-          // clone it to make it mutable
-          // TODO do not clone it
-          draftCtx.luckysheetfile = _.cloneDeep(mergedSettings.data);
-        }
-        draftCtx.defaultcolumnNum = mergedSettings.column;
-        draftCtx.defaultrowNum = mergedSettings.row;
-        draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
-        draftCtx.fullscreenmode = mergedSettings.fullscreenmode;
-        draftCtx.lang = mergedSettings.lang;
-        draftCtx.allowEdit = mergedSettings.allowEdit;
-        draftCtx.limitSheetNameLength = mergedSettings.limitSheetNameLength;
-        draftCtx.defaultSheetNameMaxLength =
-          mergedSettings.defaultSheetNameMaxLength;
-        // draftCtx.fontList = mergedSettings.fontList;
-        if (_.isEmpty(draftCtx.currentSheetIndex)) {
-          initSheetIndex(draftCtx);
-        }
-        let sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
-        if (sheetIdx == null) {
-          if ((draftCtx.luckysheetfile?.length ?? 0) > 0) {
-            sheetIdx = 0;
-            draftCtx.currentSheetIndex = draftCtx.luckysheetfile[0].index!;
+      setContextWithProduce(
+        (draftCtx) => {
+          if (_.isEmpty(draftCtx.luckysheetfile)) {
+            // mergedSettings.data at this time may be immutable, causing following modifications to fail,
+            // clone it to make it mutable
+            // TODO do not clone it
+            draftCtx.luckysheetfile = _.cloneDeep(mergedSettings.data);
           }
-        }
-        if (sheetIdx == null) return;
+          draftCtx.defaultcolumnNum = mergedSettings.column;
+          draftCtx.defaultrowNum = mergedSettings.row;
+          draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
+          draftCtx.fullscreenmode = mergedSettings.fullscreenmode;
+          draftCtx.lang = mergedSettings.lang;
+          draftCtx.allowEdit = mergedSettings.allowEdit;
+          draftCtx.limitSheetNameLength = mergedSettings.limitSheetNameLength;
+          draftCtx.defaultSheetNameMaxLength =
+            mergedSettings.defaultSheetNameMaxLength;
+          // draftCtx.fontList = mergedSettings.fontList;
+          if (_.isEmpty(draftCtx.currentSheetIndex)) {
+            initSheetIndex(draftCtx);
+          }
+          let sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
+          if (sheetIdx == null) {
+            if ((draftCtx.luckysheetfile?.length ?? 0) > 0) {
+              sheetIdx = 0;
+              draftCtx.currentSheetIndex = draftCtx.luckysheetfile[0].index!;
+            }
+          }
+          if (sheetIdx == null) return;
 
-        const sheet = draftCtx.luckysheetfile?.[sheetIdx];
-        if (!sheet) return;
+          const sheet = draftCtx.luckysheetfile?.[sheetIdx];
+          if (!sheet) return;
 
-        const cellData = sheet.celldata;
-        let { data } = sheet;
-        // expand cell data
-        if (_.isEmpty(data)) {
-          const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
-          const lastCol = _.maxBy(cellData, "c");
-          const lastRowNum = Math.max(lastRow?.r ?? 0, draftCtx.defaultrowNum);
-          const lastColNum = Math.max(
-            lastCol?.c ?? 0,
-            draftCtx.defaultcolumnNum
-          );
-          if (lastRowNum && lastColNum) {
-            const expandedData: SheetType["data"] = _.times(
-              lastRowNum + 1,
-              () => _.times(lastColNum + 1, () => null)
+          const cellData = sheet.celldata;
+          let { data } = sheet;
+          // expand cell data
+          if (_.isEmpty(data)) {
+            const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
+            const lastCol = _.maxBy(cellData, "c");
+            const lastRowNum = Math.max(
+              lastRow?.r ?? 0,
+              draftCtx.defaultrowNum
             );
-            cellData?.forEach((d) => {
-              // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
-              expandedData[d.r][d.c] = d.v;
-            });
-            sheet.data = expandedData;
-            data = expandedData;
+            const lastColNum = Math.max(
+              lastCol?.c ?? 0,
+              draftCtx.defaultcolumnNum
+            );
+            if (lastRowNum && lastColNum) {
+              const expandedData: SheetType["data"] = _.times(
+                lastRowNum + 1,
+                () => _.times(lastColNum + 1, () => null)
+              );
+              cellData?.forEach((d) => {
+                // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
+                expandedData[d.r][d.c] = d.v;
+              });
+              sheet.data = expandedData;
+              data = expandedData;
+            }
           }
-        }
 
-        if (
-          _.isEmpty(draftCtx.luckysheet_select_save) &&
-          !_.isEmpty(sheet.luckysheet_select_save)
-        ) {
-          draftCtx.luckysheet_select_save = sheet.luckysheet_select_save;
-        }
-        if (draftCtx.luckysheet_select_save?.length === 0) {
           if (
-            data?.[0]?.[0]?.mc &&
-            !_.isNil(data?.[0]?.[0]?.mc?.rs) &&
-            !_.isNil(data?.[0]?.[0]?.mc?.cs)
+            _.isEmpty(draftCtx.luckysheet_select_save) &&
+            !_.isEmpty(sheet.luckysheet_select_save)
           ) {
-            draftCtx.luckysheet_select_save = [
-              {
-                row: [0, data[0][0].mc.rs - 1],
-                column: [0, data[0][0].mc.cs - 1],
-              },
-            ];
-          } else {
-            draftCtx.luckysheet_select_save = [
-              {
-                row: [0, 0],
-                column: [0, 0],
-              },
-            ];
+            draftCtx.luckysheet_select_save = sheet.luckysheet_select_save;
           }
-        }
+          if (draftCtx.luckysheet_select_save?.length === 0) {
+            if (
+              data?.[0]?.[0]?.mc &&
+              !_.isNil(data?.[0]?.[0]?.mc?.rs) &&
+              !_.isNil(data?.[0]?.[0]?.mc?.cs)
+            ) {
+              draftCtx.luckysheet_select_save = [
+                {
+                  row: [0, data[0][0].mc.rs - 1],
+                  column: [0, data[0][0].mc.cs - 1],
+                },
+              ];
+            } else {
+              draftCtx.luckysheet_select_save = [
+                {
+                  row: [0, 0],
+                  column: [0, 0],
+                },
+              ];
+            }
+          }
 
-        draftCtx.luckysheet_selection_range = _.isNil(
-          sheet.luckysheet_selection_range
-        )
-          ? []
-          : sheet.luckysheet_selection_range;
-        draftCtx.config = _.isNil(sheet.config) ? {} : sheet.config;
+          draftCtx.luckysheet_selection_range = _.isNil(
+            sheet.luckysheet_selection_range
+          )
+            ? []
+            : sheet.luckysheet_selection_range;
+          draftCtx.config = _.isNil(sheet.config) ? {} : sheet.config;
 
-        draftCtx.zoomRatio = _.isNil(sheet.zoomRatio) ? 1 : sheet.zoomRatio;
+          draftCtx.zoomRatio = _.isNil(sheet.zoomRatio) ? 1 : sheet.zoomRatio;
 
-        if (!_.isNil(sheet.defaultRowHeight)) {
-          draftCtx.defaultrowlen = Number(sheet.defaultRowHeight);
-        } else {
-          draftCtx.defaultrowlen = mergedSettings.defaultRowHeight;
-        }
+          if (!_.isNil(sheet.defaultRowHeight)) {
+            draftCtx.defaultrowlen = Number(sheet.defaultRowHeight);
+          } else {
+            draftCtx.defaultrowlen = mergedSettings.defaultRowHeight;
+          }
 
-        if (!_.isNil(sheet.defaultColWidth)) {
-          draftCtx.defaultcollen = Number(sheet.defaultColWidth);
-        } else {
-          draftCtx.defaultcollen = mergedSettings.defaultColWidth;
-        }
+          if (!_.isNil(sheet.defaultColWidth)) {
+            draftCtx.defaultcollen = Number(sheet.defaultColWidth);
+          } else {
+            draftCtx.defaultcollen = mergedSettings.defaultColWidth;
+          }
 
-        if (!_.isNil(sheet.showGridLines)) {
-          const { showGridLines } = sheet;
-          if (showGridLines === 0 || showGridLines === false) {
-            draftCtx.showGridLines = false;
+          if (!_.isNil(sheet.showGridLines)) {
+            const { showGridLines } = sheet;
+            if (showGridLines === 0 || showGridLines === false) {
+              draftCtx.showGridLines = false;
+            } else {
+              draftCtx.showGridLines = true;
+            }
           } else {
             draftCtx.showGridLines = true;
           }
-        } else {
-          draftCtx.showGridLines = true;
-        }
-        if (!_.isNil(mergedSettings.lang)) {
-          localStorage.setItem("lang", mergedSettings.lang);
-        }
-      }, true);
+          if (!_.isNil(mergedSettings.lang)) {
+            localStorage.setItem("lang", mergedSettings.lang);
+          }
+        },
+        { noHistory: true }
+      );
     }, [
       mergedSettings.data,
       context.currentSheetIndex,

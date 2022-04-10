@@ -5,6 +5,7 @@ import {
   defaultSettings,
   Settings,
   GlobalCache,
+  PatchOptions,
 } from "@fortune-sheet/core";
 
 type RefValues = {
@@ -17,9 +18,16 @@ type RefValues = {
   workbookContainer: React.MutableRefObject<HTMLDivElement | null>;
 };
 
+export type SetContextOptions = {
+  noHistory?: boolean;
+} & PatchOptions;
+
 const WorkbookContext = React.createContext<{
   context: Context;
-  setContext: (recipe: (ctx: Context) => void) => void;
+  setContext: (
+    recipe: (ctx: Context) => void,
+    options?: SetContextOptions
+  ) => void;
   // eslint-disable-next-line
   settings: Required<Settings>;
   refs: RefValues;

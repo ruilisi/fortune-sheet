@@ -1,4 +1,12 @@
-import { Patch } from "immer";
+import { Patch as ImmerPatch } from "immer";
+import { PatchOptions } from "./utils";
+
+export type Op = {
+  op: "replace" | "remove" | "add" | "insertRowCol" | "deleteRowCol";
+  index?: string;
+  path: (string | number)[];
+  value?: any;
+};
 
 export type CellStyle = {
   bl?: number;
@@ -94,8 +102,9 @@ export type Sheet = {
 };
 
 export type History = {
-  patches: Patch[];
-  inversePatches: Patch[];
+  patches: ImmerPatch[];
+  inversePatches: ImmerPatch[];
+  options?: PatchOptions;
 };
 
 export type GlobalCache = {
@@ -112,10 +121,3 @@ export type GlobalCache = {
 
 export type SingleRange = { row: number[]; column: number[] };
 export type Range = SingleRange[];
-
-export type Op = {
-  op: "replace" | "remove" | "add";
-  index?: string;
-  path: (string | number)[];
-  value?: any;
-};

@@ -3,11 +3,11 @@ import {
   handleCopy,
   handlePasteByClick,
   deleteRowCol,
-  extendSheet,
+  insertRowCol,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, { useContext, useMemo, useRef, useLayoutEffect } from "react";
-import WorkbookContext from "../../context";
+import WorkbookContext, { SetContextOptions } from "../../context";
 import "./index.css";
 import Menu from "./Menu";
 
@@ -51,26 +51,32 @@ const ContextMenu: React.FC = () => {
             <Menu
               key={`add-col-${dir}`}
               onClick={(e) => {
-                setContext((draftCtx) => {
-                  const position =
-                    draftCtx.luckysheet_select_save?.[0]?.column?.[0];
-                  if (position == null) return;
-                  const countStr = (e.target as HTMLDivElement).querySelector(
-                    "input"
-                  )?.value;
-                  if (countStr == null) return;
-                  const count = parseInt(countStr, 10);
-                  if (count < 1) return;
-                  extendSheet(
-                    draftCtx,
-                    "column",
-                    position,
-                    count,
-                    dir === "left" ? "lefttop" : "rightbottom",
-                    draftCtx.currentSheetIndex
-                  );
-                  draftCtx.contextMenu = undefined;
-                });
+                const position =
+                  context.luckysheet_select_save?.[0]?.column?.[0];
+                if (position == null) return;
+                const countStr = (e.target as HTMLDivElement).querySelector(
+                  "input"
+                )?.value;
+                if (countStr == null) return;
+                const count = parseInt(countStr, 10);
+                if (count < 1) return;
+                const direction = dir === "left" ? "lefttop" : "rightbottom";
+                const insertRowColOp: SetContextOptions["insertRowColOp"] = {
+                  type: "column",
+                  index: position,
+                  count,
+                  direction,
+                  sheetIndex: context.currentSheetIndex,
+                };
+                setContext(
+                  (draftCtx) => {
+                    insertRowCol(draftCtx, insertRowColOp);
+                    draftCtx.contextMenu = undefined;
+                  },
+                  {
+                    insertRowColOp,
+                  }
+                );
               }}
             >
               <>
@@ -99,24 +105,27 @@ const ContextMenu: React.FC = () => {
             <Menu
               key={`add-row-${dir}`}
               onClick={(e, container) => {
-                setContext((draftCtx) => {
-                  const position =
-                    draftCtx.luckysheet_select_save?.[0]?.row?.[0];
-                  if (position == null) return;
-                  const countStr = container.querySelector("input")?.value;
-                  if (countStr == null) return;
-                  const count = parseInt(countStr, 10);
-                  if (count < 1) return;
-                  extendSheet(
-                    draftCtx,
-                    "row",
-                    position,
-                    count,
-                    dir === "top" ? "lefttop" : "rightbottom",
-                    draftCtx.currentSheetIndex
-                  );
-                  draftCtx.contextMenu = undefined;
-                });
+                const position = context.luckysheet_select_save?.[0]?.row?.[0];
+                if (position == null) return;
+                const countStr = container.querySelector("input")?.value;
+                if (countStr == null) return;
+                const count = parseInt(countStr, 10);
+                if (count < 1) return;
+                const direction = dir === "top" ? "lefttop" : "rightbottom";
+                const insertRowColOp: SetContextOptions["insertRowColOp"] = {
+                  type: "row",
+                  index: position,
+                  count,
+                  direction,
+                  sheetIndex: context.currentSheetIndex,
+                };
+                setContext(
+                  (draftCtx) => {
+                    insertRowCol(draftCtx, insertRowColOp);
+                    draftCtx.contextMenu = undefined;
+                  },
+                  { insertRowColOp }
+                );
               }}
             >
               <>
@@ -145,10 +154,19 @@ const ContextMenu: React.FC = () => {
           onClick={() => {
             if (!selection) return;
             const [st_index, ed_index] = selection.column;
-            setContext((draftCtx) => {
-              deleteRowCol(draftCtx, "column", st_index, ed_index);
-              draftCtx.contextMenu = undefined;
-            });
+            const deleteRowColOp: SetContextOptions["deleteRowColOp"] = {
+              type: "column",
+              start: st_index,
+              end: ed_index,
+              sheetIndex: context.currentSheetIndex,
+            };
+            setContext(
+              (draftCtx) => {
+                deleteRowCol(draftCtx, deleteRowColOp);
+                draftCtx.contextMenu = undefined;
+              },
+              { deleteRowColOp }
+            );
           }}
         >
           {rightclick.deleteSelected}
@@ -161,10 +179,19 @@ const ContextMenu: React.FC = () => {
           onClick={() => {
             if (!selection) return;
             const [st_index, ed_index] = selection.row;
-            setContext((draftCtx) => {
-              deleteRowCol(draftCtx, "row", st_index, ed_index);
-              draftCtx.contextMenu = undefined;
-            });
+            const deleteRowColOp: SetContextOptions["deleteRowColOp"] = {
+              type: "row",
+              start: st_index,
+              end: ed_index,
+              sheetIndex: context.currentSheetIndex,
+            };
+            setContext(
+              (draftCtx) => {
+                deleteRowCol(draftCtx, deleteRowColOp);
+                draftCtx.contextMenu = undefined;
+              },
+              { deleteRowColOp }
+            );
           }}
         >
           {rightclick.deleteSelected}
@@ -172,7 +199,12 @@ const ContextMenu: React.FC = () => {
         </Menu>
       ),
     };
-  }, [context.luckysheet_select_save, rightclick, setContext]);
+  }, [
+    context.currentSheetIndex,
+    context.luckysheet_select_save,
+    rightclick,
+    setContext,
+  ]);
 
   useLayoutEffect(() => {
     // re-position the context menu if it overflows the window
