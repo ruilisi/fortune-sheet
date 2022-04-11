@@ -6,4 +6,10 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  options: {
+    storySort: {
+      // put Workbook at first
+      order: ['Workbook'],
+    },
+  },
 };

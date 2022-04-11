@@ -9,6 +9,7 @@ export default {
 
 const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
   const [data, setData] = useState<Sheet[]>();
+  const [error, setError] = useState(false);
   const wsRef = useRef<WebSocket>();
   const workbookRef = useRef<WorkbookInstance>(null);
 
@@ -27,6 +28,9 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
         workbookRef.current?.applyOp(msg.data);
       }
     };
+    socket.onerror = () => {
+      setError(true);
+    };
   }, []);
 
   const onOp = useCallback((op: Op[]) => {
@@ -38,6 +42,26 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
   const onChange = useCallback((d: Sheet[]) => {
     setData(d);
   }, []);
+
+  if (error)
+    return (
+      <div style={{ padding: 16 }}>
+        <p>Failed to connect to websocket server.</p>
+        <p>
+          Please note that this collabration demo connects to a local websocket
+          server (ws://localhost:8081/ws).
+        </p>
+        <p>
+          To make this work:
+          <ol>
+            <li>Clone the project</li>
+            <li>Run server in backend-demo/: node index.js</li>
+            <li>Make sure you also have mongodb running locally</li>
+            <li>Try again</li>
+          </ol>
+        </p>
+      </div>
+    );
 
   if (!data) return <div />;
 
@@ -54,4 +78,4 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
   );
 };
 
-export const Basic = Template.bind({});
+export const Example = Template.bind({});
