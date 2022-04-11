@@ -558,9 +558,7 @@ function checkNoNullValueAll(cell) {
 
   return false;
 }
-// @ts-ignore
-function getNoNullValue(d, st_x, ed, type: string) {
-  // const _this = this;
+function getNoNullValue(d: CellMatrix, st_x: number, ed: number, type: string) {
   // let hasValueSum = 0;
   let hasValueStart = null;
   let nullNum = 0;
@@ -678,8 +676,6 @@ function backFormulaInput(
   formula: string,
   ctx: Context
 ) {
-  // const _this = this;
-
   const f = `=${formula.toUpperCase()}(${getRangetxt(
     ctx,
     ctx.currentSheetIndex,
@@ -715,8 +711,6 @@ function singleFormulaInput(
   noNum?: boolean,
   noNull?: boolean
 ) {
-  // const _this = this;
-
   if (type == null) {
     type = "r";
   }
@@ -921,7 +915,6 @@ function autoSelectionFormula(
   formula: string,
   cache: GlobalCache
 ) {
-  // const d = editor.deepCopyFlowData(Store.flowdata);
   const flowdata = getFlowdata(ctx);
   if (flowdata == null) return;
   // const nullfindnum = 40;
@@ -1107,7 +1100,6 @@ function autoSelectionFormula(
 }
 
 export function cancelPaintModel(ctx: Context) {
-  // let _this = this;
   // $("#luckysheet-sheettable_0").removeClass("luckysheetPaintCursor");
   if (ctx.luckysheet_copy_save === null) return;
   if (ctx.luckysheet_copy_save?.dataSheetIndex === ctx.currentSheetIndex) {

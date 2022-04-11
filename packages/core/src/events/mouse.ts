@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import {
+  cancelPaintModel,
   formulaCache,
   functionHTMLGenerate,
   israngeseleciton,
@@ -18,7 +19,10 @@ import {
   checkProtectionAllSelected,
   checkProtectionSelectLockedOrUnLockedCells,
 } from "../modules/protection";
-import { normalizeSelection } from "../modules/selection";
+import {
+  normalizeSelection,
+  pasteHandlerOfPaintModel,
+} from "../modules/selection";
 import { Settings } from "../settings";
 import { GlobalCache, Selection } from "../types";
 import { getSheetIndex } from "../utils";
@@ -396,8 +400,6 @@ export function handleCellAreaMouseDown(
         e.ctrlKey &&
         _.last(cellInput.querySelectorAll("span"))?.innerText !== ","
       ) {
-        // else if(event.ctrlKey && $("#luckysheet-rich-text-editor").find("span").last().text() != ","){
-        // check一下上一行
         // 按住ctrl 选择选区时  先处理上一个选区
         let vText = cellInput.innerText;
 
@@ -435,9 +437,8 @@ export function handleCellAreaMouseDown(
 
           /* 在显示前重新 + 右侧的圆括号) */
           cellInput.innerHTML = vText;
-          // $("#luckysheet-rich-text-editor").html(`${vText})`);
 
-          // formula.canceFunctionrangeSelected();
+          // formula.canceFunctionrangeSelected(); 暂时还没实现
           // formula.createRangeHightlight();
         }
 
@@ -3608,13 +3609,13 @@ export function handleOverlayMouseUp(
     //   countfunc();
     // }, 0);
     // 格式刷
-    // if (menuButton.luckysheetPaintModelOn) {
-    //   selection.pasteHandlerOfPaintModel(ctx.luckysheet_copy_save);
-    //   if (menuButton.luckysheetPaintSingle) {
-    //     // 单次 格式刷
-    //     menuButton.cancelPaintModel();
-    //   }
-    // }
+    if (ctx.luckysheetPaintModelOn) {
+      pasteHandlerOfPaintModel(ctx, ctx.luckysheet_copy_save);
+      if (ctx.luckysheetPaintSingle) {
+        // 单次 格式刷
+        cancelPaintModel(ctx);
+      }
+    }
   }
 
   ctx.luckysheet_select_status = false;
@@ -4823,9 +4824,6 @@ export function handleRowHeaderMouseDown(
           changeparam[3],
         ];
         // columnseleted = changeparam[0];
-        // rowseleted = changeparam[1];
-        // top = changeparam[2];
-        // height = changeparam[3];
         // left = changeparam[4];
         // width = changeparam[5];
       }
@@ -4900,7 +4898,6 @@ export function handleRowHeaderMouseDown(
         e.ctrlKey &&
         _.last(cellInput.querySelectorAll("span"))?.innerText !== ","
       ) {
-        // check一下
         // 按住ctrl 选择选区时  先处理上一个选区
         let vText = `${cellInput.innerText},`;
         if (vText.length > 0 && vText.substring(0, 1) === "=") {
@@ -5215,7 +5212,6 @@ export function handleColumnHeaderMouseDown(
   ctx.luckysheet_scroll_status = true;
 
   // 公式相关
-  // const $input = $("#luckysheet-input-box");
   if (!_.isEmpty(ctx.luckysheetCellUpdate)) {
     if (
       formulaCache.rangestart ||
@@ -5243,12 +5239,6 @@ export function handleColumnHeaderMouseDown(
           changeparam[4],
           changeparam[5],
         ];
-        // columnseleted = changeparam[0];
-        // // rowseleted= changeparam[1];
-        // // top = changeparam[2];
-        // // height = changeparam[3];
-        // left = changeparam[4];
-        // width = changeparam[5];
       }
 
       if (e.shiftKey) {
@@ -5306,12 +5296,6 @@ export function handleColumnHeaderMouseDown(
             changeparam[4],
             changeparam[5],
           ];
-          // columnseleted = changeparam[0];
-          // rowseleted= changeparam[1];
-          // top = changeparam[2];
-          // height = changeparam[3];
-          // left = changeparam[4];
-          // width = changeparam[5];
         }
 
         last.column = columnseleted;
@@ -5348,7 +5332,6 @@ export function handleColumnHeaderMouseDown(
             formulaCache.functionRangeIndex = textRange;
           }
 
-          // $("#luckysheet-rich-text-editor").html(vText);
           cellInput.innerHTML = vText;
 
           // formula.canceFunctionrangeSelected();

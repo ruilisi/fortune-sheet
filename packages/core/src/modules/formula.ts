@@ -3151,7 +3151,6 @@ function functionStrChange_range(
 
 export function israngeseleciton(istooltip?: boolean) {
   // istooltip疑似无用
-  // const _this = this;
 
   if (operatorjson == null) {
     const arr = operator.split("|");
@@ -3434,8 +3433,6 @@ export function functionStrChange(
   return function_str;
 }
 export function rangeSetValue(ctx: Context, selected: any) {
-  // const _this = this;
-
   // let range = "";
   const rf = selected.row[0];
   const cf = selected.column[0];
