@@ -240,6 +240,147 @@ describe("patch", () => {
     ]);
   });
 
+  it("patchToOp with row insertion and formula cells", async () => {
+    const newOps = patchToOp(
+      context,
+      [
+        {
+          op: "replace",
+          value: { bl: 1 },
+          path: ["luckysheetfile", 0, "data", 1, 1],
+        },
+        {
+          op: "replace",
+          value: { cl: 2 },
+          path: ["luckysheetfile", 0, "data", 2, 1],
+        },
+        {
+          op: "replace",
+          value: [{ cl: 2 }, null, null, { f: "f1" }, null, { f: "f2" }],
+          path: ["luckysheetfile", 0, "data", 3],
+        },
+        {
+          op: "replace",
+          value: ["1"],
+          path: ["luckysheetfile", 0, "calcChain"],
+        },
+      ],
+      {
+        insertRowColOp: {
+          type: "row",
+          index: 1,
+          count: 2,
+          direction: "lefttop",
+          sheetIndex: "index_1",
+        },
+      }
+    );
+    expect(newOps).toEqual([
+      {
+        op: "replace",
+        value: ["1"],
+        index: "index_1",
+        path: ["calcChain"],
+      },
+      {
+        op: "insertRowCol",
+        index: "index_1",
+        path: [],
+        value: {
+          type: "row",
+          index: 1,
+          count: 2,
+          direction: "lefttop",
+          sheetIndex: "index_1",
+        },
+      },
+      {
+        op: "replace",
+        value: { f: "f1" },
+        index: "index_1",
+        path: ["data", 3, 3],
+      },
+      {
+        op: "replace",
+        value: { f: "f2" },
+        index: "index_1",
+        path: ["data", 3, 5],
+      },
+    ]);
+  });
+
+  it("patchToOp with column deletion and formula cells", async () => {
+    const newOps = patchToOp(
+      context,
+      [
+        {
+          op: "replace",
+          value: { bl: 1 },
+          path: ["luckysheetfile", 0, "data", 1, 1],
+        },
+        {
+          op: "replace",
+          value: { cl: 2 },
+          path: ["luckysheetfile", 0, "data", 2, 1],
+        },
+        {
+          op: "replace",
+          value: { f: "f1" },
+          path: ["luckysheetfile", 0, "data", 3, 3],
+        },
+        {
+          op: "replace",
+          value: { f: "f2" },
+          path: ["luckysheetfile", 0, "data", 3, 5],
+        },
+        {
+          op: "replace",
+          value: ["1"],
+          path: ["luckysheetfile", 0, "calcChain"],
+        },
+      ],
+      {
+        deleteRowColOp: {
+          type: "column",
+          start: 2,
+          end: 3,
+          sheetIndex: "index_1",
+        },
+      }
+    );
+    expect(newOps).toEqual([
+      {
+        op: "replace",
+        value: ["1"],
+        index: "index_1",
+        path: ["calcChain"],
+      },
+      {
+        op: "deleteRowCol",
+        index: "index_1",
+        path: [],
+        value: {
+          type: "column",
+          start: 2,
+          end: 3,
+          sheetIndex: "index_1",
+        },
+      },
+      {
+        op: "replace",
+        value: { f: "f1" },
+        index: "index_1",
+        path: ["data", 3, 3],
+      },
+      {
+        op: "replace",
+        value: { f: "f2" },
+        index: "index_1",
+        path: ["data", 3, 5],
+      },
+    ]);
+  });
+
   it("opToPatch", async () => {
     const [newPatches, rowcolOps] = opToPatch(context, ops);
     expect(newPatches).toEqual(patches);

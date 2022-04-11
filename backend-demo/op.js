@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 const _ = require("lodash");
 
 /**
@@ -15,7 +16,7 @@ async function applyOp(collection, ops) {
       if (op.value.direction === "rightbottom") {
         insertPos += 1;
       }
-      collection.updateOne(
+      await collection.updateOne(
         filter,
         {
           $inc: {
@@ -27,7 +28,6 @@ async function applyOp(collection, ops) {
     } else if (op.op === "deleteRowCol") {
       const field = op.value.type === "row" ? "r" : "c";
       // delete cells
-      // eslint-disable-next-line no-await-in-loop
       await collection.updateOne(filter, {
         $pull: {
           celldata: {
@@ -39,7 +39,7 @@ async function applyOp(collection, ops) {
         },
       });
       // decr indexes
-      collection.updateOne(
+      await collection.updateOne(
         filter,
         {
           $inc: {
@@ -71,7 +71,6 @@ async function applyOp(collection, ops) {
               },
             };
       if (path.length === 3) {
-        // eslint-disable-next-line no-await-in-loop
         const cellExists = await collection.findOne({
           ...filter,
           celldata: {
@@ -82,9 +81,9 @@ async function applyOp(collection, ops) {
           },
         });
         if (cellExists) {
-          collection.updateOne(filter, updater, options);
+          await collection.updateOne(filter, updater, options);
         } else {
-          collection.updateOne(filter, {
+          await collection.updateOne(filter, {
             $addToSet: {
               celldata: {
                 r,
@@ -95,7 +94,7 @@ async function applyOp(collection, ops) {
           });
         }
       } else {
-        collection.updateOne(filter, updater, options);
+        await collection.updateOne(filter, updater, options);
       }
     } else if (path.length === 2 && path[0] === "data" && _.isNumber(path[1])) {
       // entire row operation
@@ -103,13 +102,13 @@ async function applyOp(collection, ops) {
     } else if (path[0] !== "data") {
       // other config update
       if (op.op === "remove") {
-        collection.updateOne(filter, {
+        await collection.updateOne(filter, {
           $unset: {
             [op.path.join(".")]: "",
           },
         });
       } else {
-        collection.updateOne(filter, {
+        await collection.updateOne(filter, {
           $set: {
             [op.path.join(".")]: op.value,
           },

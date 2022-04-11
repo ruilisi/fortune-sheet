@@ -22,7 +22,35 @@ export type PatchOptions = {
 };
 
 export function filterPatch(patches: Patch[]) {
-  return _.filter(patches, (p) => p.path[0] === "luckysheetfile");
+  return _.filter(
+    patches,
+    (p) =>
+      p.path[0] === "luckysheetfile" && p.path[2] !== "luckysheet_select_save"
+  );
+}
+
+export function extractFormulaCellOps(ops: Op[]) {
+  // ops are ensured to be cell data ops
+  const formulaOps: Op[] = [];
+  ops.forEach((op) => {
+    if (op.op === "remove") return;
+    if (op.path.length === 2 && Array.isArray(op.value)) {
+      // entire row op
+      for (let i = 0; i < op.value.length; i += 1) {
+        if (op.value[i]?.f) {
+          formulaOps.push({
+            op: "replace",
+            index: op.index,
+            path: [...op.path, i],
+            value: op.value[i],
+          });
+        }
+      }
+    } else if (op.path.length === 3 && op.value?.f) {
+      formulaOps.push(op);
+    }
+  });
+  return formulaOps;
 }
 
 export function patchToOp(
@@ -44,15 +72,19 @@ export function patchToOp(
     return op;
   });
   if (options?.insertRowColOp) {
-    ops = ops.filter((p) => p.path[0] !== "data");
+    const [nonDataOps, dataOps] = _.partition(ops, (p) => p.path[0] !== "data");
+    // find out formula cells as their formula range may be changed
+    const formulaOps = extractFormulaCellOps(dataOps);
+    ops = nonDataOps;
     ops.push({
       op: "insertRowCol",
       index: options.insertRowColOp.sheetIndex,
       path: [],
       value: options.insertRowColOp,
     });
+    ops = [...ops, ...formulaOps];
     if (options?.restoreDeletedCells) {
-      // find out cells to restore
+      // undoing deleted row/col, find out cells to restore
       const restoreCellsOps: Op[] = [];
       const flowdata = getFlowdata(ctx);
       if (flowdata) {
@@ -85,13 +117,17 @@ export function patchToOp(
       ops = [...ops, ...restoreCellsOps];
     }
   } else if (options?.deleteRowColOp) {
-    ops = ops.filter((p) => p.path[0] !== "data");
+    const [nonDataOps, dataOps] = _.partition(ops, (p) => p.path[0] !== "data");
+    // find out formula cells as their formula range may be changed
+    const formulaOps = extractFormulaCellOps(dataOps);
+    ops = nonDataOps;
     ops.push({
       op: "deleteRowCol",
       index: options.deleteRowColOp.sheetIndex,
       path: [],
       value: options.deleteRowColOp,
     });
+    ops = [...ops, ...formulaOps];
   }
   return ops;
 }
