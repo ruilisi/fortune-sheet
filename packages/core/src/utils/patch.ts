@@ -125,12 +125,16 @@ export function inverseRowColOptions(
 ): PatchOptions | undefined {
   if (!options) return options;
   if (options.insertRowColOp) {
+    let { index } = options.insertRowColOp;
+    if (options.insertRowColOp.direction === "rightbottom") {
+      index += 1;
+    }
     return {
       deleteRowColOp: {
         type: options.insertRowColOp.type,
         sheetIndex: options.insertRowColOp.sheetIndex,
-        start: options.insertRowColOp.index,
-        end: options.insertRowColOp.count,
+        start: index,
+        end: index + options.insertRowColOp.count - 1,
       },
     };
   }

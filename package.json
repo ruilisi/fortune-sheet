@@ -17,7 +17,7 @@
     "postinstall": "patch-package",
     "publish": "lerna publish --registry 'https://registry.npmjs.org'",
     "test": "jest",
-    "test:cov": "jest --coverage"
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",
