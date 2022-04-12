@@ -6,6 +6,11 @@ import {
   handleTextSize,
   normalizedCellAttr,
   getFlowdata,
+  newComment,
+  editComment,
+  deleteComment,
+  showHideComment,
+  showHideAllComments,
 } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import "./index.css";
@@ -141,6 +146,77 @@ const Toolbar: React.FC = () => {
           />
         );
       }
+      if (name === "comment") {
+        const last =
+          context.luckysheet_select_save?.[
+            context.luckysheet_select_save.length - 1
+          ];
+        let row_index = last?.row_focus;
+        let col_index = last?.column_focus;
+        if (!last) {
+          row_index = 0;
+          col_index = 0;
+        } else {
+          if (row_index == null) {
+            [row_index] = last.row;
+          }
+          if (col_index == null) {
+            [col_index] = last.column;
+          }
+        }
+        let itemData: { key: any; text: any; onClick: any }[];
+        if (flowdata?.[row_index][col_index]?.ps != null) {
+          itemData = [
+            { key: "edit", text: "编辑评论", onClick: editComment },
+            { key: "delete", text: "删除", onClick: deleteComment },
+            {
+              key: "showOrHide",
+              text: "显示/隐藏评论",
+              onClick: showHideComment,
+            },
+            {
+              key: "showOrHideAll",
+              text: "显示/隐藏所有评论",
+              onClick: showHideAllComments,
+            },
+          ];
+        } else {
+          itemData = [
+            { key: "new", text: "新建评论", onClick: newComment },
+            {
+              key: "showOrHideAll",
+              text: "显示/隐藏所有评论",
+              onClick: showHideAllComments,
+            },
+          ];
+        }
+        return (
+          <Combo iconId={name} key={name} tooltip={name}>
+            {(setOpen) => (
+              <Select>
+                {itemData.map(({ key, text, onClick }) => (
+                  <Option
+                    key={key}
+                    onClick={() => {
+                      setContext((draftContext) =>
+                        onClick(
+                          draftContext,
+                          refs.globalCache,
+                          row_index,
+                          col_index
+                        )
+                      );
+                      setOpen(false);
+                    }}
+                  >
+                    {text}
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
       return (
         <Button
           iconId={name}
@@ -158,7 +234,16 @@ const Toolbar: React.FC = () => {
         />
       );
     },
-    [cell, handleRedo, handleUndo, refs.cellInput, refs.globalCache, setContext]
+    [
+      cell,
+      handleRedo,
+      handleUndo,
+      context.luckysheet_select_save,
+      flowdata,
+      refs.cellInput,
+      refs.globalCache,
+      setContext,
+    ]
   );
 
   return (

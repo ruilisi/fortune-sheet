@@ -5,15 +5,27 @@ type ContentEditableProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
   "onChange"
 > & {
-  innerRef: (e: HTMLDivElement | null) => void;
-  onChange: (html: string) => void;
+  initialContent?: string;
+  innerRef?: (e: HTMLDivElement | null) => void;
+  onChange?: (html: string) => void;
   onBlur?: (e: React.FocusEvent<HTMLDivElement, Element>) => void;
+  autoFocus?: boolean;
 };
 
 class ContentEditable extends React.Component<ContentEditableProps> {
   lastHtml?: string = undefined;
 
   root: HTMLDivElement | null = null;
+
+  componentDidMount() {
+    const { autoFocus, initialContent } = this.props;
+    if (autoFocus) {
+      this.root?.focus();
+    }
+    if (initialContent && this.root) {
+      this.root.innerHTML = initialContent;
+    }
+  }
 
   emitChange() {
     const { onChange } = this.props;
@@ -28,14 +40,22 @@ class ContentEditable extends React.Component<ContentEditableProps> {
     const { innerRef, onBlur } = this.props;
     return (
       <div
-        {..._.omit(this.props, "innerRef", "onChange", "html", "onBlur")}
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+        {..._.omit(
+          this.props,
+          "innerRef",
+          "onChange",
+          "html",
+          "onBlur",
+          "autoFocus",
+          "initialContent"
+        )}
         ref={(e) => {
           this.root = e;
           innerRef?.(e);
         }}
         tabIndex={0}
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={(e) => e.stopPropagation()}
         onInput={this.emitChange.bind(this)}
         onBlur={(e) => {
           this.emitChange.bind(this)();

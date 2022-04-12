@@ -34,12 +34,12 @@ export type Cell = {
   lo?: number;
   rt?: number;
   ps?: {
-    left: number;
-    top: number;
-    width: number;
-    height: number;
+    left: number | null;
+    top: number | null;
+    width: number | null;
+    height: number | null;
     value: string;
-    isshow: boolean;
+    isShow: boolean;
   };
 } & CellStyle;
 
@@ -117,6 +117,17 @@ export type GlobalCache = {
   visibleRowsUnique?: number[];
   undoList: History[];
   redoList: History[];
+  editingCommentBox?: HTMLDivElement;
+  commentBox?: {
+    movingId: string | undefined;
+    resizingId: string | undefined;
+    resizingSide: string | undefined;
+    commentRC: { r: number; c: number; rc: string };
+    boxInitialPosition:
+      | { left: number; top: number; width: number; height: number }
+      | undefined;
+    cursorMoveStartPosition: { x: number; y: number } | undefined;
+  };
 };
 
 export type SingleRange = { row: number[]; column: number[] };

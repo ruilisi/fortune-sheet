@@ -1,17 +1,21 @@
 import React, { useContext, useCallback, useRef, useEffect } from "react";
 import "./index.css";
 import {
+  drawArrow,
   handleCellAreaDoubleClick,
   handleCellAreaMouseDown,
   handleContextMenu,
   handleOverlayMouseMove,
   handleOverlayMouseUp,
+  onCommentBoxMoveStart,
+  onCommentBoxResizeStart,
 } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import ColumnHeader from "./ColumnHeader";
 import RowHeader from "./RowHeader";
 import InputBox from "./InputBox";
 import ScrollBar from "./ScrollBar";
+import ContentEditable from "./ContentEditable";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
@@ -22,6 +26,7 @@ const SheetOverlay: React.FC = () => {
       setContext((draftCtx) => {
         handleCellAreaMouseDown(
           draftCtx,
+          refs.globalCache,
           e.nativeEvent,
           refs.cellInput.current!,
           refs.cellArea.current!,
@@ -29,7 +34,7 @@ const SheetOverlay: React.FC = () => {
         );
       });
     },
-    [refs.cellArea, refs.cellInput, refs.fxInput, setContext]
+    [refs.cellArea, refs.cellInput, refs.globalCache, refs.fxInput, setContext]
   );
 
   const cellAreaContextMenu = useCallback(
@@ -65,6 +70,7 @@ const SheetOverlay: React.FC = () => {
       setContext((draftCtx) => {
         handleOverlayMouseMove(
           draftCtx,
+          refs.globalCache,
           e.nativeEvent,
           refs.scrollbarX.current!,
           refs.scrollbarY.current!,
@@ -72,7 +78,7 @@ const SheetOverlay: React.FC = () => {
         );
       });
     },
-    [refs.scrollbarX, refs.scrollbarY, setContext]
+    [refs.globalCache, refs.scrollbarX, refs.scrollbarY, setContext]
   );
 
   const onMouseUp = useCallback(
@@ -80,13 +86,14 @@ const SheetOverlay: React.FC = () => {
       setContext((draftCtx) => {
         handleOverlayMouseUp(
           draftCtx,
+          refs.globalCache,
           settings,
           e.nativeEvent,
           containerRef.current!
         );
       });
     },
-    [setContext, settings]
+    [refs.globalCache, setContext, settings]
   );
 
   useEffect(() => {
@@ -96,8 +103,24 @@ const SheetOverlay: React.FC = () => {
 
   useEffect(() => {
     // ensure cell input is always focused to accept first key stroke on cell
-    refs.cellInput.current?.focus();
-  }, [context.luckysheet_select_save, refs.cellInput]);
+    if (!context.editingCommentBox) {
+      refs.cellInput.current?.focus();
+    }
+  }, [
+    context.editingCommentBox,
+    context.luckysheet_select_save,
+    refs.cellInput,
+  ]);
+
+  useEffect(() => {
+    if (context.commentBoxs || context.hoveredCommentBox) {
+      (context.commentBoxs || [])
+        .concat(context.hoveredCommentBox || [])
+        .forEach((box) => {
+          drawArrow(box.rc, box.size);
+        });
+    }
+  }, [context.commentBoxs, context.hoveredCommentBox]);
 
   return (
     <div
@@ -246,7 +269,145 @@ const SheetOverlay: React.FC = () => {
             </div>
           )}
           <InputBox />
-          <div id="luckysheet-postil-showBoxs" />
+          <div id="luckysheet-postil-showBoxs">
+            {context.commentBoxs
+              ?.concat(context.hoveredCommentBox)
+              .map((commentBox) => {
+                if (!commentBox) return null;
+                const {
+                  r,
+                  c,
+                  rc,
+                  left,
+                  top,
+                  width,
+                  height,
+                  value,
+                  autoFocus,
+                  size,
+                } = commentBox;
+                const isEditing = context.editingCommentBox === rc;
+                const commentId = `comment-box-${rc}`;
+                return (
+                  <div key={rc}>
+                    <canvas
+                      id={`arrowCanvas-${rc}`}
+                      className="arrowCanvas"
+                      width={size.width}
+                      height={size.height}
+                      style={{
+                        position: "absolute",
+                        left: size.left,
+                        top: size.top,
+                        zIndex: 100,
+                        pointerEvents: "none",
+                      }}
+                    />
+                    <div
+                      id={commentId}
+                      className="luckysheet-postil-show-main"
+                      style={{
+                        width,
+                        height,
+                        color: "#000",
+                        padding: 5,
+                        border: "1px solid #000",
+                        backgroundColor: "rgb(255,255,225)",
+                        position: "absolute",
+                        left,
+                        top,
+                        boxSizing: "border-box",
+                        zIndex: isEditing ? 200 : 100,
+                      }}
+                      onMouseDown={(e) => {
+                        onCommentBoxMoveStart(
+                          context,
+                          refs.globalCache,
+                          e.nativeEvent,
+                          containerRef.current!,
+                          { r, c, rc },
+                          commentId
+                        );
+                        e.stopPropagation();
+                      }}
+                    >
+                      <div className="luckysheet-postil-dialog-move">
+                        {["t", "r", "b", "l"].map((v) => (
+                          <div
+                            key={v}
+                            className={`luckysheet-postil-dialog-move-item luckysheet-postil-dialog-move-item-${v}`}
+                            data-type={v}
+                          />
+                        ))}
+                      </div>
+                      {isEditing && (
+                        <div className="luckysheet-postil-dialog-resize">
+                          {["lt", "mt", "lm", "rm", "rt", "lb", "mb", "rb"].map(
+                            (v) => (
+                              <div
+                                key={v}
+                                className={`luckysheet-postil-dialog-resize-item luckysheet-postil-dialog-resize-item-${v}`}
+                                data-type={v}
+                                onMouseDown={(e) => {
+                                  onCommentBoxResizeStart(
+                                    context,
+                                    refs.globalCache,
+                                    e.nativeEvent,
+                                    containerRef.current!,
+                                    { r, c, rc },
+                                    commentId,
+                                    v
+                                  );
+                                  e.stopPropagation();
+                                }}
+                              />
+                            )
+                          )}
+                        </div>
+                      )}
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <ContentEditable
+                          autoFocus={autoFocus}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            lineHeight: "20px",
+                            boxSizing: "border-box",
+                            textAlign: "center",
+                            wordBreak: "break-all",
+                            outline: "none",
+                          }}
+                          spellCheck={false}
+                          data-r={r}
+                          data-c={c}
+                          onKeyDown={(e) => e.stopPropagation()}
+                          onFocus={(e) => {
+                            refs.globalCache.editingCommentBox =
+                              e.target as HTMLDivElement;
+                            setContext((draftContext) => {
+                              draftContext.editingCommentBox = rc;
+                            });
+                          }}
+                          onMouseDown={(e) => {
+                            e.stopPropagation();
+                          }}
+                          onDoubleClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                          initialContent={value}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
           <div id="luckysheet-multipleRange-show" />
           <div id="luckysheet-dynamicArray-hightShow" />
           <div id="luckysheet-image-showBoxs">

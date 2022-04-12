@@ -13,6 +13,9 @@ export type Context = {
   devicePixelRatio: number;
   limitSheetNameLength: boolean;
   defaultSheetNameMaxLength?: number;
+  commentBoxs?: any[];
+  editingCommentBox?: string;
+  hoveredCommentBox?: any;
 
   contextMenu: any;
 

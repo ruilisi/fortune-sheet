@@ -154,7 +154,7 @@
             width: 73,//批注框宽度 <br>
             left: 75,//批注框距离左边工作表边缘位置 <br>
             top: 22,//批注框距离上边工作表边缘位置 <br>
-            isshow: true,//是否显示批注<br>
+            isShow: true,//是否显示批注<br>
             value: "jhbk"//批注内容<br>
         }
         </code>
@@ -190,7 +190,7 @@
         "width": 91, //批注框宽度
         "height": 48, //批注框高度
         "value": "I am a comment", //批准内容
-        "isshow": true //批注框为显示状态
+        "isShow": true //批注框为显示状态
     },
     "f": "=SUM(233)" //单元格是一个求和公式
 }

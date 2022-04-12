@@ -110,6 +110,8 @@ export const defaultSettings: Required<Settings> = {
     "align-top",
     "align-mid",
     "align-bottom",
+    "|",
+    "comment",
     "formula-sum",
   ], // 自定义工具栏
   showsheetbarConfig: {}, // 自定义底部sheet页

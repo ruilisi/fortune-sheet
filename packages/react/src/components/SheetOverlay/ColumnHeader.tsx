@@ -59,6 +59,7 @@ const ColumnHeader: React.FC = () => {
       setContext((draftCtx) => {
         handleColumnHeaderMouseDown(
           draftCtx,
+          refs.globalCache,
           e.nativeEvent,
           containerRef.current!,
           cellInputRef.current!,
@@ -66,7 +67,7 @@ const ColumnHeader: React.FC = () => {
         );
       });
     },
-    [setContext]
+    [refs.globalCache, setContext]
   );
 
   const onMouseLeave = useCallback(() => {
@@ -81,6 +82,7 @@ const ColumnHeader: React.FC = () => {
       setContext((draftCtx) => {
         handleColSizeHandleMouseDown(
           draftCtx,
+          refs.globalCache,
           e.nativeEvent,
           containerRef.current!,
           refs.cellArea.current!
@@ -88,7 +90,7 @@ const ColumnHeader: React.FC = () => {
       });
       e.stopPropagation();
     },
-    [refs.cellArea, setContext]
+    [refs.cellArea, refs.globalCache, setContext]
   );
 
   const onContextMenu = useCallback(

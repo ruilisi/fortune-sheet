@@ -7,6 +7,12 @@ import {
   israngeseleciton,
   rangeHightlightselected,
   rangeSetValue,
+  onCommentBoxMove,
+  onCommentBoxMoveEnd,
+  onCommentBoxResize,
+  onCommentBoxResizeEnd,
+  removeEditingComment,
+  showComment,
 } from "../modules";
 import { mergeBorder, mergeMoveMain, updateCell } from "../modules/cell";
 import {
@@ -134,6 +140,7 @@ export function handleGlobalWheel(
 
 export function handleCellAreaMouseDown(
   ctx: Context,
+  globalCache: GlobalCache,
   e: MouseEvent,
   cellInput: HTMLDivElement,
   container: HTMLDivElement,
@@ -143,6 +150,8 @@ export function handleCellAreaMouseDown(
 
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
+  // //有批注在编辑时
+  removeEditingComment(ctx, globalCache);
   // TODO set MouseDown state to context
   // const mouse = mousePosition(
   //   e.nativeEvent.offsetX,
@@ -1373,6 +1382,7 @@ export function handleContextMenu(
 
 function mouseRender(
   ctx: Context,
+  globalCache: GlobalCache,
   e: MouseEvent,
   scrollX: HTMLDivElement,
   scrollY: HTMLDivElement,
@@ -3003,113 +3013,6 @@ function mouseRender(
         offsetLeft,
         offsetTop,
       };
-    } else if (luckysheetPostil.move) {
-      const mouse = mouseposition(event.pageX, event.pageY);
-      const x = mouse[0] + $("#luckysheet-cell-main").scrollLeft();
-      const y = mouse[1] + $("#luckysheet-cell-main").scrollTop();
-  
-      const myh = luckysheetPostil.currentObj.outerHeight();
-      const myw = luckysheetPostil.currentObj.outerWidth();
-  
-      let top = y - luckysheetPostil.moveXY[1];
-      let left = x - luckysheetPostil.moveXY[0];
-  
-      if (top < 0) {
-        top = 0;
-      }
-  
-      if (top + myh + 42 + 6 > luckysheetPostil.currentWinH) {
-        top = luckysheetPostil.currentWinH - myh - 42 - 6;
-      }
-  
-      if (left < 0) {
-        left = 0;
-      }
-  
-      if (left + myw + 22 + 36 > luckysheetPostil.currentWinW) {
-        left = luckysheetPostil.currentWinW - myw - 22 - 36;
-      }
-  
-      luckysheetPostil.currentObj.css({ left, top });
-    } else if (luckysheetPostil.resize) {
-      const mouse = mouseposition(event.pageX, event.pageY);
-      const x = mouse[0] + $("#luckysheet-cell-main").scrollLeft();
-      const y = mouse[1] + $("#luckysheet-cell-main").scrollTop();
-  
-      if (x < 0 || y < 0) {
-        return false;
-      }
-  
-      const { resizeXY } = luckysheetPostil;
-  
-      const topchange = y - resizeXY[1];
-      const leftchange = x - resizeXY[0];
-  
-      let top = resizeXY[5];
-      let height = resizeXY[3];
-      let left = resizeXY[4];
-      let width = resizeXY[2];
-  
-      const { resize } = luckysheetPostil;
-  
-      if (resize == "lm" || resize == "lt" || resize == "lb") {
-        left = x;
-        width = resizeXY[2] - leftchange;
-  
-        if (left > resizeXY[2] + resizeXY[4] - 60) {
-          left = resizeXY[2] + resizeXY[4] - 60;
-          width = resizeXY[2] - (resizeXY[2] + resizeXY[4] - 60 - resizeXY[0]);
-        } else if (left <= 0) {
-          left = 0;
-          width = resizeXY[2] + resizeXY[0];
-        }
-      }
-  
-      if (resize == "rm" || resize == "rt" || resize == "rb") {
-        width = resizeXY[2] + leftchange;
-  
-        if (width < 60) {
-          width = 60;
-        } else if (
-          width >=
-          luckysheetPostil.currentWinW - resizeXY[4] - 22 - 36
-        ) {
-          width = luckysheetPostil.currentWinW - resizeXY[4] - 22 - 36;
-        }
-      }
-  
-      if (resize == "mt" || resize == "lt" || resize == "rt") {
-        top = y;
-        height = resizeXY[3] - topchange;
-  
-        if (top > resizeXY[3] + resizeXY[5] - 60) {
-          top = resizeXY[3] + resizeXY[5] - 60;
-          height = resizeXY[3] - (resizeXY[3] + resizeXY[5] - 60 - resizeXY[1]);
-        } else if (top <= 0) {
-          top = 0;
-          height = resizeXY[3] + resizeXY[1];
-        }
-      }
-  
-      if (resize == "mb" || resize == "lb" || resize == "rb") {
-        height = resizeXY[3] + topchange;
-  
-        if (height < 60) {
-          height = 60;
-        } else if (
-          height >=
-          luckysheetPostil.currentWinH - resizeXY[5] - 42 - 6
-        ) {
-          height = luckysheetPostil.currentWinH - resizeXY[5] - 42 - 6;
-        }
-      }
-  
-      luckysheetPostil.currentObj.css({
-        width,
-        height,
-        left,
-        top,
-      });
     } else if (formula.rangeResize) {
       formula.rangeResizeDraging(
         event,
@@ -3150,12 +3053,15 @@ function mouseRender(
 
 export function handleOverlayMouseMove(
   ctx: Context,
+  globalCache: GlobalCache,
   e: MouseEvent,
   scrollX: HTMLDivElement,
   scrollY: HTMLDivElement,
   container: HTMLDivElement
 ) {
-  // luckysheetPostil.overshow(event); // 有批注显示
+  if (onCommentBoxResize(ctx, globalCache, e)) return;
+  if (onCommentBoxMove(ctx, globalCache, e)) return;
+  showComment(ctx, e, scrollX, scrollY, container); // 有批注显示
   // hyperlinkCtrl.overshow(event); // 链接提示显示
 
   // window.cancelAnimationFrame(ctx.jfautoscrollTimeout);
@@ -3512,18 +3418,22 @@ export function handleOverlayMouseMove(
     //   }, 500);
     // }
 
-    mouseRender(ctx, e, scrollX, scrollY, container);
+    mouseRender(ctx, globalCache, e, scrollX, scrollY, container);
     // ctx.jfautoscrollTimeout = window.requestAnimationFrame(mouseRender);
   }
 }
 
 export function handleOverlayMouseUp(
   ctx: Context,
+  globalCache: GlobalCache,
   settings: Settings,
   e: MouseEvent,
   container: HTMLDivElement
 ) {
   const rect = container.getBoundingClientRect();
+  // 批注框 移动结束
+  onCommentBoxMoveEnd(ctx, globalCache, container);
+  onCommentBoxResizeEnd(ctx, globalCache, container);
   // if (
   //   luckysheetConfigsetting &&
   //   luckysheetConfigsetting.hook &&
@@ -3869,78 +3779,6 @@ export function handleOverlayMouseUp(
     // image cropChange
     if (imageCtrl.cropChange) {
       imageCtrl.cropChangeImgItem();
-    }
-  
-    // 批注框 移动
-    if (luckysheetPostil.move) {
-      luckysheetPostil.move = false;
-  
-      const ps_id = luckysheetPostil.currentObj
-        .closest(".luckysheet-postil-show")
-        .attr("id");
-  
-      const ps_r = ps_id.split("luckysheet-postil-show_")[1].split("_")[0];
-      const ps_c = ps_id.split("luckysheet-postil-show_")[1].split("_")[1];
-  
-      const d = editor.deepCopyFlowData(ctx.flowdata);
-      const rc = [];
-  
-      d[ps_r][ps_c].ps.left = luckysheetPostil.currentObj.position().left;
-      d[ps_r][ps_c].ps.top = luckysheetPostil.currentObj.position().top;
-      d[ps_r][ps_c].ps.value = luckysheetPostil.currentObj
-        .find(".formulaInputFocus")
-        .text();
-  
-      rc.push(`${ps_r}_${ps_c}`);
-  
-      luckysheetPostil.ref(d, rc);
-  
-      $(`#${ps_id}`).remove();
-  
-      if (d[ps_r][ps_c].ps.isshow) {
-        luckysheetPostil.buildPs(ps_r, ps_c, d[ps_r][ps_c].ps);
-        $(`#${ps_id}`).addClass("luckysheet-postil-show-active");
-        $(`#${ps_id}`).find(".luckysheet-postil-dialog-resize").show();
-      } else {
-        luckysheetPostil.editPs(ps_r, ps_c);
-      }
-    }
-  
-    // 批注框 改变大小
-    if (luckysheetPostil.resize) {
-      luckysheetPostil.resize = null;
-  
-      const ps_id = luckysheetPostil.currentObj
-        .closest(".luckysheet-postil-show")
-        .attr("id");
-  
-      const ps_r = ps_id.split("luckysheet-postil-show_")[1].split("_")[0];
-      const ps_c = ps_id.split("luckysheet-postil-show_")[1].split("_")[1];
-  
-      const d = editor.deepCopyFlowData(ctx.flowdata);
-      const rc = [];
-  
-      d[ps_r][ps_c].ps.left = luckysheetPostil.currentObj.position().left;
-      d[ps_r][ps_c].ps.top = luckysheetPostil.currentObj.position().top;
-      d[ps_r][ps_c].ps.width = luckysheetPostil.currentObj.outerWidth();
-      d[ps_r][ps_c].ps.height = luckysheetPostil.currentObj.outerHeight();
-      d[ps_r][ps_c].ps.value = luckysheetPostil.currentObj
-        .find(".formulaInputFocus")
-        .text();
-  
-      rc.push(`${ps_r}_${ps_c}`);
-  
-      luckysheetPostil.ref(d, rc);
-  
-      $(`#${ps_id}`).remove();
-  
-      if (d[ps_r][ps_c].ps.isshow) {
-        luckysheetPostil.buildPs(ps_r, ps_c, d[ps_r][ps_c].ps);
-        $(`#${ps_id}`).addClass("luckysheet-postil-show-active");
-        $(`#${ps_id}`).find(".luckysheet-postil-dialog-resize").show();
-      } else {
-        luckysheetPostil.editPs(ps_r, ps_c);
-      }
     }
     */
 
@@ -4732,6 +4570,7 @@ export function handleOverlayMouseUp(
 
 export function handleRowHeaderMouseDown(
   ctx: Context,
+  globalCache: GlobalCache,
   e: MouseEvent,
   container: HTMLDivElement,
   cellInput: HTMLDivElement,
@@ -4741,7 +4580,7 @@ export function handleRowHeaderMouseDown(
     return;
   }
   // 有批注在编辑时
-  // luckysheetPostil.removeActivePs();
+  removeEditingComment(ctx, globalCache);
 
   // 图片 active/cropping
   // if (
@@ -5145,6 +4984,7 @@ export function handleRowHeaderMouseDown(
 
 export function handleColumnHeaderMouseDown(
   ctx: Context,
+  globalCache: GlobalCache,
   e: MouseEvent,
   container: HTMLElement,
   cellInput: HTMLDivElement,
@@ -5154,7 +4994,7 @@ export function handleColumnHeaderMouseDown(
     return;
   }
   // 有批注在编辑时
-  // luckysheetPostil.removeActivePs();
+  removeEditingComment(ctx, globalCache);
 
   // 图片 active/cropping
   // if (
@@ -5542,12 +5382,13 @@ export function handleColumnHeaderMouseDown(
 
 export function handleColSizeHandleMouseDown(
   ctx: Context,
+  globalCache: GlobalCache,
   e: MouseEvent,
   headerContainer: HTMLDivElement,
   cellArea: HTMLDivElement
 ) {
   // //有批注在编辑时
-  // luckysheetPostil.removeActivePs();
+  removeEditingComment(ctx, globalCache);
 
   // //图片 active/cropping
   // if (
@@ -5596,12 +5437,13 @@ export function handleColSizeHandleMouseDown(
 
 export function handleRowSizeHandleMouseDown(
   ctx: Context,
+  globalCache: GlobalCache,
   e: MouseEvent,
   headerContainer: HTMLDivElement,
   cellArea: HTMLDivElement
 ) {
-  // //有批注在编辑时
-  // luckysheetPostil.removeActivePs();
+  // 有批注在编辑时
+  removeEditingComment(ctx, globalCache);
 
   // //图片 active/cropping
   // if (
