@@ -1239,7 +1239,7 @@ export function getFontStyleByCell(
     // }
 
     if (key === "fs" && valueNum !== 10) {
-      style.fontSize = valueNum;
+      style.fontSize = `${valueNum}pt`;
     }
 
     if (
