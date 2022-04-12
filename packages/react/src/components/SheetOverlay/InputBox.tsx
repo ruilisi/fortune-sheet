@@ -234,6 +234,15 @@ const InputBox: React.FC = () => {
     }
   }, [refs.cellInput, refs.fxInput, setContext]);
 
+  const onPaste = useCallback(
+    (e: React.ClipboardEvent<HTMLDivElement>) => {
+      if (_.isEmpty(context.luckysheetCellUpdate)) {
+        e.preventDefault();
+      }
+    },
+    [context.luckysheetCellUpdate]
+  );
+
   return (
     <div
       className="luckysheet-input-box"
@@ -270,6 +279,7 @@ const InputBox: React.FC = () => {
           aria-autocomplete="list"
           onChange={onChange}
           onKeyDown={onKeyDown}
+          onPaste={onPaste}
         />
       </div>
       {document.activeElement === inputRef.current && (

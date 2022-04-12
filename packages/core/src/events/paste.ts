@@ -223,7 +223,7 @@ function postPasteCut(
   // });
 }
 
-function pasteHandler(ctx: Context, data: any, borderInfo: any) {
+function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
   // if (
   //   !checkProtectionLockedRangeList(
   //     ctx.luckysheet_select_save,
@@ -1402,7 +1402,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
     if (!clipboardData) return;
 
-    const txtdata =
+    let txtdata =
       clipboardData.getData("text/html") || clipboardData.getData("text/plain");
 
     // 如果标示是qksheet复制的内容，判断剪贴板内容是否是当前页面复制的内容
@@ -1576,7 +1576,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
             }
 
             let bg: string | undefined = td.style.backgroundColor;
-            if (bg === "rgba(0, 0, 0, 0)") {
+            if (bg === "rgba(0, 0, 0, 0)" || _.isEmpty(bg)) {
               bg = undefined;
             }
 
@@ -1584,11 +1584,18 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
             const fontWight = td.style.fontWeight;
             cell.bl =
-              fontWight.toString() === "400" || fontWight === "normal" ? 0 : 1;
+              fontWight.toString() === "400" ||
+              fontWight === "normal" ||
+              _.isEmpty(fontWight)
+                ? 0
+                : 1;
 
-            cell.it = td.style.fontStyle === "normal" ? 0 : 1;
+            cell.it =
+              td.style.fontStyle === "normal" || _.isEmpty(td.style.fontStyle)
+                ? 0
+                : 1;
 
-            const ff = td.style.fontFamily;
+            const ff = td.style.fontFamily || "";
             const ffs = ff.split(",");
             for (let i = 0; i < ffs.length; i += 1) {
               let fa = _.trim(ffs[i].toLowerCase());
@@ -1601,12 +1608,14 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
                 break;
               }
             }
-            const fs = Math.round((parseInt(td.style.fontSize, 10) * 72) / 96);
+            const fs = Math.round(
+              (parseInt(td.style.fontSize || "13", 10) * 72) / 96
+            );
             cell.fs = fs;
 
             cell.fc = td.style.color;
 
-            const ht = td.style.textAlign;
+            const ht = td.style.textAlign || "left";
             if (ht === "center") {
               cell.ht = 0;
             } else if (ht === "right") {
@@ -1615,7 +1624,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
               cell.ht = 1;
             }
 
-            const vt = td.style.verticalAlign;
+            const vt = td.style.verticalAlign || "top";
             if (vt === "middle") {
               cell.vt = 0;
             } else if (vt === "top" || vt === "text-top") {
@@ -1768,15 +1777,15 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
         ele.remove();
       }
       // 复制的是图片
-      // else if (
-      //   clipboardData.files.length === 1 &&
-      //   clipboardData.files[0].type.indexOf("image") > -1
-      // ) {
-      //   imageCtrl.insertImg(clipboardData.files[0]);
-      // } else {
-      //   txtdata = clipboardData.getData("text/plain");
-      //   selection.pasteHandler(txtdata);
-      // }
+      else if (
+        clipboardData.files.length === 1 &&
+        clipboardData.files[0].type.indexOf("image") > -1
+      ) {
+        //   imageCtrl.insertImg(clipboardData.files[0]);
+      } else {
+        txtdata = clipboardData.getData("text/plain");
+        pasteHandler(ctx, txtdata);
+      }
     }
   } else if (ctx.luckysheetCellUpdate.length > 0) {
     // 阻止默认粘贴

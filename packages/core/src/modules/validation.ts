@@ -35,7 +35,7 @@ export function isRealNum(val: any) {
     return false;
   }
 
-  return !Number.isNaN(val);
+  return !Number.isNaN(Number(val));
 }
 
 function checkDateTime(str: string) {
