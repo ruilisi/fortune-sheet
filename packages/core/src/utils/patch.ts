@@ -19,6 +19,10 @@ export type PatchOptions = {
     sheetIndex: string;
   };
   restoreDeletedCells?: boolean;
+  addSheetOp?: boolean;
+  deleteSheetOp?: {
+    index: string;
+  };
 };
 
 export function filterPatch(patches: Patch[]) {
@@ -128,12 +132,32 @@ export function patchToOp(
       value: options.deleteRowColOp,
     });
     ops = [...ops, ...formulaOps];
+  } else if (options?.addSheetOp) {
+    const [addSheetOps, otherOps] = _.partition(
+      ops,
+      (op) => op.path.length === 0 && op.op === "add"
+    );
+    ops = otherOps;
+    ops.push({
+      op: "addSheet",
+      path: [],
+      value: addSheetOps[0]?.value,
+    });
+  } else if (options?.deleteSheetOp) {
+    ops = [
+      {
+        op: "deleteSheet",
+        index: options.deleteSheetOp.index,
+        path: [],
+        value: options.deleteSheetOp,
+      },
+    ];
   }
   return ops;
 }
 
 export function opToPatch(ctx: Context, ops: Op[]): [Patch[], Op[]] {
-  const [normalOps, rowcolOps] = _.partition(
+  const [normalOps, specialOps] = _.partition(
     ops,
     (op) => op.op === "add" || op.op === "remove" || op.op === "replace"
   );
@@ -153,7 +177,7 @@ export function opToPatch(ctx: Context, ops: Op[]): [Patch[], Op[]] {
     }
     return patch;
   });
-  return [patches, rowcolOps];
+  return [patches, specialOps];
 }
 
 export function inverseRowColOptions(

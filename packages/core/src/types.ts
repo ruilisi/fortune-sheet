@@ -2,7 +2,14 @@ import { Patch as ImmerPatch } from "immer";
 import { PatchOptions } from "./utils";
 
 export type Op = {
-  op: "replace" | "remove" | "add" | "insertRowCol" | "deleteRowCol";
+  op:
+    | "replace"
+    | "remove"
+    | "add"
+    | "insertRowCol"
+    | "deleteRowCol"
+    | "addSheet"
+    | "deleteSheet";
   index?: string;
   path: (string | number)[];
   value?: any;

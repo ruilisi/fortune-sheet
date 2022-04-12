@@ -18,6 +18,8 @@ import {
   inverseRowColOptions,
   insertRowCol,
   deleteRowCol,
+  addSheet,
+  deleteSheet,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -71,16 +73,24 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
 
     const applyOp = useCallback((ops: Op[]) => {
       setContext((ctx_) => {
-        const [patches, rowcolOps] = opToPatch(ctx_, ops);
-        if (rowcolOps.length > 0) {
-          const [rowcolOp] = rowcolOps;
-          if (rowcolOp.op === "insertRowCol") {
+        const [patches, specialOps] = opToPatch(ctx_, ops);
+        if (specialOps.length > 0) {
+          const [specialOp] = specialOps;
+          if (specialOp.op === "insertRowCol") {
             ctx_ = produce(ctx_, (draftCtx) => {
-              insertRowCol(draftCtx, rowcolOp.value);
+              insertRowCol(draftCtx, specialOp.value);
             });
-          } else if (rowcolOp.op === "deleteRowCol") {
+          } else if (specialOp.op === "deleteRowCol") {
             ctx_ = produce(ctx_, (draftCtx) => {
-              deleteRowCol(draftCtx, rowcolOp.value);
+              deleteRowCol(draftCtx, specialOp.value);
+            });
+          } else if (specialOp.op === "addSheet") {
+            ctx_ = produce(ctx_, (draftCtx) => {
+              addSheet(draftCtx);
+            });
+          } else if (specialOp.op === "deleteSheet") {
+            ctx_ = produce(ctx_, (draftCtx) => {
+              deleteSheet(draftCtx, specialOp.value.index);
             });
           }
         }
@@ -111,12 +121,15 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             const filteredPatches = filterPatch(patches);
             const filteredInversePatches = filterPatch(inversePatches);
             if (filteredInversePatches.length > 0) {
-              globalCache.current.undoList.push({
-                patches: filteredPatches,
-                inversePatches: filteredInversePatches,
-                options,
-              });
-              globalCache.current.redoList = [];
+              if (!options.addSheetOp && !options.deleteSheetOp) {
+                // add and delete sheet does not support undo/redo
+                globalCache.current.undoList.push({
+                  patches: filteredPatches,
+                  inversePatches: filteredInversePatches,
+                  options,
+                });
+                globalCache.current.redoList = [];
+              }
               emitOp(result, filteredPatches, options);
             }
           }

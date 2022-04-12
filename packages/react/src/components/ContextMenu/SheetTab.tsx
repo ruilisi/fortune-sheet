@@ -69,10 +69,17 @@ const SheetTabContextMenu: React.FC<Props> = ({
     >
       <Menu
         onClick={() => {
-          setContext((draftCtx) => {
-            deleteSheet(draftCtx, sheet.index!);
-            onClose?.();
-          });
+          setContext(
+            (draftCtx) => {
+              deleteSheet(draftCtx, sheet.index!);
+              onClose?.();
+            },
+            {
+              deleteSheetOp: {
+                index: sheet.index!,
+              },
+            }
+          );
         }}
       >
         {sheetconfig.delete}
