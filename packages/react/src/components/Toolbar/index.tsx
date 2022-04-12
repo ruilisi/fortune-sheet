@@ -11,6 +11,8 @@ import {
   deleteComment,
   showHideComment,
   showHideAllComments,
+  autoSelectionFormula,
+  handleSum,
 } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import "./index.css";
@@ -217,6 +219,53 @@ const Toolbar: React.FC = () => {
           </Combo>
         );
       }
+
+      if (name === "formula-sum") {
+        const itemData = [
+          { text: "求和", key: "SUM" },
+          { text: "平均", key: "AVERAGE" },
+          { text: "计数", key: "COUNT" },
+          { text: "最大值", key: "MAX" },
+          { text: "最小值", key: "MIN" },
+        ];
+        return (
+          <Combo
+            iconId={name}
+            key={name}
+            tooltip={name}
+            text="求和"
+            onClick={() =>
+              setContext((ctx) => {
+                handleSum(ctx, refs.cellInput.current!, refs.globalCache!);
+              })
+            }
+          >
+            {(setOpen) => (
+              <Select>
+                {itemData.map(({ key, text }) => (
+                  <Option
+                    key={key}
+                    onClick={() => {
+                      setContext((ctx) => {
+                        autoSelectionFormula(
+                          ctx,
+                          refs.cellInput.current!,
+                          key,
+                          refs.globalCache
+                        );
+                      });
+                      setOpen(false);
+                    }}
+                  >
+                    {`${text}  ${key}`}
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
+
       return (
         <Button
           iconId={name}

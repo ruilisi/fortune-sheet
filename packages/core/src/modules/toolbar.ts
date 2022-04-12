@@ -889,7 +889,7 @@ function singleFormulaInput(
   }
   return true;
 }
-function autoSelectionFormula(
+export function autoSelectionFormula(
   ctx: Context,
   cellInput: HTMLDivElement,
   formula: string,
