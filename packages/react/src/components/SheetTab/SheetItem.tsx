@@ -1,4 +1,4 @@
-import { Sheet, handleSheetTabOnBlur } from "@fortune-sheet/core";
+import { Sheet, editSheetName } from "@fortune-sheet/core";
 import React, {
   useContext,
   useState,
@@ -53,10 +53,16 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
 
   const onBlur = useCallback(() => {
     setContext((draftCtx) => {
-      handleSheetTabOnBlur(draftCtx, editable.current!);
+      editSheetName(draftCtx, editable.current!);
     });
     setEditing(false);
   }, [setContext]);
+
+  const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLSpanElement>) => {
+    if (e.key === "Enter") {
+      editable.current?.blur();
+    }
+  }, []);
 
   return (
     <div
@@ -87,6 +93,7 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
         contentEditable={editing}
         onDoubleClick={() => setEditing(true)}
         onBlur={onBlur}
+        onKeyDown={onKeyDown}
         ref={editable}
       >
         {sheet.name}

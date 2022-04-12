@@ -173,7 +173,7 @@ export function deleteSheet(ctx: Context, index: string) {
   // method.createHookFunction("sheetDeleteAfter", { sheet: file });
 }
 
-export function handleSheetTabOnBlur(ctx: Context, editable: HTMLSpanElement) {
+export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
   if (ctx.allowEdit === false) {
     return;
   }
