@@ -28,10 +28,7 @@ const port = process.env.PORT || 8081;
 
 async function getData() {
   const db = client.db(dbName);
-  const data = await db
-    .collection(collectionName)
-    .find({ name: "Demo" })
-    .toArray();
+  const data = await db.collection(collectionName).find().toArray();
   return data;
 }
 
@@ -44,7 +41,7 @@ app.get("/", async (req, res) => {
 app.get("/init", async (req, res) => {
   const db = client.db(dbName);
   const coll = db.collection(collectionName);
-  await coll.deleteMany({ name: "Demo" });
+  await coll.deleteMany();
   await db.collection(collectionName).insertOne(defaultData);
   res.json({
     ok: true,
