@@ -2,6 +2,7 @@ import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { locale } from "../locale";
 import {
+  delFunctionGroup,
   execfunction,
   execFunctionGroup,
   formulaCache,
@@ -12,7 +13,7 @@ import { genarate, update } from "../modules/format";
 import { selectionCache } from "../modules/selection";
 import { Cell, CellMatrix } from "../types";
 import { getSheetIndex } from "../utils";
-import { hasPartMC } from "../modules/validation";
+import { hasPartMC, isRealNum } from "../modules/validation";
 import { getBorderInfoCompute } from "../modules/border";
 import { storeSheetParamALL } from "../modules/sheet";
 
@@ -220,6 +221,294 @@ function postPasteCut(
   // server.saveParam("all", target["sheetIndex"], target["curDataVerification"], {
   //   k: "dataVerification",
   // });
+}
+
+function pasteHandler(ctx: Context, data: any, borderInfo: any) {
+  // if (
+  //   !checkProtectionLockedRangeList(
+  //     ctx.luckysheet_select_save,
+  //     ctx.currentSheetIndex
+  //   )
+  // ) {
+  //   return;
+  // }
+
+  if (ctx.allowEdit === false) {
+    return;
+  }
+  if ((ctx.luckysheet_select_save?.length ?? 0) !== 1) {
+    // if (isEditMode()) {
+    //   alert("不能对多重选择区域执行此操作，请选择单个区域，然后再试");
+    // } else {
+    //   tooltip.info(
+    //     '<i class="fa fa-exclamation-triangle"></i>提示',
+    //     "不能对多重选择区域执行此操作，请选择单个区域，然后再试"
+    //   );
+    // }
+    return;
+  }
+
+  if (typeof data === "object") {
+    if (data.length === 0) {
+      return;
+    }
+
+    const cfg = ctx.config || {};
+    if (cfg.merge == null) {
+      cfg.merge = {};
+    }
+
+    if (JSON.stringify(borderInfo).length > 2 && cfg.borderInfo == null) {
+      cfg.borderInfo = [];
+    }
+
+    const copyh = data.length;
+    const copyc = data[0].length;
+
+    const minh = ctx.luckysheet_select_save![0].row[0]; // 应用范围首尾行
+    const maxh = minh + copyh - 1;
+    const minc = ctx.luckysheet_select_save![0].column[0]; // 应用范围首尾列
+    const maxc = minc + copyc - 1;
+
+    // 应用范围包含部分合并单元格，则return提示
+    let has_PartMC = false;
+    if (cfg.merge != null) {
+      has_PartMC = hasPartMC(ctx, cfg, minh, maxh, minc, maxc);
+    }
+
+    if (has_PartMC) {
+      // if (isEditMode()) {
+      //   alert("不能对合并单元格做部分更改");
+      // } else {
+      //   tooltip.info(
+      //     '<i class="fa fa-exclamation-triangle"></i>提示',
+      //     "不能对合并单元格做部分更改"
+      //   );
+      // }
+      return;
+    }
+
+    const d = getFlowdata(ctx); // 取数据
+    if (!d) return;
+
+    const rowMaxLength = d.length;
+    const cellMaxLength = d[0].length;
+
+    // 若应用范围超过最大行或最大列，增加行列
+    const addr = maxh - rowMaxLength + 1;
+    const addc = maxc - cellMaxLength + 1;
+    if (addr > 0 || addc > 0) {
+      // d = datagridgrowth([].concat(d), addr, addc, true);
+    }
+    if (!d) return;
+
+    if (cfg.rowlen == null) {
+      cfg.rowlen = {};
+    }
+
+    const RowlChange = false;
+    const offsetMC: any = {};
+    for (let h = minh; h <= maxh; h += 1) {
+      const x = d[h];
+
+      let currentRowLen = ctx.defaultrowlen;
+      if (cfg.rowlen[h] != null) {
+        currentRowLen = cfg.rowlen[h];
+      }
+
+      for (let c = minc; c <= maxc; c += 1) {
+        if (x?.[c]?.mc) {
+          if ("rs" in x[c]!.mc!) {
+            delete cfg.merge[`${x[c]!.mc!.r}_${x[c]!.mc!.c}`];
+          }
+          delete x![c]!.mc;
+        }
+
+        let value = null;
+        if (data[h - minh] != null && data[h - minh][c - minc] != null) {
+          value = data[h - minh][c - minc];
+        }
+
+        x[c] = value;
+
+        if (value != null && x?.[c]?.mc) {
+          if (x![c]!.mc!.rs != null) {
+            x![c]!.mc!.r = h;
+            x![c]!.mc!.c = c;
+
+            cfg.merge[`${x[c]!.mc!.r}_${x[c]!.mc!.c}`] = x[c]!.mc;
+
+            offsetMC[`${value.mc.r}_${value.mc.c}`] = [
+              x[c]!.mc!.r,
+              x[c]!.mc!.c,
+            ];
+          } else {
+            x[c] = {
+              mc: {
+                r: offsetMC[`${value.mc.r}_${value.mc.c}`][0],
+                c: offsetMC[`${value.mc.r}_${value.mc.c}`][1],
+              },
+            };
+          }
+        }
+
+        if (borderInfo[`${h - minh}_${c - minc}`]) {
+          const bd_obj = {
+            rangeType: "cell",
+            value: {
+              row_index: h,
+              col_index: c,
+              l: borderInfo[`${h - minh}_${c - minc}`].l,
+              r: borderInfo[`${h - minh}_${c - minc}`].r,
+              t: borderInfo[`${h - minh}_${c - minc}`].t,
+              b: borderInfo[`${h - minh}_${c - minc}`].b,
+            },
+          };
+
+          cfg.borderInfo.push(bd_obj);
+        }
+
+        // const fontset = luckysheetfontformat(x[c]);
+        // const oneLineTextHeight = menuButton.getTextSize("田", fontset)[1];
+        // // 比较计算高度和当前高度取最大高度
+        // if (oneLineTextHeight > currentRowLen) {
+        //   currentRowLen = oneLineTextHeight;
+        //   RowlChange = true;
+        // }
+      }
+      d[h] = x;
+
+      if (currentRowLen !== ctx.defaultrowlen) {
+        cfg.rowlen[h] = currentRowLen;
+      }
+    }
+
+    ctx.luckysheet_select_save = [{ row: [minh, maxh], column: [minc, maxc] }];
+
+    if (addr > 0 || addc > 0 || RowlChange) {
+      // const allParam = {
+      //   cfg,
+      //   RowlChange: true,
+      // };
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!].config =
+        cfg;
+      // jfrefreshgrid(d, ctx.luckysheet_select_save, allParam);
+    } else {
+      // const allParam = {
+      //   cfg,
+      // };
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!].config =
+        cfg;
+      // jfrefreshgrid(d, ctx.luckysheet_select_save, allParam);
+      // selectHightlightShow();
+    }
+  } else {
+    data = data.replace(/\r/g, "");
+    const dataChe = [];
+    const che = data.split("\n");
+    const colchelen = che[0].split("\t").length;
+
+    for (let i = 0; i < che.length; i += 1) {
+      if (che[i].split("\t").length < colchelen) {
+        continue;
+      }
+
+      dataChe.push(che[i].split("\t"));
+    }
+
+    const d = getFlowdata(ctx); // 取数据
+    if (!d) return;
+
+    const last =
+      ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1];
+    if (!last) return;
+
+    const curR = last.row == null ? 0 : last.row[0];
+    const curC = last.column == null ? 0 : last.column[0];
+    const rlen = dataChe.length;
+    const clen = dataChe[0].length;
+
+    // 应用范围包含部分合并单元格，则return提示
+    let has_PartMC = false;
+    if (ctx.config.merge != null) {
+      has_PartMC = hasPartMC(
+        ctx,
+        ctx.config,
+        curR,
+        curR + rlen - 1,
+        curC,
+        curC + clen - 1
+      );
+    }
+
+    if (has_PartMC) {
+      // if (isEditMode()) {
+      //   alert("不能对合并单元格做部分更改");
+      // } else {
+      //   tooltip.info(
+      //     '<i class="fa fa-exclamation-triangle"></i>提示',
+      //     "不能对合并单元格做部分更改"
+      //   );
+      // }
+      return;
+    }
+
+    const addr = curR + rlen - d.length;
+    const addc = curC + clen - d[0].length;
+    if (addr > 0 || addc > 0) {
+      // d = datagridgrowth([].concat(d), addr, addc, true);
+    }
+    if (!d) return;
+
+    for (let r = 0; r < rlen; r += 1) {
+      const x = d[r + curR];
+      for (let c = 0; c < clen; c += 1) {
+        const originCell = x[c + curC];
+        let value = dataChe[r][c];
+        if (isRealNum(value)) {
+          // 如果单元格设置了纯文本格式，那么就不要转成数值类型了，防止数值过大自动转成科学计数法
+          if (originCell && originCell.ct && originCell.ct.fa === "@") {
+            value = String(value);
+          } else {
+            value = parseFloat(value);
+          }
+        }
+        if (originCell) {
+          originCell.v = value;
+          if (originCell.ct != null && originCell.ct.fa != null) {
+            originCell.m = update(originCell.ct.fa, value);
+          } else {
+            originCell.m = value;
+          }
+
+          if (originCell.f != null && originCell.f.length > 0) {
+            originCell.f = "";
+            delFunctionGroup(ctx, r + curR, c + curC, ctx.currentSheetIndex);
+          }
+        } else {
+          const cell: Cell = {};
+          const mask = genarate(value);
+          [cell.m, cell.ct, cell.v] = mask!;
+
+          x[c + curC] = cell;
+        }
+      }
+      d[r + curR] = x;
+    }
+
+    last.row = [curR, curR + rlen - 1];
+    last.column = [curC, curC + clen - 1];
+
+    // if (addr > 0 || addc > 0) {
+    //   const allParam = {
+    //     RowlChange: true,
+    //   };
+    //   jfrefreshgrid(d, ctx.luckysheet_select_save, allParam);
+    // } else {
+    //   jfrefreshgrid(d, ctx.luckysheet_select_save);
+    //   selectHightlightShow();
+    // }
+  }
 }
 
 function pasteHandlerOfCutPaste(
@@ -1474,7 +1763,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
         });
 
         ctx.luckysheet_selection_range = [];
-        // selection.pasteHandler(data, borderInfo);
+        pasteHandler(ctx, data, borderInfo);
         // $("#luckysheet-copy-content").empty();
         ele.remove();
       }
