@@ -20,8 +20,6 @@ import WorkbookContext from "../../context";
 const ColumnHeader: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
-  const cellInputRef = useRef<HTMLDivElement>(null);
-  const fxInputRef = useRef<HTMLDivElement>(null);
   const colChangeSizeRef = useRef<HTMLDivElement>(null);
   const [hoverLocation, setHoverLocation] = useState({
     col: -1,
@@ -62,12 +60,12 @@ const ColumnHeader: React.FC = () => {
           refs.globalCache,
           e.nativeEvent,
           containerRef.current!,
-          cellInputRef.current!,
-          fxInputRef.current!
+          refs.cellInput.current!,
+          refs.fxInput.current!
         );
       });
     },
-    [refs.globalCache, setContext]
+    [refs.globalCache, refs.cellInput, refs.fxInput, setContext]
   );
 
   const onMouseLeave = useCallback(() => {

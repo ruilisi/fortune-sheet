@@ -21,8 +21,6 @@ const RowHeader: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
   const rowChangeSizeRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const fxInputRef = useRef<HTMLDivElement>(null);
-  const cellInputRef = useRef<HTMLDivElement>(null);
   const [hoverLocation, setHoverLocation] = useState({
     row: -1,
     row_pre: -1,
@@ -62,12 +60,12 @@ const RowHeader: React.FC = () => {
           refs.globalCache,
           e.nativeEvent,
           containerRef.current!,
-          cellInputRef.current!,
-          fxInputRef.current!
+          refs.cellInput.current!,
+          refs.fxInput.current!
         );
       });
     },
-    [setContext, refs.globalCache]
+    [refs.globalCache, refs.cellInput, refs.fxInput, setContext]
   );
 
   const onMouseLeave = useCallback(() => {
