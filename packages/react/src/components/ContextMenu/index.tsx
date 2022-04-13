@@ -15,7 +15,7 @@ const ContextMenu: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { context, setContext, settings } = useContext(WorkbookContext);
   const { contextMenu } = context;
-  const { rightclick } = locale();
+  const { rightclick } = locale(context);
   const menuElements: Record<string, React.ReactNode> = useMemo(() => {
     const selection = context.luckysheet_select_save?.[0];
     return {
@@ -80,11 +80,7 @@ const ContextMenu: React.FC = () => {
               }}
             >
               <>
-                {rightclick.to}
-                <span className={`luckysheet-cols-rows-shift-${dir}`}>
-                  {(rightclick as any)[dir]}
-                </span>
-                {rightclick.add}
+                {`${rightclick.insert}  `}
                 <input
                   onClick={(e) => e.stopPropagation()}
                   onKeyDown={(e) => e.stopPropagation()}
@@ -94,7 +90,11 @@ const ContextMenu: React.FC = () => {
                   defaultValue="1"
                 />
                 <span className="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">
-                  {rightclick.column}
+                  {`${rightclick.column}  `}
+                </span>
+
+                <span className={`luckysheet-cols-rows-shift-${dir}`}>
+                  {(rightclick as any)[dir]}
                 </span>
               </>
             </Menu>
@@ -129,11 +129,7 @@ const ContextMenu: React.FC = () => {
               }}
             >
               <>
-                {rightclick.to}
-                <span className={`luckysheet-cols-rows-shift-${dir}`}>
-                  {(rightclick as any)[dir]}
-                </span>
-                {rightclick.add}
+                {`${rightclick.insert}  `}
                 <input
                   onClick={(e) => e.stopPropagation()}
                   onKeyDown={(e) => e.stopPropagation()}
@@ -143,7 +139,10 @@ const ContextMenu: React.FC = () => {
                   defaultValue="1"
                 />
                 <span className="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">
-                  {rightclick.row}
+                  {`${rightclick.row}  `}
+                </span>
+                <span className={`luckysheet-cols-rows-shift-${dir}`}>
+                  {(rightclick as any)[dir]}
                 </span>
               </>
             </Menu>

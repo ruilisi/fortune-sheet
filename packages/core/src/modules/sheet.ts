@@ -106,7 +106,11 @@ export function addSheet(ctx: Context, isPivotTable = false) {
   const order = ctx.luckysheetfile.length;
   const index = generateRandomSheetIndex();
 
-  const sheetname = generateRandomSheetName(ctx.luckysheetfile, isPivotTable);
+  const sheetname = generateRandomSheetName(
+    ctx.luckysheetfile,
+    isPivotTable,
+    ctx
+  );
 
   const sheetconfig: Sheet = {
     name: sheetname,

@@ -299,8 +299,13 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           } else {
             draftCtx.showGridLines = true;
           }
-          if (!_.isNil(mergedSettings.lang)) {
-            localStorage.setItem("lang", mergedSettings.lang);
+          if (_.isNil(mergedSettings.lang)) {
+            const lang =
+              (navigator.languages && navigator.languages[0]) || // 兼容chromium内核浏览器
+              navigator.language || // 兼容剩余浏览器
+              // @ts-ignore
+              navigator.userLanguage; // 兼容IE浏览器
+            draftCtx.lang = lang;
           }
         },
         { noHistory: true }

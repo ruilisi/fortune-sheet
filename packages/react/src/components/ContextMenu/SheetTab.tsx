@@ -1,4 +1,4 @@
-import { locale, Sheet, deleteSheet } from "@fortune-sheet/core";
+import { locale, Sheet, deleteSheet, Context } from "@fortune-sheet/core";
 import React, {
   useContext,
   useRef,
@@ -16,6 +16,7 @@ type Props = {
   sheet?: Sheet;
   onClose?: () => void;
   onRename?: () => void;
+  ctx: Context;
 };
 
 const SheetTabContextMenu: React.FC<Props> = ({
@@ -24,9 +25,10 @@ const SheetTabContextMenu: React.FC<Props> = ({
   sheet,
   onClose,
   onRename,
+  ctx,
 }) => {
   const { setContext } = useContext(WorkbookContext);
-  const { sheetconfig } = locale();
+  const { sheetconfig } = locale(ctx);
   const [position, setPosition] = useState({ x: -1, y: -1 });
   const containerRef = useRef<HTMLDivElement>(null);
 

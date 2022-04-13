@@ -10,10 +10,14 @@ export function generateRandomSheetIndex() {
   return uuidv4();
 }
 
-export function generateRandomSheetName(file: Sheet[], isPivotTable: boolean) {
+export function generateRandomSheetName(
+  file: Sheet[],
+  isPivotTable: boolean,
+  ctx: Context
+) {
   let index = file.length;
 
-  const locale_pivotTable = locale().pivotTable;
+  const locale_pivotTable = locale(ctx).pivotTable;
   const { title } = locale_pivotTable;
 
   for (let i = 0; i < file.length; i += 1) {

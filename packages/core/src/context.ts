@@ -107,7 +107,7 @@ export type Context = {
   clearjfundo: boolean;
   jfundo: any[];
   jfredo: any[];
-  lang: string; // language
+  lang: string | undefined; // language
   createChart: string;
   highlightChart: string;
   zIndex: number;
@@ -246,7 +246,7 @@ export function defaultContext(): Context {
     clearjfundo: true,
     jfundo: [],
     jfredo: [],
-    lang: "en", // language
+    lang: undefined, // language
     createChart: "",
     highlightChart: "",
     zIndex: 15,

@@ -13,6 +13,7 @@ import {
   showHideAllComments,
   autoSelectionFormula,
   handleSum,
+  locale,
 } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import "./index.css";
@@ -31,6 +32,7 @@ const Toolbar: React.FC = () => {
   const row = firstSelection?.row_focus;
   const col = firstSelection?.column_focus;
   const cell = flowdata && row && col ? flowdata?.[row]?.[col] : undefined;
+  const { toolbar } = locale(context);
 
   const getToolbarItem = useCallback(
     (name: string, i: number) => {
@@ -130,7 +132,7 @@ const Toolbar: React.FC = () => {
         return (
           <Button
             iconId={name}
-            tooltip={name}
+            tooltip={toolbar[name]}
             key={name}
             disabled={refs.globalCache.undoList.length === 0}
             onClick={() => handleUndo()}
@@ -141,7 +143,7 @@ const Toolbar: React.FC = () => {
         return (
           <Button
             iconId={name}
-            tooltip={name}
+            tooltip={toolbar[name]}
             key={name}
             disabled={refs.globalCache.redoList.length === 0}
             onClick={() => handleRedo()}
@@ -269,7 +271,8 @@ const Toolbar: React.FC = () => {
       return (
         <Button
           iconId={name}
-          tooltip={name}
+          // @ts-ignore
+          tooltip={toolbar[name]}
           key={name}
           onClick={() =>
             setContext((draftCtx) => {
@@ -292,6 +295,7 @@ const Toolbar: React.FC = () => {
       refs.cellInput,
       refs.globalCache,
       setContext,
+      toolbar,
     ]
   );
 

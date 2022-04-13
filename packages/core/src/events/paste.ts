@@ -1504,7 +1504,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
       }
     }
 
-    const locale_fontjson = locale().fontjson;
+    const locale_fontjson = locale(ctx).fontjson;
 
     // hook
     // if (

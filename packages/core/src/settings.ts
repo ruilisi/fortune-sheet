@@ -25,7 +25,7 @@ export type Settings = {
   editMode?: boolean;
   beforeCreateDom?: (() => void) | null;
   fireMousedown?: any;
-  lang?: string;
+  lang: string | undefined;
   plugins?: string[];
   forceCalculation?: boolean;
   rowHeaderWidth?: number;
@@ -69,7 +69,7 @@ export const defaultSettings: Required<Settings> = {
   editMode: false, // 是否为编辑模式
   beforeCreateDom: null, // 表格创建之前的方法
   fireMousedown: undefined, // 单元格数据下钻
-  lang: "zh", // language
+  lang: undefined, // language
   plugins: [], // plugins, e.g. ['chart']
   forceCalculation: false, // 强制刷新公式，公式较多会有性能问题，慎用
   rowHeaderWidth: 46,

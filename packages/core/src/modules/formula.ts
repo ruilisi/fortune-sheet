@@ -2333,7 +2333,7 @@ function functionRange(obj: HTMLDivElement, v: string, vp: string) {
 }
 
 function searchFunction(ctx: Context, searchtxt: string) {
-  const { functionlist } = locale();
+  const { functionlist } = locale(ctx);
 
   // // 这里的逻辑在原项目上做了修改
   // if (_.isNil($editer)) {
@@ -2444,8 +2444,12 @@ function getrangeseleciton() {
   return null;
 }
 
-function helpFunctionExe($editer: HTMLDivElement, currSelection: Node) {
-  const { functionlist } = locale();
+function helpFunctionExe(
+  $editer: HTMLDivElement,
+  currSelection: Node,
+  ctx: Context
+) {
+  const { functionlist } = locale(ctx);
   // let _locale = locale();
   // let locale_formulaMore = _locale.formulaMore;
   // if ($("#luckysheet-formula-help-c").length === 0) {
@@ -2585,7 +2589,7 @@ export function rangeHightlightselected(ctx: Context, $editor: HTMLDivElement) {
     searchFunction(ctx, currText.toUpperCase());
     ctx.functionHint = null;
   } else {
-    const funcName = helpFunctionExe($editor, currSelection);
+    const funcName = helpFunctionExe($editor, currSelection, ctx);
     ctx.functionHint = funcName?.toUpperCase();
     ctx.functionCandidates = [];
   }

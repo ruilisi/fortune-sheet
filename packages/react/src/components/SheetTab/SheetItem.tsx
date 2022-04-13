@@ -99,6 +99,7 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
           {...contextMenu}
           onClose={() => setContextMenu({ x: -1, y: -1 })}
           onRename={() => setEditing(true)}
+          ctx={context}
         />
       ) : null}
     </div>
