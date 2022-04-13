@@ -1495,7 +1495,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
             //   break;
             // }
           } else {
-            if (cpDataArr[r - copy_r1][c - copy_c1] !== v) {
+            if (_.trim(cpDataArr[r - copy_r1][c - copy_c1]) !== _.trim(v)) {
               isEqual = false;
               break;
             }
