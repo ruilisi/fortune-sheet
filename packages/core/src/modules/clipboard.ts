@@ -10,7 +10,7 @@ export default class clipboard {
         ele.style.position = "fixed";
         ele.style.height = "0";
         ele.style.width = "0";
-        ele.style.left = "-100px";
+        ele.style.display = "none";
         document.querySelector(".fortune-container")?.append(ele);
       }
       ele.focus();

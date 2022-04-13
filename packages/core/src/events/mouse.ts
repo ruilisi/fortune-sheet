@@ -235,28 +235,29 @@ export function handleCellAreaMouseDown(
   // }
 
   // //mousedown是右键
-  // if (event.which == "3") {
-  //   $("#luckysheet-dataVerification-showHintBox").hide();
+  if (e.button === 2) {
+    // $("#luckysheet-dataVerification-showHintBox").hide();
 
-  //   let isright = false;
+    // 如果右键在选区内, 停止mousedown处理
+    let isInSelection = false;
+    _.forEach(ctx.luckysheet_select_save, (obj_s) => {
+      if (
+        obj_s.row != null &&
+        row_index >= obj_s.row[0] &&
+        row_index <= obj_s.row[1] &&
+        col_index >= obj_s.column[0] &&
+        col_index <= obj_s.column[1]
+      ) {
+        isInSelection = true;
+        return false;
+      }
+      return true;
+    });
 
-  //   for (let s = 0; s < ctx.luckysheet_select_save.length; s++) {
-  //     if (
-  //       ctx.luckysheet_select_save[s]["row"] != null &&
-  //       row_index >= ctx.luckysheet_select_save[s]["row"][0] &&
-  //       row_index <= ctx.luckysheet_select_save[s]["row"][1] &&
-  //       col_index >= ctx.luckysheet_select_save[s]["column"][0] &&
-  //       col_index <= ctx.luckysheet_select_save[s]["column"][1]
-  //     ) {
-  //       isright = true;
-  //       break;
-  //     }
-  //   }
-
-  //   if (isright) {
-  //     return;
-  //   }
-  // }
+    if (isInSelection) {
+      return;
+    }
+  }
 
   // //单元格数据下钻
   // if (
@@ -4605,28 +4606,28 @@ export function handleRowHeaderMouseDown(
   // $("#luckysheet-sheet-list, #luckysheet-rightclick-sheet-menu").hide();
 
   // mousedown是右键
-  // if (e.which === 3) {
-  //   let isright = false;
+  if (e.button === 2) {
+    // 如果右键在选区内, 停止mousedown处理
+    let isInSelection = false;
 
-  //   for (let s = 0; s < ctx.luckysheet_select_save.length; s++) {
-  //     const obj_s = ctx.luckysheet_select_save[s];
-
-  //     if (
-  //       obj_s.row != null &&
-  //       row_index >= obj_s.row[0] &&
-  //       row_index <= obj_s.row[1] &&
-  //       obj_s.column[0] == 0 &&
-  //       obj_s.column[1] == ctx.flowdata[0].length - 1
-  //     ) {
-  //       isright = true;
-  //       break;
-  //     }
-  //   }
-
-  //   if (isright) {
-  //     return;
-  //   }
-  // }
+    const flowdata = getFlowdata(ctx);
+    _.forEach(ctx.luckysheet_select_save, (obj_s) => {
+      if (
+        obj_s.row != null &&
+        row_index >= obj_s.row[0] &&
+        row_index <= obj_s.row[1] &&
+        obj_s.column[0] === 0 &&
+        obj_s.column[1] === (flowdata?.[0]?.length ?? 0) - 1
+      ) {
+        isInSelection = true;
+        return false;
+      }
+      return true;
+    });
+    if (isInSelection) {
+      return;
+    }
+  }
 
   let top = row_pre;
   let height = row - row_pre - 1;
@@ -5022,28 +5023,29 @@ export function handleColumnHeaderMouseDown(
   // $("#luckysheet-filter-menu, #luckysheet-filter-submenu").hide();
 
   // mousedown是右键
-  // if (event.which == "3") {
-  //   let isright = false;
+  if (e.button === 2) {
+    let isInSelection = false;
 
-  //   for (let s = 0; s < ctx.luckysheet_select_save.length; s++) {
-  //     const obj_s = ctx.luckysheet_select_save[s];
+    const flowdata = getFlowdata(ctx);
+    _.forEach(ctx.luckysheet_select_save, (obj_s) => {
+      // 如果右键在选区内, 停止mousedown处理
+      if (
+        obj_s.column != null &&
+        col_index >= obj_s.column[0] &&
+        col_index <= obj_s.column[1] &&
+        obj_s.row[0] === 0 &&
+        obj_s.row[1] === (flowdata?.length ?? 0) - 1
+      ) {
+        isInSelection = true;
+        return false;
+      }
+      return true;
+    });
 
-  //     if (
-  //       obj_s.column != null &&
-  //       col_index >= obj_s.column[0] &&
-  //       col_index <= obj_s.column[1] &&
-  //       obj_s.row[0] == 0 &&
-  //       obj_s.row[1] == ctx.flowdata.length - 1
-  //     ) {
-  //       isright = true;
-  //       break;
-  //     }
-  //   }
-
-  //   if (isright) {
-  //     return;
-  //   }
-  // }
+    if (isInSelection) {
+      return;
+    }
+  }
 
   let left = col_pre;
   let width = col - col_pre - 1;
