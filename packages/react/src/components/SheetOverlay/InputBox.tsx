@@ -10,6 +10,7 @@ import {
   moveHighlightCell,
   escapeScriptTag,
   valueShowEs,
+  updateCell,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -143,16 +144,17 @@ const InputBox: React.FC = () => {
           //     )
           //   );
           // } else {
-          //   updateCell(
-          //     draftCtx,
-          //     draftCtx.luckysheetCellUpdate[0],
-          //     draftCtx.luckysheetCellUpdate[1],
-          //     refs.cellInput.current!
-          //   );
-          //   moveHighlightCell(draftCtx, "right", 1, "rangeOfSelect");
+          updateCell(
+            draftCtx,
+            draftCtx.luckysheetCellUpdate[0],
+            draftCtx.luckysheetCellUpdate[1],
+            refs.cellInput.current!
+          );
+          moveHighlightCell(draftCtx, "right", 1, "rangeOfSelect");
           // }
 
           e.preventDefault();
+          e.stopPropagation();
         } else if (e.key === "F4" && draftCtx.luckysheetCellUpdate.length > 0) {
           // formula.setfreezonFuc(event);
           e.preventDefault();
@@ -179,7 +181,7 @@ const InputBox: React.FC = () => {
           } */
       });
     },
-    [setContext]
+    [refs.cellInput, setContext]
   );
 
   const onChange = useCallback(() => {
