@@ -109,7 +109,7 @@ const SheetOverlay: React.FC = () => {
   useEffect(() => {
     // ensure cell input is always focused to accept first key stroke on cell
     if (!context.editingCommentBox) {
-      refs.cellInput.current?.focus();
+      refs.cellInput.current?.focus({ preventScroll: true });
     }
   }, [
     context.editingCommentBox,
