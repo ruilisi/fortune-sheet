@@ -9,6 +9,7 @@ import {
   handleFormulaInput,
   moveHighlightCell,
   escapeScriptTag,
+  valueShowEs,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -66,12 +67,10 @@ const InputBox: React.FC = () => {
         } else if (cell.f) {
           value = getCellValue(row_index, col_index, flowdata, "f");
         } else {
-          value =
-            getCellValue(row_index, col_index, flowdata, "m") ||
-            getCellValue(row_index, col_index, flowdata, "v");
-          // if (Number(cell.qp) === "1") {
-          //   value = value ? "" + value : value;
-          // }
+          value = valueShowEs(row_index, col_index, flowdata);
+          if (Number(cell.qp) === 1) {
+            value = value ? `${value}` : value;
+          }
         }
       }
       refs.globalCache.overwriteCell = false;

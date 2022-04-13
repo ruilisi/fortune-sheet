@@ -9,6 +9,7 @@ import {
   moveHighlightCell,
   handleFormulaInput,
   rangeHightlightselected,
+  valueShowEs,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -47,7 +48,7 @@ const FxEditor: React.FC = () => {
         } else if (cell.f) {
           value = getCellValue(r, c, d, "f");
         } else {
-          value = getCellValue(r, c, d, "m") || getCellValue(r, c, d, "v");
+          value = valueShowEs(r, c, d);
         }
       }
       refs.fxInput.current!.innerHTML = escapeScriptTag(value);
