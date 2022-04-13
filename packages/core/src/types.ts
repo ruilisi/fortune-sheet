@@ -101,6 +101,28 @@ export type Sheet = {
   dynamicArray?: any[];
 };
 
+export type CommentBox = {
+  r: number;
+  c: number;
+  rc: string;
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  autoFocus: boolean;
+  value: string;
+  size: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    fromX: number;
+    fromY: number;
+    toX: number;
+    toY: number;
+  };
+};
+
 export type History = {
   patches: ImmerPatch[];
   inversePatches: ImmerPatch[];
@@ -117,7 +139,7 @@ export type GlobalCache = {
   visibleRowsUnique?: number[];
   undoList: History[];
   redoList: History[];
-  editingCommentBox?: HTMLDivElement;
+  editingCommentBoxEle?: HTMLDivElement;
   commentBox?: {
     movingId: string | undefined;
     resizingId: string | undefined;

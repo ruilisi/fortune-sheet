@@ -2,6 +2,7 @@ import React, { useContext, useCallback, useRef, useEffect } from "react";
 import "./index.css";
 import {
   drawArrow,
+  getFlowdata,
   handleCellAreaDoubleClick,
   handleCellAreaMouseDown,
   handleContextMenu,
@@ -9,7 +10,10 @@ import {
   handleOverlayMouseUp,
   onCommentBoxMoveStart,
   onCommentBoxResizeStart,
+  setEditingComment,
+  showComments,
 } from "@fortune-sheet/core";
+import _ from "lodash";
 import WorkbookContext from "../../context";
 import ColumnHeader from "./ColumnHeader";
 import RowHeader from "./RowHeader";
@@ -20,6 +24,7 @@ import ContentEditable from "./ContentEditable";
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
+  const flowdata = getFlowdata(context);
 
   const cellAreaMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -112,15 +117,45 @@ const SheetOverlay: React.FC = () => {
     refs.cellInput,
   ]);
 
+  // TODO use patch to detect ps isShow change may be more effecient
   useEffect(() => {
-    if (context.commentBoxs || context.hoveredCommentBox) {
-      (context.commentBoxs || [])
-        .concat(context.hoveredCommentBox || [])
-        .forEach((box) => {
-          drawArrow(box.rc, box.size);
-        });
+    if (flowdata) {
+      const psShownCells: { r: number; c: number }[] = [];
+      for (let i = 0; i < flowdata.length; i += 1) {
+        for (let j = 0; j < flowdata[i].length; j += 1) {
+          const cell = flowdata[i][j];
+          if (!cell) continue;
+          if (cell.ps?.isShow) {
+            psShownCells.push({ r: i, c: j });
+          }
+        }
+      }
+      setContext((ctx) => showComments(ctx, psShownCells));
     }
-  }, [context.commentBoxs, context.hoveredCommentBox]);
+  }, [flowdata, setContext]);
+
+  useEffect(() => {
+    if (
+      context.commentBoxes ||
+      context.hoveredCommentBox ||
+      context.editingCommentBox
+    ) {
+      _.concat(
+        context.commentBoxes?.filter(
+          (v) => v.rc !== context.editingCommentBox?.rc
+        ),
+        [context.hoveredCommentBox, context.editingCommentBox]
+      ).forEach((box) => {
+        if (box) {
+          drawArrow(box.rc, box.size);
+        }
+      });
+    }
+  }, [
+    context.commentBoxes,
+    context.hoveredCommentBox,
+    context.editingCommentBox,
+  ]);
 
   return (
     <div
@@ -270,143 +305,154 @@ const SheetOverlay: React.FC = () => {
           )}
           <InputBox />
           <div id="luckysheet-postil-showBoxs">
-            {context.commentBoxs
-              ?.concat(context.hoveredCommentBox)
-              .map((commentBox) => {
-                if (!commentBox) return null;
-                const {
-                  r,
-                  c,
-                  rc,
-                  left,
-                  top,
-                  width,
-                  height,
-                  value,
-                  autoFocus,
-                  size,
-                } = commentBox;
-                const isEditing = context.editingCommentBox === rc;
-                const commentId = `comment-box-${rc}`;
-                return (
-                  <div key={rc}>
-                    <canvas
-                      id={`arrowCanvas-${rc}`}
-                      className="arrowCanvas"
-                      width={size.width}
-                      height={size.height}
-                      style={{
-                        position: "absolute",
-                        left: size.left,
-                        top: size.top,
-                        zIndex: 100,
-                        pointerEvents: "none",
-                      }}
-                    />
+            {_.concat(
+              context.commentBoxes?.filter(
+                (v) => v?.rc !== context.editingCommentBox?.rc
+              ),
+              [context.editingCommentBox, context.hoveredCommentBox]
+            ).map((commentBox) => {
+              if (!commentBox) return null;
+              const {
+                r,
+                c,
+                rc,
+                left,
+                top,
+                width,
+                height,
+                value,
+                autoFocus,
+                size,
+              } = commentBox;
+              const isEditing = context.editingCommentBox?.rc === rc;
+              const commentId = `comment-box-${rc}`;
+              return (
+                <div key={rc}>
+                  <canvas
+                    id={`arrowCanvas-${rc}`}
+                    className="arrowCanvas"
+                    width={size.width}
+                    height={size.height}
+                    style={{
+                      position: "absolute",
+                      left: size.left,
+                      top: size.top,
+                      zIndex: 100,
+                      pointerEvents: "none",
+                    }}
+                  />
+                  <div
+                    id={commentId}
+                    className="luckysheet-postil-show-main"
+                    style={{
+                      width,
+                      height,
+                      color: "#000",
+                      padding: 5,
+                      border: "1px solid #000",
+                      backgroundColor: "rgb(255,255,225)",
+                      position: "absolute",
+                      left,
+                      top,
+                      boxSizing: "border-box",
+                      zIndex: isEditing ? 200 : 100,
+                    }}
+                    onMouseDown={(e) => {
+                      setContext((draftContext) => {
+                        if (flowdata) {
+                          setEditingComment(draftContext, flowdata, r, c);
+                        }
+                      });
+                      onCommentBoxMoveStart(
+                        context,
+                        refs.globalCache,
+                        e.nativeEvent,
+                        containerRef.current!,
+                        { r, c, rc },
+                        commentId
+                      );
+                      e.stopPropagation();
+                    }}
+                  >
+                    <div className="luckysheet-postil-dialog-move">
+                      {["t", "r", "b", "l"].map((v) => (
+                        <div
+                          key={v}
+                          className={`luckysheet-postil-dialog-move-item luckysheet-postil-dialog-move-item-${v}`}
+                          data-type={v}
+                        />
+                      ))}
+                    </div>
+                    {isEditing && (
+                      <div className="luckysheet-postil-dialog-resize">
+                        {["lt", "mt", "lm", "rm", "rt", "lb", "mb", "rb"].map(
+                          (v) => (
+                            <div
+                              key={v}
+                              className={`luckysheet-postil-dialog-resize-item luckysheet-postil-dialog-resize-item-${v}`}
+                              data-type={v}
+                              onMouseDown={(e) => {
+                                onCommentBoxResizeStart(
+                                  context,
+                                  refs.globalCache,
+                                  e.nativeEvent,
+                                  containerRef.current!,
+                                  { r, c, rc },
+                                  commentId,
+                                  v
+                                );
+                                e.stopPropagation();
+                              }}
+                            />
+                          )
+                        )}
+                      </div>
+                    )}
                     <div
-                      id={commentId}
-                      className="luckysheet-postil-show-main"
                       style={{
-                        width,
-                        height,
-                        color: "#000",
-                        padding: 5,
-                        border: "1px solid #000",
-                        backgroundColor: "rgb(255,255,225)",
-                        position: "absolute",
-                        left,
-                        top,
-                        boxSizing: "border-box",
-                        zIndex: isEditing ? 200 : 100,
-                      }}
-                      onMouseDown={(e) => {
-                        onCommentBoxMoveStart(
-                          context,
-                          refs.globalCache,
-                          e.nativeEvent,
-                          containerRef.current!,
-                          { r, c, rc },
-                          commentId
-                        );
-                        e.stopPropagation();
+                        width: "100%",
+                        height: "100%",
+                        overflow: "hidden",
                       }}
                     >
-                      <div className="luckysheet-postil-dialog-move">
-                        {["t", "r", "b", "l"].map((v) => (
-                          <div
-                            key={v}
-                            className={`luckysheet-postil-dialog-move-item luckysheet-postil-dialog-move-item-${v}`}
-                            data-type={v}
-                          />
-                        ))}
-                      </div>
-                      {isEditing && (
-                        <div className="luckysheet-postil-dialog-resize">
-                          {["lt", "mt", "lm", "rm", "rt", "lb", "mb", "rb"].map(
-                            (v) => (
-                              <div
-                                key={v}
-                                className={`luckysheet-postil-dialog-resize-item luckysheet-postil-dialog-resize-item-${v}`}
-                                data-type={v}
-                                onMouseDown={(e) => {
-                                  onCommentBoxResizeStart(
-                                    context,
-                                    refs.globalCache,
-                                    e.nativeEvent,
-                                    containerRef.current!,
-                                    { r, c, rc },
-                                    commentId,
-                                    v
-                                  );
-                                  e.stopPropagation();
-                                }}
-                              />
-                            )
-                          )}
-                        </div>
-                      )}
-                      <div
+                      <ContentEditable
+                        id={`comment-editor-${rc}`}
+                        autoFocus={autoFocus}
                         style={{
                           width: "100%",
                           height: "100%",
-                          overflow: "hidden",
+                          lineHeight: "20px",
+                          boxSizing: "border-box",
+                          textAlign: "center",
+                          wordBreak: "break-all",
+                          outline: "none",
                         }}
-                      >
-                        <ContentEditable
-                          autoFocus={autoFocus}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            lineHeight: "20px",
-                            boxSizing: "border-box",
-                            textAlign: "center",
-                            wordBreak: "break-all",
-                            outline: "none",
-                          }}
-                          spellCheck={false}
-                          data-r={r}
-                          data-c={c}
-                          onKeyDown={(e) => e.stopPropagation()}
-                          onFocus={(e) => {
-                            refs.globalCache.editingCommentBox =
-                              e.target as HTMLDivElement;
-                            setContext((draftContext) => {
-                              draftContext.editingCommentBox = rc;
-                            });
-                          }}
-                          onMouseDown={(e) => {
-                            e.stopPropagation();
-                          }}
-                          onDoubleClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                          initialContent={value}
-                        />
-                      </div>
+                        spellCheck={false}
+                        data-r={r}
+                        data-c={c}
+                        onKeyDown={(e) => e.stopPropagation()}
+                        onFocus={(e) => {
+                          refs.globalCache.editingCommentBoxEle =
+                            e.target as HTMLDivElement;
+                        }}
+                        onMouseDown={(e) => {
+                          setContext((draftContext) => {
+                            if (flowdata) {
+                              setEditingComment(draftContext, flowdata, r, c);
+                            }
+                          });
+                          e.stopPropagation();
+                        }}
+                        onDoubleClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        initialContent={value}
+                      />
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              );
+            })}
           </div>
           <div id="luckysheet-multipleRange-show" />
           <div id="luckysheet-dynamicArray-hightShow" />

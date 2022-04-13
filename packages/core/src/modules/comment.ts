@@ -152,39 +152,6 @@ export const commentBoxProps: CommentBoxProps = {
   cursorStartPosition: null,
 };
 
-export function removeEditingComment(ctx: Context, globalCache: GlobalCache) {
-  const { editingCommentBox } = globalCache;
-  ctx.editingCommentBox = "";
-  let r: any = editingCommentBox?.dataset.r;
-  let c: any = editingCommentBox?.dataset.c;
-  if (!r || !c || !editingCommentBox) return;
-  r = parseInt(r, 10);
-  c = parseInt(c, 10);
-  const value = editingCommentBox.innerHTML || "";
-  const flowdata = getFlowdata(ctx);
-  globalCache.editingCommentBox = undefined;
-  if (!flowdata) return;
-  // Hook function
-  //   if (!method.createHookFunction("commentUpdateBefore", r, c, value)) {
-  //     if (!Store.flowdata[r][c].ps.isShow) {
-  //       $(`#${id}`).remove();
-  //     }
-  //   }
-
-  //  const prevCell = _.cloneDeep(flowdata?.[r][c]) || {};
-  const cell = flowdata?.[r][c];
-  if (!cell?.ps) return;
-  cell.ps.value = value;
-  if (!cell.ps.isShow) {
-    ctx.commentBoxs = _.filter(ctx.commentBoxs, (v) => v.rc !== `${r}_${c}`);
-  }
-
-  // Hook function
-  //   setTimeout(() => {
-  //     method.createHookFunction('commentUpdateAfter',r,c, previousCell, d[r][c])
-  // }, 0);
-}
-
 function getCellTopRightPostion(
   ctx: Context,
   flowdata: CellMatrix,
@@ -209,6 +176,91 @@ function getCellTopRightPostion(
   return { toX, toY };
 }
 
+export function getCommentBoxByRC(
+  ctx: Context,
+  flowdata: CellMatrix,
+  r: number,
+  c: number
+) {
+  const comment = flowdata[r][c]?.ps;
+  const { toX, toY } = getCellTopRightPostion(ctx, flowdata, r, c);
+  // let scrollLeft = $("#luckysheet-cell-main").scrollLeft();
+  // let scrollTop = $("#luckysheet-cell-main").scrollTop();
+
+  // if(luckysheetFreezen.freezenverticaldata != null && toX < (luckysheetFreezen.freezenverticaldata[0] - luckysheetFreezen.freezenverticaldata[2])){
+  //     toX += scrollLeft;
+  // }
+  // if(luckysheetFreezen.freezenhorizontaldata != null && toY < (luckysheetFreezen.freezenhorizontaldata[0] - luckysheetFreezen.freezenhorizontaldata[2])){
+  //     toY += scrollTop;
+  // }
+  const left =
+    comment?.left == null
+      ? toX + 18 * ctx.zoomRatio
+      : comment.left * ctx.zoomRatio;
+  let top =
+    comment?.top == null
+      ? toY - 18 * ctx.zoomRatio
+      : comment.top * ctx.zoomRatio;
+  const width =
+    comment?.width == null
+      ? commentBoxProps.defaultWidth * ctx.zoomRatio
+      : comment.width * ctx.zoomRatio;
+  const height =
+    comment?.height == null
+      ? commentBoxProps.defaultHeight * ctx.zoomRatio
+      : comment.height * ctx.zoomRatio;
+  const value = comment?.value == null ? "" : comment.value;
+
+  if (top < 0) {
+    top = 2;
+  }
+  const size = getArrowCanvasSize(left, top, toX, toY);
+  const rc = `${r}_${c}`;
+  return { r, c, rc, left, top, width, height, value, size, autoFocus: false };
+}
+
+export function setEditingComment(
+  ctx: Context,
+  flowdata: CellMatrix,
+  r: number,
+  c: number
+) {
+  ctx.editingCommentBox = getCommentBoxByRC(ctx, flowdata, r, c);
+}
+
+export function removeEditingComment(ctx: Context, globalCache: GlobalCache) {
+  const { editingCommentBoxEle } = globalCache;
+  ctx.editingCommentBox = undefined;
+  let r: any = editingCommentBoxEle?.dataset.r;
+  let c: any = editingCommentBoxEle?.dataset.c;
+  if (!r || !c || !editingCommentBoxEle) return;
+  r = parseInt(r, 10);
+  c = parseInt(c, 10);
+  const value = editingCommentBoxEle.innerHTML || "";
+  const flowdata = getFlowdata(ctx);
+  globalCache.editingCommentBoxEle = undefined;
+  if (!flowdata) return;
+  // Hook function
+  //   if (!method.createHookFunction("commentUpdateBefore", r, c, value)) {
+  //     if (!Store.flowdata[r][c].ps.isShow) {
+  //       $(`#${id}`).remove();
+  //     }
+  //   }
+
+  //  const prevCell = _.cloneDeep(flowdata?.[r][c]) || {};
+  const cell = flowdata?.[r][c];
+  if (!cell?.ps) return;
+  cell.ps.value = value;
+  if (!cell.ps.isShow) {
+    ctx.commentBoxes = _.filter(ctx.commentBoxes, (v) => v.rc !== `${r}_${c}`);
+  }
+
+  // Hook function
+  //   setTimeout(() => {
+  //     method.createHookFunction('commentUpdateAfter',r,c, previousCell, d[r][c])
+  // }, 0);
+}
+
 export function newComment(
   ctx: Context,
   globalCache: GlobalCache,
@@ -227,23 +279,10 @@ export function newComment(
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
 
-  const { toX, toY } = getCellTopRightPostion(ctx, flowdata, r, c);
-  const left = toX + 18 * ctx.zoomRatio;
-  let top = toY - 18 * ctx.zoomRatio;
-
-  if (top < 0) {
-    top = 2;
-  }
-
-  const width = commentBoxProps.defaultWidth * ctx.zoomRatio;
-  const height = commentBoxProps.defaultHeight * ctx.zoomRatio;
-  const size = getArrowCanvasSize(left, top, toX, toY);
-
-  const currFlowData = getFlowdata(ctx) || [];
-  let cell = currFlowData[r][c];
+  let cell = flowdata[r][c];
   if (cell == null) {
     cell = {};
-    currFlowData[r][c] = cell;
+    flowdata[r][c] = cell;
   }
   cell.ps = {
     left: null,
@@ -253,25 +292,10 @@ export function newComment(
     value: "",
     isShow: false,
   };
-  const rc = `${r}_${c}`;
-
-  const commentBox = {
-    r,
-    c,
-    rc,
-    left,
-    top,
-    width,
-    height,
-    size,
-    value: "",
+  ctx.editingCommentBox = {
+    ...getCommentBoxByRC(ctx, flowdata, r, c),
     autoFocus: true,
   };
-  if (!ctx.commentBoxs) {
-    ctx.commentBoxs = [commentBox];
-  } else {
-    ctx.commentBoxs.push(commentBox);
-  }
 }
 
 export function editComment(
@@ -284,50 +308,21 @@ export function editComment(
   //     return;
   // }
   const flowdata = getFlowdata(ctx);
-  if (!flowdata) return;
   removeEditingComment(ctx, globalCache);
-  const comment = flowdata[r][c]?.ps;
-  if (!comment) return;
-
-  const { toX, toY } = getCellTopRightPostion(ctx, flowdata, r, c);
-  const left =
-    comment.left == null
-      ? toX + 18 * ctx.zoomRatio
-      : comment.left * ctx.zoomRatio;
-  let top =
-    comment.top == null
-      ? toY - 18 * ctx.zoomRatio
-      : comment.top * ctx.zoomRatio;
-  const width =
-    comment.width == null
-      ? commentBoxProps.defaultWidth * ctx.zoomRatio
-      : comment.width * ctx.zoomRatio;
-  const height =
-    comment.height == null
-      ? commentBoxProps.defaultHeight * ctx.zoomRatio
-      : comment.height * ctx.zoomRatio;
-  const value = comment.value == null ? "" : comment.value;
-
-  if (top < 0) {
-    top = 2;
+  const comment = flowdata?.[r][c]?.ps;
+  const commentBoxes = _.concat(ctx.commentBoxes, ctx.editingCommentBox);
+  if (_.findIndex(commentBoxes, (v) => v?.rc === `${r}_${c}`) !== -1) {
+    const editCommentBox = document.getElementById(
+      `comment-editor-${r}_${c}`
+    ) as HTMLDivElement;
+    editCommentBox?.focus();
   }
-  const rc = `${r}_${c}`;
-  const size = getArrowCanvasSize(left, top, toX, toY);
-  ctx.commentBoxs = _(ctx.commentBoxs)
-    .filter((v) => v.rc !== rc)
-    .concat({
-      r,
-      c,
-      rc,
-      left,
-      top,
-      width,
-      height,
-      size,
-      value,
+  if (comment) {
+    ctx.editingCommentBox = {
+      ...getCommentBoxByRC(ctx, flowdata, r, c),
       autoFocus: true,
-    })
-    .valueOf();
+    };
+  }
 }
 
 export function deleteComment(
@@ -356,6 +351,19 @@ export function deleteComment(
   //   }, 0);
 }
 
+export function showComments(
+  ctx: Context,
+  commentShowCells: { r: number; c: number }[]
+) {
+  const flowdata = getFlowdata(ctx);
+  if (flowdata) {
+    const commentBoxes = commentShowCells.map(({ r, c }) =>
+      getCommentBoxByRC(ctx, flowdata, r, c)
+    );
+    ctx.commentBoxes = commentBoxes;
+  }
+}
+
 export function showHideComment(
   ctx: Context,
   globalCache: GlobalCache,
@@ -370,57 +378,9 @@ export function showHideComment(
 
   if (isShow) {
     comment.isShow = false;
-    ctx.commentBoxs = _.filter(ctx.commentBoxs, (v) => v.rc !== rc);
+    ctx.commentBoxes = _.filter(ctx.commentBoxes, (v) => v.rc !== rc);
   } else {
     comment.isShow = true;
-
-    const { toX, toY } = getCellTopRightPostion(ctx, flowdata, r, c);
-    // let scrollLeft = $("#luckysheet-cell-main").scrollLeft();
-    // let scrollTop = $("#luckysheet-cell-main").scrollTop();
-
-    // if(luckysheetFreezen.freezenverticaldata != null && toX < (luckysheetFreezen.freezenverticaldata[0] - luckysheetFreezen.freezenverticaldata[2])){
-    //     toX += scrollLeft;
-    // }
-    // if(luckysheetFreezen.freezenhorizontaldata != null && toY < (luckysheetFreezen.freezenhorizontaldata[0] - luckysheetFreezen.freezenhorizontaldata[2])){
-    //     toY += scrollTop;
-    // }
-
-    const left =
-      comment.left == null
-        ? toX + 18 * ctx.zoomRatio
-        : comment.left * ctx.zoomRatio;
-    let top =
-      comment.top == null
-        ? toY - 18 * ctx.zoomRatio
-        : comment.top * ctx.zoomRatio;
-    const width =
-      comment.width == null
-        ? commentBoxProps.defaultWidth * ctx.zoomRatio
-        : comment.width * ctx.zoomRatio;
-    const height =
-      comment.height == null
-        ? commentBoxProps.defaultHeight * ctx.zoomRatio
-        : comment.height * ctx.zoomRatio;
-    const value = comment.value == null ? "" : comment.value;
-
-    if (top < 0) {
-      top = 2;
-    }
-    const size = getArrowCanvasSize(left, top, toX, toY);
-    ctx.commentBoxs = (ctx.commentBoxs || [])
-      .filter((v) => v.rc !== rc)
-      .concat({
-        r,
-        c,
-        rc,
-        left,
-        top,
-        width,
-        height,
-        size,
-        value,
-        autoFocus: false,
-      });
   }
 }
 
@@ -450,7 +410,6 @@ export function showHideAllComments(ctx: Context) {
       // 全部显示，操作为隐藏所有批注
       for (let i = 0; i < allComments.length; i += 1) {
         const { r, c } = allComments[i];
-
         const comment = flowdata[r][c]?.ps;
 
         if (comment?.isShow) {
@@ -458,72 +417,23 @@ export function showHideAllComments(ctx: Context) {
           rcs.push(`${r}_${c}`);
         }
       }
-      ctx.commentBoxs = [];
+      ctx.commentBoxes = [];
     } else {
       // 部分显示或全部隐藏，操作位显示所有批注
-      const commentBoxs = [];
       for (let i = 0; i < allComments.length; i += 1) {
         const { r, c } = allComments[i];
         const comment = flowdata[r][c]?.ps;
 
         if (comment && !comment.isShow) {
           comment.isShow = true;
-          const rc = `${r}_${c}`;
-          if (_.findIndex(ctx.commentBoxs, (v) => v.rc === rc) !== -1) return;
-          const { toX, toY } = getCellTopRightPostion(ctx, flowdata, r, c);
-          // let scrollLeft = $("#luckysheet-cell-main").scrollLeft();
-          // let scrollTop = $("#luckysheet-cell-main").scrollTop();
-
-          // if(luckysheetFreezen.freezenverticaldata != null && toX < (luckysheetFreezen.freezenverticaldata[0] - luckysheetFreezen.freezenverticaldata[2])){
-          //     toX += scrollLeft;
-          // }
-          // if(luckysheetFreezen.freezenhorizontaldata != null && toY < (luckysheetFreezen.freezenhorizontaldata[0] - luckysheetFreezen.freezenhorizontaldata[2])){
-          //     toY += scrollTop;
-          // }
-
-          const left =
-            comment.left == null
-              ? toX + 18 * ctx.zoomRatio
-              : comment.left * ctx.zoomRatio;
-          let top =
-            comment.top == null
-              ? toY - 18 * ctx.zoomRatio
-              : comment.top * ctx.zoomRatio;
-          const width =
-            comment.width == null
-              ? commentBoxProps.defaultWidth * ctx.zoomRatio
-              : comment.width * ctx.zoomRatio;
-          const height =
-            comment.height == null
-              ? commentBoxProps.defaultHeight * ctx.zoomRatio
-              : comment.height * ctx.zoomRatio;
-          const value = comment.value == null ? "" : comment.value;
-
-          if (top < 0) {
-            top = 2;
-          }
-          const size = getArrowCanvasSize(left, top, toX, toY);
-          commentBoxs.push({
-            r,
-            c,
-            rc,
-            left,
-            top,
-            width,
-            height,
-            size,
-            autoFocus: false,
-            value,
-          });
-          rcs.push(rc);
         }
       }
-      ctx.commentBoxs = (ctx.commentBoxs || []).concat(commentBoxs);
     }
   }
 }
 
-export function showComment(
+// show comment when mouse is over cell with comment
+export function overShowComment(
   ctx: Context,
   e: MouseEvent,
   scrollX: HTMLDivElement,
@@ -583,14 +493,13 @@ export function showComment(
   if (
     comment == null ||
     comment.isShow ||
-    _.findIndex(ctx.commentBoxs, (v) => v.rc === rc) !== -1
+    _.findIndex(ctx.commentBoxes, (v) => v.rc === rc) !== -1 ||
+    ctx.editingCommentBox?.rc === rc
   ) {
     ctx.hoveredCommentBox = undefined;
     return;
   }
   if (ctx.hoveredCommentBox?.rc === rc) return;
-
-  const value = comment.value == null ? "" : comment.value;
 
   // let row = ctx.visibledatarow[row_index];
   let row_pre = r - 1 === -1 ? 0 : ctx.visibledatarow[r - 1];
@@ -630,6 +539,8 @@ export function showComment(
       ? commentBoxProps.defaultHeight * ctx.zoomRatio
       : comment.height * ctx.zoomRatio;
   const size = getArrowCanvasSize(left, top, toX, toY);
+  const value = comment.value == null ? "" : comment.value;
+
   ctx.hoveredCommentBox = {
     r,
     c,
@@ -749,13 +660,11 @@ export function onCommentBoxResizeEnd(
       const flowdata = getFlowdata(ctx);
       const cell = flowdata?.[r][c];
       if (!flowdata || !cell?.ps) return;
-      const { toX, toY } = getCellTopRightPostion(ctx, flowdata, r, c);
-      const size = getArrowCanvasSize(left, top, toX, toY);
-      drawArrow(`${r}_${c}`, size);
       cell.ps.left = left / ctx.zoomRatio;
       cell.ps.top = top / ctx.zoomRatio;
       cell.ps.width = width / ctx.zoomRatio;
       cell.ps.height = height / ctx.zoomRatio;
+      setEditingComment(ctx, flowdata, r, c);
     }
   }
 }
@@ -820,11 +729,9 @@ export function onCommentBoxMoveEnd(
       const flowdata = getFlowdata(ctx);
       const cell = flowdata?.[r][c];
       if (!flowdata || !cell?.ps) return;
-      const { toX, toY } = getCellTopRightPostion(ctx, flowdata, r, c);
-      const size = getArrowCanvasSize(left, top, toX, toY);
-      drawArrow(`${r}_${c}`, size);
       cell.ps.left = left / ctx.zoomRatio;
       cell.ps.top = top / ctx.zoomRatio;
+      setEditingComment(ctx, flowdata, r, c);
     }
   }
 }

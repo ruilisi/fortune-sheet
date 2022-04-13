@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { normalizeSelection } from "./modules/selection";
-import { Sheet, Selection, Cell } from "./types";
+import { Sheet, Selection, Cell, CommentBox } from "./types";
 import { generateRandomSheetIndex, getSheetIndex } from "./utils";
 
 export type Context = {
@@ -13,9 +13,9 @@ export type Context = {
   devicePixelRatio: number;
   limitSheetNameLength: boolean;
   defaultSheetNameMaxLength?: number;
-  commentBoxs?: any[];
-  editingCommentBox?: string;
-  hoveredCommentBox?: any;
+  commentBoxes?: CommentBox[];
+  editingCommentBox?: CommentBox;
+  hoveredCommentBox?: CommentBox;
 
   contextMenu: any;
 

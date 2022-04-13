@@ -12,7 +12,7 @@ import {
   onCommentBoxResize,
   onCommentBoxResizeEnd,
   removeEditingComment,
-  showComment,
+  overShowComment,
 } from "../modules";
 import { mergeBorder, mergeMoveMain, updateCell } from "../modules/cell";
 import {
@@ -3061,7 +3061,7 @@ export function handleOverlayMouseMove(
 ) {
   if (onCommentBoxResize(ctx, globalCache, e)) return;
   if (onCommentBoxMove(ctx, globalCache, e)) return;
-  showComment(ctx, e, scrollX, scrollY, container); // 有批注显示
+  overShowComment(ctx, e, scrollX, scrollY, container); // 有批注显示
   // hyperlinkCtrl.overshow(event); // 链接提示显示
 
   // window.cancelAnimationFrame(ctx.jfautoscrollTimeout);
