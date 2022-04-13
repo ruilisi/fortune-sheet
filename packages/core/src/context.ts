@@ -174,9 +174,9 @@ export function defaultContext(): Context {
 
     cellmainWidth: 0,
     cellmainHeight: 0,
-    toolbarHeight: 0,
-    infobarHeight: 0,
-    calculatebarHeight: 0,
+    toolbarHeight: 41,
+    infobarHeight: 57,
+    calculatebarHeight: 29,
     rowHeaderWidth: 46,
     columnHeaderHeight: 20,
     cellMainSrollBarSize: 12,
@@ -442,15 +442,6 @@ export function updateContextWithSheetData(ctx: Context, data: any[][]) {
 
   calcRowColSize(ctx, rowCount, colCount);
   normalizeSelection(ctx, ctx.luckysheet_select_save);
-
-  ctx.toolbarHeight = 41;
-  ctx.infobarHeight = 57;
-  ctx.calculatebarHeight = 29;
-  ctx.rowHeaderWidth = 46;
-  ctx.columnHeaderHeight = 20;
-  ctx.cellMainSrollBarSize = 12;
-  ctx.sheetBarHeight = 31;
-  ctx.statisticBarHeight = 23;
 }
 
 export function updateContextWithCanvas(

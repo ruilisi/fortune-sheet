@@ -67,7 +67,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     const workbookContainer = useRef<HTMLDivElement>(null);
     const globalCache = useRef<GlobalCache>({ undoList: [], redoList: [] });
     const mergedSettings = useMemo(
-      () => assign(defaultSettings, props) as Required<Settings>,
+      () => assign(_.cloneDeep(defaultSettings), props) as Required<Settings>,
       [props]
     );
 
