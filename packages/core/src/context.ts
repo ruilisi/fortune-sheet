@@ -396,13 +396,12 @@ function calcRowColSize(ctx: Context, rowCount: number, colCount: number) {
   ctx.ch_width += maxColumnlen;
 }
 
-export function initSheetIndex(ctx: Context) {
-  // get current sheet
-  if (ctx.luckysheetfile?.length > 0) {
+export function ensureSheetIndex(data: Sheet[]) {
+  if (data?.length > 0) {
     let hasActive = false;
     const indexs: (string | number)[] = [];
-    ctx.luckysheetfile.forEach((item) => {
-      if (_.isNil(item.index)) {
+    data.forEach((item) => {
+      if (item.index == null) {
         item.index = generateRandomSheetIndex();
       }
       if (indexs.includes(item.index)) {
@@ -411,7 +410,7 @@ export function initSheetIndex(ctx: Context) {
         indexs.push(item.index);
       }
 
-      if (_.isNil(item.status)) {
+      if (item.status == null) {
         item.status = 0;
       }
       if (item.status === 1) {
@@ -423,9 +422,13 @@ export function initSheetIndex(ctx: Context) {
       }
     });
     if (!hasActive) {
-      ctx.luckysheetfile[0].status = 1;
+      data[0].status = 1;
     }
   }
+}
+
+export function initSheetIndex(ctx: Context) {
+  // get current sheet
   ctx.currentSheetIndex = ctx.luckysheetfile[0].index!;
 
   for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {

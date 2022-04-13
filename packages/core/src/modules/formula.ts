@@ -867,8 +867,7 @@ export function delFunctionGroup(
     index = ctx.currentSheetIndex;
   }
 
-  const { luckysheetfile } = ctx;
-  const file = luckysheetfile[getSheetIndex(ctx, index)!];
+  const file = ctx.luckysheetfile[getSheetIndex(ctx, index)!];
 
   const { calcChain } = file;
   if (!_.isNil(calcChain)) {
@@ -903,8 +902,6 @@ export function delFunctionGroup(
       }
     }
   }
-
-  ctx.luckysheetfile = luckysheetfile;
 }
 
 function checkBracketNum(fp: string) {

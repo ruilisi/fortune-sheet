@@ -20,6 +20,7 @@ type RefValues = {
 
 export type SetContextOptions = {
   noHistory?: boolean;
+  logPatch?: boolean;
 } & PatchOptions;
 
 const WorkbookContext = React.createContext<{

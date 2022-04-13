@@ -20,6 +20,7 @@ import {
   deleteRowCol,
   addSheet,
   deleteSheet,
+  ensureSheetIndex,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -57,7 +58,7 @@ type AdditionalProps = {
 };
 
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
-  ({ onChange, onOp, ...props }, ref) => {
+  ({ onOp, ...props }, ref) => {
     const [context, setContext] = useState(defaultContext());
     const cellInput = useRef<HTMLDivElement>(null);
     const fxInput = useRef<HTMLDivElement>(null);
@@ -66,6 +67,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     const cellArea = useRef<HTMLDivElement>(null);
     const workbookContainer = useRef<HTMLDivElement>(null);
     const globalCache = useRef<GlobalCache>({ undoList: [], redoList: [] });
+
     const mergedSettings = useMemo(
       () => assign(_.cloneDeep(defaultSettings), props) as Required<Settings>,
       [props]
@@ -118,6 +120,10 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             recipe
           );
           if (patches.length > 0 && !options.noHistory) {
+            if (options.logPatch) {
+              // eslint-disable-next-line no-console
+              console.info("patch", patches);
+            }
             const filteredPatches = filterPatch(patches);
             const filteredInversePatches = filterPatch(inversePatches);
             if (filteredInversePatches.length > 0) {
@@ -188,17 +194,13 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     );
 
     useEffect(() => {
-      onChange?.(context.luckysheetfile);
-    }, [context.luckysheetfile, onChange]);
-
-    useEffect(() => {
       setContextWithProduce(
         (draftCtx) => {
           if (_.isEmpty(draftCtx.luckysheetfile)) {
-            // mergedSettings.data at this time may be immutable, causing following modifications to fail,
-            // clone it to make it mutable
-            // TODO do not clone it
-            draftCtx.luckysheetfile = _.cloneDeep(mergedSettings.data);
+            const newData = produce(mergedSettings.data, (draftData) => {
+              ensureSheetIndex(draftData);
+            });
+            draftCtx.luckysheetfile = newData;
           }
           draftCtx.defaultcolumnNum = mergedSettings.column;
           draftCtx.defaultrowNum = mergedSettings.row;
@@ -248,7 +250,12 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                 // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
                 expandedData[d.r][d.c] = d.v;
               });
-              sheet.data = expandedData;
+              draftCtx.luckysheetfile = produce(
+                draftCtx.luckysheetfile,
+                (d) => {
+                  d[sheetIdx!].data = expandedData;
+                }
+              );
               data = expandedData;
             }
           }
@@ -324,9 +331,9 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         { noHistory: true }
       );
     }, [
-      mergedSettings.data,
       context.currentSheetIndex,
       context.luckysheetfile.length,
+      mergedSettings.data,
       mergedSettings.defaultRowHeight,
       mergedSettings.defaultColWidth,
       mergedSettings.column,
