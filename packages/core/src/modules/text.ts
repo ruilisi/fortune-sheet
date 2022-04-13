@@ -163,8 +163,8 @@ export function getMeasureText(
   cache.actualBoundingBoxDescent = measureText.actualBoundingBoxDescent;
   cache.actualBoundingBoxAscent = measureText.actualBoundingBoxAscent;
   if (
-    !cache.actualBoundingBoxDescent ||
-    !cache.actualBoundingBoxAscent ||
+    cache.actualBoundingBoxDescent == null ||
+    cache.actualBoundingBoxAscent == null ||
     Number.isNaN(cache.actualBoundingBoxDescent) ||
     Number.isNaN(cache.actualBoundingBoxAscent)
   ) {
@@ -200,11 +200,11 @@ export function getMeasureText(
       matchTextMeasure = measureTextCache[`${matchText}_${fontset}`];
     }
 
-    if (!descTextMeasure) {
+    if (descTextMeasure == null) {
       descTextMeasure = renderCtx.measureText(descText);
     }
 
-    if (!matchTextMeasure) {
+    if (matchTextMeasure == null) {
       matchTextMeasure = renderCtx.measureText(matchText);
     }
 
@@ -339,7 +339,7 @@ export function getCellTextInfo(
   let isMode = "";
   let isModeSplit = "";
   // console.log("initialinfo", cell, option);
-  if (!cellWidth) {
+  if (cellWidth == null) {
     isMode = "onlyWidth";
     isModeSplit = "_";
   }
