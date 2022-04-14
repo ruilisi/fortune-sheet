@@ -12,6 +12,7 @@ import {
   onCommentBoxResizeStart,
   setEditingComment,
   showComments,
+  selectAll,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -69,6 +70,12 @@ const SheetOverlay: React.FC = () => {
     },
     [refs.cellArea, setContext, settings]
   );
+
+  const onLeftTopClick = useCallback(() => {
+    setContext((draftCtx) => {
+      selectAll(draftCtx);
+    });
+  }, [setContext]);
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -172,6 +179,7 @@ const SheetOverlay: React.FC = () => {
       <div className="fortune-col-header-wrap">
         <div
           className="fortune-left-top"
+          onClick={onLeftTopClick}
           style={{
             width: context.rowHeaderWidth - 1.5,
             height: context.columnHeaderHeight - 1.5,

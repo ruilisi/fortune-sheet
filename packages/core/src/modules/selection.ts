@@ -1507,3 +1507,29 @@ export function selectIsOverlap(ctx: Context, range?: any) {
 
   return overlap;
 }
+
+export function selectAll(ctx: Context) {
+  // 全选表格
+  // if (!checkProtectionAllSelected(Store.currentSheetIndex)) {
+  //   return;
+  // }
+
+  const flowdata = getFlowdata(ctx);
+  if (!flowdata) return;
+
+  // $("#luckysheet-wa-functionbox-confirm").click();
+  ctx.luckysheet_select_status = false;
+
+  ctx.luckysheet_select_save = [
+    {
+      row: [0, flowdata.length - 1],
+      column: [0, flowdata[0].length - 1],
+      row_focus: 0,
+      column_focus: 0,
+      row_select: true,
+      column_select: true,
+    },
+  ];
+
+  normalizeSelection(ctx, ctx.luckysheet_select_save);
+}

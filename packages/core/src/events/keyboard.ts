@@ -6,6 +6,7 @@ import {
   copy,
   deleteSelectedCellText,
   moveHighlightCell,
+  selectAll,
   selectionCache,
 } from "../modules/selection";
 import { handleBold } from "../modules/toolbar";
@@ -343,13 +344,12 @@ function handleWithCtrlOrMetaKey(
       $("#luckysheet-rich-text-editor"),
       e.keyCode
     );
-  } else if (e.key === "a") {
+  } */ else if (e.key === "a") {
     // Ctrl + A  全选
     // $("#luckysheet-left-top").trigger("mousedown");
     // $(document).trigger("mouseup");
-    $("#luckysheet-left-top").click();
+    selectAll(ctx);
   }
-  */
 
   e.preventDefault();
 }
