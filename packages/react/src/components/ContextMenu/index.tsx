@@ -80,6 +80,14 @@ const ContextMenu: React.FC = () => {
               }}
             >
               <>
+                {context.lang?.startsWith("zh") && (
+                  <>
+                    {rightclick.to}
+                    <span className={`luckysheet-cols-rows-shift-${dir}`}>
+                      {(rightclick as any)[dir]}
+                    </span>
+                  </>
+                )}
                 {`${rightclick.insert}  `}
                 <input
                   onClick={(e) => e.stopPropagation()}
@@ -92,10 +100,11 @@ const ContextMenu: React.FC = () => {
                 <span className="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">
                   {`${rightclick.column}  `}
                 </span>
-
-                <span className={`luckysheet-cols-rows-shift-${dir}`}>
-                  {(rightclick as any)[dir]}
-                </span>
+                {!context.lang?.startsWith("zh") && (
+                  <span className={`luckysheet-cols-rows-shift-${dir}`}>
+                    {(rightclick as any)[dir]}
+                  </span>
+                )}
               </>
             </Menu>
           )),
@@ -129,6 +138,14 @@ const ContextMenu: React.FC = () => {
               }}
             >
               <>
+                {context.lang?.startsWith("zh") && (
+                  <>
+                    {rightclick.to}
+                    <span className={`luckysheet-cols-rows-shift-${dir}`}>
+                      {(rightclick as any)[dir]}
+                    </span>
+                  </>
+                )}
                 {`${rightclick.insert}  `}
                 <input
                   onClick={(e) => e.stopPropagation()}
@@ -141,9 +158,11 @@ const ContextMenu: React.FC = () => {
                 <span className="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">
                   {`${rightclick.row}  `}
                 </span>
-                <span className={`luckysheet-cols-rows-shift-${dir}`}>
-                  {(rightclick as any)[dir]}
-                </span>
+                {!context.lang?.startsWith("zh") && (
+                  <span className={`luckysheet-cols-rows-shift-${dir}`}>
+                    {(rightclick as any)[dir]}
+                  </span>
+                )}
               </>
             </Menu>
           )),
@@ -200,6 +219,7 @@ const ContextMenu: React.FC = () => {
     };
   }, [
     context.currentSheetIndex,
+    context.lang,
     context.luckysheet_select_save,
     rightclick,
     setContext,

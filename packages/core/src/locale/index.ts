@@ -14,7 +14,7 @@ function locale(ctx: Context) {
       return localeObj[langsToTry[i]];
     }
   }
-  return localeObj.zh;
+  return localeObj.en;
 }
 
 export { locale };
