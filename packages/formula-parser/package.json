@@ -1,6 +1,6 @@
 {
   "name": "@fortune-sheet/formula-parser",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Formula parser",
   "main": "./src/index.js",
   "jsdelivr": "dist/formula-parser.min.js",

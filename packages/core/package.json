@@ -1,6 +1,6 @@
 {
   "name": "@fortune-sheet/core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
@@ -10,7 +10,7 @@
   "repository": "https://github.com/ruilisi/fortune-sheet",
   "license": "MIT",
   "dependencies": {
-    "@fortune-sheet/formula-parser": "^0.1.0",
+    "@fortune-sheet/formula-parser": "^0.2.0",
     "dayjs": "^1.11.0",
     "immer": "^9.0.12",
     "lodash": "^4.17.21",
