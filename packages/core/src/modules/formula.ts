@@ -58,6 +58,14 @@ let isFunctionRangeSave = false;
 
 let currentContext: Context | undefined;
 
+function tryGetCellAsNumber(cell: Cell) {
+  if (cell?.ct?.t === "n") {
+    const n = Number(cell?.v);
+    return Number.isNaN(n) ? cell.v : n;
+  }
+  return cell?.v;
+}
+
 const parser = new Parser();
 
 parser.on("callCellValue", (cellCoord: any, done: any) => {
@@ -67,7 +75,7 @@ parser.on("callCellValue", (cellCoord: any, done: any) => {
     formulaCache.execFunctionGlobalData[
       `${cellCoord.row.index}_${cellCoord.column.index}_${index}`
     ] || flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
-  const v = cell?.ct?.t === "n" ? Number(cell?.v) : cell?.v;
+  const v = tryGetCellAsNumber(cell);
   done(v);
 });
 
@@ -93,7 +101,7 @@ parser.on(
         const cell =
           formulaCache.execFunctionGlobalData[`${row}_${col}_${index}`] ||
           flowdata?.[row]?.[col];
-        const v = cell?.ct?.t === "n" ? Number(cell?.v) : cell?.v;
+        const v = tryGetCellAsNumber(cell);
         colFragment.push(v);
       }
       fragment.push(colFragment);
