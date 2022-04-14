@@ -11299,8 +11299,8 @@ export default {
   },
   merge: {
     mergeAll: "Merge all",
-    mergeV: "Vertically",
-    mergeH: "Horizontally",
+    mergeV: "Merge Vertically",
+    mergeH: "Merge Horizontally",
     mergeCancel: "Unmerge",
     overlappingError: "Cannot merge overlapping areas",
     partiallyError: "Cannot perform this operation on partially merged cells",

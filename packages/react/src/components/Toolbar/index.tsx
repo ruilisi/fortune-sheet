@@ -14,6 +14,7 @@ import {
   autoSelectionFormula,
   handleSum,
   locale,
+  handleMergeAll,
 } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import "./index.css";
@@ -32,7 +33,7 @@ const Toolbar: React.FC = () => {
   const row = firstSelection?.row_focus;
   const col = firstSelection?.column_focus;
   const cell = flowdata && row && col ? flowdata?.[row]?.[col] : undefined;
-  const { toolbar } = locale(context);
+  const { toolbar, merge } = locale(context);
 
   const getToolbarItem = useCallback(
     (name: string, i: number) => {
@@ -267,6 +268,45 @@ const Toolbar: React.FC = () => {
           </Combo>
         );
       }
+      if (name === "merge-menu") {
+        const itemdata = [
+          { text: merge.mergeAll, value: "mergeAll" },
+          { text: merge.mergeV, value: "mergeV", example: "" },
+          { text: merge.mergeH, value: "mergeH", example: "" },
+          { text: merge.mergeCancel, value: "mergeCancel", example: "" },
+        ];
+        return (
+          <Combo
+            iconId="merge-all"
+            key={name}
+            tooltip={name}
+            text="合并单元格"
+            onClick={() =>
+              setContext((ctx) => {
+                handleMergeAll(ctx, "mergeAll");
+              })
+            }
+          >
+            {(setOpen) => (
+              <Select>
+                {itemdata.map(({ text, value }) => (
+                  <Option
+                    key={value}
+                    onClick={() => {
+                      setContext((ctx) => {
+                        handleMergeAll(ctx, value);
+                      });
+                      setOpen(false);
+                    }}
+                  >
+                    {text}
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
 
       return (
         <Button
@@ -287,15 +327,19 @@ const Toolbar: React.FC = () => {
       );
     },
     [
-      cell,
-      handleRedo,
-      handleUndo,
-      context.luckysheet_select_save,
-      flowdata,
+      toolbar,
+      setContext,
       refs.cellInput,
       refs.globalCache,
-      setContext,
-      toolbar,
+      cell,
+      handleUndo,
+      handleRedo,
+      context.luckysheet_select_save,
+      flowdata,
+      merge.mergeAll,
+      merge.mergeV,
+      merge.mergeH,
+      merge.mergeCancel,
     ]
   );
 

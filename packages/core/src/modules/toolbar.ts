@@ -24,7 +24,7 @@ import {
   updateInlineStringFormatOutside,
 } from "./inline-string";
 import { colLocationByIndex, rowLocationByIndex } from "./location";
-import { selectionCopyShow } from "./selection";
+import { selectionCopyShow, selectIsOverlap } from "./selection";
 import {
   hasPartMC,
   isdatatypemulti,
@@ -1543,19 +1543,19 @@ export function handleBorderAll(ctx: Context) {
   // }, 1);
 }
 
-export function handleMergeAll(ctx: Context) {
+export function handleMergeAll(ctx: Context, type: string) {
   // if (!checkProtectionNotEnable(ctx.currentSheetIndex)) {
   //   return;
   // }
 
-  // if (selectIsOverlap()) {
-  //   if (isEditMode()) {
-  //     alert("不能合并重叠区域");
-  //   } else {
-  //     tooltip.info("不能合并重叠区域", "");
-  //   }
-  //   return;
-  // }
+  if (selectIsOverlap(ctx)) {
+    //   if (isEditMode()) {
+    //     alert("不能合并重叠区域");
+    //   } else {
+    //     tooltip.info("不能合并重叠区域", "");
+    //   }
+    return;
+  }
 
   if (ctx.config.merge != null) {
     let has_PartMC = false;
@@ -1585,7 +1585,7 @@ export function handleMergeAll(ctx: Context) {
 
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
-  updateFormat_mc(ctx, flowdata, "mergeAll");
+  updateFormat_mc(ctx, flowdata, type);
 }
 
 export function handleTextSize(
@@ -1608,7 +1608,7 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
   "percentage-format": handlePercentageFormat,
   "number-decrease": handleNumberDecrease,
   "number-increase": handleNumberIncrease,
-  "merge-all": handleMergeAll,
+  "merge-all": (ctx: Context) => handleMergeAll(ctx, "mergeAll"),
   "border-all": handleBorderAll,
   bold: handleBold,
   italic: handleItalic,

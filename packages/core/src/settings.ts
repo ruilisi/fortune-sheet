@@ -102,7 +102,7 @@ export const defaultSettings: Required<Settings> = {
     "text-background",
     "border-all",
     // "merge-cell",
-    "merge-all",
+    "merge-menu",
     "|",
     "align-left",
     "align-center",
