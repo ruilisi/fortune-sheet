@@ -25,6 +25,7 @@ import SVGIcon from "../SVGIcon";
 import ContentEditable from "../SheetOverlay/ContentEditable";
 import FormulaSearch from "../SheetOverlay/FormulaSearch";
 import FormulaHint from "../SheetOverlay/FormulaHint";
+import NameBox from "./NameBox";
 
 const FxEditor: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
@@ -231,27 +232,7 @@ const FxEditor: React.FC = () => {
 
   return (
     <div className="fortune-fx-editor">
-      <div
-        className="luckysheet-wa-calculate-size"
-        id="luckysheet-wa-calculate-size"
-      />
-      <div className="luckysheet-wa-calculate-help">
-        <div className="luckysheet-wa-calculate-help-box">
-          <div spellCheck={false} aria-hidden="false" id="luckysheet-helpbox">
-            <div
-              id="luckysheet-helpbox-cell"
-              className="luckysheet-helpbox-cell-input luckysheet-mousedown-cancel"
-              tabIndex={0}
-              contentEditable="true"
-              dir="ltr"
-              aria-autocomplete="list"
-            />
-          </div>
-        </div>
-        <div className="luckysheet-wa-calculate-help-tool">
-          <i className="fa fa-caret-down" aria-hidden="true" />
-        </div>
-      </div>
+      <NameBox />
       <div className="fortune-fx-icon">
         <SVGIcon name="fx" width={18} height={18} />
       </div>
@@ -260,7 +241,7 @@ const FxEditor: React.FC = () => {
           innerRef={(e) => {
             refs.fxInput.current = e;
           }}
-          className="luckysheet-functionbox-cell-input luckysheet-mousedown-cancel"
+          className="fortune-fx-input"
           id="luckysheet-functionbox-cell"
           aria-autocomplete="list"
           onFocus={onFocus}

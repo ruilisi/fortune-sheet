@@ -1136,7 +1136,7 @@ export function getRangetxt(
   ctx: Context,
   sheetIndex: string,
   range: SingleRange,
-  currentIndex: string
+  currentIndex?: string
 ) {
   let sheettxt = "";
 

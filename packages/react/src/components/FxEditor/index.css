@@ -11,22 +11,21 @@
   margin: 0 12px;
 }
 
-.luckysheet-wa-calculate-help {
+.fortune-name-box-container {
   width: 99px;
   border-right: 1px solid #d4d4d4;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
 }
 
-.luckysheet-wa-calculate-help-box {
-  width: 85px;
-}
-
-.luckysheet-helpbox-cell-input {
+.fortune-name-box {
   width: 100%;
-  height: 100%;
+  text-align: center;
   margin: 0;
   outline: none;
   cursor: text;
-  -webkit-user-modify: read-write-plaintext-only;
+  /* -webkit-user-modify: read-write-plaintext-only; */
   white-space: nowrap;
   overflow: hidden;
   -webkit-transform: translateZ(0);
@@ -34,52 +33,6 @@
   word-wrap: break-word;
   -webkit-nbsp-mode: space;
   -webkit-line-break: after-white-space;
-}
-
-.luckysheet-wa-calculate-help-tool {
-  position: absolute;
-  left: 85px;
-  text-align: center;
-  height: 100%;
-  width: 13px;
-  border-left: 1px solid transparent;
-  border-right: 1px solid transparent;
-}
-.luckysheet-wa-calculate-help-tool .fa-caret-down {
-  position: absolute;
-  top: 50%;
-  left: 3px;
-  transform: translateY(-50%);
-}
-
-.luckysheet-wa-calculate-help-tool:hover {
-  background: #efefef;
-  cursor: pointer;
-  border-left: 1px solid #e5e5e5;
-  border-right: 1px solid #e5e5e5;
-}
-
-.luckysheet-wa-calculate-size {
-  position: absolute;
-  height: 3px;
-  width: 100%;
-  left: 0px;
-  bottom: 0px;
-  z-index: 1000;
-}
-
-.luckysheet-wa-calculate-size:hover {
-  background: #5e5e5e;
-  cursor: ns-resize;
-}
-
-.luckysheet-wa-calculate-active {
-  color: #585858;
-  cursor: pointer;
-}
-
-.luckysheet-wa-calculate-active:hover {
-  color: #0188fb;
 }
 
 .fortune-fx-input-container {
@@ -93,23 +46,7 @@
   border-left: 1px solid #e5e5e5;
 }
 
-#luckysheet-functionbox {
-  resize: none;
-  /*border: 1px #b9b9b9 solid;*/
-  font-family: arial, sans, sans-serif;
-  font-size: 14px;
-  line-height: 14px;
-  background-color: #ffffff;
-  padding: 0px 5px;
-}
-
-#luckysheet-functionbox .luckysheet-functionbox-cell-input {
-  word-wrap: break-word;
-  -webkit-nbsp-mode: space;
-  -webkit-line-break: after-white-space;
-}
-
-.luckysheet-functionbox-cell-input {
+.fortune-fx-input {
   flex: 1;
   padding-left: 2px;
   font-size: 14px;
@@ -118,6 +55,9 @@
   cursor: text;
   -webkit-user-modify: read-write-plaintext-only;
   white-space: pre-wrap;
+  word-wrap: break-word;
   -webkit-transform: translateZ(0);
+  -webkit-nbsp-mode: space;
+  -webkit-line-break: after-white-space;
   background-color: white;
 }
