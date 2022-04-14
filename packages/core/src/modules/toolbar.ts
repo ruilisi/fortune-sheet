@@ -1482,7 +1482,7 @@ export function handleTextBackground(
   setAttr(ctx, cellInput, "bg", color);
 }
 
-export function handleBorderAll(ctx: Context) {
+export function handleBorderAll(ctx: Context, type: string) {
   // *如果禁止前台编辑，则中止下一步操作
   // if (!checkIsAllowEdit()) {
   //   tooltip.info("", locale().pivotTable.errorNotAllowEdit);
@@ -1494,7 +1494,7 @@ export function handleBorderAll(ctx: Context) {
 
   // const d = editor.deepCopyFlowData(Store.flowdata);
   // let type = $(this).attr("type");
-  let type = "border-all";
+  // let type = "border-all";
   if (type == null) {
     type = "border-all";
   }
@@ -1609,7 +1609,7 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
   "number-decrease": handleNumberDecrease,
   "number-increase": handleNumberIncrease,
   "merge-all": (ctx: Context) => handleMergeAll(ctx, "mergeAll"),
-  "border-all": handleBorderAll,
+  "border-all": (ctx: Context) => handleBorderAll(ctx, "border-all"),
   bold: handleBold,
   italic: handleItalic,
   "strike-through": handleStrikeThrough,

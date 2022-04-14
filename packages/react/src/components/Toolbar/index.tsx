@@ -15,14 +15,16 @@ import {
   handleSum,
   locale,
   handleMergeAll,
+  handleBorderAll,
 } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import "./index.css";
 import Button from "./Button";
-import Divider from "./Divider";
+import Divider, { MenuDivider } from "./Divider";
 import Combo from "./Combo";
 import ColorPicker from "./ColorPicker";
 import Select, { Option } from "./Select";
+import SVGIcon from "../SVGIcon";
 
 const Toolbar: React.FC = () => {
   const { context, setContext, refs, settings, handleUndo, handleRedo } =
@@ -33,7 +35,7 @@ const Toolbar: React.FC = () => {
   const row = firstSelection?.row_focus;
   const col = firstSelection?.column_focus;
   const cell = flowdata && row && col ? flowdata?.[row]?.[col] : undefined;
-  const { toolbar, merge } = locale(context);
+  const { toolbar, merge, border } = locale(context);
 
   const getToolbarItem = useCallback(
     (name: string, i: number) => {
@@ -260,7 +262,13 @@ const Toolbar: React.FC = () => {
                       setOpen(false);
                     }}
                   >
-                    {`${text}  ${key}`}
+                    <div
+                      className="fortune-toolbar-menu-line"
+                      style={{ width: 100 }}
+                    >
+                      <div>{text}</div>
+                      <div>{key}</div>
+                    </div>
                   </Option>
                 ))}
               </Select>
@@ -271,9 +279,9 @@ const Toolbar: React.FC = () => {
       if (name === "merge-menu") {
         const itemdata = [
           { text: merge.mergeAll, value: "mergeAll" },
-          { text: merge.mergeV, value: "mergeV", example: "" },
-          { text: merge.mergeH, value: "mergeH", example: "" },
-          { text: merge.mergeCancel, value: "mergeCancel", example: "" },
+          { text: merge.mergeV, value: "mergeV" },
+          { text: merge.mergeH, value: "mergeH" },
+          { text: merge.mergeCancel, value: "mergeCancel" },
         ];
         return (
           <Combo
@@ -302,6 +310,93 @@ const Toolbar: React.FC = () => {
                     {text}
                   </Option>
                 ))}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
+      if (name === "border-menu") {
+        const itemdata = [
+          {
+            text: border.borderTop,
+            value: "border-top",
+          },
+          {
+            text: border.borderBottom,
+            value: "border-bottom",
+          },
+          {
+            text: border.borderLeft,
+            value: "border-left",
+          },
+          {
+            text: border.borderRight,
+            value: "border-right",
+          },
+          { text: "", value: "divider" },
+          {
+            text: border.borderNone,
+            value: "border-none",
+          },
+          {
+            text: border.borderAll,
+            value: "border-all",
+          },
+          {
+            text: border.borderOutside,
+            value: "border-outside",
+          },
+          { text: "", value: "divider" },
+          {
+            text: border.borderInside,
+            value: "border-inside",
+          },
+          {
+            text: border.borderHorizontal,
+            value: "border-horizontal",
+          },
+          {
+            text: border.borderVertical,
+            value: "border-vertical",
+          },
+          // { text: "", value: "divider", example: "" },
+          // {"text": "<span id='luckysheet-icon-borderColor-linecolor' class='luckysheet-mousedown-cancel' style='border-bottom:3px solid #000;'>"+ locale_border.borderColor +"</span>", "value":"borderColor", "example":"more"},
+          // {"text": ""+ locale_border.borderSize +"<img id='luckysheetborderSizepreview' width=100 height=10 src='data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==' style='position:absolute;bottom:-5px;right:0px;width:100px;height:10px;'>", "value":"borderSize", "example":"more"}
+        ];
+        return (
+          <Combo
+            iconId="border-all"
+            key={name}
+            tooltip={name}
+            text="边框设置"
+            onClick={() =>
+              setContext((ctx) => {
+                handleBorderAll(ctx, "border-all");
+              })
+            }
+          >
+            {(setOpen) => (
+              <Select>
+                {itemdata.map(({ text, value }) =>
+                  value !== "divider" ? (
+                    <Option
+                      key={value}
+                      onClick={() => {
+                        setContext((ctx) => {
+                          handleBorderAll(ctx, value);
+                        });
+                        setOpen(false);
+                      }}
+                    >
+                      <div className="fortune-toolbar-menu-line">
+                        {text}
+                        <SVGIcon name={value} />
+                      </div>
+                    </Option>
+                  ) : (
+                    <MenuDivider />
+                  )
+                )}
               </Select>
             )}
           </Combo>
@@ -340,6 +435,16 @@ const Toolbar: React.FC = () => {
       merge.mergeV,
       merge.mergeH,
       merge.mergeCancel,
+      border.borderTop,
+      border.borderBottom,
+      border.borderLeft,
+      border.borderRight,
+      border.borderNone,
+      border.borderAll,
+      border.borderOutside,
+      border.borderInside,
+      border.borderHorizontal,
+      border.borderVertical,
     ]
   );
 

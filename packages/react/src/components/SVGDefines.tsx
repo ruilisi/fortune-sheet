@@ -185,6 +185,41 @@ const SVGDefines: React.FC = () => (
           fill="#535A68"
         />
       </symbol>
+      <symbol viewBox="0 0 24 24" fill="none" id="border-horizontal">
+        <rect
+          x="5.75"
+          y="5.75"
+          width="12.5"
+          height="12.5"
+          stroke="#CCCED2"
+          strokeWidth="1.5"
+        />
+
+        <line
+          x1="12"
+          y1="17.5"
+          x2="12"
+          y2="6.5"
+          stroke="#CCCED2"
+          strokeWidth="1.5"
+        />
+        <line
+          x1="5"
+          y1="18.25"
+          x2="19"
+          y2="18.25"
+          stroke="#CCCED2"
+          strokeWidth="1.5"
+        />
+        <line
+          x1="6.5"
+          y1="12"
+          x2="17.5"
+          y2="12"
+          stroke="#535A68"
+          strokeWidth="1.5"
+        />
+      </symbol>
       <symbol viewBox="0 0 24 24" fill="none" id="border_diagonal_down">
         <line
           x1="17.9697"
@@ -307,7 +342,7 @@ const SVGDefines: React.FC = () => (
           strokeWidth="1.5"
         />
       </symbol>
-      <symbol viewBox="0 0 24 24" fill="none" id="border-outline">
+      <symbol viewBox="0 0 24 24" fill="none" id="border-outside">
         <rect
           x="5.75"
           y="5.75"
@@ -364,6 +399,40 @@ const SVGDefines: React.FC = () => (
           x2="18.25"
           y2="5"
           stroke="#535A68"
+          strokeWidth="1.5"
+        />
+      </symbol>
+      <symbol viewBox="0 0 24 24" fill="none" id="border-vertical">
+        <line
+          x1="6.5"
+          y1="12"
+          x2="17.5"
+          y2="12"
+          stroke="#CCCED2"
+          strokeWidth="1.5"
+        />
+        <line
+          x1="12"
+          y1="17.5"
+          x2="12"
+          y2="6.5"
+          stroke="#535A68"
+          strokeWidth="1.5"
+        />
+        <rect
+          x="5.75"
+          y="5.75"
+          width="12.5"
+          height="12.5"
+          stroke="#CCCED2"
+          strokeWidth="1.5"
+        />
+        <line
+          x1="18.25"
+          y1="19"
+          x2="18.25"
+          y2="5"
+          stroke="#CCCED2"
           strokeWidth="1.5"
         />
       </symbol>
