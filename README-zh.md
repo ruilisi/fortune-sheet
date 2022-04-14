@@ -57,14 +57,16 @@
 - **公式和函数**：内置公式
 
 ## 开发路线
-- 支持协同编辑和后端存储.
-- 支持撤销/重做.
+- ✅ 支持协同编辑和后端存储.
+- ✅ 支持撤销/重做.
+- 手机端适配.
+- 开放API.
 - 增加测试代码.
 - 更多基础功能:
   - 下拉填充
   - 字体
-  - 格式刷
-  - 评论
+  - ✅ 格式刷
+  - ✅ 评论
   - 插入图片
   - 更多工具栏按钮
 - Excel 导入和导出.
@@ -124,6 +126,29 @@ ReactDOM.render(
   document.getElementById('root')
 );
 ```
+
+### 后端存储和在线协同
+
+每当用户在表格上做操作，一个`Op`列表会通过`onOp`回调发出。op描述了如何从当前数据修改为用户操作后的新数据的步骤。例如，当用户在A2单元格上设置了加粗，生成的op如下：
+
+```json
+[
+    {
+        "op": "replace",
+        "index": "0",
+        "path": ["data", 1, 0, "bl"],
+        "value": 1
+    }
+]
+```
+
+op对后端数据修改和同步在线协同数据非常有用。
+
+我们在 `backend-demo` 目录中展示了一个例子，使用 `Express` (后端) and `MongoDB` (数据库) 实现。
+
+通过 `node index.js` 运行后端服务器，然后访问 [Collabration example](https://ruilisi.github.io/fortune-sheet-demo/?path=/story/collabration--example) 即可体验。
+
+详细的 `Op` 文档, 请参考 [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-docs/zh/guide/op.html)
 
 ## 贡献
 期望的工作流程为: Fork -> Patch -> Push -> Pull Request

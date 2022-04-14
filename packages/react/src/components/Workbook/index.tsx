@@ -58,7 +58,7 @@ type AdditionalProps = {
 };
 
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
-  ({ onOp, ...props }, ref) => {
+  ({ onChange, onOp, ...props }, ref) => {
     const [context, setContext] = useState(defaultContext());
     const cellInput = useRef<HTMLDivElement>(null);
     const fxInput = useRef<HTMLDivElement>(null);
@@ -192,6 +192,12 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       }),
       [context, handleRedo, handleUndo, mergedSettings, setContextWithProduce]
     );
+
+    useEffect(() => {
+      if (!_.isEmpty(context.luckysheetfile)) {
+        onChange?.(context.luckysheetfile);
+      }
+    }, [context.luckysheetfile, onChange]);
 
     useEffect(() => {
       setContextWithProduce(

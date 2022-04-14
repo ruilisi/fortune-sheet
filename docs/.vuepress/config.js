@@ -51,7 +51,7 @@ module.exports = {
 						'config',
 						'sheet',
 						'cell',
-						// 'operate',
+						'op',
 						'api',
 						'FAQ',
 						'contribute'
@@ -87,7 +87,7 @@ module.exports = {
 						'config',
 						'sheet',
 						'cell',
-						// 'operate',
+						'op',
 						'api',
 						'FAQ',
 						'contribute'

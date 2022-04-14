@@ -57,14 +57,16 @@ This project is in the state of early development, APIs may have significant cha
 - **Formulas & Functions**: Built-in formulas
 
 ## Roadmap
-- Support cooperative editing with backend storage.
-- Support undo/redo.
+- ✅ Support cooperative editing with backend storage.
+- ✅ Support undo/redo.
+- Mobile adaption.
+- Expose APIs.
 - Add tests.
 - More basic features:
   - fill handle
   - fonts
-  - format painter
-  - comments
+  - ✅ format painter
+  - ✅ comments
   - insert images
   - more toolbar buttons
 - Excel import and export.
@@ -123,6 +125,30 @@ ReactDOM.render(
   document.getElementById('root')
 );
 ```
+
+### Backend storage and collabration
+
+Each time a user operates on the sheet, an array of `Op` will be emiited through `onOp` callback. An op describes how to modify the current data to reach the new data after the user's operation. For example, here is an op when user sets the cell font to be bold on cell A2.
+
+```json
+[
+    {
+        "op": "replace",
+        "index": "0",
+        "path": ["data", 1, 0, "bl"],
+        "value": 1
+    }
+]
+```
+
+The op is useful for database modification and syncing state in online collabration.
+
+A working example with `Express` (backend server) and `MongoDB` (data persistence) is avaiable in `backend-demo` folder.
+
+Run it with `node index.js` and visit [Collabration example](https://ruilisi.github.io/fortune-sheet-demo/?path=/story/collabration--example)
+
+For detailed doc about `Op`, refer to [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-docs/guide/op.html)
+
 ## Contributing
 Expected workflow is: Fork -> Patch -> Push -> Pull Request
 
