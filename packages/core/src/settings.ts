@@ -58,7 +58,7 @@ export const defaultSettings: Required<Settings> = {
   data: [], // 客户端sheet数据[sheet1, sheet2, sheet3]
   config: {}, // 表格行高、列宽、合并单元格、公式等设置
   fullscreenmode: true, // 是否全屏模式，非全屏模式下，标记框不会强制选中。
-  devicePixelRatio: window.devicePixelRatio, // 设备比例，比例越大表格分标率越高
+  devicePixelRatio: (global || window).devicePixelRatio, // 设备比例，比例越大表格分标率越高
   allowEdit: true, // 是否允许前台编辑
   allowUpdate: false, // 是否允许编辑后的后台更新
   showConfigWindowResize: true, // 图表和数据透视表的配置会在右侧弹出，设置弹出后表格是否会自动缩进

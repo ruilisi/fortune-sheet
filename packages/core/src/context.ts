@@ -158,7 +158,7 @@ export function defaultContext(): Context {
     defaultcolumnNum: 60,
     defaultrowNum: 84,
     fullscreenmode: true,
-    devicePixelRatio: window.devicePixelRatio,
+    devicePixelRatio: (global || window).devicePixelRatio,
     limitSheetNameLength: false,
 
     contextMenu: {},
