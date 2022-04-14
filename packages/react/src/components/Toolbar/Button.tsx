@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React from "react";
 import SVGIcon from "../SVGIcon";
 
 type Props = {
@@ -6,17 +6,24 @@ type Props = {
   iconId: string;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   disabled?: boolean;
+  selected?: boolean;
 };
 
-const Button: React.FC<Props> = ({ tooltip, onClick, iconId, disabled }) => {
-  const style: CSSProperties = { userSelect: "none" };
+const Button: React.FC<Props> = ({
+  tooltip,
+  onClick,
+  iconId,
+  disabled,
+  selected,
+}) => {
+  // const style: CSSProperties = { userSelect: "none" };
   return (
     <div
       className="fortune-toolbar-button"
       onClick={onClick}
       data-tips={tooltip}
       role="button"
-      style={style}
+      style={selected ? { backgroundColor: "#E7E5EB" } : {}}
     >
       <SVGIcon name={iconId} style={disabled ? { opacity: 0.3 } : {}} />
       {tooltip && <div className="fortune-tooltip">{tooltip}</div>}

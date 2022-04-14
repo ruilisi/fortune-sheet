@@ -38,6 +38,8 @@ type ToolbarItemClickHandler = (
   cache?: GlobalCache
 ) => void;
 
+type ToolbarItemSelectedFunc = (cell: Cell | null | undefined) => boolean;
+
 function updateFormatCell(
   ctx: Context,
   d: CellMatrix,
@@ -1631,6 +1633,23 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
   "formula-sum": handleSum,
 };
 
-export function getToolbarItemClickHandler(name: string) {
+const selectedMap: Record<string, ToolbarItemSelectedFunc> = {
+  bold: (cell) => cell?.bl === 1,
+  italic: (cell) => cell?.it === 1,
+  "strike-through": (cell) => cell?.cl === 1,
+  underline: (cell) => cell?.un === 1,
+  "align-left": (cell) => Number(cell?.ht) === 1,
+  "align-center": (cell) => Number(cell?.ht) === 0,
+  "align-right": (cell) => Number(cell?.ht) === 2,
+  "align-top": (cell) => Number(cell?.vt) === 1,
+  "align-mid": (cell) => Number(cell?.vt) === 0,
+  "align-bottom": (cell) => Number(cell?.vt) === 2,
+};
+
+export function toolbarItemClickHandler(name: string) {
   return handlerMap[name];
+}
+
+export function toolbarItemSelectedFunc(name: string) {
+  return selectedMap[name];
 }

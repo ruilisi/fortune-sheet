@@ -1,6 +1,6 @@
 import React, { useContext, useCallback, useRef } from "react";
 import {
-  getToolbarItemClickHandler,
+  toolbarItemClickHandler,
   handleTextBackground,
   handleTextColor,
   handleTextSize,
@@ -16,6 +16,7 @@ import {
   locale,
   handleMergeAll,
   handleBorderAll,
+  toolbarItemSelectedFunc,
 } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import "./index.css";
@@ -34,7 +35,8 @@ const Toolbar: React.FC = () => {
   const flowdata = getFlowdata(context);
   const row = firstSelection?.row_focus;
   const col = firstSelection?.column_focus;
-  const cell = flowdata && row && col ? flowdata?.[row]?.[col] : undefined;
+  const cell =
+    flowdata && row != null && col != null ? flowdata?.[row]?.[col] : undefined;
   const { toolbar, merge, border } = locale(context);
 
   const getToolbarItem = useCallback(
@@ -409,9 +411,10 @@ const Toolbar: React.FC = () => {
           // @ts-ignore
           tooltip={toolbar[name]}
           key={name}
+          selected={toolbarItemSelectedFunc(name)?.(cell)}
           onClick={() =>
             setContext((draftCtx) => {
-              getToolbarItemClickHandler(name)?.(
+              toolbarItemClickHandler(name)?.(
                 draftCtx,
                 refs.cellInput.current!,
                 refs.globalCache
@@ -429,7 +432,7 @@ const Toolbar: React.FC = () => {
       cell,
       handleUndo,
       handleRedo,
-      context.luckysheet_select_save,
+      context,
       flowdata,
       merge.mergeAll,
       merge.mergeV,
