@@ -6,7 +6,7 @@ module.exports = {
 		'/': {
 			lang: 'en-US', // 将会被设置为 <html> 的 lang 属性
 			title: 'FortuneSheet Document',
-			description: 'FortuneSheet is an online spreedsheet component library that provides out-of-the-box features just like Excel. This site contains official configuration document, API, and tutorial.'
+			description: 'FortuneSheet is an online spreadsheet component library that provides out-of-the-box features just like Excel. This site contains official configuration document, API, and tutorial.'
 		},
 		'/zh/': {
 			lang: 'zh-CN',

@@ -1,7 +1,7 @@
 # Get started
 
 ## Introduction
-FortuneSheet is an online spreedsheet component library that provides out-of-the-box features just like Excel.
+FortuneSheet is an online spreadsheet component library that provides out-of-the-box features just like Excel.
 
 This project is originated from [Luckysheet](https://github.com/mengshukeji/Luckysheet) and has inherited many code from it. Lots of efforts have done to translate the whole project to typescript (still in progress), and solved problems in project level.
 

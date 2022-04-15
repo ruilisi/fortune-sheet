@@ -2,7 +2,7 @@
   <img align="center" src="logo.png" width="150px" height="150px" />
 </p>
 <h1 align="center">FortuneSheet</h1>
-<p align="center">FortuneSheet is an online spreedsheet component library that provides out-of-the-box features just like Excel</p>
+<p align="center">FortuneSheet is an online spreadsheet component library that provides out-of-the-box features just like Excel</p>
 
 <div align="center">
 
@@ -19,7 +19,7 @@ English | [简体中文](./README-zh.md)
 
 ## Purpose
 
-The goal of `FortuneSheet` is to make a feature-rich, easy-to-configure online spreedsheet that you can use out-of-the-box.
+The goal of `FortuneSheet` is to make a feature-rich, easy-to-configure online spreadsheet that you can use out-of-the-box.
 
 This project is originated from [Luckysheet](https://github.com/mengshukeji/Luckysheet) and has inherited many code from it. Lots of efforts have done to translate the whole project to typescript (still in progress), and solved problems in project level.
 
@@ -28,6 +28,10 @@ We aim to make FortuneSheet powerful yet easy to maintain.
 ## Online demo
 
 Take a look at the online demo at [fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/)
+
+<p>
+  <img align="center" src="screenshot.png" width="400px" />
+</p>
 
 ## Attention
 This project is in the state of early development, APIs may have significant change in the future, use with caution in production.

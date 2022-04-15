@@ -1,6 +1,6 @@
 # @fortune-sheet/react
 
-FortuneSheet is an online spreedsheet component library that provides out-of-the-box features just like Excel
+FortuneSheet is an online spreadsheet component library that provides out-of-the-box features just like Excel
 
 See our repo [fortune-sheet](https://github.com/ruilisi/fortune-sheet) for more information.
 
