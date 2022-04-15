@@ -4,8 +4,8 @@ import {
   updateContextWithCanvas,
   updateContextWithSheetData,
   groupValuesRefresh,
-  hasGroupValuesRefreshData,
   handleGlobalWheel,
+  formulaCache,
 } from "@fortune-sheet/core";
 import "./index.css";
 import type { CellMatrix } from "@fortune-sheet/core";
@@ -54,14 +54,14 @@ const Sheet: React.FC<Props> = ({ data }) => {
   }, [setContext]);
 
   useEffect(() => {
-    if (hasGroupValuesRefreshData()) {
+    if (formulaCache.groupValuesRefreshData.length > 0) {
+      const refreshData = formulaCache.groupValuesRefreshData;
+      formulaCache.groupValuesRefreshData = [];
       setContext((draftCtx) => {
-        groupValuesRefresh(draftCtx);
+        groupValuesRefresh(draftCtx, refreshData);
       });
+      return;
     }
-  }, [context.luckysheetfile, context.currentSheetIndex, setContext]);
-
-  useEffect(() => {
     const tableCanvas = new Canvas(canvasRef.current!, context);
     tableCanvas.drawMain({
       scrollHeight: context.scrollTop,
@@ -69,7 +69,7 @@ const Sheet: React.FC<Props> = ({ data }) => {
     });
     tableCanvas.drawColumnHeader(context.scrollLeft);
     tableCanvas.drawRowHeader(context.scrollTop);
-  }, [context]);
+  }, [context, setContext]);
 
   const onWheel = useCallback(
     (e: WheelEvent) => {

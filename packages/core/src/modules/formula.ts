@@ -39,10 +39,10 @@ export const formulaCache: {
   functionlistMap: {},
   execFunctionExist: null,
   execFunctionGlobalData: {},
+  groupValuesRefreshData: [],
 };
 
 let formulaContainSheetList: any = {};
-let groupValuesRefreshData: any[] = [];
 let cellTextToIndexList: any = {};
 let operatorjson: any = null;
 const operator = "==|!=|<>|<=|>=|=|+|-|>|<|/|*|%|&|^";
@@ -1567,13 +1567,13 @@ function insertUpdateDynamicArray(ctx: Context, dynamicArrayItem: any) {
   return dynamicArray;
 }
 
-export function groupValuesRefresh(ctx: Context) {
+export function groupValuesRefresh(ctx: Context, refreshData: any[]) {
   const { luckysheetfile } = ctx;
-  if (groupValuesRefreshData.length > 0) {
-    for (let i = 0; i < groupValuesRefreshData.length; i += 1) {
-      const item = groupValuesRefreshData[i];
+  if (refreshData.length > 0) {
+    for (let i = 0; i < refreshData.length; i += 1) {
+      const item = refreshData[i];
 
-      // if(item.i !== Store.currentSheetIndex){
+      // if(item.i !== ctx.currentSheetIndex){
       //     continue;
       // }
 
@@ -1604,12 +1604,8 @@ export function groupValuesRefresh(ctx: Context) {
     }
 
     // editor.webWorkerFlowDataCache(Store.flowdata); // worker存数据
-    groupValuesRefreshData = [];
+    // refreshData = [];
   }
-}
-
-export function hasGroupValuesRefreshData() {
-  return groupValuesRefreshData.length > 0;
 }
 
 export function execFunctionGroup(
@@ -2012,7 +2008,7 @@ export function execFunctionGroup(
       formulaCell.index
     );
 
-    groupValuesRefreshData.push({
+    formulaCache.groupValuesRefreshData.push({
       r: formulaCell.r,
       c: formulaCell.c,
       v: v[1],
