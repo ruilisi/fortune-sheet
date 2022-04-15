@@ -1,6 +1,6 @@
 {
   "name": "@fortune-sheet/react",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.esm.js",
@@ -15,9 +15,11 @@
   "dependencies": {
     "@fortune-sheet/core": "^0.2.0",
     "immer": "^9.0.12",
-    "lodash": "^4.17.21",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "lodash": "^4.17.21"
+  },
+  "peerDependencies": {
+    "react": ">= 16.8",
+    "react-dom": ">= 16.8"
   },
   "publishConfig": {
     "access": "public"
