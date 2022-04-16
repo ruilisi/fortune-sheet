@@ -879,10 +879,13 @@ export function delFunctionGroup(
 
   const { calcChain } = file;
   if (!_.isNil(calcChain)) {
-    for (let i = 0; i < calcChain.length; i += 1) {
-      const calc = calcChain[i];
+    let modified = false;
+    const calcChainClone = _.cloneDeep(calcChain);
+    for (let i = 0; i < calcChainClone.length; i += 1) {
+      const calc = calcChainClone[i];
       if (calc.r === r && calc.c === c && calc.index === index) {
-        calcChain.splice(i, 1);
+        calcChainClone.splice(i, 1);
+        modified = true;
         // server.saveParam("fc", index, calc, {
         //   op: "del",
         //   pos: i,
@@ -890,24 +893,33 @@ export function delFunctionGroup(
         break;
       }
     }
+    if (modified) {
+      file.calcChain = calcChainClone;
+    }
   }
 
   const { dynamicArray } = file;
   if (!_.isNil(dynamicArray)) {
-    for (let i = 0; i < dynamicArray.length; i += 1) {
-      const calc = dynamicArray[i];
+    let modified = false;
+    const dynamicArrayClone = _.cloneDeep(dynamicArray);
+    for (let i = 0; i < dynamicArrayClone.length; i += 1) {
+      const calc = dynamicArrayClone[i];
       if (
         calc.r === r &&
         calc.c === c &&
         (_.isNil(calc.index) || calc.index === index)
       ) {
-        dynamicArray.splice(i, 1);
+        dynamicArrayClone.splice(i, 1);
+        modified = true;
         // server.saveParam("ac", index, null, {
         //   op: "del",
         //   pos: i,
         // });
         break;
       }
+    }
+    if (modified) {
+      file.dynamicArray = dynamicArrayClone;
     }
   }
 }
