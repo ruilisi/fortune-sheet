@@ -1641,6 +1641,196 @@ export function handleSum(
 ) {
   autoSelectionFormula(ctx, cellInput, "SUM", cache!);
 }
+
+export function handleInsertImage(ctx: Context, src: string, options = {}) {
+  const order = getSheetIndex(ctx, ctx.currentSheetIndex);
+  if (order == null) return;
+  // @ts-ignore
+  // eslint-disable-next-line prefer-const
+  let { rowIndex, colIndex, success } = { ...options };
+
+  const file = ctx.luckysheetfile[order];
+
+  if (file == null) {
+    // return tooltip.info("The order parameter is invalid.", "");
+  }
+
+  if (file.index === ctx.currentSheetIndex) {
+    if (ctx.luckysheet_select_save == null) return;
+    const last =
+      ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
+
+    if (rowIndex == null) {
+      rowIndex = last.row_focus || 0;
+    }
+
+    if (rowIndex < 0) {
+      rowIndex = 0;
+    }
+
+    if (rowIndex > ctx.visibledatarow.length) {
+      rowIndex = ctx.visibledatarow.length;
+    }
+
+    if (colIndex == null) {
+      colIndex = last.column_focus || 0;
+    }
+
+    if (colIndex < 0) {
+      colIndex = 0;
+    }
+
+    if (colIndex > ctx.visibledatacolumn.length) {
+      colIndex = ctx.visibledatacolumn.length;
+    }
+
+    // const left = colIndex === 0 ? 0 : ctx.visibledatacolumn[colIndex - 1];
+    // const top = rowIndex === 0 ? 0 : ctx.visibledatarow[rowIndex - 1];
+
+    const image = new Image();
+    image.onload = () => {
+      // const { width } = image;
+      // const { height } = image;
+
+      // const img = {
+      //   src,
+      //   left,
+      //   top,
+      //   originWidth: width,
+      //   originHeight: height,
+      // };
+
+      // imageCtrl.addImgItem(img);
+
+      if (success && typeof success === "function") {
+        success();
+      }
+    };
+    image.src = src;
+  } else {
+    const images = ctx.insertedImgs || {};
+    const { config } = file;
+    const zoomRatio = file.zoomRatio || 1;
+
+    const rowheight = file.row;
+    const visibledatarow = ctx.visibledatarow || [];
+    if (visibledatarow.length === 0) {
+      let rh_height = 0;
+      if (rowheight == null) return;
+      for (let r = 0; r < rowheight; r += 1) {
+        let rowlen = ctx.defaultrowlen;
+
+        if (config.rowlen != null && config.rowlen[r] != null) {
+          rowlen = config.rowlen[r];
+        }
+
+        if (config.rowhidden != null && config.rowhidden[r] != null) {
+          visibledatarow.push(rh_height);
+          continue;
+        }
+
+        rh_height += Math.round((rowlen + 1) * zoomRatio);
+
+        visibledatarow.push(rh_height); // 行的临时长度分布
+      }
+    }
+
+    const colwidth = file.column;
+    const visibledatacolumn = ctx.visibledatacolumn || [];
+    if (visibledatacolumn.length === 0) {
+      let ch_width = 0;
+      if (colwidth == null) return;
+
+      for (let c = 0; c < colwidth; c += 1) {
+        let firstcolumnlen = ctx.defaultcollen;
+
+        if (config.columnlen != null && config.columnlen[c] != null) {
+          firstcolumnlen = config.columnlen[c];
+        }
+
+        if (config.colhidden != null && config.colhidden[c] != null) {
+          visibledatacolumn.push(ch_width);
+          continue;
+        }
+
+        ch_width += Math.round((firstcolumnlen + 1) * zoomRatio);
+
+        visibledatacolumn.push(ch_width); // 列的临时长度分布
+      }
+    }
+
+    if (rowIndex == null) {
+      rowIndex = 0;
+    }
+
+    if (rowIndex < 0) {
+      rowIndex = 0;
+    }
+
+    if (rowIndex > visibledatarow.length) {
+      rowIndex = visibledatarow.length;
+    }
+
+    if (colIndex == null) {
+      colIndex = 0;
+    }
+
+    if (colIndex < 0) {
+      colIndex = 0;
+    }
+
+    if (colIndex > visibledatacolumn.length) {
+      colIndex = visibledatacolumn.length;
+    }
+
+    // const left = colIndex === 0 ? 0 : visibledatacolumn[colIndex - 1];
+    // const top = rowIndex === 0 ? 0 : visibledatarow[rowIndex - 1];
+
+    const image = new Image();
+    image.onload = () => {
+      // const img = {
+      //   src,
+      //   left,
+      //   top,
+      //   originWidth: image.width,
+      //   originHeight: image.height,
+      // };
+
+      // let width;
+      // let height;
+      // const max = 400;
+
+      // if (img.originHeight < img.originWidth) {
+      // height = Math.round(img.originHeight * (max / img.originWidth));
+      // width = max;
+      // } else {
+      // width = Math.round(img.originWidth * (max / img.originHeight));
+      // height = max;
+      // }
+
+      // const imgItem = $.extend(true, {}, imageCtrl.imgItem);
+      // imgItem.src = img.src;
+      // imgItem.originWidth = img.originWidth;
+      // imgItem.originHeight = img.originHeight;
+      // imgItem.default.width = width;
+      // imgItem.default.height = height;
+      // imgItem.default.left = img.left;
+      // imgItem.default.top = img.top;
+      // imgItem.crop.width = width;
+      // imgItem.crop.height = height;
+
+      // const id = imageCtrl.generateRandomId();
+      // images[id] = imgItem;
+
+      ctx.insertedImgs = images;
+
+      if (success && typeof success === "function") {
+        success();
+      }
+    };
+    image.src = src;
+  }
+}
 const handlerMap: Record<string, ToolbarItemClickHandler> = {
   "currency-format": handleCurrencyFormat,
   "percentage-format": handlePercentageFormat,

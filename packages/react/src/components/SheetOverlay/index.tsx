@@ -512,6 +512,48 @@ const SheetOverlay: React.FC = () => {
               );
             })}
           </div>
+          {context.insertedImgs?.map((v: any) => {
+            const { left, top, width, height, src } = v;
+            return (
+              <div
+                id="${id}"
+                className="luckysheet-modal-dialog luckysheet-modal-dialog-image"
+                style={{
+                  width,
+                  height,
+                  padding: 0,
+                  position: "absolute",
+                  left,
+                  top,
+                  zIndex: 200,
+                }}
+              >
+                <div
+                  className="luckysheet-modal-dialog-content"
+                  // style="width:100%;height:100%;overflow:hidden;position:relative;"
+                >
+                  <img
+                    src={src}
+                    alt=""
+                    // style={{position:"absolute";width:${imgItem.default.width * Store.zoomRatio}px;height:${imgItem.default.height * Store.zoomRatio}px;left:${-imgItem.crop.offsetLeft * Store.zoomRatio}px;top:${-imgItem.crop.offsetTop * Store.zoomRatio}px}}
+                    style={{
+                      width,
+                      height,
+                      padding: 0,
+                      position: "absolute",
+                      left,
+                      top,
+                      // zIndex: 200,
+                    }}
+                  />
+                </div>
+                <div
+                  className="luckysheet-modal-dialog-border"
+                  // style="border:${borderWidth}px ${imgItem.border.style} ${imgItem.border.color};border-radius:${imgItem.border.radius * Store.zoomRatio}px;position:absolute;left:${-borderWidth}px;right:${-borderWidth}px;top:${-borderWidth}px;bottom:${-borderWidth}px;"
+                />
+              </div>
+            );
+          })}
           <div id="luckysheet-multipleRange-show" />
           <div id="luckysheet-dynamicArray-hightShow" />
           <div id="luckysheet-image-showBoxs">

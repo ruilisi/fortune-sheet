@@ -111,6 +111,7 @@ export const defaultSettings: Required<Settings> = {
     "align-bottom",
     "|",
     "freeze",
+    "image",
     "comment",
     "formula-sum",
   ], // 自定义工具栏

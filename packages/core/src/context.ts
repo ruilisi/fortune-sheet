@@ -17,6 +17,7 @@ export type Context = {
   commentBoxes?: CommentBox[];
   editingCommentBox?: CommentBox;
   hoveredCommentBox?: CommentBox;
+  insertedImgs?: any;
 
   contextMenu: any;
   sheetTabContextMenu: {

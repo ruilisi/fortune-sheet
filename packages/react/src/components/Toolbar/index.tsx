@@ -25,6 +25,7 @@ import {
   toolbarItemSelectedFunc,
   handleFreeze,
 } from "@fortune-sheet/core";
+import { insertImage, showImgChooser } from "packages/core/src/modules/image";
 import WorkbookContext from "../../context";
 import "./index.css";
 import Button from "./Button";
@@ -209,6 +210,29 @@ const Toolbar: React.FC<{
             disabled={refs.globalCache.redoList.length === 0}
             onClick={() => handleRedo()}
           />
+        );
+      }
+      if (name === "image") {
+        return (
+          <>
+            <Button
+              iconId={name}
+              tooltip={name}
+              key={name}
+              onClick={() => showImgChooser()}
+            />
+            <input
+              id="luckysheet-imgUpload"
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                console.info("selected file >>>>>>");
+                insertImage(setContext, e.currentTarget?.files?.[0]);
+              }}
+              // onClick={(e) => e.stopPropagation()}
+            />
+          </>
         );
       }
       if (name === "comment") {
