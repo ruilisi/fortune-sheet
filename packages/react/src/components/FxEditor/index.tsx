@@ -64,6 +64,9 @@ const FxEditor: React.FC = () => {
   ]);
 
   const onFocus = useCallback(() => {
+    if (!context.allowEdit) {
+      return;
+    }
     if ((context.luckysheet_select_save?.length ?? 0) > 0) {
       setFocused(true);
       setContext((draftCtx) => {
@@ -80,14 +83,18 @@ const FxEditor: React.FC = () => {
         // formula.rangeResizeTo = $("#luckysheet-functionbox-cell");
       });
     }
-  }, [context.luckysheet_select_save, refs.globalCache, setContext]);
+  }, [
+    context.allowEdit,
+    context.luckysheet_select_save?.length,
+    refs.globalCache,
+    setContext,
+  ]);
 
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      // if (isEditMode()) {
-      //   // 此模式下禁用公式栏
-      //   return;
-      // }
+      if (!context.allowEdit) {
+        return;
+      }
       lastKeyDownEventRef.current = e;
       setContext((draftCtx) => {
         if (context.luckysheetCellUpdate.length > 0) {
@@ -194,7 +201,12 @@ const FxEditor: React.FC = () => {
         }
       });
     },
-    [context.luckysheetCellUpdate.length, refs.fxInput, setContext]
+    [
+      context.allowEdit,
+      context.luckysheetCellUpdate.length,
+      refs.fxInput,
+      setContext,
+    ]
   );
 
   const onChange = useCallback(() => {

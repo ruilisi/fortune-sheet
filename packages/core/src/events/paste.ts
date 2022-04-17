@@ -233,7 +233,7 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
   //   return;
   // }
 
-  if (ctx.allowEdit === false) {
+  if (!ctx.allowEdit) {
     return;
   }
   if ((ctx.luckysheet_select_save?.length ?? 0) !== 1) {
@@ -523,7 +523,7 @@ function pasteHandlerOfCutPaste(
   // ) {
   //   return;
   // }
-  if (ctx.allowEdit === false) {
+  if (!ctx.allowEdit) {
     return;
   }
   if (!copyRange) return;
@@ -1021,7 +1021,9 @@ function pasteHandlerOfCopyPaste(
   // ) {
   //   return;
   // }
-
+  if (!ctx.allowEdit) {
+    return;
+  }
   if (!copyRange) return;
 
   const cfg = ctx.config;
@@ -1387,6 +1389,9 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
   //   // 此模式下禁用粘贴
   //   return;
   // }
+  if (!ctx.allowEdit) {
+    return;
+  }
 
   if (selectionCache.isPasteAction) {
     ctx.luckysheetCellUpdate = [];
@@ -1805,7 +1810,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 }
 
 export function handlePasteByClick(ctx: Context, triggerType?: string) {
-  if (ctx.allowEdit === false) {
+  if (!ctx.allowEdit) {
     return;
   }
 

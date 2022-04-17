@@ -519,6 +519,7 @@ export function handleGlobalKeyDown(
   // }
 
   if (kstr === "Enter") {
+    if (!ctx.allowEdit) return;
     handleGlobalEnter(ctx, cellInput, e);
   } else if (kstr === "Tab") {
     if (ctx.luckysheetCellUpdate.length > 0) {
@@ -528,6 +529,7 @@ export function handleGlobalKeyDown(
     moveHighlightCell(ctx, "right", 1, "rangeOfSelect");
     e.preventDefault();
   } else if (kstr === "F2") {
+    if (!ctx.allowEdit) return;
     if (ctx.luckysheetCellUpdate.length > 0) {
       return;
     }
@@ -579,6 +581,7 @@ export function handleGlobalKeyDown(
 
       // selectHightlightShow();
     } else if (kstr === "Delete" || kstr === "Backspace") {
+      if (!ctx.allowEdit) return;
       // if (imageCtrl.currentImgId != null) {
       //   imageCtrl.removeImgItem();
       // } else {
@@ -613,6 +616,7 @@ export function handleGlobalKeyDown(
       kcode === 0 ||
       (e.ctrlKey && kcode === 86)
     ) {
+      if (!ctx.allowEdit) return;
       if (
         String.fromCharCode(kcode) != null &&
         !_.isEmpty(ctx.luckysheet_select_save) && // $("#luckysheet-cell-selected").is(":visible") &&
