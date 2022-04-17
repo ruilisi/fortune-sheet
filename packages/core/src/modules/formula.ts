@@ -828,18 +828,18 @@ export function getAllFunctionGroup(ctx: Context) {
     let { calcChain } = file;
 
     /* 备注：再次加载表格获取的数据可能是JSON字符串格式(需要进行发序列化处理) */
-    if (calcChain) {
-      const tempCalcChain: any[] = [];
-      calcChain.forEach((item) => {
-        if (typeof item === "string") {
-          tempCalcChain.push(JSON.parse(item));
-        } else {
-          tempCalcChain.push(item);
-        }
-      });
-      calcChain = tempCalcChain;
-      file.calcChain = tempCalcChain;
-    }
+    // if (calcChain) {
+    //   const tempCalcChain: any[] = [];
+    //   calcChain.forEach((item) => {
+    //     if (typeof item === "string") {
+    //       tempCalcChain.push(JSON.parse(item));
+    //     } else {
+    //       tempCalcChain.push(item);
+    //     }
+    //   });
+    //   calcChain = tempCalcChain;
+    //   file.calcChain = tempCalcChain;
+    // }
 
     let { dynamicArray_compute } = file;
     if (_.isNil(calcChain)) {
