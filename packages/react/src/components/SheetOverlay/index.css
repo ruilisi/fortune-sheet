@@ -317,8 +317,7 @@
   padding: 0 2px;
   margin: 0;
   resize: none;
-  overflow: auto;
-  overflow: initial;
+  overflow: hidden;
   white-space: pre-wrap;
   outline: none;
   -webkit-box-shadow: 0 2px 5px rgb(0 0 0 / 40%);

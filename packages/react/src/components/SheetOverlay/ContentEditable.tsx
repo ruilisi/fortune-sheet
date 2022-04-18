@@ -41,6 +41,7 @@ class ContentEditable extends React.Component<ContentEditableProps> {
     return (
       <div
         onMouseDown={(e) => e.stopPropagation()}
+        onDoubleClick={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
         {..._.omit(
           this.props,

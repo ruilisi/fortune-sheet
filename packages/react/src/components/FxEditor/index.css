@@ -48,6 +48,8 @@
 
 .fortune-fx-input {
   flex: 1;
+  height: 100%;
+  overflow-y: scroll;
   padding-left: 2px;
   font-size: 14px;
   margin: 0;

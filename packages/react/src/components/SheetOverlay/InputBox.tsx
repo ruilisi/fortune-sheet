@@ -117,6 +117,11 @@ const InputBox: React.FC = () => {
         });
         e.preventDefault();
       } else if (e.key === "Enter" && context.luckysheetCellUpdate.length > 0) {
+        if (e.altKey || e.metaKey) {
+          // originally `enterKeyControll`
+          document.execCommand("insertHTML", false, "\n");
+          e.stopPropagation();
+        }
         // if (
         //   $("#luckysheet-formula-search-c").is(":visible") &&
         //   formula.searchFunctionCell != null
@@ -259,7 +264,6 @@ const InputBox: React.FC = () => {
           firstSelection
             ? {
                 minWidth: firstSelection.width_move,
-                height: firstSelection.height_move,
                 ...inputBoxStyle,
               }
             : {}
