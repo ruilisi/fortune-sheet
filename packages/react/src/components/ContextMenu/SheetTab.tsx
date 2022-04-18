@@ -1,40 +1,32 @@
-import { locale, Sheet, deleteSheet, Context } from "@fortune-sheet/core";
+import { locale, deleteSheet } from "@fortune-sheet/core";
 import React, {
   useContext,
   useRef,
   useEffect,
   useState,
   useLayoutEffect,
+  useCallback,
 } from "react";
 import WorkbookContext from "../../context";
 import "./index.css";
 import Menu from "./Menu";
 
-type Props = {
-  x: number;
-  y: number;
-  sheet?: Sheet;
-  onClose?: () => void;
-  onRename?: () => void;
-  ctx: Context;
-};
-
-const SheetTabContextMenu: React.FC<Props> = ({
-  x,
-  y,
-  sheet,
-  onClose,
-  onRename,
-  ctx,
-}) => {
-  const { setContext } = useContext(WorkbookContext);
-  const { sheetconfig } = locale(ctx);
+const SheetTabContextMenu: React.FC = () => {
+  const { context, setContext } = useContext(WorkbookContext);
+  const { x, y, sheet, onRename } = context.sheetTabContextMenu;
+  const { sheetconfig } = locale(context);
   const [position, setPosition] = useState({ x: -1, y: -1 });
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const close = useCallback(() => {
+    setContext((ctx) => {
+      ctx.sheetTabContextMenu = {};
+    });
+  }, [setContext]);
+
   useLayoutEffect(() => {
     const rect = containerRef.current?.getBoundingClientRect();
-    if (rect) {
+    if (rect && x != null && y != null) {
       setPosition({ x, y: y - rect.height });
     }
   }, [x, y]);
@@ -45,20 +37,16 @@ const SheetTabContextMenu: React.FC<Props> = ({
         containerRef.current &&
         !containerRef.current.contains(e.target as HTMLElement)
       ) {
-        onClose?.();
+        close();
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onClose]);
+  }, [close]);
 
-  if (!sheet) return null;
-
-  if (position.x > -1 && position.y > -1) {
-    return null;
-  }
+  if (!sheet || x == null || y == null) return null;
 
   return (
     <div
@@ -72,7 +60,6 @@ const SheetTabContextMenu: React.FC<Props> = ({
           setContext(
             (draftCtx) => {
               deleteSheet(draftCtx, sheet.index!);
-              onClose?.();
             },
             {
               deleteSheetOp: {
@@ -80,6 +67,7 @@ const SheetTabContextMenu: React.FC<Props> = ({
               },
             }
           );
+          close();
         }}
       >
         {sheetconfig.delete}
@@ -87,7 +75,7 @@ const SheetTabContextMenu: React.FC<Props> = ({
       <Menu
         onClick={() => {
           onRename?.();
-          onClose?.();
+          close();
         }}
       >
         {sheetconfig.rename}

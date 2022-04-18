@@ -3285,18 +3285,18 @@ export function handleOverlayMouseMove(
       top: y - pivotTable.movesave.height,
     });
   } else if (ctx.luckysheet_sheet_move_status) {
-    const scrollLeft = $("#luckysheet-sheet-container-c").scrollLeft();
+    const scrollLeft = $("#fortune-sheettab-container-c").scrollLeft();
     const x = event.pageX + scrollLeft;
 
     if (Math.abs(event.pageX - ctx.luckysheet_sheet_move_data.pageX) < 3) {
       return;
     }
 
-    const winW = $("#luckysheet-sheet-container").width();
+    const winW = $("#fortune-sheettab-container").width();
     const left =
       x -
       ctx.luckysheet_sheet_move_data.curleft -
-      $("#luckysheet-sheet-container").offset().left;
+      $("#fortune-sheettab-container").offset().left;
     ctx.luckysheet_sheet_move_data.activeobject.css({ left });
 
     let row_index = luckysheet_searcharray(

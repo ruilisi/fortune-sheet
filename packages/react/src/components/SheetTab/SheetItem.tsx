@@ -7,22 +7,16 @@ import React, {
   useCallback,
 } from "react";
 import WorkbookContext from "../../context";
-import SheetTabContextMenu from "../ContextMenu/SheetTab";
 
 type Props = {
   sheet: Sheet;
 };
 
 const SheetItem: React.FC<Props> = ({ sheet }) => {
-  const { context, setContext } = useContext(WorkbookContext);
+  const { context, setContext, refs } = useContext(WorkbookContext);
   const [editing, setEditing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const editable = useRef<HTMLSpanElement>(null);
-  const [contextMenu, setContextMenu] = useState<{
-    x: number;
-    y: number;
-    sheet?: Sheet;
-  }>({ x: -1, y: -1 });
 
   useEffect(() => {
     if (editing) {
@@ -79,11 +73,14 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
         });
       }}
       onContextMenu={(e) => {
-        const rect = containerRef.current!.getBoundingClientRect();
-        setContextMenu({
-          x: e.pageX - rect.left,
-          y: e.pageY - rect.top,
-          sheet,
+        const rect = refs.workbookContainer.current!.getBoundingClientRect();
+        setContext((ctx) => {
+          ctx.sheetTabContextMenu = {
+            x: e.pageX - rect.left,
+            y: e.pageY - rect.top,
+            sheet,
+            onRename: () => setEditing(true),
+          };
         });
       }}
     >
@@ -101,14 +98,6 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
       <span className="luckysheet-sheets-item-menu luckysheet-mousedown-cancel">
         <i className="fa fa-sort-desc luckysheet-mousedown-cancel" />
       </span>
-      {contextMenu.x > -1 && contextMenu.y > -1 ? (
-        <SheetTabContextMenu
-          {...contextMenu}
-          onClose={() => setContextMenu({ x: -1, y: -1 })}
-          onRename={() => setEditing(true)}
-          ctx={context}
-        />
-      ) : null}
     </div>
   );
 };

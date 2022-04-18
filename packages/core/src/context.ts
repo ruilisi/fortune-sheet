@@ -18,6 +18,12 @@ export type Context = {
   hoveredCommentBox?: CommentBox;
 
   contextMenu: any;
+  sheetTabContextMenu: {
+    x?: number;
+    y?: number;
+    sheet?: Sheet;
+    onRename?: () => void;
+  };
 
   currentSheetIndex: string;
   calculateSheetIndex: string;
@@ -162,6 +168,7 @@ export function defaultContext(): Context {
     limitSheetNameLength: false,
 
     contextMenu: {},
+    sheetTabContextMenu: {},
 
     currentSheetIndex: "",
     calculateSheetIndex: "",

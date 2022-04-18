@@ -45,6 +45,7 @@ import FxEditor from "../FxEditor";
 import SheetTab from "../SheetTab";
 import ContextMenu from "../ContextMenu";
 import SVGDefines from "../SVGDefines";
+import SheetTabContextMenu from "../ContextMenu/SheetTab";
 
 enablePatches();
 
@@ -410,6 +411,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           <Sheet data={sheetData} />
           <SheetTab />
           <ContextMenu />
+          <SheetTabContextMenu />
           {!_.isEmpty(context.contextMenu) && (
             <div
               onMouseDown={() => {

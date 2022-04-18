@@ -7,13 +7,14 @@ import SheetItem from "./SheetItem";
 
 const SheetTab: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const tabContainerRef = useRef<HTMLDivElement>(null);
+  const leftScrollRef = useRef<HTMLDivElement>(null);
+  const rightScrollRef = useRef<HTMLDivElement>(null);
 
   return (
     <div
       className="luckysheet-sheet-area luckysheet-noselected-text"
       onContextMenu={(e) => e.preventDefault()}
-      ref={containerRef}
       id="luckysheet-sheet-area"
     >
       <div id="luckysheet-sheet-content">
@@ -45,25 +46,13 @@ const SheetTab: React.FC = () => {
           <i className="iconfont luckysheet-iconfont-caidan2" />
         </div>
         <div
-          className="luckysheet-sheet-container"
-          id="luckysheet-sheet-container"
+          className="fortune-sheettab-container"
+          id="fortune-sheettab-container"
         >
           <div
-            className="docs-sheet-fade docs-sheet-fade-left"
-            style={{ display: "none" }}
-          >
-            <div className="docs-sheet-fade3" />
-            <div className="docs-sheet-fade2" />
-            <div className="docs-sheet-fade1" />
-          </div>
-          <div className="docs-sheet-fade docs-sheet-fade-right">
-            <div className="docs-sheet-fade1" />
-            <div className="docs-sheet-fade2" />
-            <div className="docs-sheet-fade3" />
-          </div>
-          <div
-            className="luckysheet-sheet-container-c"
-            id="luckysheet-sheet-container-c"
+            className="fortune-sheettab-container-c"
+            id="fortune-sheettab-container-c"
+            ref={tabContainerRef}
           >
             {context.luckysheetfile.map((sheet) => {
               return <SheetItem key={sheet.index} sheet={sheet} />;
@@ -71,18 +60,24 @@ const SheetTab: React.FC = () => {
           </div>
         </div>
         <div
-          id="luckysheet-sheets-leftscroll"
-          className="luckysheet-sheets-scroll lucky-button-custom"
-          style={{ display: "inline-block" }}
+          id="fortune-sheettab-leftscroll"
+          className="fortune-sheettab-scroll"
+          ref={leftScrollRef}
+          onClick={() => {
+            tabContainerRef.current!.scrollLeft -= 150;
+          }}
         >
-          <i className="fa fa-caret-left" />
+          <SVGIcon name="arrow-doubleleft" width={12} height={12} />
         </div>
         <div
-          id="luckysheet-sheets-rightscroll"
-          className="luckysheet-sheets-scroll lucky-button-custom"
-          style={{ display: "inline-block" }}
+          id="fortune-sheettab-rightscroll"
+          className="fortune-sheettab-scroll"
+          ref={rightScrollRef}
+          onClick={() => {
+            tabContainerRef.current!.scrollLeft += 150;
+          }}
         >
-          <i className="fa fa-caret-right" />
+          <SVGIcon name="arrow-doubleright" width={12} height={12} />
         </div>
       </div>
     </div>
