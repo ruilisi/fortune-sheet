@@ -22,6 +22,19 @@
     "@types/numeral": "^2.0.2",
     "@types/uuid": "^8.3.4"
   },
+  "keywords": [
+    "spreadsheet",
+    "sheet",
+    "excel",
+    "data table",
+    "table",
+    "data grid",
+    "react",
+    "reactjs",
+    "react component",
+    "collabration",
+    "collabrative"
+  ],
   "publishConfig": {
     "access": "public"
   }

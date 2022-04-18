@@ -21,6 +21,19 @@
     "react": ">= 16.8",
     "react-dom": ">= 16.8"
   },
+  "keywords": [
+    "spreadsheet",
+    "sheet",
+    "excel",
+    "data table",
+    "table",
+    "data grid",
+    "react",
+    "reactjs",
+    "react component",
+    "collabration",
+    "collabrative"
+  ],
   "publishConfig": {
     "access": "public"
   }
