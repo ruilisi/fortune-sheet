@@ -14,6 +14,7 @@ import { error } from "./validation";
 import { moveToEnd } from "./cursor";
 import { locale } from "../locale";
 import { colors } from "./color";
+import { extendParser } from "./extension";
 
 export const formulaCache: {
   func_selectedrange: Selection | undefined;
@@ -66,7 +67,8 @@ function tryGetCellAsNumber(cell: Cell) {
   return cell?.v;
 }
 
-const parser = new Parser();
+const parser = extendParser(new Parser());
+console.log("----parser", parser);
 
 parser.on("callCellValue", (cellCoord: any, done: any) => {
   const flowdata = getFlowdata(currentContext);
