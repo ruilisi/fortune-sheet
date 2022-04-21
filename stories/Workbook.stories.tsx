@@ -5,6 +5,7 @@ import { Workbook } from "@fortune-sheet/react";
 import cell from "./data/cell";
 import formula from "./data/formula";
 import empty from "./data/empty";
+import freeze from "./data/freeze";
 
 export default {
   component: Workbook,
@@ -40,3 +41,7 @@ Empty.args = { data: [empty] };
 export const Tabs = Template.bind({});
 // @ts-ignore
 Tabs.args = { data: [cell, formula] };
+
+export const Freeze = Template.bind({});
+// @ts-ignore
+Freeze.args = { data: [freeze] };

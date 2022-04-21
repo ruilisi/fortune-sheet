@@ -106,6 +106,10 @@ export type Sheet = {
   hyperlink?: any;
   dynamicArray_compute?: any;
   dynamicArray?: any[];
+  frozen?: {
+    type: "row" | "column" | "both" | "rangeRow" | "rangeColumn" | "rangeBoth";
+    range?: { row_focus: number; column_focus: number };
+  };
 };
 
 export type CommentBox = {
@@ -136,6 +140,11 @@ export type History = {
   options?: PatchOptions;
 };
 
+export type Freezen = {
+  horizontal?: { freezenhorizontaldata: any[]; top: number };
+  vertical?: { freezenverticaldata: any[]; left: number };
+};
+
 export type GlobalCache = {
   overwriteCell?: boolean;
   doNotFocus?: boolean;
@@ -147,6 +156,7 @@ export type GlobalCache = {
   undoList: History[];
   redoList: History[];
   editingCommentBoxEle?: HTMLDivElement;
+  freezen?: Record<string, Freezen>;
   commentBox?: {
     movingId: string | undefined;
     resizingId: string | undefined;

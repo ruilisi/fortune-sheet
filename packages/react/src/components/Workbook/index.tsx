@@ -3,7 +3,6 @@ import {
   defaultSettings,
   Settings,
   Context,
-  getFlowdata,
   initSheetIndex,
   CellWithRowAndCol,
   GlobalCache,
@@ -387,12 +386,12 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       };
     }, [onPaste]);
 
-    if (!context.luckysheetfile) {
+    const i = getSheetIndex(context, context.currentSheetIndex);
+    if (i == null) {
       return null;
     }
-
-    const sheetData = getFlowdata(context);
-    if (!sheetData) {
+    const sheet = context.luckysheetfile?.[i];
+    if (!sheet) {
       return null;
     }
 
@@ -408,7 +407,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             <Toolbar />
             <FxEditor />
           </div>
-          <Sheet data={sheetData} />
+          <Sheet sheet={sheet} />
           <SheetTab />
           <ContextMenu />
           <SheetTabContextMenu />

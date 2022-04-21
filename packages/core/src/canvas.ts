@@ -532,6 +532,7 @@ export class Canvas {
     offsetTop,
     columnOffsetCell,
     rowOffsetCell,
+    clear,
   }: {
     scrollWidth: number;
     scrollHeight: number;
@@ -541,6 +542,7 @@ export class Canvas {
     offsetTop?: number;
     columnOffsetCell?: number;
     rowOffsetCell?: number;
+    clear?: boolean;
   }) {
     const flowdata = getFlowdata(this.sheetCtx);
     if (_.isNil(flowdata)) {
@@ -598,12 +600,14 @@ export class Canvas {
       this.sheetCtx.devicePixelRatio,
       this.sheetCtx.devicePixelRatio
     );
-    renderCtx.clearRect(
-      0,
-      0,
-      this.sheetCtx.luckysheetTableContentHW[0],
-      this.sheetCtx.luckysheetTableContentHW[1]
-    );
+    if (clear) {
+      renderCtx.clearRect(
+        0,
+        0,
+        this.sheetCtx.luckysheetTableContentHW[0],
+        this.sheetCtx.luckysheetTableContentHW[1]
+      );
+    }
 
     // 表格渲染区域, 起止行列index
     let rowStart: number;
@@ -2673,5 +2677,42 @@ export class Canvas {
     if (textInfo.rotate !== 0 && textInfo.type !== "verticalWrap") {
       ctx.restore();
     }
+  }
+
+  drawFreezeLine({
+    horizontalTop,
+    verticalLeft,
+  }: {
+    horizontalTop?: number;
+    verticalLeft?: number;
+  }) {
+    const renderCtx = this.canvasElement.getContext("2d");
+    if (!renderCtx) return;
+
+    renderCtx.save();
+    renderCtx.scale(
+      this.sheetCtx.devicePixelRatio,
+      this.sheetCtx.devicePixelRatio
+    );
+    renderCtx.strokeStyle = "#ccc";
+    renderCtx.lineWidth = 2;
+
+    if (horizontalTop) {
+      renderCtx.beginPath();
+      renderCtx.moveTo(0, horizontalTop);
+      renderCtx.lineTo(this.canvasElement.width, horizontalTop);
+      renderCtx.stroke();
+      renderCtx.closePath();
+    }
+
+    if (verticalLeft) {
+      renderCtx.beginPath();
+      renderCtx.moveTo(verticalLeft, 0);
+      renderCtx.lineTo(verticalLeft, this.canvasElement.height);
+      renderCtx.stroke();
+      renderCtx.closePath();
+    }
+
+    renderCtx.restore();
   }
 }
