@@ -107,3 +107,86 @@ export function initFreeze(
 ) {
   frozenTofreezen(ctx, cache, sheetIndex);
 }
+
+export function scrollToFrozenRowCol(
+  ctx: Context,
+  freeze: Freezen | undefined
+) {
+  const select_save = ctx.luckysheet_select_save;
+  if (!select_save) return;
+
+  let row;
+  const { row_focus } = select_save[0];
+  if (row_focus === select_save[0].row[0]) {
+    [, row] = select_save[0].row;
+  } else if (row_focus === select_save[0].row[1]) {
+    [row] = select_save[0].row;
+  }
+
+  let column;
+  const { column_focus } = select_save[0];
+  if (column_focus === select_save[0].column[0]) {
+    [, column] = select_save[0].column;
+  } else if (column_focus === select_save[0].column[1]) {
+    [column] = select_save[0].column;
+  }
+
+  const freezenverticaldata = freeze?.vertical?.freezenverticaldata;
+  const freezenhorizontaldata = freeze?.horizontal?.freezenhorizontaldata;
+
+  if (freezenverticaldata != null && column != null) {
+    let freezen_colindex = freezenverticaldata[1];
+
+    const offset = _.sortedIndex(freezenverticaldata[3], ctx.scrollLeft);
+
+    const top = freezenverticaldata[4];
+
+    freezen_colindex += offset;
+
+    if (column >= ctx.visibledatacolumn.length) {
+      column = ctx.visibledatacolumn.length - 1;
+    }
+
+    if (freezen_colindex >= ctx.visibledatacolumn.length) {
+      freezen_colindex = ctx.visibledatacolumn.length - 1;
+    }
+
+    const column_px = ctx.visibledatacolumn[column];
+    const freezen_px = ctx.visibledatacolumn[freezen_colindex];
+
+    if (column_px <= freezen_px + top) {
+      ctx.scrollLeft = 0;
+      // setTimeout(function () {
+      //   $("#luckysheet-scrollbar-x").scrollLeft(0);
+      // }, 100);
+    }
+  }
+
+  if (freezenhorizontaldata != null && row != null) {
+    let freezen_rowindex = freezenhorizontaldata[1];
+
+    const offset = _.sortedIndex(freezenhorizontaldata[3], ctx.scrollTop);
+
+    const left = freezenhorizontaldata[4];
+
+    freezen_rowindex += offset;
+
+    if (row >= ctx.visibledatarow.length) {
+      row = ctx.visibledatarow.length - 1;
+    }
+
+    if (freezen_rowindex >= ctx.visibledatarow.length) {
+      freezen_rowindex = ctx.visibledatarow.length - 1;
+    }
+
+    const row_px = ctx.visibledatarow[row];
+    const freezen_px = ctx.visibledatarow[freezen_rowindex];
+
+    if (row_px <= freezen_px + left) {
+      ctx.scrollTop = 0;
+      // setTimeout(function () {
+      //   $("#luckysheet-scrollbar-y").scrollTop(0);
+      // }, 100);
+    }
+  }
+}

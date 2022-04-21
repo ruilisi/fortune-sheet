@@ -13,6 +13,7 @@ import {
   setEditingComment,
   showComments,
   selectAll,
+  getSelectionStyle,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -62,13 +63,14 @@ const SheetOverlay: React.FC = () => {
       setContext((draftCtx) => {
         handleCellAreaDoubleClick(
           draftCtx,
+          refs.globalCache,
           settings,
           e.nativeEvent,
           refs.cellArea.current!
         );
       });
     },
-    [refs.cellArea, setContext, settings]
+    [refs.cellArea, refs.globalCache, setContext, settings]
   );
 
   const onLeftTopClick = useCallback(() => {
@@ -286,11 +288,11 @@ const SheetOverlay: React.FC = () => {
                   id="luckysheet-cell-selected"
                   className="luckysheet-cell-selected"
                   style={{
-                    left: selection.left_move,
-                    width: selection.width_move,
-                    top: selection.top_move,
-                    height: selection.height_move,
-                    display: "block",
+                    ...getSelectionStyle(
+                      context,
+                      selection,
+                      refs.globalCache.freezen?.[context.currentSheetIndex]
+                    ),
                     border: "1px solid #0188fb",
                   }}
                 >

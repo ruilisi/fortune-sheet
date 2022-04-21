@@ -1,5 +1,5 @@
 import _, { isPlainObject } from "lodash";
-import type { Sheet as SheetType } from "../types";
+import type { Sheet as SheetType, Selection, Freezen } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
   getCellValue,
@@ -154,7 +154,7 @@ export function pasteHandlerOfPaintModel(
   ctx: Context,
   copyRange: Context["luckysheet_copy_save"]
 ) {
-  // if (!checkProtectionLockedRangeList(Store.luckysheet_select_save, Store.currentSheetIndex)) {
+  // if (!checkProtectionLockedRangeList(ctx.luckysheet_select_save, ctx.currentSheetIndex)) {
   //   return;
   // }
   const cfg = ctx.config;
@@ -224,7 +224,7 @@ export function pasteHandlerOfPaintModel(
   const timesH = Math.ceil((maxh - minh + 1) / copyh); // 复制行 组数
   const timesC = Math.ceil((maxc - minc + 1) / copyc); // 复制列 组数
 
-  // let d = editor.deepCopyFlowData(Store.flowdata);//取数据
+  // let d = editor.deepCopyFlowData(ctx.flowdata);//取数据
   const flowdata = getFlowdata(ctx); // 取数据
   if (flowdata == null) return;
   const cellMaxLength = flowdata[0].length;
@@ -1510,7 +1510,7 @@ export function selectIsOverlap(ctx: Context, range?: any) {
 
 export function selectAll(ctx: Context) {
   // 全选表格
-  // if (!checkProtectionAllSelected(Store.currentSheetIndex)) {
+  // if (!checkProtectionAllSelected(ctx.currentSheetIndex)) {
   //   return;
   // }
 
@@ -1532,4 +1532,115 @@ export function selectAll(ctx: Context) {
   ];
 
   normalizeSelection(ctx, ctx.luckysheet_select_save);
+}
+
+export function getSelectionStyle(
+  ctx: Context,
+  selection: Selection,
+  freeze: Freezen | undefined
+): {
+  left: number | undefined;
+  top: number | undefined;
+  width: number | undefined;
+  height: number | undefined;
+  display: string;
+} {
+  const ret = {
+    left: selection.left_move,
+    top: selection.top_move,
+    width: selection.width_move,
+    height: selection.height_move,
+    display: "block",
+  };
+  if (!freeze) return ret;
+
+  const { scrollTop } = ctx;
+  const { scrollLeft } = ctx;
+
+  const freezenverticaldata = freeze?.vertical?.freezenverticaldata;
+  const freezenhorizontaldata = freeze?.horizontal?.freezenhorizontaldata;
+
+  const obj = selection;
+
+  let rangeshow = true;
+
+  if (freezenhorizontaldata != null) {
+    const freezenTop = freezenhorizontaldata[0];
+    const freezen_rowindex = freezenhorizontaldata[1];
+    const offTop = scrollTop - freezenhorizontaldata[2];
+
+    const r1 = obj.row[0];
+    const r2 = obj.row[1];
+
+    const row = ctx.visibledatarow[r2];
+    const row_pre = r1 - 1 === -1 ? 0 : ctx.visibledatarow[r1 - 1];
+
+    const top_move = row_pre;
+    const height_move = row - row_pre - 1;
+
+    if (r1 >= freezen_rowindex) {
+      // 原选区在冻结区外
+      if (top_move + height_move < freezenTop + offTop) {
+        rangeshow = false;
+      } else if (top_move < freezenTop + offTop) {
+        ret.top = freezenTop + offTop;
+        ret.height = height_move - (freezenTop + offTop - top_move);
+      } else {
+      }
+    } else if (r2 >= freezen_rowindex) {
+      // 原选区有一部分在冻结区内
+      if (top_move + height_move < freezenTop + offTop) {
+        ret.top = top_move + offTop;
+        ret.height = freezenTop - top_move;
+      } else {
+        ret.top = top_move + offTop;
+        ret.height = height_move - offTop;
+      }
+    } else {
+      // 原选区在冻结区内
+      ret.top = top_move + offTop;
+    }
+  }
+
+  if (freezenverticaldata != null) {
+    const freezenLeft = freezenverticaldata[0];
+    const freezen_colindex = freezenverticaldata[1];
+    const offLeft = scrollLeft - freezenverticaldata[2];
+
+    const c1 = obj.column[0];
+    const c2 = obj.column[1];
+
+    const col = ctx.visibledatacolumn[c2];
+    const col_pre = c1 - 1 === -1 ? 0 : ctx.visibledatacolumn[c1 - 1];
+
+    const left_move = col_pre;
+    const width_move = col - col_pre - 1;
+
+    if (c1 >= freezen_colindex) {
+      // 原选区在冻结区外
+      if (left_move + width_move < freezenLeft + offLeft) {
+        rangeshow = false;
+      } else if (left_move < freezenLeft + offLeft) {
+        ret.left = freezenLeft + offLeft;
+        ret.width = width_move - (freezenLeft + offLeft - left_move);
+      } else {
+      }
+    } else if (c2 >= freezen_colindex) {
+      // 原选区有一部分在冻结区内
+      if (left_move + width_move < freezenLeft + offLeft) {
+        ret.left = left_move + offLeft;
+        ret.width = freezenLeft - left_move;
+      } else {
+        ret.left = left_move + offLeft;
+        ret.width = width_move - offLeft;
+      }
+    } else {
+      // 原选区在冻结区内
+      ret.left = left_move + offLeft;
+    }
+  }
+  if (!rangeshow) {
+    ret.display = "none";
+  }
+  return ret;
 }
