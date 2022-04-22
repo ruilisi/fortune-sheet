@@ -8,7 +8,7 @@ provider.send("eth_requestAccounts", []);
 const signer = provider.getSigner();
 
 const contracts = [];
-const defines = [];
+// const defines = [];
 
 const interpret_addrs = "0x0000000000000000000000000000000000000019";
 const interpret_abi = [
@@ -286,6 +286,7 @@ const interpret_abi = [
 
 const post_ops = {
   LIST: "",
+  STOP: "00",
   ADD: "01",
   MUL: "02",
   SUB: "03",
@@ -331,6 +332,40 @@ const post_ops = {
   STATICCALL: "fa",
   CALL: "f1",
   CALLCODE: "f2",
+  "ADDRESS": "30",
+  "ORIGIN": "32",
+  "CALLER": "33",
+  "CALLVALUE": "34",
+  "CALLDATASIZE":  "36",
+  "CODESIZE": "38",
+  "GASPRICE": "3a",
+  "RETURNDATASIZE":  "3d",
+  "COINBASE": "41",
+  "TIMESTAMP":  "42",
+  "NUMBER": "43",
+  "DIFFICULTY": "44",
+  "GASLIMIT":  "45",
+  "CHAINID": "46",
+  "SELFBALANCE":  "47",
+  "BASEFEE": "48",
+  "POP": "50",
+  "PC": "58",
+  "MSIZE":  "59",
+  "GAS": "5a",
+  "JUMPDEST": "5b",
+  "INVALID":  "fe",
+  
+  "ISZERO": "15",
+  "NOT": "19",
+  "BALANCE": "31",
+  "CALLDATALOAD": "35",
+  "EXTCODESIZE": "3b",
+  "EXTCODEHASH": "3f",
+  "BLOCKHASH": "40",
+  "MLOAD": "51",
+  "SLOAD": "54",
+  "JUMP": "56",
+  "SELFDESTRUCT": "ff",
 };
 
 const ante_ops = {
@@ -341,27 +376,54 @@ const loco = function (c, r) {
   return "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[c] + (r + 2);
 };
 
+const pushx = function () {
+  let args = arguments[0];
+  let len = args[1]? args[1] : (args[0].length/2);
+  let content = args[0].padStart(len*2, "0");
+  let ans = ["(push "+len+" 0x"+content+")", (95+len).toString(16)+content];
+  console.log("PUSH",args,len);
+  return JSON.stringify(ans);
+
+};
+
+const dupx = function () {
+  let args = arguments[0];
+  let arg0 = args[0]? args[0] : 1;
+  let ans = ["(dup"+arg0+")", (127+arg0).toString(16)]
+  return ans;
+};
+
+const swapx = function () {
+  let args = arguments[0];
+  let arg0 = args[0]? args[0] : 1;
+  let ans = ["(swap"+arg0+")", (143+arg0).toString(16)];
+  return ans;
+};
+
+
 const post = function (opcode) {
-  return function () {
+  return function (...args) {
     // if (arguments.length < this.m[0] || arguments.length > this.m[1]) {
     //   return formula.error.na;
     // }
+    console.log("FUNC_SIG", opcode, args);
     let arg0;
     let arg01;
     let temp;
     let ans = [`(${opcode.toLowerCase()}`, post_ops[opcode]];
-    console.log("FUNC_SIG", arguments);
-    const args = [...arguments];
+    
 
     // args = args.map(dirornot);
-    for (const i in args) {
+    // for (const i in args) {
+    for (let i = 0; i < args.length; i++) {
       // temp = resolve(arguments[i]);
+      console.log("arg", i, args[i]);
       try {
-        temp = JSON.parse(arguments[i]);
+        temp = JSON.parse(args[i]);
         console.log("temp-json", temp);
         ans = [`${ans[0]} ${temp[0].join(" ")}`, temp[1].join("") + ans[1]];
       } catch {
-        temp = arguments[i];
+        temp = args[i];
         console.log("temp2", temp);
         ans = [`${ans[0]} ${temp.join(" ")}`, temp.join("") + ans[1]];
       }
@@ -376,6 +438,7 @@ const post = function (opcode) {
 
 const def = function (parser) {
   return function () {
+    console.log("def", arguments);
     const ins = arguments.values;
     console.log("def0", inp, ins);
     const ans = ["", ""];
@@ -389,26 +452,26 @@ const def = function (parser) {
 };
 
 const ante = function (opcode) {
-  return function () {
+  return function (...args) {
     // if (arguments.length < this.m[0] || arguments.length > this.m[1]) {
     //   return formula.error.na;
     // }
     let arg0;
     let arg01;
     let temp;
+    console.log("FUNC_SIG", opcode, args);
     let ans = [`(${opcode.toLowerCase()}`, ante_ops[opcode]];
-    console.log("FUNC_SIG", arguments);
-    const args = [...arguments];
+    
 
     // args = args.map(dirornot);
-    for (const i in args) {
+    for (let i = 0; i < args.length; i++) {
       // temp = resolve(arguments[i]);
       try {
-        temp = JSON.parse(arguments[i]);
+        temp = JSON.parse(args[i]);
         console.log("temp-json", temp);
         ans = [`${ans[0]} ${temp[0].join(" ")}`, temp[1].join("") + ans[1]];
       } catch {
-        temp = arguments[i];
+        temp = args[i];
         console.log("temp2", temp);
         ans = [`${ans[0]} ${temp.join(" ")}`, temp.join("") + ans[1]];
       }
@@ -460,17 +523,50 @@ const interpret = function (inp) {
   }
   const arg3 = JSON.parse(inp[0]);
   console.log(arg3, inp);
+  console.log("aaaa", _);
   const ans = contract.functions.interpret(
     prefix_0x(arg3[1]),
     prefix_0x(inp[1]),
     inp[2],
     inp[3]
   );
+
   ans.then((data) => {
     console.log("daaata", data);
+
   });
-  return "Interpreting...";
+  return ans;
 };
+
+const inter = function (cod) {
+  return function () {
+    let contract = contracts[interpret_addrs] || null;
+    let inp = arguments;
+    if (!contract) {
+      console.log("args", inp);
+      // console.log(new ethers.Contract());
+      contract = new ethers.Contract(interpret_addrs, interpret_abi, signer); // inp[1]
+      contracts[interpret_addrs] = contract;
+      console.log("interpret", contract);
+    }
+    const arg3 = JSON.parse(inp[0]);
+    console.log(arg3, inp);
+    console.log("aaaa", _);
+    const ans = contract.functions[cod](
+      prefix_0x(arg3[1]),
+      prefix_0x(inp[1]),
+      inp[2],
+      inp[3]
+    );
+
+    ans.then((data) => {
+      console.log("daaata", data);
+
+    });
+    return ans;
+  };
+};
+
 
 const eth_tx = function (inp) {
   let contract = contracts[inp[0]] || null;
@@ -506,10 +602,38 @@ function etherst(inp) {
   return JSON.stringify([inp[0], 4]);
 }
 
+function hex2a(inp) {
+  console.log("hex2a",inp)
+  var hex = inp[0].toString()
+  var str = '';
+  for (var i = 0; i < hex.length; i += 2)
+      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+  return str;
+}
+
+function a2hex(inp) {
+  console.log("a2hex",inp)
+  var arg0 = inp[0].toString()
+  var arr = [];
+  for (var i = 0, l = arg0.length; i < l; i ++) {
+    var hex = Number(arg0.charCodeAt(i)).toString(16);
+    arr.push(hex);
+  }
+  return arr.join('');
+}
+
+
 export function extendParser(parser: any) {
   parser.setFunction("ETH", etherst);
   parser.setFunction("SEL", select);
-  parser.setFunction("INTERPRET", interpret);
+
+  parser.setFunction("INTERPRET", inter("interpret"));
+  parser.setFunction("ANALYZE", inter("analyze"));
+  parser.setFunction("ANAFRAG", inter("analyzeFrag"));
+  parser.setFunction("PART", inter("part"));
+  parser.setFunction("PARTFRAG", inter("partFrag"));
+  //parser.setFunction("INTERPRET", inter("interpret"));
+
   parser.setFunction("ETH_CALL", eth_call);
   parser.setFunction("ETH_TX", eth_tx);
   //parser.setFunction("DEF", def(parser));
@@ -519,6 +643,11 @@ export function extendParser(parser: any) {
     parser.setFunction(i, post(i));
     console.log(i, post_ops[i]);
   }
+  parser.setFunction("PUSH", pushx);
+  parser.setFunction("DUP", dupx);
+  parser.setFunction("SWAP", swapx);
+  parser.setFunction("HEX2A", hex2a);
+  parser.setFunction("A2HEX", a2hex);
   for (const i in ante_ops) {
     parser.setFunction(i, ante(i));
     console.log(i, ante_ops[i]);
