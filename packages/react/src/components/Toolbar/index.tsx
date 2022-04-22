@@ -14,8 +14,8 @@ import {
   autoSelectionFormula,
   handleSum,
   locale,
-  handleMergeAll,
-  handleBorderAll,
+  handleMerge,
+  handleBorder,
   toolbarItemSelectedFunc,
   handleFreeze,
 } from "@fortune-sheet/core";
@@ -296,7 +296,7 @@ const Toolbar: React.FC = () => {
             text="合并单元格"
             onClick={() =>
               setContext((ctx) => {
-                handleMergeAll(ctx, "merge-all");
+                handleMerge(ctx, "merge-all");
               })
             }
           >
@@ -307,7 +307,7 @@ const Toolbar: React.FC = () => {
                     key={value}
                     onClick={() => {
                       setContext((ctx) => {
-                        handleMergeAll(ctx, value);
+                        handleMerge(ctx, value);
                       });
                       setOpen(false);
                     }}
@@ -376,7 +376,7 @@ const Toolbar: React.FC = () => {
             text="边框设置"
             onClick={() =>
               setContext((ctx) => {
-                handleBorderAll(ctx, "border-all");
+                handleBorder(ctx, "border-all");
               })
             }
           >
@@ -388,7 +388,7 @@ const Toolbar: React.FC = () => {
                       key={value}
                       onClick={() => {
                         setContext((ctx) => {
-                          handleBorderAll(ctx, value);
+                          handleBorder(ctx, value);
                         });
                         setOpen(false);
                       }}

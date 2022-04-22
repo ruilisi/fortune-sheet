@@ -246,7 +246,7 @@ function updateFormat(
   //   jfrefreshgrid(d, ctx.luckysheet_select_save, allParam, false);
 }
 
-function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
+function applyMerge(ctx: Context, d: CellMatrix, foucsStatus: any) {
   // if (!checkIsAllowEdit()) {
   //   tooltip.info("", locale().pivotTable.errorNotAllowEdit);
   //   return;
@@ -484,6 +484,8 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
       }
     }
   }
+  const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!];
+  file.config = cfg;
 }
 
 function toggleAttr(ctx: Context, cellInput: HTMLDivElement, attr: keyof Cell) {
@@ -1484,7 +1486,7 @@ export function handleTextBackground(
   setAttr(ctx, cellInput, "bg", color);
 }
 
-export function handleBorderAll(ctx: Context, type: string) {
+export function handleBorder(ctx: Context, type: string) {
   // *如果禁止前台编辑，则中止下一步操作
   // if (!checkIsAllowEdit()) {
   //   tooltip.info("", locale().pivotTable.errorNotAllowEdit);
@@ -1545,7 +1547,7 @@ export function handleBorderAll(ctx: Context, type: string) {
   // }, 1);
 }
 
-export function handleMergeAll(ctx: Context, type: string) {
+export function handleMerge(ctx: Context, type: string) {
   // if (!checkProtectionNotEnable(ctx.currentSheetIndex)) {
   //   return;
   // }
@@ -1587,30 +1589,31 @@ export function handleMergeAll(ctx: Context, type: string) {
 
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
-  updateFormat_mc(ctx, flowdata, type);
+  applyMerge(ctx, flowdata, type);
 }
 
 export function handleFreeze(ctx: Context, type: string) {
   if (!ctx.allowEdit) return;
 
-  const firstSelection = ctx.luckysheet_select_save?.[0];
-  if (!firstSelection) return;
-
   const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!];
   if (!file) return;
+
+  if (type === "freeze-cancel") {
+    delete file.frozen;
+    return;
+  }
+
+  const firstSelection = ctx.luckysheet_select_save?.[0];
+  if (!firstSelection) return;
 
   const { row_focus, column_focus } = firstSelection;
   if (!row_focus || !column_focus) return;
 
-  if (type === "freeze-cancel") {
-    delete file.frozen;
-  } else {
-    file.frozen = { type: "both", range: { row_focus, column_focus } };
-    if (type === "freeze-row") {
-      file.frozen.type = "rangeRow";
-    } else if (type === "freeze-col") {
-      file.frozen.type = "rangeColumn";
-    }
+  file.frozen = { type: "both", range: { row_focus, column_focus } };
+  if (type === "freeze-row") {
+    file.frozen.type = "rangeRow";
+  } else if (type === "freeze-col") {
+    file.frozen.type = "rangeColumn";
   }
 }
 
@@ -1634,8 +1637,8 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
   "percentage-format": handlePercentageFormat,
   "number-decrease": handleNumberDecrease,
   "number-increase": handleNumberIncrease,
-  "merge-all": (ctx: Context) => handleMergeAll(ctx, "mergeAll"),
-  "border-all": (ctx: Context) => handleBorderAll(ctx, "border-all"),
+  "merge-all": (ctx: Context) => handleMerge(ctx, "mergeAll"),
+  "border-all": (ctx: Context) => handleBorder(ctx, "border-all"),
   bold: handleBold,
   italic: handleItalic,
   "strike-through": handleStrikeThrough,
