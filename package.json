@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "yarn storybook",
-    "build": "father-build",
+    "build": "mv packages/react/tsconfig.build.json packages/react/tsconfig.json && father-build && mv packages/react/tsconfig.json packages/react/tsconfig.build.json",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "tsc": "tsc --noEmit",
