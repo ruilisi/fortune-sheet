@@ -52,6 +52,7 @@
   overflow-y: scroll;
   padding-left: 2px;
   font-size: 14px;
+  line-height: 14px;
   margin: 0;
   outline: none;
   cursor: text;
@@ -62,4 +63,6 @@
   -webkit-nbsp-mode: space;
   -webkit-line-break: after-white-space;
   background-color: white;
+  padding-top: 7px;
+  box-sizing: border-box;
 }
