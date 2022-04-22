@@ -3708,11 +3708,12 @@ export function handleOverlayMouseUp(
         });
     }
     if (changeRowSelected) {
+      cfg.rowlen ||= {};
       ctx.luckysheet_select_save
         ?.filter((select) => select.row_select)
         ?.forEach((select) => {
           for (let r = select.row[0]; r <= select.row[1]; r += 1) {
-            cfg.rowlen[r] = Math.ceil(size / ctx.zoomRatio);
+            cfg.rowlen![r] = Math.ceil(size / ctx.zoomRatio);
           }
         });
     } else {
@@ -3817,11 +3818,12 @@ export function handleOverlayMouseUp(
         });
     }
     if (changeColumnSelected) {
+      cfg.columnlen ||= {};
       ctx.luckysheet_select_save
         ?.filter((select) => select.column_select)
         ?.forEach((select) => {
           for (let r = select.column[0]; r <= select.column[1]; r += 1) {
-            cfg.columnlen[r] = Math.ceil(size / ctx.zoomRatio);
+            cfg.columnlen![r] = Math.ceil(size / ctx.zoomRatio);
           }
         });
     } else {

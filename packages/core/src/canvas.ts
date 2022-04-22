@@ -1189,7 +1189,7 @@ export class Canvas {
     */
 
     // 边框单独渲染
-    if (this.sheetCtx.config?.borderInfo?.length > 0) {
+    if ((this.sheetCtx.config?.borderInfo?.length ?? 0) > 0) {
       // 边框渲染
       type BorderRender = (
         style: any,

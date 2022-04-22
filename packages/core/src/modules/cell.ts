@@ -1535,7 +1535,7 @@ export function getdatabyselection(
     if (d?.[r] == null) {
       continue;
     }
-    if (cfg.rowhidden != null && cfg.rowhidden[r] != null) {
+    if (cfg?.rowhidden != null && cfg.rowhidden[r] != null) {
       continue;
     }
 

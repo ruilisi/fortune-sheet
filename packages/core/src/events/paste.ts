@@ -336,7 +336,8 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
             x![c]!.mc!.r = h;
             x![c]!.mc!.c = c;
 
-            cfg.merge[`${x[c]!.mc!.r}_${x[c]!.mc!.c}`] = x[c]!.mc;
+            // @ts-ignore
+            cfg.merge[`${x[c]!.mc!.r}_${x[c]!.mc!.c}`] = x[c]!.mc!;
 
             offsetMC[`${value.mc.r}_${value.mc.c}`] = [
               x[c]!.mc!.r,
@@ -365,7 +366,7 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
             },
           };
 
-          cfg.borderInfo.push(bd_obj);
+          cfg.borderInfo?.push(bd_obj);
         }
 
         // const fontset = luckysheetfontformat(x[c]);
@@ -730,7 +731,8 @@ function pasteHandlerOfCutPaste(
           x[c]!.mc!.r = h;
           x[c]!.mc!.c = c;
 
-          cfg.merge[`${x[c]!.mc!.r}_${x[c]!.mc!.c}`] = x[c]!.mc;
+          // @ts-ignore
+          cfg.merge[`${x[c]!.mc!.r}_${x[c]!.mc!.c}`] = x[c]!.mc!;
 
           offsetMC[`${value.mc!.r}_${value.mc!.c}`] = [
             x[c]!.mc!.r,
@@ -775,7 +777,7 @@ function pasteHandlerOfCutPaste(
     );
 
     const sourceCurData = _.cloneDeep(sourceData);
-    const sourceCurConfig = _.cloneDeep(sourceConfig);
+    const sourceCurConfig = _.cloneDeep(sourceConfig) || {};
     if (sourceCurConfig.merge == null) {
       sourceCurConfig.merge = {};
     }
@@ -1285,7 +1287,8 @@ function pasteHandlerOfCopyPaste(
               x![c]!.mc!.r = h;
               x![c]!.mc!.c = c;
 
-              cfg.merge[`${h}_${c}`] = x![c]!.mc;
+              // @ts-ignore
+              cfg.merge[`${h}_${c}`] = x![c]!.mc!;
 
               offsetMC[`${value!.mc!.r}_${value!.mc!.c}`] = [
                 x![c]!.mc!.r,

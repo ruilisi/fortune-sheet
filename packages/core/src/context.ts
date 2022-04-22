@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { SheetConfig } from ".";
 import { normalizeSelection } from "./modules/selection";
 import { Sheet, Selection, Cell, CommentBox } from "./types";
 import { generateRandomSheetIndex, getSheetIndex } from "./utils";
@@ -27,7 +28,7 @@ export type Context = {
 
   currentSheetIndex: string;
   calculateSheetIndex: string;
-  config: any;
+  config: SheetConfig;
 
   visibledatarow: number[];
   visibledatacolumn: number[];

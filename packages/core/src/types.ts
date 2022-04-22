@@ -76,9 +76,21 @@ export type Selection = {
   column_select?: boolean;
 };
 
+export type SheetConfig = {
+  merge?: Record<string, { r: number; c: number; rs: number; cs: number }>; // 合并单元格
+  rowlen?: Record<string, number>; // 表格行高
+  columnlen?: Record<string, number>; // 表格列宽
+  rowhidden?: Record<string, number>; // 隐藏行
+  colhidden?: Record<string, number>; // 隐藏列
+  customHeight?: Record<string, number>;
+  customWidth?: Record<string, number>;
+  borderInfo?: any[]; // 边框
+  authority?: any;
+};
+
 export type Sheet = {
   name: string;
-  config?: any;
+  config?: SheetConfig;
   order?: number;
   data?: CellMatrix;
   celldata?: CellWithRowAndCol[];

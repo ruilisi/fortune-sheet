@@ -58,10 +58,7 @@ export function insertRowCol(
 
   const merge_new: any = {};
   _.forEach(cfg.merge, (mc) => {
-    const { r } = mc;
-    const { c } = mc;
-    const { rs } = mc;
-    const { cs } = mc;
+    const { r, c, rs, cs } = mc;
 
     if (type === "row") {
       if (index < r) {
@@ -295,7 +292,7 @@ export function insertRowCol(
     _.forEach(newFilterObj.filter, (v, k) => {
       const f_rowhidden = newFilterObj.filter[k].rowhidden;
       _.forEach(f_rowhidden, (v1, n) => {
-        cfg.rowhidden[n] = 0;
+        cfg.rowhidden![n] = 0;
       });
     });
   }
@@ -576,15 +573,15 @@ export function insertRowCol(
         const r = parseFloat(rstr);
 
         if (r < index) {
-          rowlen_new[r] = cfg.rowlen[r];
+          rowlen_new[r] = cfg.rowlen![r];
         } else if (r === index) {
           if (direction === "lefttop") {
-            rowlen_new[r + count] = cfg.rowlen[r];
+            rowlen_new[r + count] = cfg.rowlen![r];
           } else if (direction === "rightbottom") {
-            rowlen_new[r] = cfg.rowlen[r];
+            rowlen_new[r] = cfg.rowlen![r];
           }
         } else {
-          rowlen_new[r + count] = cfg.rowlen[r];
+          rowlen_new[r + count] = cfg.rowlen![r];
         }
       });
 
@@ -599,15 +596,15 @@ export function insertRowCol(
         const r = parseFloat(rstr);
 
         if (r < index) {
-          rowhidden_new[r] = cfg.rowhidden[r];
+          rowhidden_new[r] = cfg.rowhidden![r];
         } else if (r === index) {
           if (direction === "lefttop") {
-            rowhidden_new[r + count] = cfg.rowhidden[r];
+            rowhidden_new[r + count] = cfg.rowhidden![r];
           } else if (direction === "rightbottom") {
-            rowhidden_new[r] = cfg.rowhidden[r];
+            rowhidden_new[r] = cfg.rowhidden![r];
           }
         } else {
-          rowhidden_new[r + count] = cfg.rowhidden[r];
+          rowhidden_new[r + count] = cfg.rowhidden![r];
         }
       });
 
@@ -717,7 +714,7 @@ export function insertRowCol(
             item.value.row_index += r;
           }
         });
-        cfg.borderInfo.push(...cellBorderConfigCopy);
+        cfg.borderInfo?.push(...cellBorderConfigCopy);
       }
     }
 
@@ -744,15 +741,15 @@ export function insertRowCol(
         const c = parseFloat(cstr);
 
         if (c < index) {
-          columnlen_new[c] = cfg.columnlen[c];
+          columnlen_new[c] = cfg.columnlen![c];
         } else if (c === index) {
           if (direction === "lefttop") {
-            columnlen_new[c + count] = cfg.columnlen[c];
+            columnlen_new[c + count] = cfg.columnlen![c];
           } else if (direction === "rightbottom") {
-            columnlen_new[c] = cfg.columnlen[c];
+            columnlen_new[c] = cfg.columnlen![c];
           }
         } else {
-          columnlen_new[c + count] = cfg.columnlen[c];
+          columnlen_new[c + count] = cfg.columnlen![c];
         }
       });
 
@@ -767,15 +764,15 @@ export function insertRowCol(
         const c = parseFloat(cstr);
 
         if (c < index) {
-          colhidden_new[c] = cfg.colhidden[c];
+          colhidden_new[c] = cfg.colhidden![c];
         } else if (c === index) {
           if (direction === "lefttop") {
-            colhidden_new[c + count] = cfg.colhidden[c];
+            colhidden_new[c + count] = cfg.colhidden![c];
           } else if (direction === "rightbottom") {
-            colhidden_new[c] = cfg.colhidden[c];
+            colhidden_new[c] = cfg.colhidden![c];
           }
         } else {
-          colhidden_new[c + count] = cfg.colhidden[c];
+          colhidden_new[c + count] = cfg.colhidden![c];
         }
       });
 
@@ -883,7 +880,7 @@ export function insertRowCol(
             item.value.col_index += i;
           }
         });
-        cfg.borderInfo.push(...cellBorderConfigCopy);
+        cfg.borderInfo?.push(...cellBorderConfigCopy);
       }
     }
 
@@ -1299,7 +1296,7 @@ export function deleteRowCol(
     _.forEach(newFilterObj.filter, (v, k) => {
       const f_rowhidden = newFilterObj.filter[k].rowhidden;
       _.forEach(f_rowhidden, (v1, n) => {
-        cfg.rowhidden[n] = 0;
+        cfg.rowhidden![n] = 0;
       });
     });
   }
@@ -1584,9 +1581,9 @@ export function deleteRowCol(
     _.forEach(cfg.rowlen, (v, rstr) => {
       const r = parseFloat(rstr);
       if (r < start) {
-        rowlen_new[r] = cfg.rowlen[r];
+        rowlen_new[r] = cfg.rowlen![r];
       } else if (r > end) {
-        rowlen_new[r - slen] = cfg.rowlen[r];
+        rowlen_new[r - slen] = cfg.rowlen![r];
       }
     });
 
@@ -1601,9 +1598,9 @@ export function deleteRowCol(
     _.forEach(cfg.rowhidden, (v, rstr) => {
       const r = parseFloat(rstr);
       if (r < start) {
-        rowhidden_new[r] = cfg.rowhidden[r];
+        rowhidden_new[r] = cfg.rowhidden![r];
       } else if (r > end) {
-        rowhidden_new[r - slen] = cfg.rowhidden[r];
+        rowhidden_new[r - slen] = cfg.rowhidden![r];
       }
     });
 
@@ -1708,9 +1705,9 @@ export function deleteRowCol(
     _.forEach(cfg.columnlen, (v, cstr) => {
       const c = parseFloat(cstr);
       if (c < start) {
-        columnlen_new[c] = cfg.columnlen[c];
+        columnlen_new[c] = cfg.columnlen![c];
       } else if (c > end) {
-        columnlen_new[c - slen] = cfg.columnlen[c];
+        columnlen_new[c - slen] = cfg.columnlen![c];
       }
     });
 
@@ -1725,9 +1722,9 @@ export function deleteRowCol(
     _.forEach(cfg.colhidden, (v, cstr) => {
       const c = parseFloat(cstr);
       if (c < start) {
-        colhidden_new[c] = cfg.colhidden[c];
+        colhidden_new[c] = cfg.colhidden![c];
       } else if (c > end) {
-        colhidden_new[c - slen] = cfg.colhidden[c];
+        colhidden_new[c - slen] = cfg.colhidden![c];
       }
     });
 
