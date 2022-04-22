@@ -17,6 +17,7 @@ import {
   handleMergeAll,
   handleBorderAll,
   toolbarItemSelectedFunc,
+  handleFreeze,
 } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import "./index.css";
@@ -37,7 +38,7 @@ const Toolbar: React.FC = () => {
   const col = firstSelection?.column_focus;
   const cell =
     flowdata && row != null && col != null ? flowdata?.[row]?.[col] : undefined;
-  const { toolbar, merge, border } = locale(context);
+  const { toolbar, merge, border, freezen } = locale(context);
 
   const getToolbarItem = useCallback(
     (name: string, i: number) => {
@@ -278,7 +279,7 @@ const Toolbar: React.FC = () => {
           </Combo>
         );
       }
-      if (name === "merge-menu") {
+      if (name === "merge-cell") {
         const itemdata = [
           { text: merge.mergeAll, value: "mergeAll" },
           { text: merge.mergeV, value: "mergeV" },
@@ -317,8 +318,8 @@ const Toolbar: React.FC = () => {
           </Combo>
         );
       }
-      if (name === "border-menu") {
-        const itemdata = [
+      if (name === "border") {
+        const items = [
           {
             text: border.borderTop,
             value: "border-top",
@@ -361,9 +362,6 @@ const Toolbar: React.FC = () => {
             text: border.borderVertical,
             value: "border-vertical",
           },
-          // { text: "", value: "divider", example: "" },
-          // {"text": "<span id='luckysheet-icon-borderColor-linecolor' class='luckysheet-mousedown-cancel' style='border-bottom:3px solid #000;'>"+ locale_border.borderColor +"</span>", "value":"borderColor", "example":"more"},
-          // {"text": ""+ locale_border.borderSize +"<img id='luckysheetborderSizepreview' width=100 height=10 src='data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==' style='position:absolute;bottom:-5px;right:0px;width:100px;height:10px;'>", "value":"borderSize", "example":"more"}
         ];
         return (
           <Combo
@@ -379,7 +377,7 @@ const Toolbar: React.FC = () => {
           >
             {(setOpen) => (
               <Select>
-                {itemdata.map(({ text, value }) =>
+                {items.map(({ text, value }) =>
                   value !== "divider" ? (
                     <Option
                       key={value}
@@ -399,6 +397,60 @@ const Toolbar: React.FC = () => {
                     <MenuDivider />
                   )
                 )}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
+
+      if (name === "freeze") {
+        const items = [
+          {
+            text: freezen.freezenRowRange,
+            value: "freeze-row",
+          },
+          {
+            text: freezen.freezenColumnRange,
+            value: "freeze-col",
+          },
+          {
+            text: freezen.freezenRCRange,
+            value: "freeze-row-col",
+          },
+          {
+            text: freezen.freezenCancel,
+            value: "freeze-cancel",
+          },
+        ];
+        return (
+          <Combo
+            iconId="freeze-row-col"
+            key={name}
+            tooltip={name}
+            onClick={() =>
+              setContext((ctx) => {
+                handleFreeze(ctx, "freeze-row-col");
+              })
+            }
+          >
+            {(setOpen) => (
+              <Select>
+                {items.map(({ text, value }) => (
+                  <Option
+                    key={value}
+                    onClick={() => {
+                      setContext((ctx) => {
+                        handleFreeze(ctx, value);
+                      });
+                      setOpen(false);
+                    }}
+                  >
+                    <div className="fortune-toolbar-menu-line">
+                      {text}
+                      <SVGIcon name={value} />
+                    </div>
+                  </Option>
+                ))}
               </Select>
             )}
           </Combo>
@@ -434,20 +486,9 @@ const Toolbar: React.FC = () => {
       handleRedo,
       context,
       flowdata,
-      merge.mergeAll,
-      merge.mergeV,
-      merge.mergeH,
-      merge.mergeCancel,
-      border.borderTop,
-      border.borderBottom,
-      border.borderLeft,
-      border.borderRight,
-      border.borderNone,
-      border.borderAll,
-      border.borderOutside,
-      border.borderInside,
-      border.borderHorizontal,
-      border.borderVertical,
+      merge,
+      border,
+      freezen,
     ]
   );
 

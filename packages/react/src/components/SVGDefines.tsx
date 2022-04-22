@@ -918,6 +918,83 @@ const SVGDefines: React.FC = () => (
         <path d="M533.2 492.3L277.9 166.1c-3-3.9-7.7-6.1-12.6-6.1H188c-6.7 0-10.4 7.7-6.3 12.9L447.1 512 181.7 851.1c-4.1 5.2-0.4 12.9 6.3 12.9h77.3c4.9 0 9.6-2.3 12.6-6.1l255.3-326.1c9.1-11.7 9.1-27.9 0-39.5z" />
         <path d="M837.2 492.3L581.9 166.1c-3-3.9-7.7-6.1-12.6-6.1H492c-6.7 0-10.4 7.7-6.3 12.9L751.1 512 485.7 851.1c-4.1 5.2-0.4 12.9 6.3 12.9h77.3c4.9 0 9.6-2.3 12.6-6.1l255.3-326.1c9.1-11.7 9.1-27.9 0-39.5z" />
       </symbol>
+      <symbol viewBox="0 0 24 24" fill="none" id="freeze-col">
+        <rect
+          x="5.75"
+          y="5.75"
+          width="12.5"
+          height="12.5"
+          stroke="#525C6F"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M5.75 12H18.25M12 5.5V18.5"
+          stroke="#525C6F"
+          strokeWidth="1.5"
+        />
+        <path d="M12 12L5.5 17.75" stroke="#525C6F" strokeWidth="1.5" />
+        <path d="M11.25 6L5.75 11.5" stroke="#525C6F" strokeWidth="1.5" />
+      </symbol>
+      <symbol viewBox="0 0 24 24" fill="none" id="freeze-row">
+        <rect
+          x="5.75"
+          y="5.75"
+          width="12.5"
+          height="12.5"
+          stroke="#525C6F"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M5.75 12H18.25M12 5.5V18.5"
+          stroke="#525C6F"
+          strokeWidth="1.5"
+        />
+        <path d="M18 6.5L11.5 12.25" stroke="#525C6F" strokeWidth="1.5" />
+        <path d="M11.25 6L5.75 11.5" stroke="#525C6F" strokeWidth="1.5" />
+      </symbol>
+      <symbol viewBox="0 0 24 24" fill="none" id="freeze-row-col">
+        <rect
+          x="5.75"
+          y="5.75"
+          width="12.5"
+          height="12.5"
+          stroke="#525C6F"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M5.75 12H18.25M12 5.5V18.5"
+          stroke="#525C6F"
+          strokeWidth="1.5"
+        />
+        <path d="M18 6L5.75 18.25" stroke="#525C6F" strokeWidth="1.5" />
+        <path d="M11.25 6L5.75 11.5" stroke="#525C6F" strokeWidth="1.5" />
+      </symbol>
+      <symbol viewBox="0 0 24 24" fill="none" id="freeze-cancel">
+        <rect
+          x="5.75"
+          y="5.75"
+          width="12.5"
+          height="12.5"
+          stroke="#535A68"
+          strokeWidth="1.5"
+        />
+        <line
+          x1="6.5"
+          y1="12"
+          x2="17.5"
+          y2="12"
+          stroke="#535A68"
+          strokeWidth="1.5"
+        />
+        <line
+          x1="12"
+          y1="17.5"
+          x2="12"
+          y2="6.5"
+          stroke="#535A68"
+          strokeWidth="1.5"
+        />
+      </symbol>
     </defs>
   </svg>
 );

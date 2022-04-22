@@ -1,4 +1,4 @@
-import _, { isPlainObject } from "lodash";
+import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 // import { locale } from "../locale";
 import { Cell, CellMatrix, GlobalCache } from "../types";
@@ -510,7 +510,7 @@ function setAttr(
 // @ts-ignore
 function checkNoNullValue(cell) {
   let v = cell;
-  if (isPlainObject(v)) {
+  if (_.isPlainObject(v)) {
     v = v.v;
   }
 
@@ -530,7 +530,7 @@ function checkNoNullValue(cell) {
 // @ts-ignore
 function checkNoNullValueAll(cell) {
   let v = cell;
-  if (isPlainObject(v)) {
+  if (_.isPlainObject(v)) {
     v = v.v;
   }
 
@@ -1588,6 +1588,30 @@ export function handleMergeAll(ctx: Context, type: string) {
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
   updateFormat_mc(ctx, flowdata, type);
+}
+
+export function handleFreeze(ctx: Context, type: string) {
+  if (!ctx.allowEdit) return;
+
+  const firstSelection = ctx.luckysheet_select_save?.[0];
+  if (!firstSelection) return;
+
+  const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!];
+  if (!file) return;
+
+  const { row_focus, column_focus } = firstSelection;
+  if (!row_focus || !column_focus) return;
+
+  if (type === "freeze-cancel") {
+    delete file.frozen;
+  } else {
+    file.frozen = { type: "both", range: { row_focus, column_focus } };
+    if (type === "freeze-row") {
+      file.frozen.type = "rangeRow";
+    } else if (type === "freeze-col") {
+      file.frozen.type = "rangeColumn";
+    }
+  }
 }
 
 export function handleTextSize(

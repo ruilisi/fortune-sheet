@@ -11376,9 +11376,9 @@ export default {
     freezenRow: "冻结第一行",
     freezenColumn: "冻结第A列",
     freezenRC: "冻结第一行第A列",
-    freezenRowRange: "冻结行到选区",
-    freezenColumnRange: "冻结列到选区",
-    freezenRCRange: "冻结行列到选区",
+    freezenRowRange: "冻结至当前行",
+    freezenColumnRange: "冻结至当前列",
+    freezenRCRange: "冻结至当前行列",
     freezenCancel: "取消冻结",
 
     noSeletionError: "没有选区",

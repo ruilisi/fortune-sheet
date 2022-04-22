@@ -15,6 +15,7 @@ function frozenTofreezen(ctx: Context, cache: GlobalCache, sheetIndex: string) {
   const { frozen } = file;
 
   if (frozen == null) {
+    delete cache.freezen;
     return;
   }
 
