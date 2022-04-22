@@ -150,7 +150,7 @@
   z-index: 14;
   border: none;
   margin: 0px 0 0 0px;
-  display: none;
+  /* display: none; */
 }
 
 .luckysheet-cell-selected-extend {
@@ -600,4 +600,122 @@
   right: -6px;
   bottom: -6px;
   cursor: se-resize;
+}
+
+.luckysheet-selection-copy-top {
+  left: 0;
+  right: 0;
+  height: 2px;
+  top: 0;
+  background-position: bottom;
+  /* background-image: url("EwaAntH.gif"); */
+}
+
+.luckysheet-selection-copy-right {
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  right: 0;
+  /* background-image: url("EwaAntV.gif"); */
+}
+
+.luckysheet-selection-copy-bottom {
+  left: 0;
+  right: 0;
+  height: 2px;
+  bottom: 0;
+  /* background-image: url("EwaAntH.gif"); */
+}
+
+.luckysheet-selection-copy-left {
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  left: 0;
+  background-position: right;
+  /* background-image: url("EwaAntV.gif"); */
+}
+
+.luckysheet-selection-copy-hc {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 2px dashed #12A5FF;
+  z-index: 8;
+}
+
+.luckysheet-formula-functionrange-highlight .luckysheet-copy {
+  background-image: none;
+  background: #0188fb;
+  position: absolute;
+  z-index: 18;
+  cursor: move;
+  opacity: 0.9;
+  /*border: 1px solid #fff;*/
+}
+
+.luckysheet-formula-functionrange-highlight .luckysheet-selection-copy-top {
+  top: -2px;
+  border-top: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.luckysheet-formula-functionrange-highlight .luckysheet-selection-copy-right {
+  right: -2px;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #fff;
+}
+
+.luckysheet-formula-functionrange-highlight .luckysheet-selection-copy-bottom {
+  bottom: -2px;
+  border-top: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.luckysheet-formula-functionrange-highlight .luckysheet-selection-copy-left {
+  left: -2px;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #fff;
+}
+
+.luckysheet-formula-functionrange-highlight .luckysheet-selection-copy-hc {
+  border: 2px solid #5e5e5e;
+  opacity: 0.03;
+  z-index: initial;
+}
+
+.luckysheet-selection-highlight-lt {
+  left: -3px;
+  top: -3px;
+  cursor: se-resize;
+}
+
+.luckysheet-selection-highlight-rt {
+  right: -3px;
+  top: -3px;
+  cursor: ne-resize;
+}
+
+.luckysheet-selection-highlight-lb {
+  left: -3px;
+  bottom: -3px;
+  cursor: ne-resize;
+}
+
+.luckysheet-selection-highlight-rb {
+  right: -3px;
+  bottom: -3px;
+  cursor: se-resize;
+}
+
+
+.luckysheet-formula-functionrange-highlight .luckysheet-highlight {
+  position: absolute;
+  z-index: 19;
+  border: 1px solid #fff;
+  background: #0188fb;
+  width: 6px;
+  height: 6px;
 }

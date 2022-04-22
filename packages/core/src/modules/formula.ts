@@ -1,7 +1,7 @@
 import _ from "lodash";
 // @ts-ignore
 import { Parser } from "@fortune-sheet/formula-parser";
-import type { Cell, Selection } from "../types";
+import type { Cell, Rect, Selection } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
   columnCharToIndex,
@@ -9,11 +9,18 @@ import {
   getSheetIndex,
   indexToColumnChar,
 } from "../utils";
-import { getcellFormula, setCellValue } from "./cell";
+import {
+  getcellFormula,
+  getRangetxt,
+  mergeMoveMain,
+  setCellValue,
+} from "./cell";
 import { error } from "./validation";
 import { moveToEnd } from "./cursor";
 import { locale } from "../locale";
 import { colors } from "./color";
+import { colLocation, rowLocation } from "./location";
+import { cancelFunctionrangeSelected, seletedHighlistByindex } from ".";
 
 export const formulaCache: {
   func_selectedrange: Selection | undefined;
@@ -21,6 +28,7 @@ export const formulaCache: {
   func_selectedrange: undefined,
   data_parm_index: 0,
   rangechangeindex: null,
+  selectingRangeIndex: -1,
   rangedragged: () => {},
   rangeResizeObj: null,
   rangeResize: null,
@@ -112,6 +120,11 @@ parser.on(
     }
   }
 );
+
+function parseElement(eleString: string) {
+  return new DOMParser().parseFromString(eleString, "text/html").body
+    .childNodes[0];
+}
 
 export function iscelldata(txt: string) {
   // 判断是否为单元格格式
@@ -2249,60 +2262,50 @@ function findrangeindex(v: string, vp: string) {
   return null;
 }
 
-/*
-export function createRangeHightlight() {
-  const $span = $("#luckysheet-rich-text-editor").find(
-    "span.luckysheet-formula-functionrange-cell"
-  );
-  $(
-    "#luckysheet-formula-functionrange .luckysheet-formula-functionrange-highlight"
-  ).remove();
-
-  $span.each(function () {
-    const rangeindex = $(this).attr("rangeindex");
-    const range = $(this).text();
-
-    $("#luckysheet-formula-functionrange").append(
-      replaceHtml(_this.rangeHightlightHTML, {
-        id: rangeindex,
-      })
-    );
-
-    const cellrange = _this.getcellrange(range);
-    const rangeid = `luckysheet-formula-functionrange-highlight-${rangeindex}`;
-
-    if (_.isNil(cellrange)) {
-    } else if (
-      cellrange.sheetIndex === Store.currentSheetIndex ||
-      (cellrange.sheetIndex === -1 &&
-        _this.rangetosheet === Store.currentSheetIndex)
-    ) {
-      $(`#${rangeid}`)
-        .data("range", cellrange)
-        .find(".luckysheet-copy")
-        .css({ background: colors[rangeindex] })
-        .end()
-        .find(".luckysheet-highlight")
-        .css({ background: colors[rangeindex] })
-        .end()
-        .find(".luckysheet-selection-copy-hc")
-        .css({ background: colors[rangeindex] });
-
-      seletedHighlistByindex(
-        rangeid,
-        cellrange.row[0],
-        cellrange.row[1],
-        cellrange.column[0],
-        cellrange.column[1]
-      );
-    }
-  });
-
-  $(
-    "#luckysheet-formula-functionrange .luckysheet-formula-functionrange-highlight"
-  ).show();
+export function createFormulaRangeSelect(
+  ctx: Context,
+  select: { rangeIndex: number } & Rect
+) {
+  ctx.formulaRangeSelect = select;
 }
-*/
+
+export function createRangeHightlight(ctx: Context, inputInnerHtmlStr: string) {
+  const $span = parseElement(`<div>${inputInnerHtmlStr}</div>`) as HTMLElement;
+  const formulaRanges: {
+    rangeIndex: number;
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    backgroundColor: string;
+  }[] = [];
+  $span
+    .querySelectorAll("span.luckysheet-formula-functionrange-cell")
+    .forEach((ele) => {
+      const rangeIndex = parseInt(ele.getAttribute("rangeindex") || "0", 10);
+      const cellrange = getcellrange(ctx, ele.textContent || "");
+      if (rangeIndex === formulaCache.selectingRangeIndex || cellrange == null)
+        return;
+      if (
+        cellrange.sheetIndex === ctx.currentSheetIndex ||
+        (cellrange.sheetIndex === -1 &&
+          formulaCache.rangetosheet === ctx.currentSheetIndex)
+      ) {
+        formulaRanges.push({
+          rangeIndex,
+          ...seletedHighlistByindex(
+            ctx,
+            cellrange.row[0],
+            cellrange.row[1],
+            cellrange.column[0],
+            cellrange.column[1]
+          ),
+          backgroundColor: colors[rangeIndex],
+        });
+      }
+    });
+  ctx.formulaRangeHighlight = formulaRanges;
+}
 
 export function setCaretPosition(
   textDom: HTMLElement,
@@ -2920,11 +2923,11 @@ export function handleFormulaInput(
     // the cursor will be set to the beginning of input box after set innerHTML,
     // restoring it to the correct position
     functionRange($editor, value, value1);
-    // TODO canceFunctionrangeSelected();
+    cancelFunctionrangeSelected(ctx);
 
     if (kcode !== 46) {
       // delete不执行此函数
-      // TODO createRangeHightlight();
+      createRangeHightlight(ctx, value);
     }
 
     $copyTo.innerHTML = value;
@@ -3205,7 +3208,7 @@ export function israngeseleciton(istooltip?: boolean) {
       formulaCache.rangeSetValueTo = ahr;
     } else {
       lasttxt = txt.substring(anchorOffset - 1, 1);
-      formulaCache.rangeSetValueTo = anchor.parentNode;
+      formulaCache.rangeSetValueTo = anchor.parentNode.nextSibling;
     }
 
     if (
@@ -3449,161 +3452,172 @@ export function functionStrChange(
 
   return function_str;
 }
-export function rangeSetValue(ctx: Context, selected: any) {
-  // let range = "";
+
+export function rangeSetValue(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  selected: any
+) {
+  let range = "";
   const rf = selected.row[0];
   const cf = selected.column[0];
   if (ctx.config.merge != null && `${rf}_${cf}` in ctx.config.merge) {
-    // range = getRangetxt(
-    //   ctx,
-    //   ctx.currentSheetIndex,
-    //   {
-    //     column: [cf, cf],
-    //     row: [rf, rf],
-    //   },
-    //   formulaCache.rangetosheet
-    // );
+    range = getRangetxt(
+      ctx,
+      ctx.currentSheetIndex,
+      {
+        column: [cf, cf],
+        row: [rf, rf],
+      },
+      formulaCache.rangetosheet
+    );
   } else {
-    // range = getRangetxt(
-    //   ctx,
-    //   ctx.currentSheetIndex,
-    //   selected,
-    //   formulaCache.rangetosheet
-    // );
+    range = getRangetxt(
+      ctx,
+      ctx.currentSheetIndex,
+      selected,
+      formulaCache.rangetosheet
+    );
   }
 
   // let $editor;
 
-  // if (
-  //   formulaCache.rangestart ||
-  //   formulaCache.rangedrag_column_start ||
-  //   formulaCache.rangedrag_row_start
-  // )
-  // {
-  //   if (
-  //     $("#luckysheet-search-formula-parm").is(":visible") ||
-  //     $("#luckysheet-search-formula-parm-select").is(":visible")
-  //   ) {
-  //     // 公式参数框选取范围
-  //     $editor = $("#luckysheet-rich-text-editor");
-  //     $("#luckysheet-search-formula-parm-select-input").val(range);
-  //     $("#luckysheet-search-formula-parm .parmBox")
-  //       .eq(formulaCache.data_parm_index)
-  //       .find(".txt input")
-  //       .val(range);
+  if (
+    formulaCache.rangestart ||
+    formulaCache.rangedrag_column_start ||
+    formulaCache.rangedrag_row_start
+  ) {
+    //   if (
+    //     $("#luckysheet-search-formula-parm").is(":visible") ||
+    //     $("#luckysheet-search-formula-parm-select").is(":visible")
+    //   ) {
+    //     // 公式参数框选取范围
+    //     $editor = $("#luckysheet-rich-text-editor");
+    //     $("#luckysheet-search-formula-parm-select-input").val(range);
+    //     $("#luckysheet-search-formula-parm .parmBox")
+    //       .eq(formulaCache.data_parm_index)
+    //       .find(".txt input")
+    //       .val(range);
 
-  //     // 参数对应值显示
-  //     const txtdata = luckysheet_getcelldata(range).data;
-  //     if (txtdata instanceof Array) {
-  //       // 参数为多个单元格选区
-  //       const txtArr = [];
+    //     // 参数对应值显示
+    //     const txtdata = luckysheet_getcelldata(range).data;
+    //     if (txtdata instanceof Array) {
+    //       // 参数为多个单元格选区
+    //       const txtArr = [];
 
-  //       for (let i = 0; i < txtdata.length; i += 1) {
-  //         for (let j = 0; j < txtdata[i].length; j += 1) {
-  //           if (txtdata[i][j] == null) {
-  //             txtArr.push(null);
-  //           } else {
-  //             txtArr.push(txtdata[i][j].v);
-  //           }
-  //         }
-  //       }
+    //       for (let i = 0; i < txtdata.length; i += 1) {
+    //         for (let j = 0; j < txtdata[i].length; j += 1) {
+    //           if (txtdata[i][j] == null) {
+    //             txtArr.push(null);
+    //           } else {
+    //             txtArr.push(txtdata[i][j].v);
+    //           }
+    //         }
+    //       }
 
-  //       $("#luckysheet-search-formula-parm .parmBox")
-  //         .eq(formulaCache.data_parm_index)
-  //         .find(".val")
-  //         .text(` = {${txtArr.join(",")}}`);
-  //     } else {
-  //       // 参数为单个单元格选区
-  //       $("#luckysheet-search-formula-parm .parmBox")
-  //         .eq(formulaCache.data_parm_index)
-  //         .find(".val")
-  //         .text(` = {${txtdata.v}}`);
-  //     }
+    //       $("#luckysheet-search-formula-parm .parmBox")
+    //         .eq(formulaCache.data_parm_index)
+    //         .find(".val")
+    //         .text(` = {${txtArr.join(",")}}`);
+    //     } else {
+    //       // 参数为单个单元格选区
+    //       $("#luckysheet-search-formula-parm .parmBox")
+    //         .eq(formulaCache.data_parm_index)
+    //         .find(".val")
+    //         .text(` = {${txtdata.v}}`);
+    //     }
 
-  //     // 计算结果显示
-  //     let isVal = true; // 参数不为空
-  //     const parmValArr = []; // 参数值集合
-  //     let lvi = -1; // 最后一个有值的参数索引
-  //     $("#luckysheet-search-formula-parm .parmBox").each(function (i, e) {
-  //       const parmtxt = $(e).find(".txt input").val();
-  //       if (
-  //         parmtxt === "" &&
-  //         $(e).find(".txt input").attr("data_parm_require") === "m"
-  //       ) {
-  //         isVal = false;
-  //       }
-  //       if (parmtxt !== "") {
-  //         lvi = i;
-  //       }
-  //     });
+    //     // 计算结果显示
+    //     let isVal = true; // 参数不为空
+    //     const parmValArr = []; // 参数值集合
+    //     let lvi = -1; // 最后一个有值的参数索引
+    //     $("#luckysheet-search-formula-parm .parmBox").each(function (i, e) {
+    //       const parmtxt = $(e).find(".txt input").val();
+    //       if (
+    //         parmtxt === "" &&
+    //         $(e).find(".txt input").attr("data_parm_require") === "m"
+    //       ) {
+    //         isVal = false;
+    //       }
+    //       if (parmtxt !== "") {
+    //         lvi = i;
+    //       }
+    //     });
 
-  // 单元格显示
-  //     let functionHtmlTxt;
-  //     if (lvi === -1) {
-  //       functionHtmlTxt = `=${$(
-  //         "#luckysheet-search-formula-parm .luckysheet-modal-dialog-title-text"
-  //       ).text()}()`;
-  //     } else if (lvi === 0) {
-  //       functionHtmlTxt = `=${$(
-  //         "#luckysheet-search-formula-parm .luckysheet-modal-dialog-title-text"
-  //       ).text()}(${$("#luckysheet-search-formula-parm .parmBox")
-  //         .eq(0)
-  //         .find(".txt input")
-  //         .val()})`;
-  //     } else {
-  //       for (let j = 0; j <= lvi; j += 1) {
-  //         parmValArr.push(
-  //           $("#luckysheet-search-formula-parm .parmBox")
-  //             .eq(j)
-  //             .find(".txt input")
-  //             .val()
-  //         );
-  //       }
-  //       functionHtmlTxt = `=${$(
-  //         "#luckysheet-search-formula-parm .luckysheet-modal-dialog-title-text"
-  //       ).text()}(${parmValArr.join(",")})`;
-  //     }
+    // 单元格显示
+    //     let functionHtmlTxt;
+    //     if (lvi === -1) {
+    //       functionHtmlTxt = `=${$(
+    //         "#luckysheet-search-formula-parm .luckysheet-modal-dialog-title-text"
+    //       ).text()}()`;
+    //     } else if (lvi === 0) {
+    //       functionHtmlTxt = `=${$(
+    //         "#luckysheet-search-formula-parm .luckysheet-modal-dialog-title-text"
+    //       ).text()}(${$("#luckysheet-search-formula-parm .parmBox")
+    //         .eq(0)
+    //         .find(".txt input")
+    //         .val()})`;
+    //     } else {
+    //       for (let j = 0; j <= lvi; j += 1) {
+    //         parmValArr.push(
+    //           $("#luckysheet-search-formula-parm .parmBox")
+    //             .eq(j)
+    //             .find(".txt input")
+    //             .val()
+    //         );
+    //       }
+    //       functionHtmlTxt = `=${$(
+    //         "#luckysheet-search-formula-parm .luckysheet-modal-dialog-title-text"
+    //       ).text()}(${parmValArr.join(",")})`;
+    //     }
 
-  //     const function_str = functionHTMLGenerate(functionHtmlTxt);
-  //     $("#luckysheet-rich-text-editor").html(function_str);
-  //     $("#luckysheet-functionbox-cell").html(
-  //       $("#luckysheet-rich-text-editor").html()
-  //     );
+    //     const function_str = functionHTMLGenerate(functionHtmlTxt);
+    //     $("#luckysheet-rich-text-editor").html(function_str);
+    //     $("#luckysheet-functionbox-cell").html(
+    //       $("#luckysheet-rich-text-editor").html()
+    //     );
 
-  //     if (isVal) {
-  //       // 公式计算
-  //       const fp = _.trim(
-  //         functionParserExe($("#luckysheet-rich-text-editor").text())
-  //       );
-  //       const result = new Function(`return ${fp}`)();
-  //       $("#luckysheet-search-formula-parm .result span").text(result);
-  //     }
-  //   } else {
-  //     const currSelection = window.getSelection();
-  //     const anchorOffset = currSelection!.anchorNode;
-  //     $editor = $(anchorOffset).closest("div");
+    //     if (isVal) {
+    //       // 公式计算
+    //       const fp = _.trim(
+    //         functionParserExe($("#luckysheet-rich-text-editor").text())
+    //       );
+    //       const result = new Function(`return ${fp}`)();
+    //       $("#luckysheet-search-formula-parm .result span").text(result);
+    //     }
+    //   } else {
+    // const currSelection = window.getSelection();
+    // const anchorOffset = currSelection!.anchorNode;
+    // $editor = $(anchorOffset).closest("div");
 
-  //     const $span = $editor
-  //       .find(`span[rangeindex='${formulaCache.rangechangeindex}']`)
-  //       .html(range);
-
-  //     setCaretPosition($span.get(0), 0, range.length);
-  //   }
-  // } else {
-  //   const function_str = `<span class="luckysheet-formula-functionrange-cell" rangeindex="${formulaCache.functionHTMLIndex}" dir="auto" style="color:${colors[functionHTMLIndex]};">${range}</span>`;
-  //   const $t = $(function_str).insertAfter(formulaCache.rangeSetValueTo);
-  //   formulaCache.rangechangeindex = formulaCache.functionHTMLIndex;
-  //   $editor = $(formulaCache.rangeSetValueTo).closest("div");
-
-  //   setCaretPosition(
-  //     $editor
-  //       .find(`span[rangeindex='${formulaCache.rangechangeindex}']`)
-  //       .get(0),
-  //     0,
-  //     range.length
-  //   );
-  //   formulaCache.functionHTMLIndex += 1;
-  // }
+    // const $span = $editor
+    //   .find(`span[rangeindex='${formulaCache.rangechangeindex}']`)
+    //   .html(range);
+    const span = cellInput.querySelector(
+      `span[rangeindex='${formulaCache.rangechangeindex}']`
+    ) as HTMLSpanElement;
+    if (span) {
+      span.innerHTML = range;
+      setCaretPosition(span, 0, range.length);
+    }
+    //   }
+  } else {
+    const function_str = `<span class="luckysheet-formula-functionrange-cell" rangeindex="${
+      formulaCache.functionHTMLIndex
+    }" dir="auto" style="color:${
+      colors[formulaCache.functionHTMLIndex]
+    };">${range}</span>`;
+    cellInput.insertBefore(
+      parseElement(function_str),
+      formulaCache.rangeSetValueTo
+    );
+    formulaCache.rangechangeindex = formulaCache.functionHTMLIndex;
+    const span = cellInput.querySelector(
+      `span[rangeindex='${formulaCache.rangechangeindex}']`
+    ) as HTMLSpanElement;
+    setCaretPosition(span, 0, range.length);
+    formulaCache.functionHTMLIndex += 1;
+  }
 
   // if ($editor.attr("id") === "luckysheet-rich-text-editor") {
   //   $("#luckysheet-functionbox-cell").html(
@@ -3615,6 +3629,165 @@ export function rangeSetValue(ctx: Context, selected: any) {
   //   );
   // }
 }
+
+export function onFormulaRangeDragEnd(ctx: Context) {
+  if (formulaCache.func_selectedrange) {
+    const {
+      left_move: left,
+      top_move: top,
+      width_move: width,
+      height_move: height,
+    } = formulaCache.func_selectedrange;
+    if (
+      left == null ||
+      top == null ||
+      width == null ||
+      height == null ||
+      !formulaCache.rangestart
+    )
+      return;
+    ctx.formulaRangeSelect = {
+      rangeIndex: formulaCache.rangeindex,
+      left,
+      top,
+      width,
+      height,
+    };
+  }
+  formulaCache.selectingRangeIndex = -1;
+}
+
+export function rangeDrag(
+  ctx: Context,
+  e: MouseEvent,
+  cellInput: HTMLDivElement,
+  scrollLeft: number,
+  scrollTop: number,
+  container: HTMLDivElement
+) {
+  const { func_selectedrange } = formulaCache;
+  if (
+    !func_selectedrange ||
+    func_selectedrange.left == null ||
+    func_selectedrange.height == null ||
+    func_selectedrange.top == null ||
+    func_selectedrange.width == null
+  )
+    return;
+  const rect = container.getBoundingClientRect();
+  const x = e.pageX + rect.left - ctx.rowHeaderWidth + scrollLeft;
+  const y = e.pageY - rect.top - ctx.columnHeaderHeight + scrollTop;
+
+  const row_location = rowLocation(y, ctx.visibledatarow);
+  const row = row_location[1];
+  const row_pre = row_location[0];
+  const row_index = row_location[2];
+
+  const col_location = colLocation(x, ctx.visibledatacolumn);
+  const col = col_location[1];
+  const col_pre = col_location[0];
+  const col_index = col_location[2];
+
+  let top = 0;
+  let height = 0;
+  let rowseleted = [];
+
+  if (func_selectedrange.top > row_pre) {
+    top = row_pre;
+    height = func_selectedrange.top + func_selectedrange.height - row_pre;
+    rowseleted = [row_index, func_selectedrange.row[1]];
+  } else if (func_selectedrange.top === row_pre) {
+    top = row_pre;
+    height = func_selectedrange.top + func_selectedrange.height - row_pre;
+    rowseleted = [row_index, func_selectedrange.row[0]];
+  } else {
+    top = func_selectedrange.top;
+    height = row - func_selectedrange.top - 1;
+    rowseleted = [func_selectedrange.row[0], row_index];
+  }
+
+  let left = 0;
+  let width = 0;
+  let columnseleted = [];
+
+  if (func_selectedrange.left > col_pre) {
+    left = col_pre;
+    width = func_selectedrange.left + func_selectedrange.width - col_pre;
+    columnseleted = [col_index, func_selectedrange.column[1]];
+  } else if (func_selectedrange.left === col_pre) {
+    left = col_pre;
+    width = func_selectedrange.left + func_selectedrange.width - col_pre;
+    columnseleted = [col_index, func_selectedrange.column[0]];
+  } else {
+    left = func_selectedrange.left;
+    width = col - func_selectedrange.left - 1;
+    columnseleted = [func_selectedrange.column[0], col_index];
+  }
+
+  // rowseleted[0] = luckysheetFreezen.changeFreezenIndex(rowseleted[0], "h");
+  // rowseleted[1] = luckysheetFreezen.changeFreezenIndex(rowseleted[1], "h");
+  // columnseleted[0] = luckysheetFreezen.changeFreezenIndex(
+  //   columnseleted[0],
+  //   "v"
+  // );
+  // columnseleted[1] = luckysheetFreezen.changeFreezenIndex(
+  //   columnseleted[1],
+  //   "v"
+  // );
+
+  const changeparam = mergeMoveMain(
+    ctx,
+    columnseleted,
+    rowseleted,
+    func_selectedrange,
+    top,
+    height,
+    left,
+    width
+  );
+  if (changeparam != null) {
+    // @ts-ignore
+    [columnseleted, rowseleted, top, height, left, width] = changeparam;
+  }
+
+  func_selectedrange.row = rowseleted;
+  func_selectedrange.column = columnseleted;
+
+  func_selectedrange.left_move = left;
+  func_selectedrange.width_move = width;
+  func_selectedrange.top_move = top;
+  func_selectedrange.height_move = height;
+
+  // luckysheet_count_show(left, top, width, height, rowseleted, columnseleted);
+
+  const rangeElement = document.querySelector(
+    "#luckysheet-formula-functionrange-select"
+  ) as HTMLDivElement;
+
+  // if ($("#luckysheet-ifFormulaGenerator-multiRange-dialog").is(":visible")) {
+  //   // if公式生成器 选择范围
+  //   const range = getRangetxt(
+  //     ctx,
+  //     ctx.currentSheetIndex,
+  //     { row: rowseleted, column: columnseleted },
+  //     ctx.currentSheetIndex
+  //   );
+  //   $("#luckysheet-ifFormulaGenerator-multiRange-dialog input").val(range);
+  // } else {
+  rangeSetValue(ctx, cellInput, {
+    row: rowseleted,
+    column: columnseleted,
+  });
+  if (rangeElement == null) return;
+  rangeElement.style.left = `${left}px`;
+  rangeElement.style.top = `${top}px`;
+  rangeElement.style.height = `${height}px`;
+  rangeElement.style.width = `${width}px`;
+  // }
+
+  // luckysheetFreezen.scrollFreezen(rowseleted, columnseleted);
+}
+
 function updateparam(orient: string, txt: string, step: number) {
   const val = txt.split("!");
   let rangetxt;

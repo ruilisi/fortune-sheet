@@ -18,6 +18,27 @@ export const selectionCache = {
   isPasteAction: false,
 };
 
+// 公式函数 选区实体框
+export function seletedHighlistByindex(
+  ctx: Context,
+  r1: number,
+  r2: number,
+  c1: number,
+  c2: number
+) {
+  const row = ctx.visibledatarow[r2];
+  const row_pre = r1 - 1 === -1 ? 0 : ctx.visibledatarow[r1 - 1];
+  const col = ctx.visibledatacolumn[c2];
+  const col_pre = c1 - 1 === -1 ? 0 : ctx.visibledatacolumn[c1 - 1];
+
+  return {
+    left: col_pre,
+    width: col - col_pre - 1,
+    top: row_pre,
+    height: row - row_pre - 1,
+  };
+}
+
 export function normalizeSelection(
   ctx: Context,
   selection: SheetType["luckysheet_select_save"]

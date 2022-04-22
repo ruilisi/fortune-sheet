@@ -1,4 +1,10 @@
-import React, { useContext, useCallback, useRef, useEffect } from "react";
+import React, {
+  useContext,
+  useCallback,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+} from "react";
 import "./index.css";
 import {
   drawArrow,
@@ -86,13 +92,20 @@ const SheetOverlay: React.FC = () => {
           draftCtx,
           refs.globalCache,
           e.nativeEvent,
+          refs.cellInput.current!,
           refs.scrollbarX.current!,
           refs.scrollbarY.current!,
           containerRef.current!
         );
       });
     },
-    [refs.globalCache, refs.scrollbarX, refs.scrollbarY, setContext]
+    [
+      refs.cellInput,
+      refs.globalCache,
+      refs.scrollbarX,
+      refs.scrollbarY,
+      setContext,
+    ]
   );
 
   const onMouseUp = useCallback(
@@ -143,7 +156,7 @@ const SheetOverlay: React.FC = () => {
     }
   }, [flowdata, setContext]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (
       context.commentBoxes ||
       context.hoveredCommentBox ||
@@ -205,16 +218,51 @@ const SheetOverlay: React.FC = () => {
           }}
         >
           <div id="luckysheet-formula-functionrange" />
-          {/* <div
-            id="luckysheet-formula-functionrange-select"
-            className="luckysheet-selection-copy luckysheet-formula-functionrange-select"
-          >
-            <div className="luckysheet-selection-copy-top luckysheet-copy" />
-            <div className="luckysheet-selection-copy-right luckysheet-copy" />
-            <div className="luckysheet-selection-copy-bottom luckysheet-copy" />
-            <div className="luckysheet-selection-copy-left luckysheet-copy" />
-            <div className="luckysheet-selection-copy-hc" />
-          </div> */}
+          {context.formulaRangeSelect && (
+            <div
+              id="luckysheet-formula-functionrange-select"
+              className="luckysheet-selection-copy luckysheet-formula-functionrange-select"
+              style={context.formulaRangeSelect}
+            >
+              <div className="luckysheet-selection-copy-top luckysheet-copy" />
+              <div className="luckysheet-selection-copy-right luckysheet-copy" />
+              <div className="luckysheet-selection-copy-bottom luckysheet-copy" />
+              <div className="luckysheet-selection-copy-left luckysheet-copy" />
+              <div className="luckysheet-selection-copy-hc" />
+            </div>
+          )}
+          {context.formulaRangeHighlight.map((v) => {
+            const { rangeIndex, backgroundColor } = v;
+            return (
+              <div
+                key={rangeIndex}
+                id="luckysheet-formula-functionrange-highlight"
+                className="luckysheet-selection-highlight luckysheet-formula-functionrange-highlight"
+                style={_.omit(v, "backgroundColor")}
+              >
+                {["top", "right", "bottom", "left"].map((d) => (
+                  <div
+                    key={d}
+                    data-type={d}
+                    className={`luckysheet-selection-copy-${d} luckysheet-copy`}
+                    style={{ backgroundColor }}
+                  />
+                ))}
+                <div
+                  className="luckysheet-selection-copy-hc"
+                  style={{ backgroundColor }}
+                />
+                {["lt", "rt", "lb", "rb"].map((d) => (
+                  <div
+                    key={d}
+                    data-type={d}
+                    className={`luckysheet-selection-highlight-${d} luckysheet-highlight`}
+                    style={{ backgroundColor }}
+                  />
+                ))}
+              </div>
+            );
+          })}
           <div
             className="luckysheet-row-count-show luckysheet-count-show"
             id="luckysheet-row-count-show"

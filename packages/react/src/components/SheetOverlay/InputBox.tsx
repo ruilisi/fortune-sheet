@@ -25,6 +25,7 @@ import WorkbookContext from "../../context";
 import ContentEditable from "./ContentEditable";
 import FormulaSearch from "./FormulaSearch";
 import FormulaHint from "./FormulaHint";
+import { createRangeHightlight } from "../../../../core/src/modules/formula";
 
 const InputBox: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
@@ -67,6 +68,9 @@ const InputBox: React.FC = () => {
           value = getInlineStringHTML(row_index, col_index, flowdata);
         } else if (cell.f) {
           value = getCellValue(row_index, col_index, flowdata, "f");
+          setContext((ctx) => {
+            createRangeHightlight(ctx, value);
+          });
         } else {
           value = valueShowEs(row_index, col_index, flowdata);
           if (Number(cell.qp) === 1) {

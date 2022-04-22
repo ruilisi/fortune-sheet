@@ -15,6 +15,13 @@ export type Op = {
   value?: any;
 };
 
+export type Rect = {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+};
+
 export type CellStyle = {
   bl?: number;
   it?: number;
@@ -128,23 +135,15 @@ export type CommentBox = {
   r: number;
   c: number;
   rc: string;
-  left: number;
-  top: number;
-  width: number;
-  height: number;
   autoFocus: boolean;
   value: string;
   size: {
-    left: number;
-    top: number;
-    width: number;
-    height: number;
     fromX: number;
     fromY: number;
     toX: number;
     toY: number;
-  };
-};
+  } & Rect;
+} & Rect;
 
 export type History = {
   patches: ImmerPatch[];
@@ -174,9 +173,7 @@ export type GlobalCache = {
     resizingId: string | undefined;
     resizingSide: string | undefined;
     commentRC: { r: number; c: number; rc: string };
-    boxInitialPosition:
-      | { left: number; top: number; width: number; height: number }
-      | undefined;
+    boxInitialPosition: Rect | undefined;
     cursorMoveStartPosition: { x: number; y: number } | undefined;
   };
 };

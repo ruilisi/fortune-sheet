@@ -13,6 +13,7 @@ import {
   execfunction,
   execFunctionGroup,
   functionHTMLGenerate,
+  formulaCache,
 } from "./formula";
 import {
   convertSpanToShareString,
@@ -625,25 +626,28 @@ export function mergeMoveMain(
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function canceFunctionrangeSelected(ctx: Context) {
-  // $("#luckysheet-formula-functionrange-select").hide();
+export function cancelFunctionrangeSelected(ctx: Context) {
+  if (formulaCache.selectingRangeIndex === -1) {
+    ctx.formulaRangeSelect = undefined;
+  }
   // $("#luckysheet-row-count-show, #luckysheet-column-count-show").hide();
   // // $("#luckysheet-cols-h-selected, #luckysheet-rows-h-selected").hide();
   // $("#luckysheet-formula-search-c, #luckysheet-formula-help-c").hide();
 }
 
 export function cancelNormalSelected(ctx: Context) {
-  canceFunctionrangeSelected(ctx);
+  cancelFunctionrangeSelected(ctx);
 
   ctx.luckysheetCellUpdate = [];
+  ctx.formulaRangeHighlight = [];
   // $("#luckysheet-formula-functionrange .luckysheet-formula-functionrange-highlight").remove();
   // $("#luckysheet-input-box").removeAttr("style");
   // $("#luckysheet-input-box-index").hide();
   // $("#luckysheet-wa-functionbox-cancel, #luckysheet-wa-functionbox-confirm").removeClass("luckysheet-wa-calculate-active");
 
-  // rangestart = false;
-  // rangedrag_column_start = false;
-  // rangedrag_row_start = false;
+  formulaCache.rangestart = false;
+  formulaCache.rangedrag_column_start = false;
+  formulaCache.rangedrag_row_start = false;
 }
 
 // formula.updatecell
@@ -1549,4 +1553,12 @@ export function getdatabyselection(
   }
 
   return data;
+}
+
+export function luckysheetUpdateCell(
+  ctx: Context,
+  row_index: number,
+  col_index: number
+) {
+  ctx.luckysheetCellUpdate = [row_index, col_index];
 }

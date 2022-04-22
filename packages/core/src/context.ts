@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { SheetConfig } from ".";
 import { normalizeSelection } from "./modules/selection";
-import { Sheet, Selection, Cell, CommentBox } from "./types";
+import { Sheet, Selection, Cell, CommentBox, Rect } from "./types";
 import { generateRandomSheetIndex, getSheetIndex } from "./utils";
 
 export type Context = {
@@ -59,7 +59,11 @@ export type Context = {
   luckysheet_select_status: boolean;
   luckysheet_select_save: Sheet["luckysheet_select_save"];
   luckysheet_selection_range: Sheet["luckysheet_selection_range"];
-  formulaRangeHighlight: any[];
+  formulaRangeHighlight: ({
+    rangeIndex: number;
+    backgroundColor: string;
+  } & Rect)[];
+  formulaRangeSelect: ({ rangeIndex: number } & Rect) | undefined;
   functionCandidates: any[];
   functionHint: string | null | undefined;
 
@@ -205,6 +209,7 @@ export function defaultContext(): Context {
     luckysheet_select_save: undefined,
     luckysheet_selection_range: [],
     formulaRangeHighlight: [],
+    formulaRangeSelect: undefined,
     functionCandidates: [],
     functionHint: null,
 

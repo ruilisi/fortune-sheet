@@ -18,6 +18,7 @@ import {
   israngeseleciton,
   rangeSetValue,
   setCaretPosition,
+  createFormulaRangeSelect,
 } from "./formula";
 import {
   isInlineStringCT,
@@ -625,7 +626,7 @@ function activeFormulaInput(
   formulaCache.rangedrag_column_start = false;
   formulaCache.rangedrag_row_start = false;
   formulaCache.rangechangeindex = 0;
-  rangeSetValue(ctx, { row: rowh, column: columnh });
+  rangeSetValue(ctx, cellInput, { row: rowh, column: columnh });
   formulaCache.func_selectedrange = {
     left: col_pre,
     width: col - col_pre - 1,
@@ -639,6 +640,13 @@ function activeFormulaInput(
     column: [col_index, col_index],
   };
 
+  createFormulaRangeSelect(ctx, {
+    rangeIndex: formulaCache.rangeIndex,
+    left: col_pre,
+    width: col - col_pre - 1,
+    top: row_pre,
+    height: row - row_pre - 1,
+  });
   // $("#luckysheet-formula-functionrange-select")
   //   .css({
   //     left: col_pre,
@@ -893,6 +901,7 @@ function singleFormulaInput(
   }
   return true;
 }
+
 export function autoSelectionFormula(
   ctx: Context,
   cellInput: HTMLDivElement,

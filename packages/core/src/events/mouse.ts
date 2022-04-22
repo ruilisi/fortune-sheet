@@ -14,9 +14,19 @@ import {
   onCommentBoxResizeEnd,
   removeEditingComment,
   overShowComment,
+  rangeDrag,
+  onFormulaRangeDragEnd,
+  createFormulaRangeSelect,
+  createRangeHightlight,
 } from "../modules";
-import { mergeBorder, mergeMoveMain, updateCell } from "../modules/cell";
 import { scrollToFrozenRowCol } from "../modules/freeze";
+import {
+  cancelFunctionrangeSelected,
+  mergeBorder,
+  mergeMoveMain,
+  updateCell,
+  luckysheetUpdateCell,
+} from "../modules/cell";
 import {
   colLocation,
   colLocationByIndex,
@@ -464,8 +474,8 @@ export function handleCellAreaMouseDown(
           /* 在显示前重新 + 右侧的圆括号) */
           cellInput.innerHTML = vText;
 
-          // formula.canceFunctionrangeSelected(); 暂时还没实现
-          // formula.createRangeHightlight();
+          cancelFunctionrangeSelected(ctx);
+          createRangeHightlight(ctx, vText);
         }
 
         formulaCache.rangestart = false;
@@ -509,12 +519,20 @@ export function handleCellAreaMouseDown(
         };
       }
 
-      rangeSetValue(ctx, { row: rowseleted, column: columnseleted });
+      rangeSetValue(ctx, cellInput, { row: rowseleted, column: columnseleted });
 
       formulaCache.rangestart = true;
       formulaCache.rangedrag_column_start = false;
       formulaCache.rangedrag_row_start = false;
 
+      formulaCache.selectingRangeIndex = formulaCache.rangechangeindex;
+      createFormulaRangeSelect(ctx, {
+        rangeIndex: formulaCache.rangechangeindex,
+        left,
+        top,
+        width,
+        height,
+      });
       // $("#luckysheet-formula-functionrange-select")
       //   .css({
       //     left,
@@ -558,37 +576,36 @@ export function handleCellAreaMouseDown(
       // return;
 
       // TODO 下面是临时加的逻辑，待公式选区实现后删除
-      updateCell(
-        ctx,
-        ctx.luckysheetCellUpdate[0],
-        ctx.luckysheetCellUpdate[1],
-        cellInput
-      );
-      ctx.luckysheet_select_status = true;
-    } else {
-      updateCell(
-        ctx,
-        ctx.luckysheetCellUpdate[0],
-        ctx.luckysheetCellUpdate[1],
-        cellInput
-      );
-      ctx.luckysheet_select_status = true;
+      // updateCell(
+      //   ctx,
+      //   ctx.luckysheetCellUpdate[0],
+      //   ctx.luckysheetCellUpdate[1],
+      //   cellInput
+      // );
+      // ctx.luckysheet_select_status = true;
+      return; // skip ctx.luckysheet_select_save to prevent clearing cellInput
+    }
+    updateCell(
+      ctx,
+      ctx.luckysheetCellUpdate[0],
+      ctx.luckysheetCellUpdate[1],
+      cellInput
+    );
+    ctx.luckysheet_select_status = true;
 
-      //     if ($("#luckysheet-info").is(":visible")) {
-      //       ctx.luckysheet_select_status = false;
-      //     }
-    }
-  } else {
-    if (
-      checkProtectionSelectLockedOrUnLockedCells(
-        ctx,
-        row_index,
-        col_index,
-        ctx.currentSheetIndex
-      )
-    ) {
-      ctx.luckysheet_select_status = true;
-    }
+    //     if ($("#luckysheet-info").is(":visible")) {
+    //       ctx.luckysheet_select_status = false;
+    //     }
+  }
+  if (
+    checkProtectionSelectLockedOrUnLockedCells(
+      ctx,
+      row_index,
+      col_index,
+      ctx.currentSheetIndex
+    )
+  ) {
+    ctx.luckysheet_select_status = true;
   }
 
   // //条件格式 应用范围可选择多个单元格
@@ -1164,6 +1181,14 @@ export function handleCellAreaDoubleClick(
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
 
+  if (
+    (ctx.luckysheetCellUpdate.length > 0 && formulaCache.rangestart) ||
+    formulaCache.rangedrag_column_start ||
+    formulaCache.rangedrag_row_start ||
+    israngeseleciton()
+  ) {
+    return;
+  }
   // 禁止前台编辑(只可 框选单元格、滚动查看表格)
   if (!settings.allowEdit || settings.editMode) {
     return;
@@ -1312,7 +1337,7 @@ export function handleCellAreaDoubleClick(
     col_index = column_focus;
   }
 
-  ctx.luckysheetCellUpdate = [row_index, col_index];
+  luckysheetUpdateCell(ctx, row_index, col_index);
   // }
 }
 
@@ -1374,6 +1399,7 @@ function mouseRender(
   ctx: Context,
   globalCache: GlobalCache,
   e: MouseEvent,
+  cellInput: HTMLDivElement,
   scrollX: HTMLDivElement,
   scrollY: HTMLDivElement,
   container: HTMLDivElement
@@ -1776,8 +1802,15 @@ function mouseRender(
     //     }!${range}`;
     //   }
     //   $("#luckysheet-dataVerificationRange-dialog input").val(range);
-    // } else if (formula.rangestart) {
-    //   formula.rangedrag(event);
+  } else if (formulaCache.rangestart) {
+    rangeDrag(
+      ctx,
+      e,
+      cellInput,
+      scrollX.scrollLeft,
+      scrollY.scrollTop,
+      container
+    );
     // } else if (formula.rangedrag_row_start) {
     //   formula.rangedrag_row(event);
     // } else if (formula.rangedrag_column_start) {
@@ -3046,6 +3079,7 @@ export function handleOverlayMouseMove(
   ctx: Context,
   globalCache: GlobalCache,
   e: MouseEvent,
+  cellInput: HTMLDivElement,
   scrollX: HTMLDivElement,
   scrollY: HTMLDivElement,
   container: HTMLDivElement
@@ -3293,7 +3327,7 @@ export function handleOverlayMouseMove(
     //   }, 500);
     // }
 
-    mouseRender(ctx, globalCache, e, scrollX, scrollY, container);
+    mouseRender(ctx, globalCache, e, cellInput, scrollX, scrollY, container);
     // ctx.jfautoscrollTimeout = window.requestAnimationFrame(mouseRender);
   }
 }
@@ -3309,6 +3343,7 @@ export function handleOverlayMouseUp(
   // 批注框 移动结束
   onCommentBoxMoveEnd(ctx, globalCache, container);
   onCommentBoxResizeEnd(ctx, globalCache, container);
+  onFormulaRangeDragEnd(ctx);
   // if (
   //   luckysheetConfigsetting &&
   //   luckysheetConfigsetting.hook &&
@@ -4639,8 +4674,8 @@ export function handleRowHeaderMouseDown(
           }
 
           cellInput.innerHTML = vText;
-          // formula.canceFunctionrangeSelected();
-          // formula.createRangeHightlight();
+          cancelFunctionrangeSelected(ctx);
+          createRangeHightlight(ctx, vText);
         }
 
         formulaCache.rangestart = false;
@@ -4695,7 +4730,10 @@ export function handleRowHeaderMouseDown(
         formulaCache.rangedrag_row_start ||
         israngeseleciton()
       ) {
-        rangeSetValue(ctx, { row: rowseleted, column: [null, null] });
+        rangeSetValue(ctx, cellInput, {
+          row: rowseleted,
+          column: [null, null],
+        });
       }
       // else if (
       //   $("#luckysheet-ifFormulaGenerator-multiRange-dialog").is(":visible")
@@ -5052,8 +5090,8 @@ export function handleColumnHeaderMouseDown(
 
           cellInput.innerHTML = vText;
 
-          // formula.canceFunctionrangeSelected();
-          // formula.createRangeHightlight();
+          cancelFunctionrangeSelected(ctx);
+          createRangeHightlight(ctx, vText);
         }
 
         formulaCache.rangestart = false;
@@ -5108,7 +5146,10 @@ export function handleColumnHeaderMouseDown(
         formulaCache.rangedrag_row_start ||
         israngeseleciton()
       ) {
-        rangeSetValue(ctx, { row: [null, null], column: columnseleted });
+        rangeSetValue(ctx, cellInput, {
+          row: [null, null],
+          column: columnseleted,
+        });
       }
       // else if (
       //   $("#luckysheet-ifFormulaGenerator-multiRange-dialog").is(":visible")
