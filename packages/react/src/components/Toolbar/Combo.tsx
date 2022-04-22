@@ -65,6 +65,7 @@ const Combo: React.FC<Props> = ({
         >
           <SVGIcon name="combo-arrow" width={10} />
         </div>
+        {tooltip && <div className="fortune-tooltip">{tooltip}</div>}
       </div>
       {open && (
         <div ref={popupRef} className="fortune-toolbar-combo-popup">

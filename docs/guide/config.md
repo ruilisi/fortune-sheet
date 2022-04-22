@@ -119,19 +119,26 @@ The following are all supported setting parameters
 
 ```json
 	[
+		"undo",
+		"redo",
+		"format-painter",
 		"clear-format",
 		"|",
+		"currency-format",
+		"percentage-format",
+		"number-decrease",
+		"number-increase",
 		"format",
-		"text-size",
+		"font-size",
 		"|",
 		"bold",
 		"italic",
 		"strike-through",
 		"underline",
 		"|",
-		"text-color",
-		"text-background",
-		"border-all",
+		"font-color",
+		"background",
+		"border",
 		"merge-cell",
 		"|",
 		"align-left",
@@ -140,6 +147,10 @@ The following are all supported setting parameters
 		"align-top",
 		"align-mid",
 		"align-bottom",
+		"|",
+		"freeze",
+		"comment",
+		"formula-sum",
 	]
 ```
 

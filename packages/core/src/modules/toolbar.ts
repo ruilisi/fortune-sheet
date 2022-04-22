@@ -261,7 +261,7 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
   // }
   if (!ctx.luckysheet_select_save) return;
 
-  if (foucsStatus === "mergeCancel") {
+  if (foucsStatus === "merge-cancel") {
     for (let i = 0; i < ctx.luckysheet_select_save.length; i += 1) {
       const range = ctx.luckysheet_select_save[i];
       const r1 = range.row[0];
@@ -382,7 +382,7 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
           continue;
         }
 
-        if (foucsStatus === "mergeAll") {
+        if (foucsStatus === "merge-all") {
           let fv = {};
           let isfirst = false;
 
@@ -416,7 +416,7 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
             rs: r2 - r1 + 1,
             cs: c2 - c1 + 1,
           };
-        } else if (foucsStatus === "mergeV") {
+        } else if (foucsStatus === "merge-vertical") {
           for (let c = c1; c <= c2; c += 1) {
             let fv = {};
             let isfirst = false;
@@ -448,7 +448,7 @@ function updateFormat_mc(ctx: Context, d: CellMatrix, foucsStatus: any) {
               cs: 1,
             };
           }
-        } else if (foucsStatus === "mergeH") {
+        } else if (foucsStatus === "merge-horizontal") {
           for (let r = r1; r <= r2; r += 1) {
             let fv = {};
             let isfirst = false;

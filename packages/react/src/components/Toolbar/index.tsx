@@ -42,19 +42,21 @@ const Toolbar: React.FC = () => {
 
   const getToolbarItem = useCallback(
     (name: string, i: number) => {
+      // @ts-ignore
+      const tooltip = toolbar[name];
       if (name === "|") {
         return <Divider key={i} />;
       }
-      if (["text-color", "text-background"].includes(name)) {
+      if (["font-color", "background"].includes(name)) {
         const pick = (color: string) => {
           setContext((draftCtx) =>
-            (name === "text-color" ? handleTextColor : handleTextBackground)(
+            (name === "font-color" ? handleTextColor : handleTextBackground)(
               draftCtx,
               refs.cellInput.current!,
               color
             )
           );
-          if (name === "text-color") {
+          if (name === "font-color") {
             refs.globalCache.recentTextColor = color;
           } else {
             refs.globalCache.recentBackgroundColor = color;
@@ -64,10 +66,10 @@ const Toolbar: React.FC = () => {
           <Combo
             iconId={name}
             key={name}
-            tooltip={name}
+            tooltip={tooltip}
             onClick={() => {
               const color =
-                name === "text-color"
+                name === "font-color"
                   ? refs.globalCache.recentTextColor
                   : refs.globalCache.recentBackgroundColor;
               if (color) pick(color);
@@ -86,7 +88,7 @@ const Toolbar: React.FC = () => {
       }
       if (name === "format") {
         return (
-          <Combo text="自动" key={name} tooltip={name}>
+          <Combo text="自动" key={name} tooltip={tooltip}>
             {(setOpen) => (
               <Select>
                 <Option
@@ -101,12 +103,12 @@ const Toolbar: React.FC = () => {
           </Combo>
         );
       }
-      if (name === "text-size") {
+      if (name === "font-size") {
         return (
           <Combo
             text={cell ? normalizedCellAttr(cell, "fs") : "10"}
             key={name}
-            tooltip={name}
+            tooltip={tooltip}
           >
             {(setOpen) => (
               <Select>
@@ -138,7 +140,7 @@ const Toolbar: React.FC = () => {
         return (
           <Button
             iconId={name}
-            tooltip={toolbar[name]}
+            tooltip={tooltip}
             key={name}
             disabled={refs.globalCache.undoList.length === 0}
             onClick={() => handleUndo()}
@@ -149,7 +151,7 @@ const Toolbar: React.FC = () => {
         return (
           <Button
             iconId={name}
-            tooltip={toolbar[name]}
+            tooltip={tooltip}
             key={name}
             disabled={refs.globalCache.redoList.length === 0}
             onClick={() => handleRedo()}
@@ -201,7 +203,7 @@ const Toolbar: React.FC = () => {
           ];
         }
         return (
-          <Combo iconId={name} key={name} tooltip={name}>
+          <Combo iconId={name} key={name} tooltip={tooltip}>
             {(setOpen) => (
               <Select>
                 {itemData.map(({ key, text, onClick }) => (
@@ -240,7 +242,7 @@ const Toolbar: React.FC = () => {
           <Combo
             iconId={name}
             key={name}
-            tooltip={name}
+            tooltip={tooltip}
             text="求和"
             onClick={() =>
               setContext((ctx) => {
@@ -281,20 +283,20 @@ const Toolbar: React.FC = () => {
       }
       if (name === "merge-cell") {
         const itemdata = [
-          { text: merge.mergeAll, value: "mergeAll" },
-          { text: merge.mergeV, value: "mergeV" },
-          { text: merge.mergeH, value: "mergeH" },
-          { text: merge.mergeCancel, value: "mergeCancel" },
+          { text: merge.mergeAll, value: "merge-all" },
+          { text: merge.mergeV, value: "merge-vertical" },
+          { text: merge.mergeH, value: "merge-horizontal" },
+          { text: merge.mergeCancel, value: "merge-cancel" },
         ];
         return (
           <Combo
             iconId="merge-all"
             key={name}
-            tooltip={name}
+            tooltip={tooltip}
             text="合并单元格"
             onClick={() =>
               setContext((ctx) => {
-                handleMergeAll(ctx, "mergeAll");
+                handleMergeAll(ctx, "merge-all");
               })
             }
           >
@@ -310,7 +312,10 @@ const Toolbar: React.FC = () => {
                       setOpen(false);
                     }}
                   >
-                    {text}
+                    <div className="fortune-toolbar-menu-line">
+                      <SVGIcon name={value} style={{ marginRight: 4 }} />
+                      {text}
+                    </div>
                   </Option>
                 ))}
               </Select>
@@ -367,7 +372,7 @@ const Toolbar: React.FC = () => {
           <Combo
             iconId="border-all"
             key={name}
-            tooltip={name}
+            tooltip={tooltip}
             text="边框设置"
             onClick={() =>
               setContext((ctx) => {
@@ -426,7 +431,7 @@ const Toolbar: React.FC = () => {
           <Combo
             iconId="freeze-row-col"
             key={name}
-            tooltip={name}
+            tooltip={tooltip}
             onClick={() =>
               setContext((ctx) => {
                 handleFreeze(ctx, "freeze-row-col");
@@ -460,8 +465,7 @@ const Toolbar: React.FC = () => {
       return (
         <Button
           iconId={name}
-          // @ts-ignore
-          tooltip={toolbar[name]}
+          tooltip={tooltip}
           key={name}
           selected={toolbarItemSelectedFunc(name)?.(cell)}
           onClick={() =>
