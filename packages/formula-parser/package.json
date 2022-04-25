@@ -1,24 +1,22 @@
 {
   "name": "@fortune-sheet/formula-parser",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Formula parser",
-  "main": "./src/index.js",
-  "jsdelivr": "dist/formula-parser.min.js",
-  "unpkg": "dist/formula-parser.min.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "files": [
+    "es",
+    "lib"
+  ],
   "scripts": {
     "clean": "rimraf tmp coverage",
     "lint": "eslint src test",
     "check": "npm run lint && npm run test",
     "test": "cross-env BABEL_ENV=commonjs jest",
     "coverage": "cross-env BABEL_ENV=commonjs jest --coverage",
-    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
-    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir tmp",
-    "build:es": "cross-env BABEL_ENV=es babel src --out-file-extension .mjs --out-dir tmp",
-    "build:umd:min": "cross-env BABEL_ENV=commonjs NODE_ENV=production webpack",
-    "build:umd": "cross-env BABEL_ENV=commonjs NODE_ENV=development webpack",
+    "build": "father-build",
     "generate-parser": "cd src/grammar-parser && jison grammar-parser.jison",
-    "release": "generate-release",
-    "postbuild": "node ./scripts/prepare-package"
+    "release": "generate-release"
   },
   "keywords": [
     "formula",
