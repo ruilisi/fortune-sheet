@@ -11,6 +11,7 @@ import {
   escapeScriptTag,
   valueShowEs,
   updateCell,
+  createRangeHightlight,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -25,7 +26,6 @@ import WorkbookContext from "../../context";
 import ContentEditable from "./ContentEditable";
 import FormulaSearch from "./FormulaSearch";
 import FormulaHint from "./FormulaHint";
-import { createRangeHightlight } from "../../../../core/src/modules/formula";
 
 const InputBox: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);

@@ -9,12 +9,12 @@
   "license": "MIT",
   "scripts": {
     "dev": "yarn storybook",
-    "build": "mv packages/react/tsconfig.build.json packages/react/tsconfig.json && father-build && mv packages/react/tsconfig.json packages/react/tsconfig.build.json",
+    "build": "node ./scripts/build",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "tsc": "tsc --noEmit",
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./packages",
-    "postinstall": "patch-package",
+    "postinstall": "patch-package && lerna run build --scope=@fortune-sheet/formula-parser",
     "publish": "lerna publish --registry 'https://registry.npmjs.org'",
     "test": "jest",
     "coverage": "jest --coverage"
