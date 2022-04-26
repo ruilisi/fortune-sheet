@@ -19,6 +19,8 @@ op对后端数据修改和同步在线协同数据非常有用。
 
 通过 `node index.js` 运行后端服务器，然后访问 [Collabration example](https://ruilisi.github.io/fortune-sheet-demo/?path=/story/collabration--example) 即可体验。
 
+> 可通过 http://localhost:8081/init 初始化数据
+
 ## 格式
 
 每个 `Op` 的格式如下

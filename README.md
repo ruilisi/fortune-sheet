@@ -149,7 +149,7 @@ The op is useful for database modification and syncing state in online collabrat
 
 A working example with `Express` (backend server) and `MongoDB` (data persistence) is avaiable in `backend-demo` folder.
 
-Run it with `node index.js` and visit [Collabration example](https://ruilisi.github.io/fortune-sheet-demo/?path=/story/collabration--example)
+Run it with `node index.js` and visit [Collabration example](https://ruilisi.github.io/fortune-sheet-demo/?path=/story/collabration--example) (initialize data by visiting http://localhost:8081/init)
 
 For detailed doc about `Op`, refer to [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-docs/guide/op.html)
 
