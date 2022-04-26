@@ -45,7 +45,7 @@ const ContextMenu: React.FC = () => {
           {rightclick.paste}
         </Menu>
       ),
-      insertColumn: selection?.row_select
+      "insert-column": selection?.row_select
         ? null
         : ["left", "right"].map((dir) => (
             <Menu
@@ -108,7 +108,7 @@ const ContextMenu: React.FC = () => {
               </>
             </Menu>
           )),
-      insertRow: selection?.column_select
+      "insert-row": selection?.column_select
         ? null
         : ["top", "bottom"].map((dir) => (
             <Menu
@@ -166,7 +166,7 @@ const ContextMenu: React.FC = () => {
               </>
             </Menu>
           )),
-      deleteColumn: selection?.row_select ? null : (
+      "delete-column": selection?.row_select ? null : (
         <Menu
           key="delete-col"
           onClick={() => {
@@ -191,7 +191,7 @@ const ContextMenu: React.FC = () => {
           {rightclick.column}
         </Menu>
       ),
-      deleteRow: selection?.column_select ? null : (
+      "delete-row": selection?.column_select ? null : (
         <Menu
           key="delete-row"
           onClick={() => {
@@ -268,7 +268,7 @@ const ContextMenu: React.FC = () => {
       onContextMenu={(e) => e.stopPropagation()}
       style={{ left: contextMenu.x, top: contextMenu.y }}
     >
-      {settings.cellRightClickConfig.map((menu) => menuElements[menu])}
+      {settings.cellContextMenu.map((menu) => menuElements[menu])}
     </div>
   );
 };

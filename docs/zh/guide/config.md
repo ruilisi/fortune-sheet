@@ -19,15 +19,12 @@ const settings = {
 
 `Workbook`的配置项会作用于整个表格，单个sheet的配置则需要在`settings.data`数组中，分别设置对应更详细的参数，参考[工作表配置](/zh/guide/sheet.html)
 
-针对个性化的需求，除了允许配置信息栏（[showinfobar](#showinfobar)）、工具栏（[showtoolbar](#showtoolbar)）、底部sheet页（[showsheetbar](#showsheetbar)）、底部计数栏（[showstatisticBar](#showstatisticBar)）之外，
+针对个性化的需求，除了允许配置工具栏（[showToolbar](#showtoolbar)）、公示栏（[showFormulaBar](#showformulabar)）、底部sheet页（[showSheetTabs](#showsheettabs)）之外，
 FortuneSheet开放了更细致的自定义配置选项，分别有
 
-- 自定义工具栏（[showtoolbarConfig](#showtoolbarconfig)）
-- 自定义底部sheet页（[showsheetbarConfig](#showsheetbarconfig)）
-- 自定义计数栏（[showstatisticBarConfig](#showstatisticbarconfig)）
-- 自定义单元格右键菜单（[cellRightClickConfig](#cellrightclickconfig)）
-- 自定义底部sheet页右击菜单（[sheetRightClickConfig](#sheetrightclickconfig)）
-
+- 自定义工具栏（[toolbarItems](#toolbaritems)）
+- 自定义单元格右键菜单（[cellContextMenu](#cellcontextmenu)）
+- 自定义底部sheet页右击菜单（[sheetTabContextMenu](#sheettabcontextmenu)）
 
 ## 配置项
 
@@ -38,28 +35,16 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 - 工作表onChange事件 [onChange](#onchange)
 - 列数 [column](#column)
 - 行数 [row](#row)
-- 亿万格式 [autoFormatw](#autoformatw)
-- 精度 [accuracy](#accuracy)
-- 允许复制 [allowCopy](#allowcopy)
-- 工具栏 [showtoolbar](#showtoolbar)
-- 自定义工具栏[showtoolbarConfig](#showtoolbarconfig)
-- 信息栏 [showinfobar](#showinfobar)
-- 底部sheet页 [showsheetbar](#showsheetbar)
-- 自定义底部sheet页 [showsheetbarConfig](#showsheetbarconfig)
-- 底部计数栏 [showstatisticBar](#showstatisticbar)
-- 自定义计数栏 [showstatisticBarConfig](#showstatisticbarconfig)
-- 允许添加行 [enableAddRow](#enableaddrow)
-- 默认添加行的数目 [addRowCount](#addrowcount)
+- 工具栏 [showToolbar](#showtoolbar)
+- 自定义工具栏[toolbarItems](#toolbaritems)
+- 底部sheet页 [showSheetTabs](#showsheettabs)
 - 比例 [devicePixelRatio](#devicepixelratio)
-- 自动缩进界面 [showConfigWindowResize](#showconfigwindowresize)
-- 自定义单元格右键菜单 [cellRightClickConfig](#cellrightclickconfig)
-- 自定义sheet页右击菜单 [sheetRightClickConfig](#sheetrightclickconfig)
+- 自定义单元格右键菜单 [cellContextMenu](#cellcontextmenu)
+- 自定义sheet页右击菜单 [sheetTabContextMenu](#sheettabcontextmenu)
 - 行标题区域的宽度 [rowHeaderWidth](#rowheaderwidth)
 - 列标题区域的高度 [columnHeaderHeight](#columnheaderheight)
-- 是否显示公式栏 [sheetFormulaBar](#sheetformulabar)
+- 是否显示公式栏 [showFormulaBar](#showformulabar)
 - 初始化默认字体大小 [defaultFontSize](#defaultfontsize)
-- 是否限制工作表名长度 [limitSheetNameLength](#limitsheetnamelength)
-- 默认允许工作表名的最大长度 [defaultSheetNameMaxLength](#defaultsheetnamemaxlength)
 
 ### lang
 - 类型：String
@@ -91,52 +76,41 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 - 作用：空表格默认的行数据量
 
 ------------
-### autoFormatw
-- 类型：Boolean
-- 默认值：false
-- 作用：自动格式化超过4位数的数字为‘亿万格式’，例：true or "true" or "TRUE"
-
-------------
-### accuracy
-- 类型：Number
-- 默认值：undefined
-- 作用：设置精度，小数点后的位数。传参数为数字或数字字符串，例： "0" 或 0
-
-------------
-### allowCopy
-- 类型：Boolean
-- 默认值：true
-- 作用：是否允许拷贝
-
-------------
-### showtoolbar
+### showToolbar
 - 类型：Boolean
 - 默认值：true
 - 作用：是否显示工具栏
 
 ------------
-### showtoolbarConfig
+### toolbarItems
 
 - 类型：Array
 - 默认值：[]
-- 作用：自定义配置工具栏，可以与showtoolbar配合使用，`showtoolbarConfig`拥有更高的优先级。
+- 作用：自定义配置工具栏，可以与showtoolbar配合使用，`toolbarItems`拥有更高的优先级。
 - 格式：
     对象格式可以很方便控制显示隐藏，使用数组形式可轻松控制按钮顺序和位置， 以下为工具栏按钮和分隔符的默认配置。
     ```json
 	[
+		"undo",
+		"redo",
+		"format-painter",
 		"clear-format",
 		"|",
+		"currency-format",
+		"percentage-format",
+		"number-decrease",
+		"number-increase",
 		"format",
-		"text-size",
+		"font-size",
 		"|",
 		"bold",
 		"italic",
 		"strike-through",
 		"underline",
 		"|",
-		"text-color",
-		"text-background",
-		"border-all",
+		"font-color",
+		"background",
+		"border",
 		"merge-cell",
 		"|",
 		"align-left",
@@ -145,114 +119,19 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 		"align-top",
 		"align-mid",
 		"align-bottom",
+		"|",
+		"freeze",
+		"image",
+		"comment",
+		"formula-sum"
 	]
 	```
 
 ------------
-### showinfobar
-- 类型：Boolean
-- 默认值：true
-- 作用：是否显示顶部信息栏
-
-------------
-### showsheetbar
+### showSheetTabs
 - 类型：Boolean
 - 默认值：true
 - 作用：是否显示底部sheet页按钮
-
-------------
-### showsheetbarConfig
-
-- 类型：Object
-- 默认值：{}
-- 作用：自定义配置底部sheet页按钮，可以与showsheetbar配合使用，`showsheetbarConfig`拥有更高的优先级。
-- 格式：
-    ```json
-    {
-        add: false, //新增sheet  
-        menu: false, //sheet管理菜单
-        sheet: false //sheet页显示
-    }
-    ```
-- 示例：
-	- 仅显示新增sheet按钮：
-		
-		```js
-			//options
-			{
-				showsheetbar: false,
-				showsheetbarConfig:{
-					add: true,
-				}
-			}
-		```
-	- 仅隐藏新增sheet和管理按钮：
-		
-		```js
-			//options
-			{
-				showsheetbar: true, // 默认就是true，可以不设置
-				showsheetbarConfig:{
-					add: false,
-					menu: false,
-				}
-			}
-		```
-
-------------
-### showstatisticBar
-- 类型：Boolean
-- 默认值：true
-- 作用：是否显示底部计数栏
-
-------------
-### showstatisticBarConfig
-
-- 类型：Object
-- 默认值：{}
-- 作用：自定义配置底部计数栏，可以与showstatisticBar配合使用，`showstatisticBarConfig`拥有更高的优先级。
-- 格式：
-    ```json
-    {
-        count: false, // 计数栏
-		view: false, // 打印视图
-        zoom: false, // 缩放
-    }
-	```
-- 示例：
-	- 仅显示缩放按钮：
-		
-		```js
-			//options
-			{
-				showstatisticBar: false,
-				showstatisticBarConfig:{
-					zoom: true,
-				}
-			}
-		```
-	- 仅隐藏打印视图按钮：
-		
-		```js
-			//options
-			{
-				showstatisticBar: true, // 默认就是true，可以不设置
-				showstatisticBarConfig:{
-					view: false,
-				}
-			}
-		```
-
-------------
-### enableAddRow
-- 类型：Boolean
-- 默认值：true
-- 作用：允许添加行
-
-### addRowCount
-- Number
-- 默认值：100
-- 作用：配置新增行处默认新增的行数目
 
 ------------
 ### devicePixelRatio
@@ -261,13 +140,7 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 - 作用：设备比例，比例越大表格分辨率越高
 
 ------------
-### showConfigWindowResize
-- 类型：Boolean
-- 默认值：true
-- 作用：图表或数据透视表的配置会在右侧弹出，设置弹出后表格是否会自动缩进
-
-------------
-### cellRightClickConfig
+### cellContextMenu
 
 - 类型：Array
 - 默认值：[]
@@ -276,26 +149,22 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 	```json
 	[
 		"copy", // 复制
-		"copyAs", // 复制为
 		"paste", // 粘贴
-		"insertRow", // 插入行
-		"insertColumn", // 插入列
-		"deleteRow", // 删除选中行
-		"deleteColumn", // 删除选中列
-		"deleteCell", // 删除单元格
-		"hideRow", // 隐藏选中行和显示选中行
-		"hideColumn", // 隐藏选中列和显示选中列
-		"rowHeight", // 行高
-		"columnWidth", // 列宽
+		"insert-row", // 插入行
+		"insert-column", // 插入列
+		"delete-row", // 删除选中行
+		"delete-column", // 删除选中列
+		"delete-cell", // 删除单元格
+		"hide-row", // 隐藏选中行和显示选中行
+		"hide-column", // 隐藏选中列和显示选中列
 		"clear", // 清除内容
-		"matrix", // 矩阵操作选区
 		"sort", // 排序选区
 		"filter", // 筛选选区
 		"chart", // 图表生成
 		"image", // 插入图片
 		"link", // 插入链接
 		"data", // 数据验证
-		"cellFormat" // 设置单元格格式
+		"cell-format" // 设置单元格格式
 	]
 	```
 
@@ -327,7 +196,7 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 
 
 ------------
-### sheetRightClickConfig
+### sheetTabContextMenu
 
 - 类型：Object
 - 默认值：{}
@@ -358,7 +227,7 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 - 作用：列标题区域的高度，如果设置为0，则表示隐藏列标题
 
 ------------
-### sheetFormulaBar
+### showFormulaBar
 
 - 类型：Boolean
 - 默认值：true
@@ -369,20 +238,6 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 - 类型：Number
 - 默认值：11
 - 作用：初始化默认字体大小
-
-------------
-
-### limitSheetNameLength
-- 类型：Boolean
-- 默认值：true
-- 作用：工作表重命名等场景下是否限制工作表名称的长度
-
-------------
-
-### defaultSheetNameMaxLength
-- 类型：Number
-- 默认值：31
-- 作用：默认允许的工作表名最大长度
 
 ------------
 

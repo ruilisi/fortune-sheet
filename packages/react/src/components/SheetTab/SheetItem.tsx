@@ -56,6 +56,7 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
     if (e.key === "Enter") {
       editable.current?.blur();
     }
+    e.stopPropagation();
   }, []);
 
   return (

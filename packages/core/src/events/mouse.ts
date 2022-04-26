@@ -1195,7 +1195,7 @@ export function handleCellAreaDoubleClick(
     return;
   }
   // 禁止前台编辑(只可 框选单元格、滚动查看表格)
-  if (!settings.allowEdit || settings.editMode) {
+  if (!settings.allowEdit) {
     return;
   }
 
@@ -1368,7 +1368,7 @@ export function handleContextMenu(
     return;
   }
 
-  const { cellRightClickConfig } = settings;
+  const { cellContextMenu } = settings;
 
   // $("#luckysheet-cols-rows-data").show();
   // $("#luckysheet-cols-rows-handleincell").show();
@@ -1381,7 +1381,7 @@ export function handleContextMenu(
   // ).style.display = "block";
 
   // 如果全部按钮都隐藏，则整个菜单容器也要隐藏
-  if (_.isEmpty(cellRightClickConfig)) {
+  if (_.isEmpty(cellContextMenu)) {
     return;
   }
 

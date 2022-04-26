@@ -57,7 +57,7 @@ const Toolbar: React.FC<{
   // rerenders the entire toolbar and trigger recalculation of item locations
   useEffect(() => {
     setToolbarWrapIndex(-1);
-  }, [settings.showtoolbarConfig]);
+  }, [settings.toolbarItems]);
 
   // recalculate item locations
   useEffect(() => {
@@ -578,11 +578,11 @@ const Toolbar: React.FC<{
     <div ref={containerRef} className="fortune-toolbar">
       <div className="luckysheet-toolbar-left-theme" />
       {(toolbarWrapIndex === -1
-        ? settings.showtoolbarConfig
-        : settings.showtoolbarConfig.slice(0, toolbarWrapIndex + 1)
+        ? settings.toolbarItems
+        : settings.toolbarItems.slice(0, toolbarWrapIndex + 1)
       ).map((name, i) => getToolbarItem(name, i))}
       {toolbarWrapIndex !== -1 &&
-      toolbarWrapIndex < settings.showtoolbarConfig.length - 1 ? (
+      toolbarWrapIndex < settings.toolbarItems.length - 1 ? (
         <Button
           iconId="more"
           tooltip={toolbar.toolMore}
@@ -591,7 +591,7 @@ const Toolbar: React.FC<{
               setMoreItems(null);
             } else {
               setMoreItems(
-                settings.showtoolbarConfig
+                settings.toolbarItems
                   .slice(toolbarWrapIndex + 1)
                   .map((name, i) => getToolbarItem(name, i))
               );

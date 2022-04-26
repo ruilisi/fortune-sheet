@@ -12,8 +12,6 @@ export type Context = {
   defaultrowNum: number;
   fullscreenmode: boolean;
   devicePixelRatio: number;
-  limitSheetNameLength: boolean;
-  defaultSheetNameMaxLength?: number;
   commentBoxes?: CommentBox[];
   editingCommentBox?: CommentBox;
   hoveredCommentBox?: CommentBox;
@@ -173,7 +171,6 @@ export function defaultContext(): Context {
     defaultrowNum: 84,
     fullscreenmode: true,
     devicePixelRatio: (global || window).devicePixelRatio,
-    limitSheetNameLength: false,
 
     contextMenu: {},
     sheetTabContextMenu: {},

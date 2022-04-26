@@ -19,14 +19,12 @@ const settings = {
 
 `Workbook` props will affect the entire workbook. The configuration of a single worksheet needs to be set in the `settings.data` array to set more detailed parameters. Refer to [Worksheet Configuration](/guide/sheet.html)
 
-For personalized needs, in addition to allowing configuration information bar ([showinfobar](#showinfobar)), toolbar ([showtoolbar](#showtoolbar)), bottom sheet bar ([showsheetbar](#showsheetbar)), bottom count bar ([ShowstatisticBar](#showstatisticBar)),
-Luckysheet has opened more detailed custom configuration options, which are as follows:
+For personalized needs, in addition to allowing configuration information bar toolbar ([showToolbar](#showtoolbar)), formula bar ([showFormulaBar](#showformulabar)) and bottom sheet bar ([showSheetTabs](#showsheettabs)),
+FortuneSheet has opened more detailed custom configuration options, which are as follows:
 
-- Customize the toolbar ([showtoolbarConfig](#showtoolbarConfig))
-- Customize the bottom sheet bar ([showsheetbarConfig](#showsheetbarConfig))
-- Customize the counting bar ([showstatisticBarConfig](#showstatisticBarConfig))
-- Custom cell right-click menu ([cellRightClickConfig](#cellRightClickConfig))
-- Customize the right-click menu of the bottom sheet bar ([sheetRightClickConfig](#sheetRightClickConfig))
+- Customize the toolbar ([toolbarItems](#toolbaritems))
+- Custom cell context menu ([cellContextMenu](#cellcontextmenu))
+- Customize the context menu of the bottom sheet bar ([sheetTabContextMenu](#sheettabcontextmenu))
 
 ## Configuration item
 
@@ -37,24 +35,15 @@ The following are all supported setting parameters
 - Worksheet onChange event [onChange](#onchange)
 - Number of columns [column](#column)
 - Number of rows [row](#row)
-- Billion format [autoFormatw](#autoFormatw)
-- Accuracy [accuracy](#accuracy)
-- Allow copying [allowCopy](#allowCopy)
-- Toolbar [showtoolbar](#showtoolbar)
-- Customize Toolbar [showtoolbarConfig](#showtoolbarconfig)
-- Information bar [showinfobar](#showinfobar)
-- Bottom sheet bar [showsheetbar](#showsheetbar)
-- Customize the bottom sheet bar [showsheetbarConfig](#showsheetbarconfig)
-- The bottom count bar [showstatisticBar](#showstatisticbar)
-- Custom Count Bar [showstatisticBarConfig](#showstatisticbarconfig)
-- Allow adding rows [enableAddRow](#enableaddrow)
+- Toolbar [showToolbar](#showtoolbar)
+- Customize Toolbar [toolbarItems](#toolbaritems)
+- Bottom sheet bar [showSheetTabs](#showsheettabs)
 - Ratio [devicePixelRatio](#devicepixelratio)
-- Auto-indent interface [showConfigWindowResize](#showconfigwindowresize)
-- Custom cell right-click menu [cellRightClickConfig](#cellrightclickconfig)
-- Customize the right-click menu of the bottom sheet bar [sheetRightClickConfig](#sheetrightclickconfig)
+- Custom cell right-click menu [cellContextMenu](#cellcontextmenu)
+- Customize the right-click menu of the bottom sheet bar [sheetTabContextMenu](#sheettabcontextmenu)
 - The width of the row header area [rowHeaderWidth](#rowheaderwidth)
 - The height of the column header area [columnHeaderHeight](#columnheaderheight)
-- Whether to show the formula bar [sheetFormulaBar](#sheetformulabar)
+- Whether to show the formula bar [showFormulaBar](#showformulabar)
 - Initialize the default font size [defaultFontSize](#defaultfontsize)
 
 ### lang
@@ -87,34 +76,16 @@ The following are all supported setting parameters
 - Usage: The default number of rows in an empty workbook
 
 ------------
-### autoFormatw
-- Type: Boolean
-- Default: false
-- Usage: Automatically format numbers with more than 4 digits into "billion format", for example: true or "true" or "TRUE"
-
-------------
-### accuracy
-- Type: Number
-- Default: undefined
-- Usage: Set the precision, the number of digits after the decimal point. The parameter is a number or a string of numbers, for example: "0" or 0
-
-------------
-### allowCopy
-- Type: Boolean
-- Default: true
-- Usage: Whether to allow copy
-
-------------
-### showtoolbar
+### showToolbar
 - Type: Boolean
 - Default: true
 - Usage: Whether to show the toolbar
 
 ------------
-### showtoolbarConfig
+### toolbarItems
 
 - Type: Array
-- Usage: Custom configuration toolbar,can be used in conjunction with `showtoolbar`, `showtoolbarConfig` has a higher priority.
+- Usage: Custom configuration toolbar,can be used in conjunction with `showToolbar`, `toolbarItems` has a higher priority.
 - Format:
 
 ```json
@@ -155,120 +126,19 @@ The following are all supported setting parameters
 ```
 
 ------------
-### showinfobar
-- Type: Boolean
-- Default: true
-- Usage: Whether to show the top information bar
-
-------------
-### showsheetbar
+### showSheetTabs
 - Type: Boolean
 - Default: true
 - Usage: Whether to show the bottom sheet button
 
 ------------
-### showsheetbarConfig
-
-- Type: Object
-- Default: {}
-- Usage: Custom configuration bottom sheet button, can be used in conjunction with `showsheetbar`, `showsheetbarConfig` has a higher priority.
-- Format: 
-    ```json
-    {
-        add: false, //Add worksheet
-        menu: false, //Worksheet management menu
-        sheet: false //Worksheet display
-    }
-    ```
-- Example:
-	- Only display the `Add worksheet` button:
-		
-		```js
-			//options
-			{
-				showsheetbar: false,
-				showsheetbarConfig:{
-					add: true,
-				}
-			}
-		```
-	- Only hide the `Add worksheet` and `Worksheet management menu` buttons:
-		
-		```js
-			//options
-			{
-				showsheetbar: true, // The default is true, you can leave it unset
-				showsheetbarConfig:{
-					add: false,
-					menu: false,
-				}
-			}
-		```
-
-------------
-### showstatisticBar
-- Type: Boolean
-- Default: true
-- Usage: Whether to show the bottom count bar
-
-------------
-### showstatisticBarConfig
-
-- Type: Object
-- Default: {}
-- Usage: Customize the bottom count bar, can be used in conjunction with `showstatisticBar`, `showstatisticBarConfig` has a higher priority.
-- Format: 
-    ```json
-    {
-		count: false, // Count bar
-		view: false, // Print view
-        zoom: false // Zoom
-    }
-	```
-- Example:
-	- Only display the `Zoom` button:
-		
-		```js
-			//options
-			{
-				showstatisticBar: false,
-				showstatisticBarConfig:{
-					zoom: true,
-				}
-			}
-		```
-	- Only hide the `print view` button:
-		
-		```js
-			//options
-			{
-				showstatisticBar: true, // The default is true, you can leave it unset
-				showstatisticBarConfig:{
-					view: false,
-				}
-			}
-		```	
-------------
-### enableAddRow
-- Type: Boolean
-- Default: true
-- Usage: Allow additional rows
-
-------------
-
 ### devicePixelRatio
 - Type: Number
 - Default: window.devicePixelRatio
 - Usage: Device ratio, the larger the ratio, the higher the resolution of the workbook
 
 ------------
-### showConfigWindowResize
-- Type: Boolean
-- Default: true
-- Usage: The configuration of the chart or pivot table will pop up on the right, set whether the workbook will be automatically indented after popping up
-
-------------
-### cellRightClickConfig
+### cellContextMenu
 
 - Type: Array
 - Default: []
@@ -277,26 +147,22 @@ The following are all supported setting parameters
 	```json
 	[
 		"copy", // 复制
-		"copyAs", // 复制为
 		"paste", // 粘贴
-		"insertRow", // 插入行
-		"insertColumn", // 插入列
-		"deleteRow", // 删除选中行
-		"deleteColumn", // 删除选中列
-		"deleteCell", // 删除单元格
-		"hideRow", // 隐藏选中行和显示选中行
-		"hideColumn", // 隐藏选中列和显示选中列
-		"rowHeight", // 行高
-		"columnWidth", // 列宽
+		"insert-row", // 插入行
+		"insert-column", // 插入列
+		"delete-row", // 删除选中行
+		"delete-column", // 删除选中列
+		"delete-cell", // 删除单元格
+		"hide-row", // 隐藏选中行和显示选中行
+		"hide-column", // 隐藏选中列和显示选中列
 		"clear", // 清除内容
-		"matrix", // 矩阵操作选区
 		"sort", // 排序选区
 		"filter", // 筛选选区
 		"chart", // 图表生成
 		"image", // 插入图片
 		"link", // 插入链接
 		"data", // 数据验证
-		"cellFormat" // 设置单元格格式
+		"cell-format" // 设置单元格格式
 	]
 	```
 	
@@ -327,7 +193,7 @@ The following are all supported setting parameters
 	|cellFormat|Set cell format|Set cell format|Set cell format|-|
 
 ------------
-### sheetRightClickConfig
+### sheetTabContextMenu
 
 - Type: Object
 - Default: {}
@@ -356,7 +222,7 @@ The following are all supported setting parameters
 - Usage: The height of the column header area, if set to 0, it means hide the column header
 
 ------------
-### sheetFormulaBar
+### showFormulaBar
 - Type: Boolean
 - Default: true
 - Usage: Whether to show the formula bar
@@ -366,20 +232,6 @@ The following are all supported setting parameters
 - Type：Number
 - Default：11
 - Usage：Initialize the default font size
-
-------------
-
-### limitSheetNameLength
-- Type: Boolean
-- Default: true
-- Usage：Is the length of the sheet name limited in scenarios such as sheet renaming
-
-------------
-
-### defaultSheetNameMaxLength
-- Type：Number
-- Default：31
-- Usage：Default maximum allowed sheet name length
 
 ------------
 

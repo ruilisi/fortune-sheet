@@ -216,12 +216,8 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           draftCtx.defaultcolumnNum = mergedSettings.column;
           draftCtx.defaultrowNum = mergedSettings.row;
           draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
-          draftCtx.fullscreenmode = mergedSettings.fullscreenmode;
           draftCtx.lang = mergedSettings.lang;
           draftCtx.allowEdit = mergedSettings.allowEdit;
-          draftCtx.limitSheetNameLength = mergedSettings.limitSheetNameLength;
-          draftCtx.defaultSheetNameMaxLength =
-            mergedSettings.defaultSheetNameMaxLength;
           // draftCtx.fontList = mergedSettings.fontList;
           if (_.isEmpty(draftCtx.currentSheetIndex)) {
             initSheetIndex(draftCtx);
@@ -351,11 +347,8 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       mergedSettings.column,
       mergedSettings.row,
       mergedSettings.defaultFontSize,
-      mergedSettings.fullscreenmode,
       mergedSettings.lang,
       mergedSettings.allowEdit,
-      mergedSettings.limitSheetNameLength,
-      mergedSettings.defaultSheetNameMaxLength,
       setContextWithProduce,
     ]);
 
@@ -414,14 +407,16 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         >
           <SVGDefines />
           <div className="fortune-workarea">
-            <Toolbar
-              moreItemsOpen={moreToolbarItems !== null}
-              setMoreItems={setMoreToolbarItems}
-            />
-            <FxEditor />
+            {mergedSettings.showToolbar && (
+              <Toolbar
+                moreItemsOpen={moreToolbarItems !== null}
+                setMoreItems={setMoreToolbarItems}
+              />
+            )}
+            {mergedSettings.showFormulaBar && <FxEditor />}
           </div>
           <Sheet sheet={sheet} />
-          <SheetTab />
+          {mergedSettings.showSheetTabs && <SheetTab />}
           <ContextMenu />
           <SheetTabContextMenu />
           {moreToolbarItems && (

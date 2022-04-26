@@ -12,7 +12,7 @@ import "./index.css";
 import Menu from "./Menu";
 
 const SheetTabContextMenu: React.FC = () => {
-  const { context, setContext } = useContext(WorkbookContext);
+  const { context, setContext, settings } = useContext(WorkbookContext);
   const { x, y, sheet, onRename } = context.sheetTabContextMenu;
   const { sheetconfig } = locale(context);
   const [position, setPosition] = useState({ x: -1, y: -1 });
@@ -42,31 +42,42 @@ const SheetTabContextMenu: React.FC = () => {
       style={{ left: position.x, top: position.y, overflow: "visible" }}
       ref={containerRef}
     >
-      <Menu
-        onClick={() => {
-          setContext(
-            (draftCtx) => {
-              deleteSheet(draftCtx, sheet.index!);
-            },
-            {
-              deleteSheetOp: {
-                index: sheet.index!,
-              },
-            }
+      {settings.sheetTabContextMenu?.map((name) => {
+        if (name === "delete") {
+          return (
+            <Menu
+              onClick={() => {
+                setContext(
+                  (draftCtx) => {
+                    deleteSheet(draftCtx, sheet.index!);
+                  },
+                  {
+                    deleteSheetOp: {
+                      index: sheet.index!,
+                    },
+                  }
+                );
+                close();
+              }}
+            >
+              {sheetconfig.delete}
+            </Menu>
           );
-          close();
-        }}
-      >
-        {sheetconfig.delete}
-      </Menu>
-      <Menu
-        onClick={() => {
-          onRename?.();
-          close();
-        }}
-      >
-        {sheetconfig.rename}
-      </Menu>
+        }
+        if (name === "rename") {
+          return (
+            <Menu
+              onClick={() => {
+                onRename?.();
+                close();
+              }}
+            >
+              {sheetconfig.rename}
+            </Menu>
+          );
+        }
+        return null;
+      })}
     </div>
   );
 };
