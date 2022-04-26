@@ -5,7 +5,7 @@ import { Context, getFlowdata } from "../context";
 import { CellMatrix, GlobalCache } from "../types";
 import { colLocation, rowLocation } from "./location";
 
-function getArrowCanvasSize(
+export function getArrowCanvasSize(
   fromX: number,
   fromY: number,
   toX: number,
@@ -152,7 +152,7 @@ export const commentBoxProps: CommentBoxProps = {
   cursorStartPosition: null,
 };
 
-function getCellTopRightPostion(
+export function getCellTopRightPostion(
   ctx: Context,
   flowdata: CellMatrix,
   r: number,

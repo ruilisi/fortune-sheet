@@ -14,6 +14,7 @@ import {
   handleContextMenu,
   handleOverlayMouseMove,
   handleOverlayMouseUp,
+  onImageMoveStart,
   onCommentBoxMoveStart,
   onCommentBoxResizeStart,
   setEditingComment,
@@ -179,6 +180,7 @@ const SheetOverlay: React.FC = () => {
     context.editingCommentBox,
   ]);
 
+  console.info(context.activeImg);
   return (
     <div
       className="fortune-sheet-overlay"
@@ -512,30 +514,125 @@ const SheetOverlay: React.FC = () => {
               );
             })}
           </div>
-          {context.insertedImgs?.map((v: any) => {
-            const { left, top, width, height, src } = v;
-            return (
+
+          <div id="luckysheet-multipleRange-show" />
+          <div id="luckysheet-dynamicArray-hightShow" />
+          <div id="luckysheet-image-showBoxs">
+            {context.activeImg && (
               <div
-                id="${id}"
-                className="luckysheet-modal-dialog luckysheet-modal-dialog-image"
+                id="luckysheet-modal-dialog-activeImage"
+                className="luckysheet-modal-dialog"
                 style={{
-                  width,
-                  height,
                   padding: 0,
                   position: "absolute",
-                  left,
-                  top,
-                  zIndex: 200,
+                  zIndex: 300,
+                  // width: 100,
+                  // height: 100,
+                  // left: 100,
+                  // top: 100,
+                  // backgroundColor: "red",
+                  // backgroundImage: `url(${context.activeImg.src})`,
+                  ..._.omit(context.activeImg, "src"),
                 }}
               >
                 <div
+                  className="luckysheet-modal-dialog-border"
+                  style={{ position: "absolute" }}
+                />
+                <div
                   className="luckysheet-modal-dialog-content"
-                  // style="width:100%;height:100%;overflow:hidden;position:relative;"
-                >
-                  <img
-                    src={src}
-                    alt=""
-                    // style={{position:"absolute";width:${imgItem.default.width * Store.zoomRatio}px;height:${imgItem.default.height * Store.zoomRatio}px;left:${-imgItem.crop.offsetLeft * Store.zoomRatio}px;top:${-imgItem.crop.offsetTop * Store.zoomRatio}px}}
+                  style={{
+                    ..._.omit(context.activeImg, "src, left,top"),
+                    // height: 200,
+                    // width: 200,
+                    backgroundImage: `url(${context.activeImg.src})`,
+                    // backgroundSize: "cover",
+                    // context.activeImg.width * context.zoomRatio +
+                    // context.activeImg.height * context.zoomRatio,
+                  }}
+                  onMouseDown={(e) => {
+                    onImageMoveStart(
+                      context,
+                      refs.globalCache,
+                      e.nativeEvent,
+                      containerRef.current!
+                    );
+                    e.stopPropagation();
+                  }}
+                />
+                <div className="luckysheet-modal-dialog-resize">
+                  <div
+                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lt"
+                    data-type="lt"
+                  />
+                  <div
+                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-mt"
+                    data-type="mt"
+                  />
+                  <div
+                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lm"
+                    data-type="lm"
+                  />
+                  <div
+                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rm"
+                    data-type="rm"
+                  />
+                  <div
+                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rt"
+                    data-type="rt"
+                  />
+                  <div
+                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lb"
+                    data-type="lb"
+                  />
+                  <div
+                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-mb"
+                    data-type="mb"
+                  />
+                  <div
+                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rb"
+                    data-type="rb"
+                  />
+                </div>
+                <div className="luckysheet-modal-dialog-controll">
+                  <span
+                    className="luckysheet-modal-controll-btn luckysheet-modal-controll-crop"
+                    role="button"
+                    tabIndex={0}
+                    aria-label="裁剪"
+                    title="裁剪"
+                  >
+                    <i className="fa fa-pencil" aria-hidden="true" />
+                  </span>
+                  <span
+                    className="luckysheet-modal-controll-btn luckysheet-modal-controll-restore"
+                    role="button"
+                    tabIndex={0}
+                    aria-label="恢复原图"
+                    title="恢复原图"
+                  >
+                    <i className="fa fa-window-maximize" aria-hidden="true" />
+                  </span>
+                  <span
+                    className="luckysheet-modal-controll-btn luckysheet-modal-controll-del"
+                    role="button"
+                    tabIndex={0}
+                    aria-label="删除"
+                    title="删除"
+                  >
+                    <i className="fa fa-trash" aria-hidden="true" />
+                  </span>
+                </div>
+              </div>
+            )}
+            <div className="img-list">
+              {context.insertedImgs?.map((v: any) => {
+                const { id, left, top, width, height, src } = v;
+                if (v.id === context.activeImg?.id) return null;
+                return (
+                  <div
+                    id={id}
+                    className="luckysheet-modal-dialog luckysheet-modal-dialog-image"
                     style={{
                       width,
                       height,
@@ -543,98 +640,44 @@ const SheetOverlay: React.FC = () => {
                       position: "absolute",
                       left,
                       top,
-                      // zIndex: 200,
+                      zIndex: 200,
                     }}
-                  />
-                </div>
-                <div
-                  className="luckysheet-modal-dialog-border"
-                  // style="border:${borderWidth}px ${imgItem.border.style} ${imgItem.border.color};border-radius:${imgItem.border.radius * Store.zoomRatio}px;position:absolute;left:${-borderWidth}px;right:${-borderWidth}px;top:${-borderWidth}px;bottom:${-borderWidth}px;"
-                />
-              </div>
-            );
-          })}
-          <div id="luckysheet-multipleRange-show" />
-          <div id="luckysheet-dynamicArray-hightShow" />
-          <div id="luckysheet-image-showBoxs">
-            <div
-              id="luckysheet-modal-dialog-activeImage"
-              className="luckysheet-modal-dialog"
-              style={{
-                display: "none",
-                padding: 0,
-                position: "absolute",
-                zIndex: 300,
-              }}
-            >
-              <div
-                className="luckysheet-modal-dialog-border"
-                style={{ position: "absolute" }}
-              />
-              <div className="luckysheet-modal-dialog-content" />
-              <div className="luckysheet-modal-dialog-resize">
-                <div
-                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lt"
-                  data-type="lt"
-                />
-                <div
-                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-mt"
-                  data-type="mt"
-                />
-                <div
-                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lm"
-                  data-type="lm"
-                />
-                <div
-                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rm"
-                  data-type="rm"
-                />
-                <div
-                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rt"
-                  data-type="rt"
-                />
-                <div
-                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lb"
-                  data-type="lb"
-                />
-                <div
-                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-mb"
-                  data-type="mb"
-                />
-                <div
-                  className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rb"
-                  data-type="rb"
-                />
-              </div>
-              <div className="luckysheet-modal-dialog-controll">
-                <span
-                  className="luckysheet-modal-controll-btn luckysheet-modal-controll-crop"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="裁剪"
-                  title="裁剪"
-                >
-                  <i className="fa fa-pencil" aria-hidden="true" />
-                </span>
-                <span
-                  className="luckysheet-modal-controll-btn luckysheet-modal-controll-restore"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="恢复原图"
-                  title="恢复原图"
-                >
-                  <i className="fa fa-window-maximize" aria-hidden="true" />
-                </span>
-                <span
-                  className="luckysheet-modal-controll-btn luckysheet-modal-controll-del"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="删除"
-                  title="删除"
-                >
-                  <i className="fa fa-trash" aria-hidden="true" />
-                </span>
-              </div>
+                    onClick={(e) => {
+                      setContext((ctx) => {
+                        ctx.activeImg = v;
+                      });
+                      e.stopPropagation();
+                    }}
+                  >
+                    <div
+                      className="luckysheet-modal-dialog-content"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        overflow: "hidden",
+                        position: "relative",
+                      }}
+                    >
+                      <img
+                        src={src}
+                        alt=""
+                        // style={{position:"absolute";width:${imgItem.default.width * Store.zoomRatio}px;height:${imgItem.default.height * Store.zoomRatio}px;left:${-imgItem.crop.offsetLeft * Store.zoomRatio}px;top:${-imgItem.crop.offsetTop * Store.zoomRatio}px}}
+                        style={{
+                          width,
+                          height,
+                          padding: 0,
+                          position: "absolute",
+                          // zIndex: 200,
+                        }}
+                      />
+                    </div>
+                    <div
+                      className="luckysheet-modal-dialog-border"
+                      // style="border:${borderWidth}px ${imgItem.border.style} ${imgItem.border.color};border-radius:${imgItem.border.radius * Store.zoomRatio}px;position:absolute;left:${-borderWidth}px;right:${-borderWidth}px;top:${-borderWidth}px;bottom:${-borderWidth}px;"
+                    />
+                  </div>
+                );
+              })}
             </div>
             <div
               id="luckysheet-modal-dialog-cropping"
@@ -692,7 +735,7 @@ const SheetOverlay: React.FC = () => {
                 </span>
               </div>
             </div>
-            <div className="img-list" />
+
             <div className="cell-date-picker">
               {/* <input
             id="cellDatePickerBtn"

@@ -168,6 +168,11 @@ export type GlobalCache = {
   redoList: History[];
   editingCommentBoxEle?: HTMLDivElement;
   freezen?: Record<string, Freezen>;
+  image?: {
+    imgInitialPosition: Rect | undefined;
+    cursorMoveStartPosition: { x: number; y: number } | undefined;
+    resizingSide: string | undefined;
+  };
   commentBox?: {
     movingId: string | undefined;
     resizingId: string | undefined;

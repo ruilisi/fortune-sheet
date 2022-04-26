@@ -18,6 +18,8 @@ export type Context = {
   editingCommentBox?: CommentBox;
   hoveredCommentBox?: CommentBox;
   insertedImgs?: any;
+  editingInsertedImgs?: any;
+  activeImg: any;
 
   contextMenu: any;
   sheetTabContextMenu: {
@@ -243,6 +245,7 @@ export function defaultContext(): Context {
     luckysheet_shiftpositon: undefined,
 
     iscopyself: true,
+    activeImg: undefined,
 
     orderbyindex: 0, // 排序下标
 

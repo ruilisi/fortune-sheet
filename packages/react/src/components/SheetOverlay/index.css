@@ -644,6 +644,79 @@
   border: 2px dashed #12A5FF;
   z-index: 8;
 }
+.luckysheet-modal-dialog-resize {
+  position: absolute;
+  border: 2px solid #0188fb;
+  margin: 0px;
+  padding: 0px;
+  top: -2px;
+  left: -2px;
+  bottom: -2px;
+  right: -2px;
+  pointer-events: none;
+}
+
+.luckysheet-modal-dialog-resize-item {
+  position: absolute;
+  height: 6px;
+  width: 6px;
+  background: #ffffff;
+  border: 2px solid #0188fb;
+  pointer-events: all;
+  border-radius: 6px;
+}
+
+.luckysheet-modal-dialog-resize-item-lt {
+  left: -6px;
+  top: -6px;
+  cursor: se-resize;
+}
+
+.luckysheet-modal-dialog-resize-item-mt {
+  left: 50%;
+  top: -6px;
+  margin-left: -4px;
+  cursor: s-resize;
+}
+
+.luckysheet-modal-dialog-resize-item-rt {
+  right: -6px;
+  top: -6px;
+  cursor: ne-resize;
+}
+
+.luckysheet-modal-dialog-resize-item-lm {
+  top: 50%;
+  left: -6px;
+  margin-top: -4px;
+  cursor: w-resize;
+}
+
+.luckysheet-modal-dialog-resize-item-rm {
+  top: 50%;
+  right: -6px;
+  margin-top: -4px;
+  cursor: w-resize;
+}
+
+.luckysheet-modal-dialog-resize-item-lb {
+  left: -6px;
+  bottom: -6px;
+  cursor: ne-resize;
+}
+
+.luckysheet-modal-dialog-resize-item-mb {
+  left: 50%;
+  bottom: -6px;
+  margin-left: -4px;
+  cursor: s-resize;
+}
+
+.luckysheet-modal-dialog-resize-item-rb {
+  right: -6px;
+  bottom: -6px;
+  cursor: se-resize;
+}
 
 .luckysheet-formula-functionrange-highlight .luckysheet-copy {
   background-image: none;

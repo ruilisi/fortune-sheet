@@ -2,6 +2,7 @@ import _ from "lodash";
 import { Freezen } from "..";
 import { Context, getFlowdata } from "../context";
 import {
+  cancelActiveImgItem,
   cancelPaintModel,
   formulaCache,
   functionHTMLGenerate,
@@ -12,6 +13,8 @@ import {
   onCommentBoxMoveEnd,
   onCommentBoxResize,
   onCommentBoxResizeEnd,
+  onImageMove,
+  onImageMoveEnd,
   removeEditingComment,
   overShowComment,
   rangeDrag,
@@ -188,7 +191,6 @@ export function handleCellAreaMouseDown(
   fxInput: HTMLDivElement
 ) {
   ctx.contextMenu = undefined;
-
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
   // //有批注在编辑时
@@ -199,6 +201,7 @@ export function handleCellAreaMouseDown(
   //   e.nativeEvent.offsetY,
   //   context
   // );
+  cancelActiveImgItem(ctx);
   const rect = container.getBoundingClientRect();
   const mouseX = e.pageX - rect.left;
   const mouseY = e.pageY - rect.top;
@@ -3086,6 +3089,7 @@ export function handleOverlayMouseMove(
 ) {
   if (onCommentBoxResize(ctx, globalCache, e)) return;
   if (onCommentBoxMove(ctx, globalCache, e)) return;
+  if (onImageMove(ctx, globalCache, e)) return;
   overShowComment(ctx, e, scrollX, scrollY, container); // 有批注显示
   // hyperlinkCtrl.overshow(event); // 链接提示显示
 
@@ -3341,6 +3345,7 @@ export function handleOverlayMouseUp(
 ) {
   const rect = container.getBoundingClientRect();
   // 批注框 移动结束
+  onImageMoveEnd(ctx, globalCache, container);
   onCommentBoxMoveEnd(ctx, globalCache, container);
   onCommentBoxResizeEnd(ctx, globalCache, container);
   onFormulaRangeDragEnd(ctx);
@@ -4499,7 +4504,7 @@ export function handleRowHeaderMouseDown(
   //   $("#luckysheet-modal-dialog-activeImage").is(":visible") ||
   //   $("#luckysheet-modal-dialog-cropping").is(":visible")
   // ) {
-  //   imageCtrl.cancelActiveImgItem();
+  cancelActiveImgItem(ctx);
   // }
 
   const rect = container.getBoundingClientRect();
@@ -4916,7 +4921,7 @@ export function handleColumnHeaderMouseDown(
   //   $("#luckysheet-modal-dialog-activeImage").is(":visible") ||
   //   $("#luckysheet-modal-dialog-cropping").is(":visible")
   // ) {
-  //   imageCtrl.cancelActiveImgItem();
+  cancelActiveImgItem(ctx);
   // }
 
   const rect = container.getBoundingClientRect();
@@ -5314,7 +5319,7 @@ export function handleColSizeHandleMouseDown(
   //   $("#luckysheet-modal-dialog-activeImage").is(":visible") ||
   //   $("#luckysheet-modal-dialog-cropping").is(":visible")
   // ) {
-  //   imageCtrl.cancelActiveImgItem();
+  cancelActiveImgItem(ctx);
   // }
 
   ctx.luckysheetCellUpdate = [];
@@ -5369,7 +5374,7 @@ export function handleRowSizeHandleMouseDown(
   //   $("#luckysheet-modal-dialog-activeImage").is(":visible") ||
   //   $("#luckysheet-modal-dialog-cropping").is(":visible")
   // ) {
-  //   imageCtrl.cancelActiveImgItem();
+  cancelActiveImgItem(ctx);
   // }
 
   ctx.luckysheetCellUpdate = [];
