@@ -489,7 +489,7 @@ export function overShowComment(
   }
   const rc = `${r}_${c}`;
 
-  const comment = flowdata[r][c]?.ps;
+  const comment = flowdata[r]?.[c]?.ps;
   if (
     comment == null ||
     comment.isShow ||
