@@ -68,7 +68,7 @@ export function getImageByRC(
   return { r, c, rc, left, top, width, height, value, size, autoFocus: false };
 }
 
-export function generateRandomId(ctx: Context, prefix: string) {
+export function generateRandomId(prefix: string) {
   if (prefix == null) {
     prefix = "img";
   }
@@ -96,17 +96,6 @@ export function showImgChooser() {
 }
 
 function _insertImg(src: any, ctx: Context, setContext: any) {
-  // if (ctx.luckysheet_select_save == null) return;
-  // if (ctx.luckysheet_select_save === undefined) return;
-  // console.info("ppppp");
-  // const last =
-  //   ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
-  // console.info(last);
-  // const rowIndex = last?.row_focus || 0;
-  // const colIndex = last?.column_focus || 0;
-  // const left = colIndex === 0 ? 0 : ctx.visibledatacolumn[colIndex - 1];
-  // const top = rowIndex === 0 ? 0 : ctx.visibledatarow[rowIndex - 1];
-
   try {
     const last =
       ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1];
@@ -127,32 +116,27 @@ function _insertImg(src: any, ctx: Context, setContext: any) {
     let left = colIndex === 0 ? 0 : ctx.visibledatacolumn[colIndex - 1];
     let top = rowIndex === 0 ? 0 : ctx.visibledatarow[rowIndex - 1];
     if (flowdata) {
-      console.info("if flowdata");
       const margeset = mergeBorder(ctx, flowdata, rowIndex, colIndex);
       if (margeset) {
         [top] = margeset.row;
         [left] = margeset.column;
-        console.info("set new left top");
       }
     }
-    console.info("shitshit-------", rowIndex, colIndex, left, top);
     const image = new Image();
     image.onload = () => {
       const { width } = image;
       const { height } = image;
       const img = {
-        id: generateRandomId(ctx, "img"),
+        id: generateRandomId("img"),
         src,
         left,
         top,
-        width,
-        height,
+        width: width * 0.5,
+        height: height * 0.5,
         originWidth: width,
         originHeight: height,
       };
       setContext((draftCtx: Context) => {
-        console.info("what the fuck");
-        console.info("img", img);
         draftCtx.insertedImgs = (draftCtx.insertedImgs || []).concat(img);
       });
     };
@@ -290,8 +274,9 @@ export function getImgItemParam(imgItem) {
   };
 }
 */
-export function cancelActiveImgItem(ctx: Context) {
+export function cancelActiveImgItem(ctx: Context, globalCache: GlobalCache) {
   ctx.activeImg = undefined;
+  globalCache.image = undefined;
 }
 export function onImageMoveStart(
   ctx: Context,
@@ -343,21 +328,24 @@ export function onImageMoveEnd(
   container: HTMLDivElement
 ) {
   const position = getImagePosition(ctx, container);
-  globalCache.image = undefined;
-  if (position) {
-    const img = _.find(ctx.insertedImgs, (v) => v.id === ctx.activeImg?.id);
-    if (img) {
-      img.left = position.left;
-      img.top = position.top;
+  if (!globalCache.image?.resizingSide) {
+    globalCache.image = undefined;
+
+    if (position) {
+      const img = _.find(ctx.insertedImgs, (v) => v.id === ctx.activeImg?.id);
+      if (img) {
+        img.left = position.left;
+        img.top = position.top;
+      }
     }
   }
 }
 
 export function onImageResizeStart(
   ctx: Context,
-  container: HTMLDivElement,
   globalCache: GlobalCache,
   e: MouseEvent,
+  container: HTMLDivElement,
   resizingSide: string
 ) {
   const position = getImagePosition(ctx, container);
@@ -377,7 +365,11 @@ export function onImageResize(
 ) {
   const image = globalCache?.image;
   if (image?.resizingSide) {
-    const img = document.getElementById("luckysheet-modal-dialog-activeImage");
+    const imgContainer = document.getElementById(
+      "luckysheet-modal-dialog-activeImage"
+    );
+    const img = imgContainer?.querySelector(".luckysheet-modal-dialog-content");
+    if (img == null) return false;
     const { x: startX, y: startY } = image.cursorMoveStartPosition!;
     let { top, left, width, height } = image.imgInitialPosition!;
     const dx = e.pageX - startX;
@@ -394,6 +386,7 @@ export function onImageResize(
       }
       if (left < 0) left = 0;
       (img as HTMLDivElement).style.left = `${left}px`;
+      (imgContainer as HTMLDivElement).style.left = `${left}px`;
     }
     if (["rm", "rt", "rb"].includes(image.resizingSide)) {
       width = width + dx < minWidth ? minWidth : width + dx;
@@ -408,12 +401,17 @@ export function onImageResize(
       }
       if (top < 0) top = 0;
       (img as HTMLDivElement).style.top = `${top}px`;
+      (imgContainer as HTMLDivElement).style.top = `${top}px`;
     }
     if (["mb", "lb", "rb"].includes(image.resizingSide)) {
       height = height + dy < minHeight ? minHeight : height + dy;
     }
     (img as HTMLDivElement).style.width = `${width}px`;
+    (imgContainer as HTMLDivElement).style.width = `${width}px`;
     (img as HTMLDivElement).style.height = `${height}px`;
+    (imgContainer as HTMLDivElement).style.height = `${height}px`;
+    (img as HTMLDivElement).style.backgroundSize = `${width}px ${height}px`;
+
     return true;
   }
   return false;
@@ -425,14 +423,14 @@ export function onImageResizeEnd(
   container: HTMLDivElement
 ) {
   if (globalCache.image?.resizingSide) {
-    globalCache.image.resizingSide = undefined;
+    globalCache.image = undefined;
     const position = getImagePosition(ctx, container);
     if (position) {
       const img = _.find(ctx.insertedImgs, (v) => v.id === ctx.activeImg?.id);
       if (img) {
         img.left = position.left;
         img.top = position.top;
-        img.top = position.width;
+        img.width = position.width;
         img.height = position.height;
       }
     }

@@ -24,8 +24,9 @@ import {
   handleBorder,
   toolbarItemSelectedFunc,
   handleFreeze,
+  insertImage,
+  showImgChooser,
 } from "@fortune-sheet/core";
-import { insertImage, showImgChooser } from "packages/core/src/modules/image";
 import WorkbookContext from "../../context";
 import "./index.css";
 import Button from "./Button";
@@ -227,8 +228,8 @@ const Toolbar: React.FC<{
               accept="image/*"
               style={{ display: "none" }}
               onChange={(e) => {
-                console.info("selected file >>>>>>");
                 insertImage(setContext, e.currentTarget?.files?.[0]);
+                e.currentTarget.value = "";
               }}
               // onClick={(e) => e.stopPropagation()}
             />

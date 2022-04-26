@@ -15,6 +15,7 @@ import {
   handleOverlayMouseMove,
   handleOverlayMouseUp,
   onImageMoveStart,
+  onImageResizeStart,
   onCommentBoxMoveStart,
   onCommentBoxResizeStart,
   setEditingComment,
@@ -180,7 +181,6 @@ const SheetOverlay: React.FC = () => {
     context.editingCommentBox,
   ]);
 
-  console.info(context.activeImg);
   return (
     <div
       className="fortune-sheet-overlay"
@@ -546,7 +546,8 @@ const SheetOverlay: React.FC = () => {
                     // height: 200,
                     // width: 200,
                     backgroundImage: `url(${context.activeImg.src})`,
-                    // backgroundSize: "cover",
+                    backgroundSize: `${context.activeImg.width}px ${context.activeImg.height}px`,
+                    backgroundRepeat: "no-repeat",
                     // context.activeImg.width * context.zoomRatio +
                     // context.activeImg.height * context.zoomRatio,
                   }}
@@ -561,7 +562,24 @@ const SheetOverlay: React.FC = () => {
                   }}
                 />
                 <div className="luckysheet-modal-dialog-resize">
-                  <div
+                  {["lt", "mt", "lm", "rm", "rt", "lb", "mb", "rb"].map((v) => (
+                    <div
+                      key={v}
+                      className={`luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-${v}`}
+                      data-type={v}
+                      onMouseDown={(e) => {
+                        onImageResizeStart(
+                          context,
+                          refs.globalCache,
+                          e.nativeEvent,
+                          containerRef.current!,
+                          v
+                        );
+                        e.stopPropagation();
+                      }}
+                    />
+                  ))}
+                  {/* <div
                     className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lt"
                     data-type="lt"
                   />
@@ -592,7 +610,7 @@ const SheetOverlay: React.FC = () => {
                   <div
                     className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rb"
                     data-type="rb"
-                  />
+                  /> */}
                 </div>
                 <div className="luckysheet-modal-dialog-controll">
                   <span
@@ -661,20 +679,15 @@ const SheetOverlay: React.FC = () => {
                       <img
                         src={src}
                         alt=""
-                        // style={{position:"absolute";width:${imgItem.default.width * Store.zoomRatio}px;height:${imgItem.default.height * Store.zoomRatio}px;left:${-imgItem.crop.offsetLeft * Store.zoomRatio}px;top:${-imgItem.crop.offsetTop * Store.zoomRatio}px}}
                         style={{
                           width,
                           height,
                           padding: 0,
                           position: "absolute",
-                          // zIndex: 200,
                         }}
                       />
                     </div>
-                    <div
-                      className="luckysheet-modal-dialog-border"
-                      // style="border:${borderWidth}px ${imgItem.border.style} ${imgItem.border.color};border-radius:${imgItem.border.radius * Store.zoomRatio}px;position:absolute;left:${-borderWidth}px;right:${-borderWidth}px;top:${-borderWidth}px;bottom:${-borderWidth}px;"
-                    />
+                    <div className="luckysheet-modal-dialog-border" />
                   </div>
                 );
               })}
