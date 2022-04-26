@@ -2,7 +2,7 @@
   <img align="center" src="logo.png" width="150px" height="150px" />
 </p>
 <h1 align="center">FortuneSheet</h1>
-<p align="center">FortuneSheet is an online spreadsheet component library that provides out-of-the-box features just like Excel</p>
+<p align="center">FortuneSheet is a drop-in javascript spreadsheet library that provides rich features like Excel and Google Sheets</p>
 
 <div align="center">
 
@@ -71,7 +71,7 @@ This project is in the state of early development, APIs may have significant cha
   - fonts
   - ✅ format painter
   - ✅ comments
-  - insert images
+  - ✅ insert images
   - more toolbar buttons
 - Excel import and export.
 - Support Vue.
@@ -82,7 +82,8 @@ This project is in the state of early development, APIs may have significant cha
   - find and replace
   - location
   - data verification
-  - hide, freeze, and split text
+  - ✅ freeze
+  - hide, and split text
 - More advanced features:
   - pivot tables
   - charts

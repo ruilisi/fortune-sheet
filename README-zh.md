@@ -3,7 +3,7 @@
   <img align="center" src="logo.png" width="150px" height="150px" />
 </p>
 <h1 align="center">FortuneSheet</h1>
-<p align="center">FortuneSheet是一款类似Excel的开箱即用的在线表格组件。</p>
+<p align="center">FortuneSheet是一款开箱即用的类似Excel和Google Sheets的javascript表格组件。</p>
 
 <div align="center">
 
@@ -67,7 +67,7 @@
   - 字体
   - ✅ 格式刷
   - ✅ 评论
-  - 插入图片
+  - ✅ 插入图片
   - 更多工具栏按钮
 - Excel 导入和导出.
 - 支持Vue.
@@ -78,6 +78,7 @@
   - 查找和替换
   - 定位
   - 数据验证
+  - ✅ 冻结
   - 隐藏、冻结，文本分列
 - 更多高级功能:
   - 数据透视表

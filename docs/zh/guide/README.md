@@ -1,7 +1,7 @@
 # 快速上手
 
 ## 基本介绍
-FortuneSheet是一款类似Excel的开箱即用的在线表格组件。
+FortuneSheet是一款开箱即用的类似Excel和Google Sheets的javascript表格组件。
 
 本项目源于 [Luckysheet](https://github.com/mengshukeji/Luckysheet)，并继承了它的很多代码。我们为将其转换为typescript做了很多努力，并且解决了一些项目层面的问题。
 

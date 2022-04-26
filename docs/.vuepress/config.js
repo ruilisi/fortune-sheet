@@ -6,12 +6,12 @@ module.exports = {
 		'/': {
 			lang: 'en-US', // 将会被设置为 <html> 的 lang 属性
 			title: 'FortuneSheet Document',
-			description: 'FortuneSheet is an online spreadsheet component library that provides out-of-the-box features just like Excel. This site contains official configuration document, API, and tutorial.'
+			description: 'FortuneSheet is a drop-in javascript spreadsheet library that provides rich features like Excel and Google Sheets. This site contains official configuration document, API, and tutorial.'
 		},
 		'/zh/': {
 			lang: 'zh-CN',
 			title: 'FortuneSheet文档',
-			description: 'FortuneSheet是一款类似Excel的开箱即用的在线表格组件。本站包含官方配置文档，API，教程。'
+			description: 'FortuneSheet是一款开箱即用的类似Excel和Google Sheets的javascript表格组件。本站包含官方配置文档，API，教程。'
 		},
 		
 	},
