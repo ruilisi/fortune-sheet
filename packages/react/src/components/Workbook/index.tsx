@@ -36,7 +36,7 @@ import produce, {
   Patch,
   produceWithPatches,
 } from "immer";
-import _, { assign } from "lodash";
+import _ from "lodash";
 import Sheet from "../Sheet";
 import WorkbookContext, { SetContextOptions } from "../../context";
 import Toolbar from "../Toolbar";
@@ -45,6 +45,7 @@ import SheetTab from "../SheetTab";
 import ContextMenu from "../ContextMenu";
 import SVGDefines from "../SVGDefines";
 import SheetTabContextMenu from "../ContextMenu/SheetTab";
+import MoreItemsContaier from "../Toolbar/MoreItemsContainer";
 
 enablePatches();
 
@@ -58,7 +59,7 @@ type AdditionalProps = {
 };
 
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
-  ({ onChange, onOp, ...props }, ref) => {
+  ({ onChange, onOp, data: originalData, ...props }, ref) => {
     const [context, setContext] = useState(defaultContext());
     const cellInput = useRef<HTMLDivElement>(null);
     const fxInput = useRef<HTMLDivElement>(null);
@@ -67,10 +68,14 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     const cellArea = useRef<HTMLDivElement>(null);
     const workbookContainer = useRef<HTMLDivElement>(null);
     const globalCache = useRef<GlobalCache>({ undoList: [], redoList: [] });
+    const [moreToolbarItems, setMoreToolbarItems] =
+      useState<React.ReactNode>(null);
 
     const mergedSettings = useMemo(
-      () => assign(_.cloneDeep(defaultSettings), props) as Required<Settings>,
-      [props]
+      () => _.assign(_.cloneDeep(defaultSettings), props) as Required<Settings>,
+      // props expect data, onChage, onOp
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [..._.values(props)]
     );
 
     const applyOp = useCallback((ops: Op[]) => {
@@ -203,7 +208,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       setContextWithProduce(
         (draftCtx) => {
           if (_.isEmpty(draftCtx.luckysheetfile)) {
-            const newData = produce(mergedSettings.data, (draftData) => {
+            const newData = produce(originalData, (draftData) => {
               ensureSheetIndex(draftData);
             });
             draftCtx.luckysheetfile = newData;
@@ -339,7 +344,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     }, [
       context.currentSheetIndex,
       context.luckysheetfile.length,
-      mergedSettings.data,
+      originalData,
       mergedSettings.defaultRowHeight,
       mergedSettings.defaultColWidth,
       mergedSettings.column,
@@ -379,6 +384,10 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       [setContextWithProduce]
     );
 
+    const onMoreToolbarItemsClose = useCallback(() => {
+      setMoreToolbarItems(null);
+    }, []);
+
     useEffect(() => {
       document.addEventListener("paste", onPaste);
       return () => {
@@ -404,13 +413,21 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         >
           <SVGDefines />
           <div className="fortune-workarea">
-            <Toolbar />
+            <Toolbar
+              moreItemsOpen={moreToolbarItems !== null}
+              setMoreItems={setMoreToolbarItems}
+            />
             <FxEditor />
           </div>
           <Sheet sheet={sheet} />
           <SheetTab />
           <ContextMenu />
           <SheetTabContextMenu />
+          {moreToolbarItems && (
+            <MoreItemsContaier onClose={onMoreToolbarItemsClose}>
+              {moreToolbarItems}
+            </MoreItemsContaier>
+          )}
           {!_.isEmpty(context.contextMenu) && (
             <div
               onMouseDown={() => {

@@ -2,12 +2,12 @@ import { locale, deleteSheet } from "@fortune-sheet/core";
 import React, {
   useContext,
   useRef,
-  useEffect,
   useState,
   useLayoutEffect,
   useCallback,
 } from "react";
 import WorkbookContext from "../../context";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
 import "./index.css";
 import Menu from "./Menu";
 
@@ -31,20 +31,7 @@ const SheetTabContextMenu: React.FC = () => {
     }
   }, [x, y]);
 
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as HTMLElement)
-      ) {
-        close();
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [close]);
+  useOutsideClick(containerRef, close, [close]);
 
   if (!sheet || x == null || y == null) return null;
 

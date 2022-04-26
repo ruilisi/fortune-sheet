@@ -1,4 +1,10 @@
-import React, { useContext, useCallback, useRef } from "react";
+import React, {
+  useContext,
+  useCallback,
+  useRef,
+  useEffect,
+  useState,
+} from "react";
 import {
   toolbarItemClickHandler,
   handleTextBackground,
@@ -28,10 +34,15 @@ import ColorPicker from "./ColorPicker";
 import Select, { Option } from "./Select";
 import SVGIcon from "../SVGIcon";
 
-const Toolbar: React.FC = () => {
+const Toolbar: React.FC<{
+  setMoreItems: React.Dispatch<React.SetStateAction<React.ReactNode>>;
+  moreItemsOpen: boolean;
+}> = ({ setMoreItems, moreItemsOpen }) => {
   const { context, setContext, refs, settings, handleUndo, handleRedo } =
     useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [toolbarWrapIndex, setToolbarWrapIndex] = useState(-1); // -1 means pending for item location calculation
+  const [itemLocations, setItemLocations] = useState<number[]>([]);
   const firstSelection = context.luckysheet_select_save?.[0];
   const flowdata = getFlowdata(context);
   const row = firstSelection?.row_focus;
@@ -39,6 +50,48 @@ const Toolbar: React.FC = () => {
   const cell =
     flowdata && row != null && col != null ? flowdata?.[row]?.[col] : undefined;
   const { toolbar, merge, border, freezen } = locale(context);
+  const sheetWidth = context.luckysheetTableContentHW[0];
+
+  // rerenders the entire toolbar and trigger recalculation of item locations
+  useEffect(() => {
+    setToolbarWrapIndex(-1);
+  }, [settings.showtoolbarConfig]);
+
+  // recalculate item locations
+  useEffect(() => {
+    if (toolbarWrapIndex === -1) {
+      const container = containerRef.current!;
+      if (!container) return;
+      const items = container.querySelectorAll(".fortune-toolbar-item");
+      if (!items) return;
+      const locations: number[] = [];
+      for (let i = 0; i < items.length; i += 1) {
+        const item = items[i] as HTMLElement;
+        locations.push(
+          item.offsetLeft - container.offsetLeft + item.clientWidth
+        );
+      }
+      setItemLocations(locations);
+    }
+  }, [toolbarWrapIndex, sheetWidth]);
+
+  // calculate the position after which items should be wrapped
+  useEffect(() => {
+    if (itemLocations.length === 0) return;
+    const container = containerRef.current!;
+    if (!container) return;
+    const moreButtonWidth = 50;
+    for (let i = itemLocations.length - 1; i >= 0; i -= 1) {
+      const loc = itemLocations[i];
+      if (loc + moreButtonWidth < container.offsetWidth) {
+        setToolbarWrapIndex(i);
+        if (i === itemLocations.length - 1) {
+          setMoreItems(null);
+        }
+        break;
+      }
+    }
+  }, [itemLocations, setMoreItems, sheetWidth]);
 
   const getToolbarItem = useCallback(
     (name: string, i: number) => {
@@ -499,7 +552,28 @@ const Toolbar: React.FC = () => {
   return (
     <div ref={containerRef} className="fortune-toolbar">
       <div className="luckysheet-toolbar-left-theme" />
-      {settings.showtoolbarConfig.map((name, i) => getToolbarItem(name, i))}
+      {(toolbarWrapIndex === -1
+        ? settings.showtoolbarConfig
+        : settings.showtoolbarConfig.slice(0, toolbarWrapIndex + 1)
+      ).map((name, i) => getToolbarItem(name, i))}
+      {toolbarWrapIndex !== -1 &&
+      toolbarWrapIndex < settings.showtoolbarConfig.length - 1 ? (
+        <Button
+          iconId="more"
+          tooltip={toolbar.toolMore}
+          onClick={() => {
+            if (moreItemsOpen) {
+              setMoreItems(null);
+            } else {
+              setMoreItems(
+                settings.showtoolbarConfig
+                  .slice(toolbarWrapIndex + 1)
+                  .map((name, i) => getToolbarItem(name, i))
+              );
+            }
+          }}
+        />
+      ) : null}
     </div>
   );
 };

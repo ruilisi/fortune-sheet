@@ -52,6 +52,7 @@ module.exports = {
         unnamedComponents: "arrow-function",
       },
     ],
+    "react/prop-types": 0,
     "react-hooks/rules-of-hooks": 2,
     "react-hooks/exhaustive-deps": 1,
     "@typescript-eslint/no-unused-vars": [2],

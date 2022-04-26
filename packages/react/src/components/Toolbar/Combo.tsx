@@ -1,4 +1,5 @@
-import React, { CSSProperties, useEffect, useRef, useState } from "react";
+import React, { CSSProperties, useRef, useState } from "react";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
 import SVGIcon from "../SVGIcon";
 
 type Props = {
@@ -22,23 +23,12 @@ const Combo: React.FC<Props> = ({
   const [open, setOpen] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (
-        popupRef.current &&
-        !popupRef.current.contains(e.target as HTMLElement)
-      ) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  useOutsideClick(popupRef, () => {
+    setOpen(false);
+  });
 
   return (
-    <div className="fortune-toobar-combo-container">
+    <div className="fortune-toobar-combo-container fortune-toolbar-item">
       <div className="fortune-toolbar-combo">
         <div
           className="fortune-toolbar-combo-button"

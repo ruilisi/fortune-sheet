@@ -19,7 +19,7 @@ const Button: React.FC<Props> = ({
   // const style: CSSProperties = { userSelect: "none" };
   return (
     <div
-      className="fortune-toolbar-button"
+      className="fortune-toolbar-button fortune-toolbar-item"
       onClick={onClick}
       data-tips={tooltip}
       role="button"
