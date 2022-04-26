@@ -102,6 +102,7 @@ export type Sheet = {
   data?: CellMatrix;
   celldata?: CellWithRowAndCol[];
   index?: string;
+  images?: any[];
   zoomRatio?: number;
   column?: number;
   row?: number;

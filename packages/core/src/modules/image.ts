@@ -1,7 +1,8 @@
 import _ from "lodash";
-import { CellMatrix, GlobalCache } from "../types";
-import { getArrowCanvasSize, getCellTopRightPostion, mergeBorder } from ".";
+import { GlobalCache } from "../types";
+import { mergeBorder } from ".";
 import { Context, getFlowdata } from "../context";
+import { getSheetIndex } from "../utils";
 
 type ImageProps = {
   defaultWidth: number;
@@ -29,45 +30,6 @@ export const imageProps: ImageProps = {
   cursorStartPosition: null,
 };
 
-export function getImageByRC(
-  ctx: Context,
-  flowdata: CellMatrix,
-  r: number,
-  c: number
-) {
-  const image = flowdata[r][c]?.ps;
-  const { toX, toY } = getCellTopRightPostion(ctx, flowdata, r, c);
-  // let scrollLeft = $("#luckysheet-cell-main").scrollLeft();
-  // let scrollTop = $("#luckysheet-cell-main").scrollTop();
-
-  // if(luckysheetFreezen.freezenverticaldata != null && toX < (luckysheetFreezen.freezenverticaldata[0] - luckysheetFreezen.freezenverticaldata[2])){
-  //     toX += scrollLeft;
-  // }
-  // if(luckysheetFreezen.freezenhorizontaldata != null && toY < (luckysheetFreezen.freezenhorizontaldata[0] - luckysheetFreezen.freezenhorizontaldata[2])){
-  //     toY += scrollTop;
-  // }
-  const left =
-    image?.left == null ? toX + 18 * ctx.zoomRatio : image.left * ctx.zoomRatio;
-  let top =
-    image?.top == null ? toY - 18 * ctx.zoomRatio : image.top * ctx.zoomRatio;
-  const width =
-    image?.width == null
-      ? imageProps.defaultWidth * ctx.zoomRatio
-      : image.width * ctx.zoomRatio;
-  const height =
-    image?.height == null
-      ? imageProps.defaultHeight * ctx.zoomRatio
-      : image.height * ctx.zoomRatio;
-  const value = image?.value == null ? "" : image.value;
-
-  if (top < 0) {
-    top = 2;
-  }
-  const size = getArrowCanvasSize(left, top, toX, toY);
-  const rc = `${r}_${c}`;
-  return { r, c, rc, left, top, width, height, value, size, autoFocus: false };
-}
-
 export function generateRandomId(prefix: string) {
   if (prefix == null) {
     prefix = "img";
@@ -94,7 +56,12 @@ export function showImgChooser() {
   ) as HTMLInputElement;
   if (chooser) chooser.click();
 }
-
+export function saveImage(ctx: Context) {
+  const index = getSheetIndex(ctx, ctx.currentSheetIndex);
+  if (index == null) return;
+  const file = ctx.luckysheetfile[index];
+  file.images = ctx.insertedImgs;
+}
 function _insertImg(src: any, ctx: Context, setContext: any) {
   try {
     const last =
@@ -138,6 +105,7 @@ function _insertImg(src: any, ctx: Context, setContext: any) {
       };
       setContext((draftCtx: Context) => {
         draftCtx.insertedImgs = (draftCtx.insertedImgs || []).concat(img);
+        saveImage(draftCtx);
       });
     };
     // addImgItem(img);
