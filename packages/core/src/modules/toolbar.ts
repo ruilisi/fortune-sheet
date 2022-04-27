@@ -1083,6 +1083,7 @@ export function autoSelectionFormula(
     formulaCache.execFunctionExist.reverse();
     // @ts-ignore
     execFunctionGroup(ctx, null, null, null, null, flowdata);
+    formulaCache.execFunctionGlobalData = null;
     // jfrefreshgrid(d, Store.luckysheet_select_save);
 
     clearTimeout(ctx.jfcountfuncTimeout);

@@ -1042,6 +1042,7 @@ export function updateCell(
   //   );
   // }, 0);
 
+  formulaCache.execFunctionGlobalData = null;
   /*
   if (isRefresh) {
     jfrefreshgrid(

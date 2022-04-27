@@ -80,7 +80,7 @@ parser.on("callCellValue", (cellCoord: any, done: any) => {
   const flowdata = getFlowdata(currentContext);
   const index = currentContext?.currentSheetIndex;
   const cell =
-    formulaCache.execFunctionGlobalData[
+    formulaCache.execFunctionGlobalData?.[
       `${cellCoord.row.index}_${cellCoord.column.index}_${index}`
     ] || flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
   const v = tryGetCellAsNumber(cell);
@@ -107,7 +107,7 @@ parser.on(
         col += 1
       ) {
         const cell =
-          formulaCache.execFunctionGlobalData[`${row}_${col}_${index}`] ||
+          formulaCache.execFunctionGlobalData?.[`${row}_${col}_${index}`] ||
           flowdata?.[row]?.[col];
         const v = tryGetCellAsNumber(cell);
         colFragment.push(v);
