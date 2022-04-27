@@ -2148,7 +2148,7 @@ function mouseRender(
     const y = e.pageY - rect.top - ctx.columnHeaderHeight + container.scrollTop;
     if (
       y + 3 - ctx.luckysheet_rows_change_size_start[0] > 19 &&
-      y < rect.height + ctx.scrollTop - 200
+      y < rect.height + ctx.scrollTop - 20
     ) {
       const changeSizeLine = document.querySelector(
         ".luckysheet-change-size-line"
@@ -3721,8 +3721,8 @@ export function handleOverlayMouseUp(
       size = 19;
     }
 
-    if (y >= winH - 200 + scrollTop) {
-      size = winH - 200 - ctx.luckysheet_rows_change_size_start[0] + scrollTop;
+    if (y >= winH - 20 + scrollTop) {
+      size = winH - 20 - ctx.luckysheet_rows_change_size_start[0] + scrollTop;
     }
 
     const cfg = ctx.config;
