@@ -320,6 +320,7 @@ export function onImageMoveEnd(
         img.top = position.top;
       }
     }
+    saveImage(ctx);
   }
 }
 
@@ -416,5 +417,6 @@ export function onImageResizeEnd(
         img.height = position.height;
       }
     }
+    saveImage(ctx);
   }
 }

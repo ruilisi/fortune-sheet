@@ -305,6 +305,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             ? []
             : sheet.luckysheet_selection_range;
           draftCtx.config = _.isNil(sheet.config) ? {} : sheet.config;
+          draftCtx.insertedImgs = sheet.images;
 
           draftCtx.zoomRatio = _.isNil(sheet.zoomRatio) ? 1 : sheet.zoomRatio;
 
