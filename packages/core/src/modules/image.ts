@@ -56,12 +56,15 @@ export function showImgChooser() {
   ) as HTMLInputElement;
   if (chooser) chooser.click();
 }
+
 export function saveImage(ctx: Context) {
   const index = getSheetIndex(ctx, ctx.currentSheetIndex);
   if (index == null) return;
   const file = ctx.luckysheetfile[index];
+
   file.images = ctx.insertedImgs;
 }
+
 function _insertImg(src: any, ctx: Context, setContext: any) {
   try {
     const last =
@@ -120,7 +123,18 @@ function _insertImg(src: any, ctx: Context, setContext: any) {
   }
 }
 // }
+export function removeActiveImage(ctx: Context) {
+  // setContext((ctx: Context) => {
 
+  ctx.insertedImgs = _.filter(
+    ctx.insertedImgs,
+    (image) => image.id !== ctx.activeImg.id
+  );
+  ctx.activeImg = undefined;
+  saveImage(ctx);
+}
+// });
+// }
 export function insertImage(setContext: any, file: any) {
   // const uploadImage = ctx.toJsonOptions && Store.toJsonOptions.uploadImage;
   // if (typeof uploadImage === "function") {

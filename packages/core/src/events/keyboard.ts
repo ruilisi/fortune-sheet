@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { removeActiveImage } from "..";
 import { Context, getFlowdata } from "../context";
 import { updateCell, cancelNormalSelected } from "../modules/cell";
 import { handleFormulaInput } from "../modules/formula";
@@ -582,11 +583,11 @@ export function handleGlobalKeyDown(
       // selectHightlightShow();
     } else if (kstr === "Delete" || kstr === "Backspace") {
       if (!ctx.allowEdit) return;
-      // if (imageCtrl.currentImgId != null) {
-      //   imageCtrl.removeImgItem();
-      // } else {
-      deleteSelectedCellText(ctx);
-      // }
+      if (ctx.activeImg.id != null) {
+        removeActiveImage(ctx);
+      } else {
+        deleteSelectedCellText(ctx);
+      }
 
       e.preventDefault();
       // } else if (kstr === "Backspace" && imageCtrl.currentImgId != null) {
