@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React, { useContext, useRef } from "react";
 import { updateCell, addSheet } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
@@ -54,9 +55,15 @@ const SheetTab: React.FC = () => {
             id="fortune-sheettab-container-c"
             ref={tabContainerRef}
           >
-            {context.luckysheetfile.map((sheet) => {
-              return <SheetItem key={sheet.index} sheet={sheet} />;
-            })}
+            {_.sortBy(context.luckysheetfile, (s) => Number(s.order)).map(
+              (sheet) => {
+                return <SheetItem key={sheet.index} sheet={sheet} />;
+              }
+            )}
+            <SheetItem
+              isDropPlaceholder
+              sheet={{ name: "", index: "drop-placeholder" }}
+            />
           </div>
         </div>
         <div

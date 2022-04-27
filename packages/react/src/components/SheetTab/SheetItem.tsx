@@ -1,4 +1,5 @@
 import { Sheet, editSheetName } from "@fortune-sheet/core";
+import _ from "lodash";
 import React, {
   useContext,
   useState,
@@ -10,20 +11,23 @@ import WorkbookContext from "../../context";
 
 type Props = {
   sheet: Sheet;
+  isDropPlaceholder?: boolean;
 };
 
-const SheetItem: React.FC<Props> = ({ sheet }) => {
+const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const [editing, setEditing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const editable = useRef<HTMLSpanElement>(null);
+  const [dragOver, setDragOver] = useState(false);
 
   useEffect(() => {
+    if (!editable.current) return;
     if (editing) {
       // select all when enter editing mode
       if (window.getSelection) {
         const range = document.createRange();
-        range.selectNodeContents(editable.current!);
+        range.selectNodeContents(editable.current);
         if (
           range.startContainer &&
           document.body.contains(range.startContainer)
@@ -36,13 +40,13 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
       } else if (document.selection) {
         // @ts-ignore
         const range = document.body.createTextRange();
-        range.moveToElementText(editable.current!);
+        range.moveToElementText(editable.current);
         range.select();
       }
     }
 
     // store the current text
-    editable.current!.dataset.oldText = editable.current!.innerText;
+    editable.current.dataset.oldText = editable.current.innerText;
   }, [editing]);
 
   const onBlur = useCallback(() => {
@@ -59,21 +63,71 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
     e.stopPropagation();
   }, []);
 
+  const onDragStart = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.dataTransfer.setData("index", `${sheet.index}`);
+    },
+    [sheet.index]
+  );
+
+  const onDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      setContext((draftCtx) => {
+        const draggingIndex = e.dataTransfer.getData("index");
+        const droppingIndex = sheet.index;
+        let draggingSheet: Sheet | undefined;
+        let droppingSheet: Sheet | undefined;
+        _.sortBy(draftCtx.luckysheetfile, ["order"]).forEach((f, i) => {
+          f.order = i;
+          if (f.index === draggingIndex) {
+            draggingSheet = f;
+          } else if (f.index === droppingIndex) {
+            droppingSheet = f;
+          }
+        });
+        if (draggingSheet && droppingSheet) {
+          draggingSheet.order = droppingSheet.order! - 0.1;
+          // re-order all sheets
+          _.sortBy(draftCtx.luckysheetfile, ["order"]).forEach((f, i) => {
+            f.order = i;
+          });
+        } else if (draggingSheet && isDropPlaceholder) {
+          draggingSheet.order = draftCtx.luckysheetfile.length;
+        }
+      });
+      setDragOver(false);
+    },
+    [isDropPlaceholder, setContext, sheet.index]
+  );
+
   return (
     <div
+      onDragOver={(e) => e.preventDefault()}
+      onDragEnter={() => setDragOver(true)}
+      onDragLeave={() => setDragOver(false)}
+      onDragEnd={() => setDragOver(false)}
+      onDrop={onDrop}
+      onDragStart={onDragStart}
+      draggable
       key={sheet.index}
       ref={containerRef}
-      className={`luckysheet-sheets-item${
-        context.currentSheetIndex === sheet.index
-          ? " luckysheet-sheets-item-active"
-          : ""
-      }`}
+      className={
+        isDropPlaceholder
+          ? "fortune-sheettab-placeholder"
+          : `luckysheet-sheets-item${
+              context.currentSheetIndex === sheet.index
+                ? " luckysheet-sheets-item-active"
+                : ""
+            }`
+      }
       onClick={() => {
+        if (isDropPlaceholder) return;
         setContext((draftCtx) => {
           draftCtx.currentSheetIndex = sheet.index!;
         });
       }}
       onContextMenu={(e) => {
+        if (isDropPlaceholder) return;
         const rect = refs.workbookContainer.current!.getBoundingClientRect();
         setContext((ctx) => {
           ctx.sheetTabContextMenu = {
@@ -84,20 +138,19 @@ const SheetItem: React.FC<Props> = ({ sheet }) => {
           };
         });
       }}
+      style={dragOver ? { borderLeft: "2px solid #0188fb" } : {}}
     >
       <span
         className="luckysheet-sheets-item-name"
         spellCheck="false"
-        contentEditable={editing}
+        contentEditable={isDropPlaceholder ? false : editing}
         onDoubleClick={() => setEditing(true)}
         onBlur={onBlur}
         onKeyDown={onKeyDown}
         ref={editable}
+        style={dragOver ? { pointerEvents: "none" } : {}}
       >
         {sheet.name}
-      </span>
-      <span className="luckysheet-sheets-item-menu luckysheet-mousedown-cancel">
-        <i className="fa fa-sort-desc luckysheet-mousedown-cancel" />
       </span>
     </div>
   );

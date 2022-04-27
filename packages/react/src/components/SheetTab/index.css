@@ -82,6 +82,7 @@
   box-sizing: border-box;
   border-left: 1px solid #e0e0e0;
   border-right: 1px solid #e0e0e0;
+  vertical-align: middle;
 }
 
 .luckysheet-sheet-area div.luckysheet-sheets-item:last-child {
@@ -188,4 +189,12 @@
 
 .fortune-sheettab-scroll:hover {
   background-color: #e0e0e0;
+}
+
+.fortune-sheettab-placeholder {
+  display: inline-block;
+  width: 30px;
+  height: 29px;
+  line-height: 29px;
+  vertical-align: middle;
 }
