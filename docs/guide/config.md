@@ -166,48 +166,21 @@ The following are all supported setting parameters
 	]
 	```
 	
-	In addition to the cells, the configuration here also includes the row header right-click menu, the column header right-click menu, and the column header drop-down arrow menu. The specific configuration relationships are as follows:
-	
-	|Right-click menu configuration|Cell|Row header|Column header|Column arrow|
-	| ------------ | ------------ | ------------ | ----------- | ------------ |
-	|copy|copy|copy|copy|copy|
-	|copyAs|copy as|copy as|copy as|copy as|
-	|paste|paste|paste|paste|paste|
-	|insertRow|Insert a row|Increase N rows upwards and N rows downwards|-|-|
-	|insertColumn|Insert Column|-|Add N columns to the left and N columns to the right|Add N columns to the left and N columns to the right|
-	|deleteRow|Delete selected row|Delete selected row|-|-|
-	|deleteColumn|Delete selected column|-|Delete selected column|Delete selected column|
-	|deleteCell|Delete cell|-|-|-|
-	|hideRow|-|Hide the selected row and show the selected row|-|-|
-	|hideColumn|-|-|Hide the selected column and show the selected column|Hide the selected column and show the selected column|
-	|rowHeight|-|row height|-|-|
-	|columnWidth|-|-|Column Width|Column Width|
-	|clear|clear content|clear content|clear content|-|
-	|matrix|Matrix Operation Selection|Matrix Operation Selection|Matrix Operation Selection|-|
-	|sort|Sort selection|Sort selection|Sort selection|A-Z sort and Z-A sort|
-	|filter|Filter selection|Filter selection|Filter selection|-|
-	|chart|chart generation|chart generation|chart generation|-|
-	|image|Insert Picture|Insert Picture|Insert Picture|-|
-	|link|Insert link|Insert link|Insert link|-|
-	|data|Data Verification|Data Verification|Data Verification|-|
-	|cellFormat|Set cell format|Set cell format|Set cell format|-|
-
 ------------
 ### sheetTabContextMenu
 
 - Type: Object
-- Default: {}
 - Usage: Customize the right-click menu of the bottom sheet bar
 - Format: 
     ```json
-    {   
-        delete: false, //Delete
-        copy: false, //Copy
-        rename: false, //Rename
-        color: false, //Change color
-        hide: false, //Hide, unhide
-        move: false, //Move to the left, move to the right
-    }
+	[
+		"delete",
+		"copy",
+		"rename",
+		"color",
+		"hide",
+		"move"
+	]
 
 ------------
 ### rowHeaderWidth
