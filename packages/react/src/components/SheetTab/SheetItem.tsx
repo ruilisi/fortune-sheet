@@ -66,6 +66,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
   const onDragStart = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       e.dataTransfer.setData("index", `${sheet.index}`);
+      e.stopPropagation();
     },
     [sheet.index]
   );
@@ -96,16 +97,29 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
         }
       });
       setDragOver(false);
+      e.stopPropagation();
     },
     [isDropPlaceholder, setContext, sheet.index]
   );
 
   return (
     <div
-      onDragOver={(e) => e.preventDefault()}
-      onDragEnter={() => setDragOver(true)}
-      onDragLeave={() => setDragOver(false)}
-      onDragEnd={() => setDragOver(false)}
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+      onDragEnter={(e) => {
+        setDragOver(true);
+        e.stopPropagation();
+      }}
+      onDragLeave={(e) => {
+        setDragOver(false);
+        e.stopPropagation();
+      }}
+      onDragEnd={(e) => {
+        setDragOver(false);
+        e.stopPropagation();
+      }}
       onDrop={onDrop}
       onDragStart={onDragStart}
       draggable
