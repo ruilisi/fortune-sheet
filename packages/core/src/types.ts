@@ -191,6 +191,18 @@ export type GlobalCache = {
     boxInitialPosition: Rect | undefined;
     cursorMoveStartPosition: { x: number; y: number } | undefined;
   };
+  touchMoveStatus?: boolean;
+  touchHandleStatus?: boolean;
+  touchMoveStartPos?: {
+    x: number;
+    y: number;
+    vy: number;
+    moveType: string;
+    vy_x?: number;
+    vy_y?: number;
+    scrollTop?: number;
+    scrollLeft?: number;
+  };
 };
 
 export type SingleRange = { row: number[]; column: number[] };

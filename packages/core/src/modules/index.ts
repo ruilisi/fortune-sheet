@@ -17,3 +17,4 @@ export * from "./toolbar";
 export * from "./validation";
 export * from "./comment";
 export * from "./image";
+export * from "./mobile";

@@ -22,6 +22,9 @@ import {
   showComments,
   selectAll,
   getSelectionStyle,
+  handleOverlayTouchEnd,
+  handleOverlayTouchMove,
+  handleOverlayTouchStart,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -35,7 +38,7 @@ const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const flowdata = getFlowdata(context);
-
+  // const isMobile = browser.mobilecheck();
   const cellAreaMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       setContext((draftCtx) => {
@@ -125,6 +128,35 @@ const SheetOverlay: React.FC = () => {
     [refs.globalCache, setContext, settings]
   );
 
+  const onTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      setContext((draftContext) => {
+        handleOverlayTouchStart(draftContext, e.nativeEvent, refs.globalCache);
+      });
+      e.stopPropagation();
+    },
+    [refs.globalCache, setContext]
+  );
+
+  const onTouchMove = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      setContext((draftCtx) => {
+        handleOverlayTouchMove(
+          draftCtx,
+          e.nativeEvent,
+          refs.globalCache,
+          refs.scrollbarX.current!,
+          refs.scrollbarY.current!
+        );
+      });
+      // e.stopPropagation();
+    },
+    [refs.globalCache, refs.scrollbarX, refs.scrollbarY, setContext]
+  );
+  const onTouchEnd = useCallback(() => {
+    handleOverlayTouchEnd(refs.globalCache);
+  }, [refs.globalCache]);
+
   useEffect(() => {
     refs.cellArea.current!.scrollLeft = context.scrollLeft;
     refs.cellArea.current!.scrollTop = context.scrollTop;
@@ -187,6 +219,9 @@ const SheetOverlay: React.FC = () => {
       ref={containerRef}
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
       tabIndex={-1}
       style={{
         width: context.luckysheetTableContentHW[0],
