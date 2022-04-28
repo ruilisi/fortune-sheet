@@ -1,54 +1,49 @@
-import { getFlowdata } from "../../context";
 import {
   handleCurrencyFormat,
   handleNumberDecrease,
   handleNumberIncrease,
   handlePercentageFormat,
 } from "../../modules/toolbar";
+import {
+  context,
+  luckysheetSlectSave,
+} from "../../../../../tests/mockData/context";
+import { getFlowdata } from "../../context";
 
 describe("number format", () => {
-  const context = {
-    currentSheetIndex: "index_1",
-    allowEdit: true,
-    config: {},
-    luckysheet_select_save: [
-      {
-        row: [1, 1],
-        column: [1, 1],
-        row_focus: 1,
-        column_focus: 1,
-      },
-    ],
-    luckysheetfile: [
-      {
-        index: "index_1",
-        data: [
-          [null, null],
-          [null, { m: "5", v: "5" }],
-        ],
-        length: 1,
-      },
-    ],
-  };
+  const getContext = () =>
+    context({
+      luckysheet_select_save: luckysheetSlectSave([1, 1], [1, 1], 1, 1),
+      luckysheetfile: [
+        {
+          index: "index_1",
+          data: [
+            [null, null],
+            [null, { m: "5", v: "5" }],
+          ],
+        },
+      ],
+    });
   const cellInput = document.createElement("div");
+  const ctx = getContext();
   test("currency", async () => {
-    handleCurrencyFormat(context, cellInput);
-    const flowdata = getFlowdata(context);
+    handleCurrencyFormat(ctx, cellInput);
+    const flowdata = getFlowdata(ctx);
     expect(flowdata[1][1].m).toBe("¥ 5.00");
   });
   test("percentage", async () => {
-    handlePercentageFormat(context, cellInput);
-    const flowdata = getFlowdata(context);
+    handlePercentageFormat(ctx, cellInput);
+    const flowdata = getFlowdata(ctx);
     expect(flowdata[1][1].m).toBe("500.00%");
   });
   test("number decrease", async () => {
-    handleNumberDecrease(context, cellInput);
-    const flowdata = getFlowdata(context);
+    handleNumberDecrease(ctx, cellInput);
+    const flowdata = getFlowdata(ctx);
     expect(flowdata[1][1].m).toBe("500.0%");
   });
   test("number increase", async () => {
-    handleNumberIncrease(context, cellInput);
-    const flowdata = getFlowdata(context);
+    handleNumberIncrease(ctx, cellInput);
+    const flowdata = getFlowdata(ctx);
     expect(flowdata[1][1].m).toBe("500.00%");
   });
 });

@@ -1,68 +1,66 @@
+import {
+  context,
+  luckysheetSlectSave,
+} from "../../../../../tests/mockData/context";
 import { handleFreeze } from "../../modules/toolbar";
 
 describe("freeze", () => {
-  const getContext = () => ({
-    currentSheetIndex: "index_1",
-    allowEdit: true,
-    luckysheet_select_save: [
-      {
-        row_focus: 1,
-        column_focus: 1,
-      },
-    ],
-    luckysheetfile: [{ index: "index_1" }],
-  });
+  const getContext = () =>
+    context({
+      luckysheet_select_save: luckysheetSlectSave([0, 1], [0, 1], 1, 1),
+      luckysheetfile: [{ index: "index_1" }],
+    });
   test("freeze row and cancel", async () => {
-    const context = getContext();
-    handleFreeze(context, "freeze-row");
-    expect(context.luckysheetfile[0].frozen.range).toEqual({
+    const ctx = getContext();
+    handleFreeze(ctx, "freeze-row");
+    expect(ctx.luckysheetfile[0].frozen.range).toEqual({
       column_focus: 1,
       row_focus: 1,
     });
-    expect(context.luckysheetfile[0].frozen.type).toEqual("rangeRow");
-    handleFreeze(context, "freeze-cancel");
-    expect(context.luckysheetfile[0].frozen).toBeUndefined();
+    expect(ctx.luckysheetfile[0].frozen.type).toEqual("rangeRow");
+    handleFreeze(ctx, "freeze-cancel");
+    expect(ctx.luckysheetfile[0].frozen).toBeUndefined();
   });
   test("freeze column and cancel", async () => {
-    const context = getContext();
-    handleFreeze(context, "freeze-col");
-    expect(context.luckysheetfile[0].frozen.range).toEqual({
+    const ctx = getContext();
+    handleFreeze(ctx, "freeze-col");
+    expect(ctx.luckysheetfile[0].frozen.range).toEqual({
       column_focus: 1,
       row_focus: 1,
     });
-    expect(context.luckysheetfile[0].frozen.type).toEqual("rangeColumn");
-    handleFreeze(context, "freeze-cancel");
-    expect(context.luckysheetfile[0].frozen).toBeUndefined();
+    expect(ctx.luckysheetfile[0].frozen.type).toEqual("rangeColumn");
+    handleFreeze(ctx, "freeze-cancel");
+    expect(ctx.luckysheetfile[0].frozen).toBeUndefined();
   });
   test("freeze both and cancel", async () => {
-    const context = getContext();
-    handleFreeze(context, "both");
-    expect(context.luckysheetfile[0].frozen.range).toEqual({
+    const ctx = getContext();
+    handleFreeze(ctx, "both");
+    expect(ctx.luckysheetfile[0].frozen.range).toEqual({
       column_focus: 1,
       row_focus: 1,
     });
-    expect(context.luckysheetfile[0].frozen.type).toEqual("both");
-    handleFreeze(context, "freeze-cancel");
-    expect(context.luckysheetfile[0].frozen).toBeUndefined();
+    expect(ctx.luckysheetfile[0].frozen.type).toEqual("both");
+    handleFreeze(ctx, "freeze-cancel");
+    expect(ctx.luckysheetfile[0].frozen).toBeUndefined();
   });
   test("freeze column and then freeze row", async () => {
-    const context = getContext();
-    handleFreeze(context, "freeze-col");
-    handleFreeze(context, "freeze-row");
-    expect(context.luckysheetfile[0].frozen.range).toEqual({
+    const ctx = getContext();
+    handleFreeze(ctx, "freeze-col");
+    handleFreeze(ctx, "freeze-row");
+    expect(ctx.luckysheetfile[0].frozen.range).toEqual({
       column_focus: 1,
       row_focus: 1,
     });
-    expect(context.luckysheetfile[0].frozen.type).toEqual("rangeRow");
+    expect(ctx.luckysheetfile[0].frozen.type).toEqual("rangeRow");
   });
   test("freeze column and then freeze both", async () => {
-    const context = getContext();
-    handleFreeze(context, "freeze-col");
-    handleFreeze(context, "both");
-    expect(context.luckysheetfile[0].frozen.range).toEqual({
+    const ctx = getContext();
+    handleFreeze(ctx, "freeze-col");
+    handleFreeze(ctx, "both");
+    expect(ctx.luckysheetfile[0].frozen.range).toEqual({
       column_focus: 1,
       row_focus: 1,
     });
-    expect(context.luckysheetfile[0].frozen.type).toEqual("both");
+    expect(ctx.luckysheetfile[0].frozen.type).toEqual("both");
   });
 });

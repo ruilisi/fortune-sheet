@@ -1,3 +1,7 @@
+import {
+  context,
+  luckysheetSlectSave,
+} from "../../../../../tests/mockData/context";
 import { getFlowdata } from "../../context";
 import { autoSelectionFormula } from "../../modules/toolbar";
 
@@ -15,28 +19,20 @@ function expectValuesInPositions(flowdata, expectValues, expectPositions) {
   }
 }
 describe("auto formula", () => {
-  const getContext = () => ({
-    currentSheetIndex: "index_1",
-    allowEdit: true,
-    config: {},
-    luckysheet_select_save: [
-      {
-        row: [0, 1],
-        column: [0, 1],
-      },
-    ],
-    luckysheetfile: [
-      {
-        index: "index_1",
-        data: [
-          [{ v: "30", ct: { t: "n" } }, { v: "40", ct: { t: "n" } }, null],
-          [{ v: "30", ct: { t: "n" } }, { v: "50", ct: { t: "n" } }, null],
-          [null, null, null],
-        ],
-        length: 1,
-      },
-    ],
-  });
+  const getContext = () =>
+    context({
+      luckysheet_select_save: luckysheetSlectSave([0, 1], [0, 1], 0, 0),
+      luckysheetfile: [
+        {
+          index: "index_1",
+          data: [
+            [{ v: "30", ct: { t: "n" } }, { v: "40", ct: { t: "n" } }, null],
+            [{ v: "30", ct: { t: "n" } }, { v: "50", ct: { t: "n" } }, null],
+            [null, null, null],
+          ],
+        },
+      ],
+    });
   const expectPositions = [
     [0, 2],
     [1, 2],
@@ -46,52 +42,48 @@ describe("auto formula", () => {
 
   test("sum", async () => {
     const cellInput = document.createElement("div");
-    const context = getContext();
-    autoSelectionFormula(context, cellInput, "SUM");
+    const ctx = getContext();
+    autoSelectionFormula(ctx, cellInput, "SUM");
     expectValuesInPositions(
-      getFlowdata(context),
+      getFlowdata(ctx),
       [70, 80, 60, 90],
       expectPositions
     );
   });
   test("min", async () => {
     const cellInput = document.createElement("div");
-    const context = getContext();
-    autoSelectionFormula(context, cellInput, "MIN");
+    const ctx = getContext();
+    autoSelectionFormula(ctx, cellInput, "MIN");
     expectValuesInPositions(
-      getFlowdata(context),
+      getFlowdata(ctx),
       [30, 30, 30, 40],
       expectPositions
     );
   });
   test("max", async () => {
     const cellInput = document.createElement("div");
-    const context = getContext();
-    autoSelectionFormula(context, cellInput, "max");
+    const ctx = getContext();
+    autoSelectionFormula(ctx, cellInput, "max");
     expectValuesInPositions(
-      getFlowdata(context),
+      getFlowdata(ctx),
       [40, 50, 30, 50],
       expectPositions
     );
   });
   test("average", async () => {
     const cellInput = document.createElement("div");
-    const context = getContext();
-    autoSelectionFormula(context, cellInput, "AVERAGE");
+    const ctx = getContext();
+    autoSelectionFormula(ctx, cellInput, "AVERAGE");
     expectValuesInPositions(
-      getFlowdata(context),
+      getFlowdata(ctx),
       [35, 40, 30, 45],
       expectPositions
     );
   });
   test("count", async () => {
     const cellInput = document.createElement("div");
-    const context = getContext();
-    autoSelectionFormula(context, cellInput, "COUNT");
-    expectValuesInPositions(
-      getFlowdata(context),
-      [2, 2, 2, 2],
-      expectPositions
-    );
+    const ctx = getContext();
+    autoSelectionFormula(ctx, cellInput, "COUNT");
+    expectValuesInPositions(getFlowdata(ctx), [2, 2, 2, 2], expectPositions);
   });
 });
