@@ -281,7 +281,7 @@ export function pasteHandlerOfPaintModel(
 
       const offsetMC: any = {};
       for (let h = mth; h < maxrowCache; h += 1) {
-        if (!h) return;
+        if (h == null) return;
         if (flowdata[h] == null) return;
         let x: any[] = [];
         x = flowdata[h];
