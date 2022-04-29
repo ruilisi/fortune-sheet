@@ -13,12 +13,7 @@ import {
   filterPatch,
   patchToOp,
   Op,
-  opToPatch,
   inverseRowColOptions,
-  insertRowCol,
-  deleteRowCol,
-  addSheet,
-  deleteSheet,
   ensureSheetIndex,
 } from "@fortune-sheet/core";
 import React, {
@@ -46,12 +41,11 @@ import ContextMenu from "../ContextMenu";
 import SVGDefines from "../SVGDefines";
 import SheetTabContextMenu from "../ContextMenu/SheetTab";
 import MoreItemsContaier from "../Toolbar/MoreItemsContainer";
+import { generateAPIs } from "./api";
 
 enablePatches();
 
-export type WorkbookInstance = {
-  applyOp: (ops: Op[]) => void;
-};
+export type WorkbookInstance = ReturnType<typeof generateAPIs>;
 
 type AdditionalProps = {
   onChange?: (data: SheetType[]) => void;
@@ -78,34 +72,6 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       [..._.values(props)]
     );
 
-    const applyOp = useCallback((ops: Op[]) => {
-      setContext((ctx_) => {
-        const [patches, specialOps] = opToPatch(ctx_, ops);
-        if (specialOps.length > 0) {
-          const [specialOp] = specialOps;
-          if (specialOp.op === "insertRowCol") {
-            ctx_ = produce(ctx_, (draftCtx) => {
-              insertRowCol(draftCtx, specialOp.value);
-            });
-          } else if (specialOp.op === "deleteRowCol") {
-            ctx_ = produce(ctx_, (draftCtx) => {
-              deleteRowCol(draftCtx, specialOp.value);
-            });
-          } else if (specialOp.op === "addSheet") {
-            ctx_ = produce(ctx_, (draftCtx) => {
-              addSheet(draftCtx);
-            });
-          } else if (specialOp.op === "deleteSheet") {
-            ctx_ = produce(ctx_, (draftCtx) => {
-              deleteSheet(draftCtx, specialOp.value.index);
-            });
-          }
-        }
-        const newContext = applyPatches(ctx_, patches);
-        return newContext;
-      });
-    }, []);
-
     const emitOp = useCallback(
       (ctx: Context, patches: Patch[], options?: SetContextOptions) => {
         if (onOp) {
@@ -114,8 +80,6 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       },
       [onOp]
     );
-
-    useImperativeHandle(ref, () => ({ applyOp }));
 
     const setContextWithProduce = useCallback(
       (recipe: (ctx: Context) => void, options: SetContextOptions = {}) => {
@@ -388,6 +352,13 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         document.removeEventListener("paste", onPaste);
       };
     }, [onPaste]);
+
+    // expose APIs
+    useImperativeHandle(
+      ref,
+      () => generateAPIs(context, setContextWithProduce, cellInput.current),
+      [context, setContextWithProduce]
+    );
 
     const i = getSheetIndex(context, context.currentSheetIndex);
     if (i == null) {

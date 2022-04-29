@@ -41,7 +41,7 @@ type ToolbarItemClickHandler = (
 
 type ToolbarItemSelectedFunc = (cell: Cell | null | undefined) => boolean;
 
-function updateFormatCell(
+export function updateFormatCell(
   ctx: Context,
   d: CellMatrix,
   attr: keyof Cell,

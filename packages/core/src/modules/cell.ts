@@ -655,11 +655,11 @@ export function updateCell(
   ctx: Context,
   r: number,
   c: number,
-  $input: HTMLDivElement,
+  $input?: HTMLDivElement,
   value?: any
 ) {
-  let inputText = $input.innerText;
-  const inputHtml = $input.innerHTML;
+  let inputText = $input?.innerText;
+  const inputHtml = $input?.innerHTML;
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
 
@@ -696,7 +696,7 @@ export function updateCell(
 
   const isPrevInline = isInlineStringCell(curv);
   let isCurInline =
-    inputText.slice(0, 1) !== "=" && inputHtml.substring(0, 5) === "<span";
+    inputText?.slice(0, 1) !== "=" && inputHtml?.substring(0, 5) === "<span";
 
   let isCopyVal = false;
   if (!isCurInline && inputText && inputText.length > 0) {
@@ -733,7 +733,7 @@ export function updateCell(
     }
 
     curv.ct.t = "inlineStr";
-    curv.ct.s = convertSpanToShareString($input.querySelectorAll("span"));
+    curv.ct.s = convertSpanToShareString($input!.querySelectorAll("span"));
     if (isCopyVal) {
       curv.ct.s = [
         {
@@ -744,7 +744,7 @@ export function updateCell(
   }
 
   // API, we get value from user
-  value = value || $input.innerText;
+  value = value || $input?.innerText;
 
   // Hook function
   // if (!method.createHookFunction("cellUpdateBefore", r, c, value, isRefresh)) {

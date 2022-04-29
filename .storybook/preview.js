@@ -9,7 +9,7 @@ export const parameters = {
   options: {
     storySort: {
       // put Workbook at first
-      order: ['Workbook'],
+      order: ["Features", "API"],
     },
   },
 };
