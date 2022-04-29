@@ -583,7 +583,7 @@ export function handleGlobalKeyDown(
       // selectHightlightShow();
     } else if (kstr === "Delete" || kstr === "Backspace") {
       if (!ctx.allowEdit) return;
-      if (ctx.activeImg.id != null) {
+      if (ctx.activeImg?.id != null) {
         removeActiveImage(ctx);
       } else {
         deleteSelectedCellText(ctx);

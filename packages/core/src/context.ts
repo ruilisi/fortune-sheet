@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { SheetConfig } from ".";
 import { normalizeSelection } from "./modules/selection";
-import { Sheet, Selection, Cell, CommentBox, Rect } from "./types";
+import { Sheet, Selection, Cell, CommentBox, Rect, Image } from "./types";
 import { generateRandomSheetIndex, getSheetIndex } from "./utils";
 
 export type Context = {
@@ -15,9 +15,9 @@ export type Context = {
   commentBoxes?: CommentBox[];
   editingCommentBox?: CommentBox;
   hoveredCommentBox?: CommentBox;
-  insertedImgs?: any;
-  editingInsertedImgs?: any;
-  activeImg: any;
+  insertedImgs?: Image[];
+  editingInsertedImgs?: Image;
+  activeImg?: Image;
 
   contextMenu: any;
   sheetTabContextMenu: {

@@ -128,7 +128,7 @@ export function removeActiveImage(ctx: Context) {
 
   ctx.insertedImgs = _.filter(
     ctx.insertedImgs,
-    (image) => image.id !== ctx.activeImg.id
+    (image) => image.id !== ctx.activeImg?.id
   );
   ctx.activeImg = undefined;
   saveImage(ctx);

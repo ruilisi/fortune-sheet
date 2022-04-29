@@ -95,6 +95,15 @@ export type SheetConfig = {
   authority?: any;
 };
 
+export type Image = {
+  id: string;
+  width: number;
+  height: number;
+  left: number;
+  top: number;
+  src: string;
+};
+
 export type Sheet = {
   name: string;
   config?: SheetConfig;
@@ -102,7 +111,7 @@ export type Sheet = {
   data?: CellMatrix;
   celldata?: CellWithRowAndCol[];
   index?: string;
-  images?: any[];
+  images?: Image[];
   zoomRatio?: number;
   column?: number;
   row?: number;
