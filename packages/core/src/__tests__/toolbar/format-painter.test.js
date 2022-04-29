@@ -100,4 +100,13 @@ describe("format painter", () => {
     expect(getFlowdata(context)[1][0]).toEqual(expectedCell);
     expect(getFlowdata(context)[1][1]).toEqual(expectedCell);
   });
+  test("first line", async () => {
+    const expectedCell = { v: null, bg: "#f00" };
+    const context = getContext(expectedCell);
+
+    handleFormatPainter(context);
+    context.luckysheet_select_save = [{ row: [0, 0], column: [1, 1] }];
+    pasteHandlerOfPaintModel(context, context.luckysheet_copy_save);
+    expect(getFlowdata(context)[0][1]).toEqual(expectedCell);
+  });
 });
