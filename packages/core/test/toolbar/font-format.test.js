@@ -1,19 +1,16 @@
-import { getFlowdata } from "../..";
-import {
-  context,
-  luckysheetSlectSave,
-} from "../../../../../tests/mockData/context";
+import { getFlowdata } from "../../src/context";
+import { contextFactory, selectionFactory } from "../factories/context";
 import {
   handleBold,
   handleItalic,
   handleStrikeThrough,
   handleUnderline,
-} from "../../modules/toolbar";
+} from "../../src/modules/toolbar";
 
 describe("font style", () => {
   const getContext = () =>
-    context({
-      luckysheet_select_save: luckysheetSlectSave([0, 0], [0, 0], 0, 0),
+    contextFactory({
+      luckysheet_select_save: selectionFactory([0, 0], [0, 0], 0, 0),
       luckysheetfile: [
         {
           index: "index_1",
@@ -30,6 +27,7 @@ describe("font style", () => {
     handleBold(ctx, cellInput);
     expect(getFlowdata(ctx)[0][0]).toEqual({ bl: 0, v: "abc" });
   });
+
   test("italic and cancel italic", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
@@ -38,6 +36,7 @@ describe("font style", () => {
     handleItalic(ctx, cellInput);
     expect(getFlowdata(ctx)[0][0]).toEqual({ it: 0, v: "abc" });
   });
+
   test("strikethrough and cancel strikethrough", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
@@ -46,6 +45,7 @@ describe("font style", () => {
     handleStrikeThrough(ctx, cellInput);
     expect(getFlowdata(ctx)[0][0]).toEqual({ cl: 0, v: "abc" });
   });
+
   test("underline and cancel underline", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
@@ -54,6 +54,7 @@ describe("font style", () => {
     handleUnderline(ctx, cellInput);
     expect(getFlowdata(ctx)[0][0]).toEqual({ un: 0, v: "abc" });
   });
+
   test("bold and undeline", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();

@@ -1,4 +1,4 @@
-import { handleMerge } from "../../modules/toolbar";
+import { handleMerge } from "../../src/modules/toolbar";
 
 describe("Cells", () => {
   const context = {
@@ -35,6 +35,7 @@ describe("Cells", () => {
       },
     ],
   };
+
   it("MergeAllCell", async () => {
     handleMerge(context, "merge-all");
     expect(context.luckysheetfile[0].data[0][0].v).toEqual("hello");

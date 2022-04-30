@@ -1,6 +1,6 @@
-import { Context } from "../../packages/core/src";
+import { Context } from "../../src";
 
-export function luckysheetSlectSave(
+export function selectionFactory(
   row: number[],
   column: number[],
   row_focus: number,
@@ -16,7 +16,7 @@ export function luckysheetSlectSave(
   ];
 }
 
-export function context({
+export function contextFactory({
   ...params
 }: Partial<Context> = {}): Partial<Context> {
   return {
@@ -43,8 +43,10 @@ export function context({
         ],
       },
     ],
+    luckysheetCellUpdate: [0, 0],
     visibledatarow: [20, 40],
     visibledatacolumn: [74, 148],
+    luckysheet_shiftkeydown: false,
     zoomRatio: 1,
     ...params,
   };

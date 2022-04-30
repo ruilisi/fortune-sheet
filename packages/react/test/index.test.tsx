@@ -1,7 +1,7 @@
 import { mount } from "enzyme";
 import React from "react";
-import { Workbook } from "@fortune-sheet/react";
-import { waitForComponentToPaint } from "./util";
+import Workbook from "../src/components/Workbook";
+import { waitForComponentToPaint } from "../../../tests/util";
 
 describe("Worksheet", () => {
   it("should render", async () => {

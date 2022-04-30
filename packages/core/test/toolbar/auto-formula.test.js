@@ -1,9 +1,6 @@
-import {
-  context,
-  luckysheetSlectSave,
-} from "../../../../../tests/mockData/context";
-import { getFlowdata } from "../../context";
-import { autoSelectionFormula } from "../../modules/toolbar";
+import { contextFactory, selectionFactory } from "../factories/context";
+import { getFlowdata } from "../../src/context";
+import { autoSelectionFormula } from "../../src/modules/toolbar";
 
 function expectValuesInPositions(flowdata, expectValues, expectPositions) {
   if (expectPositions.length !== expectValues.length) {
@@ -20,8 +17,8 @@ function expectValuesInPositions(flowdata, expectValues, expectPositions) {
 }
 describe("auto formula", () => {
   const getContext = () =>
-    context({
-      luckysheet_select_save: luckysheetSlectSave([0, 1], [0, 1], 0, 0),
+    contextFactory({
+      luckysheet_select_save: selectionFactory([0, 1], [0, 1], 0, 0),
       luckysheetfile: [
         {
           index: "index_1",
@@ -50,6 +47,7 @@ describe("auto formula", () => {
       expectPositions
     );
   });
+
   test("min", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
@@ -60,6 +58,7 @@ describe("auto formula", () => {
       expectPositions
     );
   });
+
   test("max", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
@@ -70,6 +69,7 @@ describe("auto formula", () => {
       expectPositions
     );
   });
+
   test("average", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
@@ -80,6 +80,7 @@ describe("auto formula", () => {
       expectPositions
     );
   });
+
   test("count", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();

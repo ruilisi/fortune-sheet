@@ -1,14 +1,11 @@
-import {
-  context,
-  luckysheetSlectSave,
-} from "../../../../../tests/mockData/context";
-import { getFlowdata } from "../../context";
-import { handleClearFormat } from "../../modules/toolbar";
+import { contextFactory, selectionFactory } from "../factories/context";
+import { getFlowdata } from "../../src/context";
+import { handleClearFormat } from "../../src/modules/toolbar";
 
 describe("clear format", () => {
   const getContext = () =>
-    context({
-      luckysheet_select_save: luckysheetSlectSave([0, 0], [0, 0], 0, 0),
+    contextFactory({
+      luckysheet_select_save: selectionFactory([0, 0], [0, 0], 0, 0),
       luckysheetfile: [
         {
           index: "index_1",
@@ -34,6 +31,7 @@ describe("clear format", () => {
         },
       ],
     });
+
   test("clear format", async () => {
     const ctx = getContext();
     handleClearFormat(ctx);

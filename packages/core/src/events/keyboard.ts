@@ -16,7 +16,7 @@ import { GlobalCache } from "../types";
 import { getNowDateTime } from "../utils";
 import { handleCopy } from "./copy";
 
-function handleGlobalEnter(
+export function handleGlobalEnter(
   ctx: Context,
   cellInput: HTMLDivElement,
   e: KeyboardEvent
@@ -118,7 +118,7 @@ function handleBatchSelectionWithArrowKey(ctx: Context, e: KeyboardEvent) {
   }
 }
 
-function handleWithCtrlOrMetaKey(
+export function handleWithCtrlOrMetaKey(
   ctx: Context,
   e: KeyboardEvent,
   cellInput: HTMLDivElement,
@@ -397,7 +397,7 @@ function handleShiftWithArrowKey(ctx: Context, e: KeyboardEvent) {
   e.preventDefault();
 }
 
-function handleArrowKey(ctx: Context, e: KeyboardEvent) {
+export function handleArrowKey(ctx: Context, e: KeyboardEvent) {
   if (
     ctx.luckysheetCellUpdate.length > 0 ||
     ctx.luckysheet_cell_selected_move ||

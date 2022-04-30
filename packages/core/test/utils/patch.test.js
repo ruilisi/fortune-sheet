@@ -1,4 +1,8 @@
-import { patchToOp, opToPatch, inverseRowColOptions } from "./patch";
+import {
+  patchToOp,
+  opToPatch,
+  inverseRowColOptions,
+} from "../../src/utils/patch";
 
 describe("patch", () => {
   const context = {

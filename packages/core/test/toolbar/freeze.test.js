@@ -1,15 +1,13 @@
-import {
-  context,
-  luckysheetSlectSave,
-} from "../../../../../tests/mockData/context";
-import { handleFreeze } from "../../modules/toolbar";
+import { contextFactory, selectionFactory } from "../factories/context";
+import { handleFreeze } from "../../src/modules/toolbar";
 
 describe("freeze", () => {
   const getContext = () =>
-    context({
-      luckysheet_select_save: luckysheetSlectSave([0, 1], [0, 1], 1, 1),
+    contextFactory({
+      luckysheet_select_save: selectionFactory([0, 1], [0, 1], 1, 1),
       luckysheetfile: [{ index: "index_1" }],
     });
+
   test("freeze row and cancel", async () => {
     const ctx = getContext();
     handleFreeze(ctx, "freeze-row");
@@ -21,6 +19,7 @@ describe("freeze", () => {
     handleFreeze(ctx, "freeze-cancel");
     expect(ctx.luckysheetfile[0].frozen).toBeUndefined();
   });
+
   test("freeze column and cancel", async () => {
     const ctx = getContext();
     handleFreeze(ctx, "freeze-col");
@@ -43,6 +42,7 @@ describe("freeze", () => {
     handleFreeze(ctx, "freeze-cancel");
     expect(ctx.luckysheetfile[0].frozen).toBeUndefined();
   });
+
   test("freeze column and then freeze row", async () => {
     const ctx = getContext();
     handleFreeze(ctx, "freeze-col");
@@ -53,6 +53,7 @@ describe("freeze", () => {
     });
     expect(ctx.luckysheetfile[0].frozen.type).toEqual("rangeRow");
   });
+
   test("freeze column and then freeze both", async () => {
     const ctx = getContext();
     handleFreeze(ctx, "freeze-col");

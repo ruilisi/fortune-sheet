@@ -1,14 +1,14 @@
-import { cellPs, editingCommentBox } from "../../../../../tests/mockData/cell";
-import { context } from "../../../../../tests/mockData/context";
+import { cellPs, editingCommentBox } from "../factories/cell";
+import { contextFactory } from "../factories/context";
 import {
   newComment,
   deleteComment,
   showHideComment,
   showHideAllComments,
-} from "../../modules/comment";
+} from "../../src/modules/comment.ts";
 
 describe("comment", () => {
-  const getContext = () => context();
+  const getContext = () => contextFactory();
   const cache = { editingCommentBoxEle: { dataset: { r: 0, c: 0 } } };
   const expectedEditingCommentBox = editingCommentBox({ r: 0, c: 0 });
   const expectedCellPs = cellPs();
