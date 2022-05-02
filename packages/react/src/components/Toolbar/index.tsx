@@ -215,15 +215,14 @@ const Toolbar: React.FC<{
       }
       if (name === "image") {
         return (
-          <>
-            <Button
-              iconId={name}
-              tooltip={name}
-              key={name}
-              onClick={() => showImgChooser()}
-            />
+          <Button
+            iconId={name}
+            tooltip={name}
+            key={name}
+            onClick={() => showImgChooser()}
+          >
             <input
-              id="luckysheet-imgUpload"
+              id="fortune-img-upload"
               type="file"
               accept="image/*"
               style={{ display: "none" }}
@@ -231,9 +230,8 @@ const Toolbar: React.FC<{
                 insertImage(setContext, e.currentTarget?.files?.[0]);
                 e.currentTarget.value = "";
               }}
-              // onClick={(e) => e.stopPropagation()}
             />
-          </>
+          </Button>
         );
       }
       if (name === "comment") {
@@ -460,7 +458,7 @@ const Toolbar: React.FC<{
           >
             {(setOpen) => (
               <Select>
-                {items.map(({ text, value }) =>
+                {items.map(({ text, value }, ii) =>
                   value !== "divider" ? (
                     <Option
                       key={value}
@@ -477,7 +475,7 @@ const Toolbar: React.FC<{
                       </div>
                     </Option>
                   ) : (
-                    <MenuDivider />
+                    <MenuDivider key={ii} />
                   )
                 )}
               </Select>

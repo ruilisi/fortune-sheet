@@ -52,7 +52,7 @@ export function generateRandomId(prefix: string) {
 
 export function showImgChooser() {
   const chooser = document.getElementById(
-    "luckysheet-imgUpload"
+    "fortune-img-upload"
   ) as HTMLInputElement;
   if (chooser) chooser.click();
 }
@@ -161,7 +161,7 @@ export function insertImage(setContext: any, file: any) {
     setContext((ctx: Context) => {
       _insertImg(src, ctx, setContext);
     });
-    // $("#luckysheet-imgUpload").val("");
+    // $("#fortune-img-upload").val("");
   };
 }
 

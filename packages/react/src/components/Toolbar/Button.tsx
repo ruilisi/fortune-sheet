@@ -15,6 +15,7 @@ const Button: React.FC<Props> = ({
   iconId,
   disabled,
   selected,
+  children,
 }) => {
   // const style: CSSProperties = { userSelect: "none" };
   return (
@@ -27,6 +28,7 @@ const Button: React.FC<Props> = ({
     >
       <SVGIcon name={iconId} style={disabled ? { opacity: 0.3 } : {}} />
       {tooltip && <div className="fortune-tooltip">{tooltip}</div>}
+      {children}
     </div>
   );
 };
