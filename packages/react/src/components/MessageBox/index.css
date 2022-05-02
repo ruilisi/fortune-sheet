@@ -1,0 +1,47 @@
+.fortune-message-box {
+  width: 300px;
+  border-radius: 6px;
+  background: white;
+  box-shadow: rgb(0 0 0 / 10%) 5px 5px 30px;
+  box-sizing: border-box;
+}
+
+.fortune-message-box-content,
+.fortune-message-box-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fortune-message-box-content {
+  padding: 30px 25px;
+}
+
+.fortune-message-box-button-container {
+  padding-top: 10px;
+  padding-bottom: 20px;
+}
+
+.fortune-message-box-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  margin: 0 8px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 20px;
+  outline: none;
+  cursor: pointer;
+}
+
+.fortune-message-box-button.button-default {
+  color: rgb(38, 42, 51);
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(235, 235, 235);
+}
+
+.fortune-message-box-button.button-primary {
+  color: white;
+  background-color: #0188FB;
+}

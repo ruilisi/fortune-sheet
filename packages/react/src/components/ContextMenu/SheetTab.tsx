@@ -7,6 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import WorkbookContext from "../../context";
+import { useAlert } from "../../hooks/useAlert";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 import "./index.css";
 import Menu from "./Menu";
@@ -16,6 +17,7 @@ const SheetTabContextMenu: React.FC = () => {
   const { x, y, sheet, onRename } = context.sheetTabContextMenu;
   const { sheetconfig } = locale(context);
   const [position, setPosition] = useState({ x: -1, y: -1 });
+  const { showAlert, hideAlert } = useAlert();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const close = useCallback(() => {
@@ -47,16 +49,19 @@ const SheetTabContextMenu: React.FC = () => {
           return (
             <Menu
               onClick={() => {
-                setContext(
-                  (draftCtx) => {
-                    deleteSheet(draftCtx, sheet.index!);
-                  },
-                  {
-                    deleteSheetOp: {
-                      index: sheet.index!,
+                showAlert(sheetconfig.confirmDelete, "yesno", () => {
+                  setContext(
+                    (draftCtx) => {
+                      deleteSheet(draftCtx, sheet.index!);
                     },
-                  }
-                );
+                    {
+                      deleteSheetOp: {
+                        index: sheet.index!,
+                      },
+                    }
+                  );
+                  hideAlert();
+                });
                 close();
               }}
             >

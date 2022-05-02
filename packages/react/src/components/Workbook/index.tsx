@@ -42,6 +42,7 @@ import SVGDefines from "../SVGDefines";
 import SheetTabContextMenu from "../ContextMenu/SheetTab";
 import MoreItemsContaier from "../Toolbar/MoreItemsContainer";
 import { generateAPIs } from "./api";
+import { ModalProvider } from "../../context/modal";
 
 enablePatches();
 
@@ -371,55 +372,49 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
 
     return (
       <WorkbookContext.Provider value={providerValue}>
-        <div
-          className="fortune-container"
-          ref={workbookContainer}
-          onKeyDown={onKeyDown}
-        >
-          <SVGDefines />
-          <div className="fortune-workarea">
-            {mergedSettings.showToolbar && (
-              <Toolbar
-                moreItemsOpen={moreToolbarItems !== null}
-                setMoreItems={setMoreToolbarItems}
+        <ModalProvider>
+          <div
+            className="fortune-container"
+            ref={workbookContainer}
+            onKeyDown={onKeyDown}
+          >
+            <SVGDefines />
+            <div className="fortune-workarea">
+              {mergedSettings.showToolbar && (
+                <Toolbar
+                  moreItemsOpen={moreToolbarItems !== null}
+                  setMoreItems={setMoreToolbarItems}
+                />
+              )}
+              {mergedSettings.showFormulaBar && <FxEditor />}
+            </div>
+            <Sheet sheet={sheet} />
+            {mergedSettings.showSheetTabs && <SheetTab />}
+            <ContextMenu />
+            <SheetTabContextMenu />
+            {moreToolbarItems && (
+              <MoreItemsContaier onClose={onMoreToolbarItemsClose}>
+                {moreToolbarItems}
+              </MoreItemsContaier>
+            )}
+            {!_.isEmpty(context.contextMenu) && (
+              <div
+                onMouseDown={() => {
+                  setContextWithProduce((draftCtx) => {
+                    draftCtx.contextMenu = undefined;
+                  });
+                }}
+                onMouseMove={(e) => e.stopPropagation()}
+                onMouseUp={(e) => e.stopPropagation()}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                className="fortune-popover-backdrop"
               />
             )}
-            {mergedSettings.showFormulaBar && <FxEditor />}
           </div>
-          <Sheet sheet={sheet} />
-          {mergedSettings.showSheetTabs && <SheetTab />}
-          <ContextMenu />
-          <SheetTabContextMenu />
-          {moreToolbarItems && (
-            <MoreItemsContaier onClose={onMoreToolbarItemsClose}>
-              {moreToolbarItems}
-            </MoreItemsContaier>
-          )}
-          {!_.isEmpty(context.contextMenu) && (
-            <div
-              onMouseDown={() => {
-                setContextWithProduce((draftCtx) => {
-                  draftCtx.contextMenu = undefined;
-                });
-              }}
-              onMouseMove={(e) => e.stopPropagation()}
-              onMouseUp={(e) => e.stopPropagation()}
-              onContextMenu={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              className="fortune-popover-backdrop"
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                zIndex: 1003, // should below .fortune-context-menu
-                height: "100%",
-                width: "100%",
-              }}
-            />
-          )}
-        </div>
+        </ModalProvider>
       </WorkbookContext.Provider>
     );
   }

@@ -8,6 +8,7 @@ import React, {
   useCallback,
 } from "react";
 import WorkbookContext from "../../context";
+import { useAlert } from "../../hooks/useAlert";
 
 type Props = {
   sheet: Sheet;
@@ -20,6 +21,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const editable = useRef<HTMLSpanElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     if (!editable.current) return;
@@ -51,10 +53,14 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
 
   const onBlur = useCallback(() => {
     setContext((draftCtx) => {
-      editSheetName(draftCtx, editable.current!);
+      try {
+        editSheetName(draftCtx, editable.current!);
+      } catch (e: any) {
+        showAlert(e.message);
+      }
     });
     setEditing(false);
-  }, [setContext]);
+  }, [setContext, showAlert]);
 
   const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLSpanElement>) => {
     if (e.key === "Enter") {

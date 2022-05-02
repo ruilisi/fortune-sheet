@@ -574,7 +574,6 @@ const Toolbar: React.FC<{
 
   return (
     <div ref={containerRef} className="fortune-toolbar">
-      <div className="luckysheet-toolbar-left-theme" />
       {(toolbarWrapIndex === -1
         ? settings.toolbarItems
         : settings.toolbarItems.slice(0, toolbarWrapIndex + 1)

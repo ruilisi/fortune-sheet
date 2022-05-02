@@ -1,4 +1,5 @@
 import { Context } from "../context";
+import { locale } from "../locale";
 import { Sheet } from "../types";
 import {
   generateRandomSheetIndex,
@@ -177,13 +178,13 @@ export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
   if (ctx.allowEdit === false) {
     return;
   }
+  const { sheetconfig } = locale(ctx);
   const oldtxt = editable.dataset.oldText || "";
   const txt = editable.innerText;
 
   if (txt.length === 0) {
-    // tooltip.info("", locale_sheetconfig.sheetNamecannotIsEmptyError);
     editable.innerText = oldtxt;
-    return;
+    throw new Error(sheetconfig.sheetNamecannotIsEmptyError);
   }
 
   if (
@@ -192,9 +193,8 @@ export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
     txt.charAt(txt.length - 1) === "'" ||
     /[：:\\/？?*[\]]+/.test(txt)
   ) {
-    // tooltip.info("", locale_sheetconfig.sheetNameSpecCharError);
     editable.innerText = oldtxt;
-    return;
+    throw new Error(sheetconfig.sheetNameSpecCharError);
   }
 
   const index = getSheetIndex(ctx, ctx.currentSheetIndex);

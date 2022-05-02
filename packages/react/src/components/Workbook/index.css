@@ -11,3 +11,19 @@
 .fortune-workarea {
   width: 100%;
 }
+
+.fortune-popover-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1003; /* should below .fortune-context-menu */
+  height: 100%;
+  width: 100%;
+}
+
+.fortune-modal-container {
+  background: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
