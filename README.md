@@ -21,13 +21,13 @@ English | [简体中文](./README-zh.md)
 
 The goal of `FortuneSheet` is to make a feature-rich, easy-to-configure online spreadsheet that you can use out-of-the-box.
 
-This project is originated from [Luckysheet](https://github.com/mengshukeji/Luckysheet) and has inherited many code from it. Lots of efforts have done to translate the whole project to typescript (still in progress), and solved problems in project level.
+This project is originated from [Luckysheet](https://github.com/mengshukeji/Luckysheet) and has inherited many code from it. Lots of efforts have done to translate the whole project to typescript (still in progress), and solved problems in the design of the original project.
 
 We aim to make FortuneSheet powerful yet easy to maintain.
 
-## Online demo
+## Live demo
 
-Take a look at the online demo at [fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/)
+Take a look at the live demo at [fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/)
 
 <p>
   <img align="center" src="screenshot.png" width="400px" />

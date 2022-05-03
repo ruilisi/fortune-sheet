@@ -21,7 +21,7 @@
 
 `FortuneSheet`的目标是制造一个功能丰富，配置简单的在线表格组件，开箱即用。
 
-本项目源于 [Luckysheet](https://github.com/mengshukeji/Luckysheet)，并继承了它的很多代码。我们为将其转换为typescript做了很多努力，并且解决了一些项目层面的问题。
+本项目源于 [Luckysheet](https://github.com/mengshukeji/Luckysheet)，并继承了它的很多代码。我们为将其转换为typescript做了很多努力，并且解决了一些原项目设计层面的问题。
 
 我们的目标是让`FortuneSheet`越来越强大，同时易于维护。
 
