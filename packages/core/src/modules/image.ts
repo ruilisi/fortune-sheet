@@ -65,7 +65,16 @@ export function saveImage(ctx: Context) {
   file.images = ctx.insertedImgs;
 }
 
-function _insertImg(src: any, ctx: Context, setContext: any) {
+export function removeActiveImage(ctx: Context) {
+  ctx.insertedImgs = _.filter(
+    ctx.insertedImgs,
+    (image) => image.id !== ctx.activeImg?.id
+  );
+  ctx.activeImg = undefined;
+  saveImage(ctx);
+}
+
+export function insertImage(ctx: Context, image: HTMLImageElement) {
   try {
     const last =
       ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1];
@@ -92,128 +101,26 @@ function _insertImg(src: any, ctx: Context, setContext: any) {
         [left] = margeset.column;
       }
     }
-    const image = new Image();
-    image.onload = () => {
-      const { width } = image;
-      const { height } = image;
-      const img = {
-        id: generateRandomId("img"),
-        src,
-        left,
-        top,
-        width: width * 0.5,
-        height: height * 0.5,
-        originWidth: width,
-        originHeight: height,
-      };
-      setContext((draftCtx: Context) => {
-        draftCtx.insertedImgs = (draftCtx.insertedImgs || []).concat(img);
-        saveImage(draftCtx);
-      });
+    const { width } = image;
+    const { height } = image;
+    const img = {
+      id: generateRandomId("img"),
+      src: image.src,
+      left,
+      top,
+      width: width * 0.5,
+      height: height * 0.5,
+      originWidth: width,
+      originHeight: height,
     };
-    // addImgItem(img);
-    // };
-    // const imageUrlHandle =
-    //   Store.toJsonOptions && Store.toJsonOptions.imageUrlHandle;
-    // image.src = typeof imageUrlHandle === "function" ? imageUrlHandle(src) : src;
-    image.src = src;
+    ctx.insertedImgs = (ctx.insertedImgs || []).concat(img);
+    saveImage(ctx);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.info(err);
   }
 }
-// }
-export function removeActiveImage(ctx: Context) {
-  // setContext((ctx: Context) => {
 
-  ctx.insertedImgs = _.filter(
-    ctx.insertedImgs,
-    (image) => image.id !== ctx.activeImg?.id
-  );
-  ctx.activeImg = undefined;
-  saveImage(ctx);
-}
-// });
-// }
-export function insertImage(setContext: any, file: any) {
-  // const uploadImage = ctx.toJsonOptions && Store.toJsonOptions.uploadImage;
-  // if (typeof uploadImage === "function") {
-  //   // 上传形式
-  //   uploadImage(file)
-  //     .then((url) => {
-  //       imageCtrl._insertImg(url);
-  //     })
-  //     .catch((error) => {
-  //       tooltip.info(
-  //         '<i class="fa fa-exclamation-triangle"></i>',
-  //         "图片上传失败"
-  //       );
-  //     });
-  // } else {
-  // 内部base64形式
-  const render = new FileReader();
-  render.readAsDataURL(file);
-
-  render.onload = (event) => {
-    if (event.target == null) return;
-    const src = event.target?.result;
-
-    setContext((ctx: Context) => {
-      _insertImg(src, ctx, setContext);
-    });
-    // $("#fortune-img-upload").val("");
-  };
-}
-
-// function addImgItem(img: any, ctx: Context) {
-//   let width;
-//   let height;
-//   const max = 400;
-
-//   if (img.originHeight < img.originWidth) {
-//     height = Math.round(img.originHeight * (max / img.originWidth));
-//     width = max;
-//   } else {
-//     width = Math.round(img.originWidth * (max / img.originHeight));
-//     height = max;
-//   }
-//   if (ctx.insertedImgs == null) {
-//     ctx.insertedImgs = {};
-//   }
-
-// const imgItem = $.extend(true, {},  imgItem);
-// imgItem.src = img.src;
-// imgItem.originWidth = img.originWidth;
-// imgItem.originHeight = img.originHeight;
-// imgItem.default.width = width;
-// imgItem.default.height = height;
-// imgItem.default.left = img.left;
-// imgItem.default.top = img.top;
-// imgItem.crop.width = width;
-// imgItem.crop.height = height;
-
-// const scrollTop = $("#luckysheet-cell-main").scrollTop();
-// const scrollLeft = $("#luckysheet-cell-main").scrollLeft();
-
-// imgItem.fixedLeft = img.left - scrollLeft + ctx.rowHeaderWidth;
-// imgItem.fixedTop =
-//   img.top -
-//   scrollTop +
-//   ctx.infobarHeight +
-//   ctx.toolbarHeight +
-//   ctx.calculatebarHeight +
-//   ctx.columnHeaderHeight;
-
-// const id = generateRandomId();
-// const modelHtml = _this.modelHtml(id, imgItem);
-
-// $("#luckysheet-image-showBoxs .img-list").append(modelHtml);
-
-// images[id] = imgItem;
-//   ref();
-
-//   init();
-// }
 function getImagePosition(ctx: Context, container: HTMLDivElement) {
   const box = document.getElementById("luckysheet-modal-dialog-activeImage");
   if (!box) return undefined;
@@ -224,42 +131,12 @@ function getImagePosition(ctx: Context, container: HTMLDivElement) {
   top -= ctx.columnHeaderHeight + rect.top;
   return { left, top, width, height };
 }
-/*
-export function getImgItemParam(imgItem) {
-  // const { isFixedPos } = imgItem;
 
-  const { width } = imgItem.default;
-  const { height } = imgItem.default;
-  const { left } = imgItem.default;
-  const { top } = imgItem.default;
-
-  // if (imgItem.crop.width !== width || imgItem.crop.height != height) {
-  //   width = imgItem.crop.width;
-  //   height = imgItem.crop.height;
-  //   left += imgItem.crop.offsetLeft;
-  //   top += imgItem.crop.offsetTop;
-  // }
-
-  // let position = "absolute";
-  // if (isFixedPos) {
-  //   position = "fixed";
-  //   left = imgItem.fixedLeft + imgItem.crop.offsetLeft;
-  //   top = imgItem.fixedTop + imgItem.crop.offsetTop;
-  // }
-
-  return {
-    width,
-    height,
-    left,
-    top,
-    // position,
-  };
-}
-*/
 export function cancelActiveImgItem(ctx: Context, globalCache: GlobalCache) {
   ctx.activeImg = undefined;
   globalCache.image = undefined;
 }
+
 export function onImageMoveStart(
   ctx: Context,
   globalCache: GlobalCache,
@@ -318,9 +195,9 @@ export function onImageMoveEnd(
       if (img) {
         img.left = position.left;
         img.top = position.top;
+        saveImage(ctx);
       }
     }
-    saveImage(ctx);
   }
 }
 
@@ -415,8 +292,8 @@ export function onImageResizeEnd(
         img.top = position.top;
         img.width = position.width;
         img.height = position.height;
+        saveImage(ctx);
       }
     }
-    saveImage(ctx);
   }
 }
