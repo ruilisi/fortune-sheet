@@ -35,8 +35,7 @@ describe("keyboard", () => {
     const cellInput = document.createElement("div");
     cellInput.innerText = "Hello world";
     const ctx = getContext();
-    const keyboardEvent = document.createEvent("KeyboardEvent");
-    keyboardEvent.initEvent = "Enter";
+    const keyboardEvent = new KeyboardEvent("Enter", { key: "Enter" });
     handleGlobalEnter(ctx, cellInput, keyboardEvent);
     expect(getFlowdata(ctx)[0][0].v).toBe("Hello world");
   });
