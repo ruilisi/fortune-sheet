@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Context, getFlowdata } from "../context";
+import { Context } from "../context";
 import {
   delFunctionGroup,
   functionHTMLGenerate,
@@ -56,14 +56,6 @@ export function setCellValue(
   cellInput: HTMLDivElement,
   options: CommonOptions = {}
 ) {
-  const flowdata = getFlowdata(ctx);
-  if (!flowdata) return;
-
-  // const curv = flowdata[row][column];
-
-  // // Store old value for hook function
-  // const oldValue = JSON.stringify(curv);
-
   if (!_.isNumber(row) || !_.isNumber(column)) {
     throw new Error("row or column cannot be null or undefined");
   }

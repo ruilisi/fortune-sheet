@@ -1,5 +1,5 @@
 import _, { isPlainObject } from "lodash";
-import type { Sheet as SheetType, Selection, Freezen } from "../types";
+import type { Sheet as SheetType, Selection, Freezen, Range } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
   getCellValue,
@@ -900,20 +900,20 @@ function getHtmlBorderStyle(type: string, color: string) {
   return `${style + color};`;
 }
 
-export function copy(ctx: Context) {
-  // copy事件
-  const flowdata = getFlowdata(ctx);
+export function rangeValueToHtml(
+  ctx: Context,
+  sheetIndex: string,
+  ranges?: Range
+) {
+  const idx = getSheetIndex(ctx, sheetIndex);
+  if (idx == null) return "";
+  const sheet = ctx.luckysheetfile[idx];
 
-  ctx.luckysheet_selection_range = [];
-  // copy范围
   const rowIndexArr: number[] = [];
   const colIndexArr: number[] = [];
-  const copyRange = [];
-  let RowlChange = false;
-  let HasMC = false;
 
-  for (let s = 0; s < (ctx.luckysheet_select_save?.length ?? 0); s += 1) {
-    const range = ctx.luckysheet_select_save![s];
+  for (let s = 0; s < (ranges?.length ?? 0); s += 1) {
+    const range = ranges![s];
 
     const r1 = range.row[0];
     const r2 = range.row[1];
@@ -922,8 +922,8 @@ export function copy(ctx: Context) {
 
     for (let copyR = r1; copyR <= r2; copyR += 1) {
       if (
-        !_.isNil(ctx.config.rowhidden) &&
-        !_.isNil(ctx.config.rowhidden[copyR])
+        !_.isNil(sheet.config?.rowhidden) &&
+        !_.isNil(sheet.config?.rowhidden[copyR])
       ) {
         continue;
       }
@@ -932,14 +932,10 @@ export function copy(ctx: Context) {
         rowIndexArr.push(copyR);
       }
 
-      if (!_.isNil(ctx.config.rowlen) && copyR in ctx.config.rowlen) {
-        RowlChange = true;
-      }
-
       for (let copyC = c1; copyC <= c2; copyC += 1) {
         if (
-          !_.isNil(ctx.config.colhidden) &&
-          !_.isNil(ctx.config.colhidden[copyC])
+          !_.isNil(sheet.config?.colhidden) &&
+          !_.isNil(sheet.config?.colhidden[copyC])
         ) {
           continue;
         }
@@ -947,43 +943,19 @@ export function copy(ctx: Context) {
         if (!colIndexArr.includes(copyC)) {
           colIndexArr.push(copyC);
         }
-
-        const cell = flowdata?.[copyR]?.[copyC];
-
-        if (!_.isNil(cell?.mc?.rs)) {
-          HasMC = true;
-        }
       }
     }
-
-    ctx.luckysheet_selection_range.push({
-      row: range.row,
-      column: range.column,
-    });
-    copyRange.push({ row: range.row, column: range.column });
   }
 
-  // selectionCopyShow();
-
-  // luckysheet内copy保存
-  ctx.luckysheet_copy_save = {
-    dataSheetIndex: ctx.currentSheetIndex,
-    copyRange,
-    RowlChange,
-    HasMC,
-  };
-
-  // copy范围数据拼接成table 赋给剪贴板
-
   let borderInfoCompute;
-  if (ctx.config.borderInfo && ctx.config.borderInfo.length > 0) {
+  if (sheet.config?.borderInfo && sheet.config.borderInfo.length > 0) {
     // 边框
-    borderInfoCompute = getBorderInfoCompute(ctx);
+    borderInfoCompute = getBorderInfoCompute(ctx, sheetIndex);
   }
 
   let cpdata = "";
-  const d = getFlowdata(ctx);
-  if (!d) return;
+  const d = sheet.data;
+  if (!d) return null;
 
   let colgroup = "";
 
@@ -993,7 +965,10 @@ export function copy(ctx: Context) {
   for (let i = 0; i < rowIndexArr.length; i += 1) {
     const r = rowIndexArr[i];
 
-    if (!_.isNil(ctx.config.rowhidden) && !_.isNil(ctx.config.rowhidden[r])) {
+    if (
+      !_.isNil(sheet.config?.rowhidden) &&
+      !_.isNil(sheet.config?.rowhidden[r])
+    ) {
       continue;
     }
 
@@ -1002,7 +977,10 @@ export function copy(ctx: Context) {
     for (let j = 0; j < colIndexArr.length; j += 1) {
       const c = colIndexArr[j];
 
-      if (!_.isNil(ctx.config.colhidden) && !_.isNil(ctx.config.colhidden[c])) {
+      if (
+        !_.isNil(sheet.config?.colhidden) &&
+        !_.isNil(sheet.config?.colhidden[c])
+      ) {
         continue;
       }
 
@@ -1016,27 +994,27 @@ export function copy(ctx: Context) {
 
         if (r === rowIndexArr[0]) {
           if (
-            _.isNil(ctx.config) ||
-            _.isNil(ctx.config.columnlen) ||
-            _.isNil(ctx.config.columnlen[c.toString()])
+            _.isNil(sheet.config) ||
+            _.isNil(sheet.config.columnlen) ||
+            _.isNil(sheet.config.columnlen[c.toString()])
           ) {
             colgroup += '<colgroup width="72px"></colgroup>';
           } else {
             colgroup += `<colgroup width="${
-              ctx.config.columnlen[c.toString()]
+              sheet.config.columnlen[c.toString()]
             }px"></colgroup>`;
           }
         }
 
         if (c === colIndexArr[0]) {
           if (
-            _.isNil(ctx.config) ||
-            _.isNil(ctx.config.rowlen) ||
-            _.isNil(ctx.config.rowlen[r.toString()])
+            _.isNil(sheet.config) ||
+            _.isNil(sheet.config.rowlen) ||
+            _.isNil(sheet.config.rowlen[r.toString()])
           ) {
             style += "height:19px;";
           } else {
-            style += `height:${ctx.config.rowlen[r.toString()]}px;`;
+            style += `height:${sheet.config.rowlen[r.toString()]}px;`;
           }
         }
 
@@ -1361,27 +1339,27 @@ export function copy(ctx: Context) {
 
         if (r === rowIndexArr[0]) {
           if (
-            _.isNil(ctx.config) ||
-            _.isNil(ctx.config.columnlen) ||
-            _.isNil(ctx.config.columnlen[c.toString()])
+            _.isNil(sheet.config) ||
+            _.isNil(sheet.config.columnlen) ||
+            _.isNil(sheet.config.columnlen[c.toString()])
           ) {
             colgroup += '<colgroup width="72px"></colgroup>';
           } else {
             colgroup += `<colgroup width="${
-              ctx.config.columnlen[c.toString()]
+              sheet.config.columnlen[c.toString()]
             }px"></colgroup>`;
           }
         }
 
         if (c === colIndexArr[0]) {
           if (
-            _.isNil(ctx.config) ||
-            _.isNil(ctx.config.rowlen) ||
-            _.isNil(ctx.config.rowlen[r.toString()])
+            _.isNil(sheet.config) ||
+            _.isNil(sheet.config.rowlen) ||
+            _.isNil(sheet.config.rowlen[r.toString()])
           ) {
             style += "height:19px;";
           } else {
-            style += `height:${ctx.config.rowlen[r.toString()]}px;`;
+            style += `height:${sheet.config.rowlen[r.toString()]}px;`;
           }
         }
 
@@ -1395,11 +1373,82 @@ export function copy(ctx: Context) {
 
     cpdata += "</tr>";
   }
-  cpdata = `<table data-type="luckysheet_copy_action_table">${colgroup}${cpdata}</table>`;
 
-  ctx.iscopyself = true;
+  return `<table data-type="luckysheet_copy_action_table">${colgroup}${cpdata}</table>`;
+}
 
-  clipboard.writeHtml(cpdata);
+export function copy(ctx: Context) {
+  const flowdata = getFlowdata(ctx);
+
+  ctx.luckysheet_selection_range = [];
+  // copy范围
+  const copyRange = [];
+  let RowlChange = false;
+  let HasMC = false;
+
+  for (let s = 0; s < (ctx.luckysheet_select_save?.length ?? 0); s += 1) {
+    const range = ctx.luckysheet_select_save![s];
+
+    const r1 = range.row[0];
+    const r2 = range.row[1];
+    const c1 = range.column[0];
+    const c2 = range.column[1];
+
+    for (let copyR = r1; copyR <= r2; copyR += 1) {
+      if (
+        !_.isNil(ctx.config.rowhidden) &&
+        !_.isNil(ctx.config.rowhidden[copyR])
+      ) {
+        continue;
+      }
+
+      if (!_.isNil(ctx.config.rowlen) && copyR in ctx.config.rowlen) {
+        RowlChange = true;
+      }
+
+      for (let copyC = c1; copyC <= c2; copyC += 1) {
+        if (
+          !_.isNil(ctx.config.colhidden) &&
+          !_.isNil(ctx.config.colhidden[copyC])
+        ) {
+          continue;
+        }
+
+        const cell = flowdata?.[copyR]?.[copyC];
+
+        if (!_.isNil(cell?.mc?.rs)) {
+          HasMC = true;
+        }
+      }
+    }
+
+    ctx.luckysheet_selection_range.push({
+      row: range.row,
+      column: range.column,
+    });
+    copyRange.push({ row: range.row, column: range.column });
+  }
+
+  // selectionCopyShow();
+
+  // luckysheet内copy保存
+  ctx.luckysheet_copy_save = {
+    dataSheetIndex: ctx.currentSheetIndex,
+    copyRange,
+    RowlChange,
+    HasMC,
+  };
+
+  const cpdata = rangeValueToHtml(
+    ctx,
+    ctx.currentSheetIndex,
+    ctx.luckysheet_select_save
+  );
+
+  if (cpdata) {
+    ctx.iscopyself = true;
+    clipboard.writeHtml(cpdata);
+  }
 }
 
 export function deleteSelectedCellText(ctx: Context) {
