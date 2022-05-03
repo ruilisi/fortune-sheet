@@ -53,7 +53,7 @@ export function setCellValue(
   row: number,
   column: number,
   value: any,
-  cellInput: HTMLDivElement,
+  cellInput: HTMLDivElement | null,
   options: CommonOptions = {}
 ) {
   if (!_.isNumber(row) || !_.isNumber(column)) {

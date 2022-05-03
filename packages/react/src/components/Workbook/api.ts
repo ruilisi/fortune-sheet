@@ -8,6 +8,9 @@ import {
   insertRowCol,
   Op,
   opToPatch,
+  Range,
+  Selection,
+  SingleRange,
 } from "@fortune-sheet/core";
 import produce, { applyPatches } from "immer";
 import { SetContextOptions } from "../../context";
@@ -18,7 +21,9 @@ export function generateAPIs(
     recipe: (ctx: Context) => void,
     options?: SetContextOptions
   ) => void,
-  cellInput: HTMLDivElement | null
+  cellInput: HTMLDivElement | null,
+  scrollbarX: HTMLDivElement | null,
+  scrollbarY: HTMLDivElement | null
 ) {
   return {
     applyOp: (ops: Op[]) => {
@@ -62,7 +67,7 @@ export function generateAPIs(
       options: { type?: keyof Cell; order?: number } = {}
     ) =>
       setContext((draftCtx) =>
-        api.setCellValue(draftCtx, row, column, value, cellInput!, options)
+        api.setCellValue(draftCtx, row, column, value, cellInput, options)
       ),
 
     clearCell: (row: number, column: number, options: api.CommonOptions = {}) =>
@@ -124,5 +129,78 @@ export function generateAPIs(
 
     getColumnWidth: (columns: number[], options: api.CommonOptions = {}) =>
       api.getColumnWidth(context, columns, options),
+
+    getSelection: () => api.getSelection(context),
+
+    getFlattenRange: (range: Range) => api.getFlattenRange(context, range),
+
+    getCellsByFlattenRange: (range?: { r: number; c: number }[]) =>
+      api.getCellsByFlattenRange(context, range),
+
+    getSelectionCoordinates: () => api.getSelectionCoordinates(context),
+
+    getCellsByRange: (range: Selection, options: api.CommonOptions = {}) =>
+      api.getCellsByRange(context, range, options),
+
+    getHtmlByRange: (range: Range, options: api.CommonOptions = {}) =>
+      api.getHtmlByRange(context, range, options),
+
+    setSelection: (range: Range, options: api.CommonOptions) =>
+      setContext((draftCtx) => api.setSelection(draftCtx, range, options)),
+
+    setCellValuesByRange: (
+      data: any[][],
+      range: SingleRange,
+      options: api.CommonOptions = {}
+    ) =>
+      setContext((draftCtx) =>
+        api.setCellValuesByRange(draftCtx, data, range, cellInput, options)
+      ),
+
+    setCellFormatByRange: (
+      attr: keyof Cell,
+      value: any,
+      range: Range | SingleRange,
+      options: api.CommonOptions = {}
+    ) =>
+      setContext((draftCtx) =>
+        api.setCellFormatByRange(draftCtx, attr, value, range, options)
+      ),
+
+    mergeCells: (
+      ranges: Range,
+      type: string,
+      options: api.CommonOptions = {}
+    ) =>
+      setContext((draftCtx) => api.mergeCells(draftCtx, ranges, type, options)),
+
+    cancelMerge: (ranges: Range, options: api.CommonOptions = {}) =>
+      setContext((draftCtx) => api.cancelMerge(draftCtx, ranges, options)),
+
+    getAllSheets: () => api.getAllSheets(context),
+
+    getSheet: (options: api.CommonOptions = {}) =>
+      api.getSheet(context, options),
+
+    addSheet: () => setContext((draftCtx) => api.addSheet(draftCtx)),
+
+    deleteSheet: (options: api.CommonOptions = {}) =>
+      setContext((draftCtx) => api.deleteSheet(draftCtx, options)),
+
+    activateSheet: (options: api.CommonOptions = {}) =>
+      setContext((draftCtx) => api.activateSheet(draftCtx, options)),
+
+    setSheetName: (name: string, options: api.CommonOptions = {}) =>
+      setContext((draftCtx) => api.setSheetName(draftCtx, name, options)),
+
+    setSheetOrder: (orderList: Record<string, number>) =>
+      setContext((draftCtx) => api.setSheetOrder(draftCtx, orderList)),
+
+    scroll: (options: {
+      scrollLeft?: number;
+      scrollTop?: number;
+      targetRow?: number;
+      targetColumn?: number;
+    }) => api.scroll(context, scrollbarX, scrollbarY, options),
   };
 }

@@ -93,7 +93,7 @@ export function setCellValuesByRange(
   ctx: Context,
   data: any[][],
   range: SingleRange,
-  cellInput: HTMLDivElement,
+  cellInput: HTMLDivElement | null,
   options: CommonOptions = {}
 ) {
   if (data == null) {

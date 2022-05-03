@@ -357,7 +357,14 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     // expose APIs
     useImperativeHandle(
       ref,
-      () => generateAPIs(context, setContextWithProduce, cellInput.current),
+      () =>
+        generateAPIs(
+          context,
+          setContextWithProduce,
+          cellInput.current,
+          scrollbarX.current,
+          scrollbarY.current
+        ),
       [context, setContextWithProduce]
     );
 

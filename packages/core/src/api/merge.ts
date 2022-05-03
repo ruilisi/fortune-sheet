@@ -12,3 +12,11 @@ export function mergeCells(
   const sheet = getSheet(ctx, options);
   mergeCellsInternal(ctx, sheet.index!, ranges, type);
 }
+
+export function cancelMerge(
+  ctx: Context,
+  ranges: Range,
+  options: CommonOptions = {}
+) {
+  mergeCells(ctx, ranges, "merge-cancel", options);
+}

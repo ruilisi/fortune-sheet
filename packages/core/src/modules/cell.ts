@@ -655,7 +655,7 @@ export function updateCell(
   ctx: Context,
   r: number,
   c: number,
-  $input?: HTMLDivElement,
+  $input?: HTMLDivElement | null,
   value?: any
 ) {
   let inputText = $input?.innerText;
