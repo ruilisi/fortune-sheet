@@ -103,16 +103,11 @@ export function setRowHeight(
 
   sheet.config = cfg;
 
+  if (ctx.currentSheetIndex === sheet.index) {
+    ctx.config = cfg;
+  }
+
   // server.saveParam("cg", file.index, cfg.rowlen, { k: "rowlen" });
-
-  // if (file.index === ctx.currentSheetIndex) {
-  //   ctx.config = cfg;
-  //   jfrefreshgrid_rhcw(ctx.flowdata.length, ctx.flowdata[0].length);
-  // }
-
-  // if (success && typeof success === "function") {
-  //   success();
-  // }
 }
 
 export function setColumnWidth(
@@ -141,16 +136,11 @@ export function setColumnWidth(
 
   sheet.config = cfg;
 
+  if (ctx.currentSheetIndex === sheet.index) {
+    ctx.config = cfg;
+  }
+
   // server.saveParam("cg", file.index, cfg.columnlen, { k: "columnlen" });
-
-  // if (file.index === ctx.currentSheetIndex) {
-  //   ctx.config = cfg;
-  //   jfrefreshgrid_rhcw(ctx.flowdata.length, ctx.flowdata[0].length);
-  // }
-
-  // if (success && typeof success === "function") {
-  //   success();
-  // }
 }
 
 export function getRowHeight(

@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { getdatabyselection, getFlowdata, getRangetxt, Selection } from "..";
 import { Context } from "../context";
-import { rangeValueToHtml } from "../modules";
+import { normalizeSelection, rangeValueToHtml } from "../modules";
 import { Cell, Range, SingleRange } from "../types";
 import { setCellFormat, setCellValue } from "./cell";
 import { CommonOptions, getSheet } from "./common";
@@ -86,7 +86,10 @@ export function setSelection(
   options: CommonOptions
 ) {
   const sheet = getSheet(ctx, options);
-  sheet.luckysheet_select_save = range;
+  sheet.luckysheet_select_save = normalizeSelection(ctx, range);
+  if (ctx.currentSheetIndex === sheet.index) {
+    ctx.luckysheet_select_save = sheet.luckysheet_select_save;
+  }
 }
 
 export function setCellValuesByRange(

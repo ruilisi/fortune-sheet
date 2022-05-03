@@ -145,7 +145,7 @@ export function generateAPIs(
     getHtmlByRange: (range: Range, options: api.CommonOptions = {}) =>
       api.getHtmlByRange(context, range, options),
 
-    setSelection: (range: Range, options: api.CommonOptions) =>
+    setSelection: (range: Range, options: api.CommonOptions = {}) =>
       setContext((draftCtx) => api.setSelection(draftCtx, range, options)),
 
     setCellValuesByRange: (
