@@ -3675,7 +3675,7 @@ export function rangeDrag(
   )
     return;
   const rect = container.getBoundingClientRect();
-  const x = e.pageX + rect.left - ctx.rowHeaderWidth + scrollLeft;
+  const x = e.pageX - rect.left - ctx.rowHeaderWidth + scrollLeft;
   const y = e.pageY - rect.top - ctx.columnHeaderHeight + scrollTop;
 
   const row_location = rowLocation(y, ctx.visibledatarow);

@@ -25,6 +25,7 @@ import {
   handleOverlayTouchEnd,
   handleOverlayTouchMove,
   handleOverlayTouchStart,
+  createDropCellRange,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -252,6 +253,9 @@ const SheetOverlay: React.FC = () => {
           style={{
             width: context.cellmainWidth,
             height: context.cellmainHeight,
+            cursor: context.luckysheet_cell_selected_extend
+              ? "crosshair"
+              : "default",
           }}
         >
           <div id="luckysheet-formula-functionrange" />
@@ -382,7 +386,20 @@ const SheetOverlay: React.FC = () => {
                   }}
                 >
                   <div className="luckysheet-cs-inner-border" />
-                  <div className="luckysheet-cs-fillhandle" />
+                  <div
+                    className="luckysheet-cs-fillhandle"
+                    onMouseDown={(e) => {
+                      setContext((draftContext) => {
+                        createDropCellRange(
+                          draftContext,
+                          setContext,
+                          e.nativeEvent,
+                          containerRef.current!
+                        );
+                      });
+                      e.stopPropagation();
+                    }}
+                  />
                   <div className="luckysheet-cs-inner-border" />
                   <div className="luckysheet-cs-draghandle-top luckysheet-cs-draghandle" />
                   <div className="luckysheet-cs-draghandle-bottom luckysheet-cs-draghandle" />

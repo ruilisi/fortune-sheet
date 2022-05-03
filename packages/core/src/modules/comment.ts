@@ -452,7 +452,7 @@ export function overShowComment(
 
   const rect = container.getBoundingClientRect();
   // const mouse = mousePosition(e.pageX, e.pageY, ctx);
-  let x = e.pageX + rect.left - ctx.rowHeaderWidth;
+  let x = e.pageX - rect.left - ctx.rowHeaderWidth;
   let y = e.pageY - rect.top - ctx.columnHeaderHeight;
   const offsetX = 0;
   const offsetY = 0;
