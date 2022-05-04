@@ -67,11 +67,11 @@ const Toolbar: React.FC<{
       const items = container.querySelectorAll(".fortune-toolbar-item");
       if (!items) return;
       const locations: number[] = [];
+      const containerRect = container.getBoundingClientRect();
       for (let i = 0; i < items.length; i += 1) {
         const item = items[i] as HTMLElement;
-        locations.push(
-          item.offsetLeft - container.offsetLeft + item.clientWidth
-        );
+        const itemRect = item.getBoundingClientRect();
+        locations.push(itemRect.left - containerRect.left + itemRect.width);
       }
       setItemLocations(locations);
     }
@@ -85,7 +85,7 @@ const Toolbar: React.FC<{
     const moreButtonWidth = 50;
     for (let i = itemLocations.length - 1; i >= 0; i -= 1) {
       const loc = itemLocations[i];
-      if (loc + moreButtonWidth < container.offsetWidth) {
+      if (loc + moreButtonWidth < container.clientWidth) {
         setToolbarWrapIndex(i);
         if (i === itemLocations.length - 1) {
           setMoreItems(null);
