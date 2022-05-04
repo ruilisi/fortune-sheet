@@ -1,11 +1,11 @@
 export default class clipboard {
   static writeHtml(str: string) {
     try {
-      let ele = document.getElementById("luckysheet-copy-content");
+      let ele = document.getElementById("fortune-copy-content");
       if (!ele) {
         ele = document.createElement("div");
         ele.setAttribute("contentEditable", "true");
-        ele.id = "luckysheet-copy-content";
+        ele.id = "fortune-copy-content";
         ele.style.position = "fixed";
         ele.style.height = "0";
         ele.style.width = "0";

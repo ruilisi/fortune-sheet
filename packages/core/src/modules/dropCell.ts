@@ -382,9 +382,12 @@ function judgeDate(data: (Cell | null | undefined)[]) {
   ];
 }
 
-export function showDropCellSelection({ width, height, top, left }: Rect) {
-  const selectedExtend = document.querySelector(
-    ".luckysheet-cell-selected-extend"
+export function showDropCellSelection(
+  { width, height, top, left }: Rect,
+  container: HTMLDivElement
+) {
+  const selectedExtend = container.querySelector(
+    ".fortune-cell-selected-extend"
   ) as HTMLDivElement;
   if (selectedExtend) {
     selectedExtend.style.left = toPx(left);
@@ -395,9 +398,9 @@ export function showDropCellSelection({ width, height, top, left }: Rect) {
   }
 }
 
-export function hideDropCellSelection() {
-  const selectedExtend = document.querySelector(
-    ".luckysheet-cell-selected-extend"
+export function hideDropCellSelection(container: HTMLDivElement) {
+  const selectedExtend = container.querySelector(
+    ".fortune-cell-selected-extend"
   ) as HTMLDivElement;
   if (selectedExtend) {
     selectedExtend.style.display = "none";
@@ -428,12 +431,15 @@ export function createDropCellRange(
 
   ctx.luckysheet_cell_selected_extend_index = [row_index, col_index];
 
-  showDropCellSelection({
-    left: col_pre,
-    width: col - col_pre - 1,
-    top: row_pre,
-    height: row - row_pre - 1,
-  });
+  showDropCellSelection(
+    {
+      left: col_pre,
+      width: col - col_pre - 1,
+      top: row_pre,
+      height: row - row_pre - 1,
+    },
+    container
+  );
 }
 
 export function onDropCellSelect(
@@ -534,7 +540,7 @@ export function onDropCellSelect(
     }
   }
 
-  showDropCellSelection({ left, width, top, height });
+  showDropCellSelection({ left, width, top, height }, container);
 }
 
 function fillCopy(data: (Cell | null | undefined)[], len: number) {
@@ -2815,7 +2821,7 @@ export function onDropCellSelectEnd(
   container: HTMLDivElement
 ) {
   ctx.luckysheet_cell_selected_extend = false;
-  hideDropCellSelection();
+  hideDropCellSelection(container);
 
   // if (
   //   !checkProtectionLockedRangeList(
@@ -3046,8 +3052,8 @@ export function onDropCellSelectEnd(
     }
     // createIcon();
 
-    const selectedMoveEle = document.querySelector(
-      "#luckysheet-cell-selected-move"
+    const selectedMoveEle = container.querySelector(
+      ".fortune-cell-selected-move"
     );
     if (selectedMoveEle) {
       (selectedMoveEle as HTMLDivElement).style.display = "none";
@@ -3057,14 +3063,5 @@ export function onDropCellSelectEnd(
     // ctx.countfuncTimeout = setTimeout(() => {
     // countfunc();
     // }, 500);
-  }
-}
-
-export function cancelDropCellSelection() {
-  const selectedExtend = document.querySelector(
-    "luckysheet-cell-selected-extend"
-  );
-  if (selectedExtend) {
-    (selectedExtend as HTMLDivElement).style.display = "none";
   }
 }

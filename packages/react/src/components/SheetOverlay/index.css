@@ -119,7 +119,7 @@
   /*transition: all 0.1s;*/
 }
 
-.luckysheet-selection-copy {
+.fortune-selection-copy {
   position: absolute;
   pointer-events: none;
   z-index: 18;
@@ -127,13 +127,13 @@
   margin: 0px 0 0 0px;
 }
 
-.luckysheet-selection-copy .luckysheet-copy {
+.fortune-selection-copy .fortune-copy {
   position: absolute;
   z-index: 18;
   background-color: transparent;
 }
 
-.luckysheet-selection-copy-hc {
+.fortune-selection-copy-hc {
   position: absolute;
   top: 0;
   right: 0;
@@ -143,7 +143,7 @@
   z-index: 8;
 }
 
-.luckysheet-selection-highlight {
+.fortune-selection-highlight {
   position: absolute;
   /*pointer-events: none;*/
   z-index: 14;
@@ -152,7 +152,7 @@
   /* display: none; */
 }
 
-.luckysheet-cell-selected-extend {
+.fortune-cell-selected-extend {
   position: absolute;
   pointer-events: none;
   z-index: 16;
@@ -162,7 +162,7 @@
   /*transition: all 0.1s;*/
 }
 
-.luckysheet-cell-selected-move {
+.fortune-cell-selected-move {
   position: absolute;
   pointer-events: none;
   z-index: 16;
@@ -443,15 +443,15 @@
   width: inherit;
 }
 
-.luckysheet-cols-change-size,
-.luckysheet-rows-change-size,
-.luckysheet-change-size-line {
+.fortune-cols-change-size,
+.fortune-rows-change-size,
+.fortune-change-size-line {
   /*display: none;*/
   position: absolute;
   z-index: 12;
 }
 
-.luckysheet-cols-change-size {
+.fortune-cols-change-size {
   width: 5px;
   height: 100%;
   background: #0188fb;
@@ -459,7 +459,7 @@
   opacity: 0;
 }
 
-.luckysheet-rows-change-size {
+.fortune-rows-change-size {
   width: 100%;
   height: 5px;
   background: #0188fb;
@@ -467,7 +467,7 @@
   opacity: 0;
 }
 
-.luckysheet-change-size-line {
+.fortune-change-size-line {
   border-color: #0188fb;
   border-style: solid;
   z-index: 15;
@@ -602,7 +602,7 @@
   cursor: se-resize;
 }
 
-.luckysheet-selection-copy-top {
+.fortune-selection-copy-top {
   left: 0;
   right: 0;
   height: 2px;
@@ -611,7 +611,7 @@
   /* background-image: url("EwaAntH.gif"); */
 }
 
-.luckysheet-selection-copy-right {
+.fortune-selection-copy-right {
   top: 0;
   bottom: 0;
   width: 2px;
@@ -619,7 +619,7 @@
   /* background-image: url("EwaAntV.gif"); */
 }
 
-.luckysheet-selection-copy-bottom {
+.fortune-selection-copy-bottom {
   left: 0;
   right: 0;
   height: 2px;
@@ -627,7 +627,7 @@
   /* background-image: url("EwaAntH.gif"); */
 }
 
-.luckysheet-selection-copy-left {
+.fortune-selection-copy-left {
   top: 0;
   bottom: 0;
   width: 2px;
@@ -636,7 +636,7 @@
   /* background-image: url("EwaAntV.gif"); */
 }
 
-.luckysheet-selection-copy-hc {
+.fortune-selection-copy-hc {
   position: absolute;
   top: 0;
   right: 0;
@@ -719,7 +719,7 @@
   cursor: se-resize;
 }
 
-.luckysheet-formula-functionrange-highlight .luckysheet-copy {
+.fortune-formula-functionrange-highlight .fortune-copy {
   background-image: none;
   background: #0188fb;
   position: absolute;
@@ -729,62 +729,62 @@
   /*border: 1px solid #fff;*/
 }
 
-.luckysheet-formula-functionrange-highlight .luckysheet-selection-copy-top {
+.fortune-formula-functionrange-highlight .fortune-selection-copy-top {
   top: -2px;
   border-top: 2px solid #fff;
   border-bottom: 2px solid #fff;
 }
 
-.luckysheet-formula-functionrange-highlight .luckysheet-selection-copy-right {
+.fortune-formula-functionrange-highlight .fortune-selection-copy-right {
   right: -2px;
   border-left: 2px solid #fff;
   border-right: 2px solid #fff;
 }
 
-.luckysheet-formula-functionrange-highlight .luckysheet-selection-copy-bottom {
+.fortune-formula-functionrange-highlight .fortune-selection-copy-bottom {
   bottom: -2px;
   border-top: 2px solid #fff;
   border-bottom: 2px solid #fff;
 }
 
-.luckysheet-formula-functionrange-highlight .luckysheet-selection-copy-left {
+.fortune-formula-functionrange-highlight .fortune-selection-copy-left {
   left: -2px;
   border-left: 2px solid #fff;
   border-right: 2px solid #fff;
 }
 
-.luckysheet-formula-functionrange-highlight .luckysheet-selection-copy-hc {
+.fortune-formula-functionrange-highlight .fortune-selection-copy-hc {
   border: 2px solid #5e5e5e;
   opacity: 0.03;
   z-index: initial;
 }
 
-.luckysheet-selection-highlight-lt {
+.fortune-selection-highlight-lt {
   left: -3px;
   top: -3px;
   cursor: se-resize;
 }
 
-.luckysheet-selection-highlight-rt {
+.fortune-selection-highlight-rt {
   right: -3px;
   top: -3px;
   cursor: ne-resize;
 }
 
-.luckysheet-selection-highlight-lb {
+.fortune-selection-highlight-lb {
   left: -3px;
   bottom: -3px;
   cursor: ne-resize;
 }
 
-.luckysheet-selection-highlight-rb {
+.fortune-selection-highlight-rb {
   right: -3px;
   bottom: -3px;
   cursor: se-resize;
 }
 
 
-.luckysheet-formula-functionrange-highlight .luckysheet-highlight {
+.fortune-formula-functionrange-highlight .luckysheet-highlight {
   position: absolute;
   z-index: 19;
   border: 1px solid #fff;

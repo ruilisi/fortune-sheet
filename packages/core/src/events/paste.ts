@@ -1414,7 +1414,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
     // 如果标示是qksheet复制的内容，判断剪贴板内容是否是当前页面复制的内容
     let isEqual = true;
     if (
-      txtdata.indexOf("luckysheet_copy_action_table") > -1 &&
+      txtdata.indexOf("fortune-copy-action-table") > -1 &&
       ctx.luckysheet_copy_save?.copyRange != null &&
       ctx.luckysheet_copy_save.copyRange.length > 0
     ) {
@@ -1524,7 +1524,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
     // }
 
     if (
-      txtdata.indexOf("luckysheet_copy_action_table") > -1 &&
+      txtdata.indexOf("fortune-copy-action-table") > -1 &&
       ctx.luckysheet_copy_save?.copyRange != null &&
       ctx.luckysheet_copy_save.copyRange.length > 0 &&
       isEqual
@@ -1537,7 +1537,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
       } else {
         pasteHandlerOfCopyPaste(ctx, ctx.luckysheet_copy_save);
       }
-    } else if (txtdata.indexOf("luckysheet_copy_action_image") > -1) {
+    } else if (txtdata.indexOf("fortune-copy-action-image") > -1) {
       // imageCtrl.pasteImgItem();
     } else {
       if (txtdata.indexOf("table") > -1) {
@@ -1779,7 +1779,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
         ctx.luckysheet_selection_range = [];
         pasteHandler(ctx, data, borderInfo);
-        // $("#luckysheet-copy-content").empty();
+        // $("#fortune-copy-content").empty();
         ele.remove();
       }
       // 复制的是图片
@@ -1815,7 +1815,7 @@ export function handlePasteByClick(ctx: Context, triggerType?: string) {
     return;
   }
 
-  const textarea = document.querySelector("#luckysheet-copy-content");
+  const textarea = document.querySelector("#fortune-copy-content");
   // textarea.focus();
   // textarea.select();
 
@@ -1825,7 +1825,7 @@ export function handlePasteByClick(ctx: Context, triggerType?: string) {
   if (!data) return;
 
   if (
-    data.indexOf("luckysheet_copy_action_table") > -1 &&
+    data.indexOf("fortune-copy-action-table") > -1 &&
     ctx.luckysheet_copy_save?.copyRange != null &&
     ctx.luckysheet_copy_save.copyRange.length > 0
   ) {
@@ -1836,7 +1836,7 @@ export function handlePasteByClick(ctx: Context, triggerType?: string) {
     } else {
       pasteHandlerOfCopyPaste(ctx, ctx.luckysheet_copy_save);
     }
-  } else if (data.indexOf("luckysheet_copy_action_image") > -1) {
+  } else if (data.indexOf("fortune-copy-action-image") > -1) {
     // imageCtrl.pasteImgItem();
   } else if (triggerType !== "btn") {
     // pasteHandler(data);

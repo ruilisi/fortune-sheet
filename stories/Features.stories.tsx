@@ -45,3 +45,37 @@ Tabs.args = { data: [cell, formula] };
 export const Freeze = Template.bind({});
 // @ts-ignore
 Freeze.args = { data: [freeze] };
+
+export const MultiInstance: ComponentStory<typeof Workbook> = () => {
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      <div
+        style={{
+          display: "inline-block",
+          width: "50%",
+          height: "100%",
+          paddingRight: "12px",
+          boxSizing: "border-box",
+        }}
+      >
+        <Workbook data={[empty]} />
+      </div>
+      <div
+        style={{
+          display: "inline-block",
+          width: "50%",
+          height: "100%",
+          paddingLeft: "12px",
+          boxSizing: "border-box",
+        }}
+      >
+        <Workbook data={[empty]} />
+      </div>
+    </div>
+  );
+};

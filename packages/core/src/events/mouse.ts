@@ -539,7 +539,7 @@ export function handleCellAreaMouseDown(
         width,
         height,
       });
-      // $("#luckysheet-formula-functionrange-select")
+      // $("#fortune-formula-functionrange-select")
       //   .css({
       //     left,
       //     width,
@@ -909,7 +909,7 @@ export function handleCellAreaMouseDown(
   //   ctx.luckysheet_select_status = false;
   //   formula.rangestart = false;
 
-  //   $("#luckysheet-formula-functionrange-select")
+  //   $("#fortune-formula-functionrange-select")
   //     .css({
   //       left: col_pre,
   //       width: col - col_pre - 1,
@@ -949,7 +949,7 @@ export function handleCellAreaMouseDown(
   //   };
   //   formula.rangestart = true;
 
-  //   $("#luckysheet-formula-functionrange-select")
+  //   $("#fortune-formula-functionrange-select")
   //     .css({
   //       left: col_pre,
   //       width: col - col_pre - 1,
@@ -2001,7 +2001,7 @@ function mouseRender(
       row_pre = row_s - 1 == -1 ? 0 : ctx.visibledatarow[row_s - 1];
       row = ctx.visibledatarow[row_e];
   
-      $("#luckysheet-cell-selected-move").css({
+      $(".fortune-cell-selected-move").css({
         left: col_pre,
         width: col - col_pre - 2,
         top: row_pre,
@@ -2018,14 +2018,14 @@ function mouseRender(
       x + 3 - ctx.luckysheet_cols_change_size_start[0] > 30 &&
       x < rect.width + ctx.scrollLeft - 100
     ) {
-      const changeSizeLine = document.querySelector(
-        ".luckysheet-change-size-line"
+      const changeSizeLine = container.querySelector(
+        ".fortune-change-size-line"
       );
       if (changeSizeLine) {
         (changeSizeLine as HTMLDivElement).style.left = `${x}px`;
       }
-      const changeSizeCol = document.querySelector(
-        ".luckysheet-cols-change-size"
+      const changeSizeCol = container.querySelector(
+        ".fortune-cols-change-size"
       );
       if (changeSizeCol) {
         (changeSizeCol as HTMLDivElement).style.left = `${x - 2}px`;
@@ -2038,14 +2038,14 @@ function mouseRender(
       y + 3 - ctx.luckysheet_rows_change_size_start[0] > 19 &&
       y < rect.height + ctx.scrollTop - 20
     ) {
-      const changeSizeLine = document.querySelector(
-        ".luckysheet-change-size-line"
+      const changeSizeLine = container.querySelector(
+        ".fortune-change-size-line"
       );
       if (changeSizeLine) {
         (changeSizeLine as HTMLDivElement).style.top = `${y}px`;
       }
-      const changeSizeRow = document.querySelector(
-        ".luckysheet-rows-change-size"
+      const changeSizeRow = container.querySelector(
+        ".fortune-rows-change-size"
       );
       if (changeSizeRow) {
         (changeSizeRow as HTMLDivElement).style.top = `${y}px`;
@@ -3593,8 +3593,8 @@ export function handleOverlayMouseUp(
   if (ctx.luckysheet_rows_change_size) {
     ctx.luckysheet_rows_change_size = false;
 
-    // $("#luckysheet-change-size-line").hide();
-    // $("#luckysheet-rows-change-size").css("opacity", 0);
+    // $("#fortune-change-size-line").hide();
+    // $("#fortune-rows-change-size").css("opacity", 0);
     // $(
     //   "#luckysheet-sheettable, #luckysheet-rows-h, #luckysheet-rows-h canvas"
     // ).css("cursor", "default");
@@ -3815,7 +3815,7 @@ export function handleOverlayMouseUp(
   // 改变选择框的位置并替换目标单元格
   if (ctx.luckysheet_cell_selected_move) {
     /*
-      $("#luckysheet-cell-selected-move").hide();
+      $(".fortune-cell-selected-move").hide();
   
       ctx.luckysheet_cell_selected_move = false;
       const mouse = mouseposition(event.pageX, event.pageY);
@@ -4417,7 +4417,7 @@ export function handleRowHeaderMouseDown(
       formulaCache.rangestart = false;
       formulaCache.rangedrag_column_start = false;
 
-      // $("#luckysheet-formula-functionrange-select")
+      // $("#fortune-formula-functionrange-select")
       //   .css({
       //     left: col_pre,
       //     width: col - col_pre - 1,
@@ -4833,7 +4833,7 @@ export function handleColumnHeaderMouseDown(
       formulaCache.rangestart = false;
       formulaCache.rangedrag_row_start = false;
 
-      // $("#luckysheet-formula-functionrange-select")
+      // $("#fortune-formula-functionrange-select")
       //   .css({
       //     left,
       //     width,
@@ -4970,6 +4970,7 @@ export function handleColSizeHandleMouseDown(
   globalCache: GlobalCache,
   e: MouseEvent,
   headerContainer: HTMLDivElement,
+  workbookContainer: HTMLDivElement,
   cellArea: HTMLDivElement
 ) {
   // //有批注在编辑时
@@ -4998,7 +4999,9 @@ export function handleColSizeHandleMouseDown(
 
   ctx.luckysheet_cols_change_size = true;
   ctx.luckysheet_scroll_status = true;
-  const changeSizeLine = document.querySelector(".luckysheet-change-size-line");
+  const changeSizeLine = workbookContainer.querySelector(
+    ".fortune-change-size-line"
+  );
   if (changeSizeLine) {
     const ele = changeSizeLine as HTMLDivElement;
     ele.style.height = `${
@@ -5025,6 +5028,7 @@ export function handleRowSizeHandleMouseDown(
   globalCache: GlobalCache,
   e: MouseEvent,
   headerContainer: HTMLDivElement,
+  workbookContainer: HTMLDivElement,
   cellArea: HTMLDivElement
 ) {
   // 有批注在编辑时
@@ -5053,7 +5057,9 @@ export function handleRowSizeHandleMouseDown(
 
   ctx.luckysheet_rows_change_size = true;
   ctx.luckysheet_scroll_status = true;
-  const changeSizeLine = document.querySelector(".luckysheet-change-size-line");
+  const changeSizeLine = workbookContainer.querySelector(
+    ".fortune-change-size-line"
+  );
   if (changeSizeLine) {
     const ele = changeSizeLine as HTMLDivElement;
     ele.style.width = `${

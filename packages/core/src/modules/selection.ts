@@ -501,7 +501,7 @@ export function pasteHandlerOfPaintModel(
 // }
 // }
 export function selectionCopyShow(range: any, ctx: Context) {
-  // $("#luckysheet-selection-copy").empty();
+  // $("#fortune-selection-copy").empty();
 
   if (range == null) {
     range = ctx.luckysheet_selection_range;
@@ -518,14 +518,14 @@ export function selectionCopyShow(range: any, ctx: Context) {
   //         let col = ctx.visibledatacolumn[c2],
   //             col_pre = c1 - 1 == -1 ? 0 : ctx.visibledatacolumn[c1 - 1];
 
-  //         let copyDomHtml = '<div class="luckysheet-selection-copy" style="display: block; left: ' + col_pre + 'px; width: ' + (col - col_pre - 1) + 'px; top: ' + row_pre + 'px; height: ' + (row - row_pre - 1) + 'px;">' +
-  //             '<div class="luckysheet-selection-copy-top luckysheet-copy"></div>' +
-  //             '<div class="luckysheet-selection-copy-right luckysheet-copy"></div>' +
-  //             '<div class="luckysheet-selection-copy-bottom luckysheet-copy"></div>' +
-  //             '<div class="luckysheet-selection-copy-left luckysheet-copy"></div>' +
-  //             '<div class="luckysheet-selection-copy-hc"></div>' +
+  //         let copyDomHtml = '<div class="fortune-selection-copy" style="display: block; left: ' + col_pre + 'px; width: ' + (col - col_pre - 1) + 'px; top: ' + row_pre + 'px; height: ' + (row - row_pre - 1) + 'px;">' +
+  //             '<div class="fortune-selection-copy-top fortune-copy"></div>' +
+  //             '<div class="fortune-selection-copy-right fortune-copy"></div>' +
+  //             '<div class="fortune-selection-copy-bottom fortune-copy"></div>' +
+  //             '<div class="fortune-selection-copy-left fortune-copy"></div>' +
+  //             '<div class="fortune-selection-copy-hc"></div>' +
   //             '</div>';
-  //         $("#luckysheet-selection-copy").append(copyDomHtml);
+  //         $("#fortune-selection-copy").append(copyDomHtml);
   //     }
   // }
 }
@@ -799,7 +799,7 @@ export function moveHighlightCell(
       moveXY: { x: moveX, y: moveY },
     };
 
-    // $("#luckysheet-formula-functionrange-select")
+    // $("#fortune-formula-functionrange-select")
     //   .css({
     //     left: col_pre,
     //     width: col - col_pre - 1,
@@ -1373,7 +1373,7 @@ export function rangeValueToHtml(
     cpdata += "</tr>";
   }
 
-  return `<table data-type="luckysheet_copy_action_table">${colgroup}${cpdata}</table>`;
+  return `<table data-type="fortune-copy-action-table">${colgroup}${cpdata}</table>`;
 }
 
 export function copy(ctx: Context) {

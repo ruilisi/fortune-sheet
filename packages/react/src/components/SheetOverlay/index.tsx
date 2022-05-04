@@ -258,18 +258,17 @@ const SheetOverlay: React.FC = () => {
               : "default",
           }}
         >
-          <div id="luckysheet-formula-functionrange" />
+          <div id="fortune-formula-functionrange" />
           {context.formulaRangeSelect && (
             <div
-              id="luckysheet-formula-functionrange-select"
-              className="luckysheet-selection-copy luckysheet-formula-functionrange-select"
+              className="fortune-selection-copy fortune-formula-functionrange-select"
               style={context.formulaRangeSelect}
             >
-              <div className="luckysheet-selection-copy-top luckysheet-copy" />
-              <div className="luckysheet-selection-copy-right luckysheet-copy" />
-              <div className="luckysheet-selection-copy-bottom luckysheet-copy" />
-              <div className="luckysheet-selection-copy-left luckysheet-copy" />
-              <div className="luckysheet-selection-copy-hc" />
+              <div className="fortune-selection-copy-top fortune-copy" />
+              <div className="fortune-selection-copy-right fortune-copy" />
+              <div className="fortune-selection-copy-bottom fortune-copy" />
+              <div className="fortune-selection-copy-left fortune-copy" />
+              <div className="fortune-selection-copy-hc" />
             </div>
           )}
           {context.formulaRangeHighlight.map((v) => {
@@ -277,27 +276,27 @@ const SheetOverlay: React.FC = () => {
             return (
               <div
                 key={rangeIndex}
-                id="luckysheet-formula-functionrange-highlight"
-                className="luckysheet-selection-highlight luckysheet-formula-functionrange-highlight"
+                id="fortune-formula-functionrange-highlight"
+                className="fortune-selection-highlight fortune-formula-functionrange-highlight"
                 style={_.omit(v, "backgroundColor")}
               >
                 {["top", "right", "bottom", "left"].map((d) => (
                   <div
                     key={d}
                     data-type={d}
-                    className={`luckysheet-selection-copy-${d} luckysheet-copy`}
+                    className={`fortune-selection-copy-${d} fortune-copy`}
                     style={{ backgroundColor }}
                   />
                 ))}
                 <div
-                  className="luckysheet-selection-copy-hc"
+                  className="fortune-selection-copy-hc"
                   style={{ backgroundColor }}
                 />
                 {["lt", "rt", "lb", "rb"].map((d) => (
                   <div
                     key={d}
                     data-type={d}
-                    className={`luckysheet-selection-highlight-${d} luckysheet-highlight`}
+                    className={`fortune-selection-highlight-${d} luckysheet-highlight`}
                     style={{ backgroundColor }}
                   />
                 ))}
@@ -313,8 +312,7 @@ const SheetOverlay: React.FC = () => {
             id="luckysheet-column-count-show"
           />
           <div
-            className="luckysheet-change-size-line"
-            id="luckysheet-change-size-line"
+            className="fortune-change-size-line"
             hidden={
               !context.luckysheet_cols_change_size &&
               !context.luckysheet_rows_change_size
@@ -325,7 +323,7 @@ const SheetOverlay: React.FC = () => {
             id="luckysheet-cell-selected-focus"
           />
           {(context.luckysheet_selection_range?.length ?? 0) > 0 && (
-            <div id="luckysheet-selection-copy">
+            <div id="fortune-selection-copy">
               {context.luckysheet_selection_range!.map((range) => {
                 const r1 = range.row[0];
                 const r2 = range.row[1];
@@ -341,7 +339,7 @@ const SheetOverlay: React.FC = () => {
 
                 return (
                   <div
-                    className="luckysheet-selection-copy"
+                    className="fortune-selection-copy"
                     key={`${r1}-${r2}-${c1}-${c2}`}
                     style={{
                       left: col_pre,
@@ -350,25 +348,19 @@ const SheetOverlay: React.FC = () => {
                       height: row - row_pre - 1,
                     }}
                   >
-                    <div className="luckysheet-selection-copy-top luckysheet-copy" />
-                    <div className="luckysheet-selection-copy-right luckysheet-copy" />
-                    <div className="luckysheet-selection-copy-bottom luckysheet-copy" />
-                    <div className="luckysheet-selection-copy-left luckysheet-copy" />
-                    <div className="luckysheet-selection-copy-hc" />
+                    <div className="fortune-selection-copy-top fortune-copy" />
+                    <div className="fortune-selection-copy-right fortune-copy" />
+                    <div className="fortune-selection-copy-bottom fortune-copy" />
+                    <div className="fortune-selection-copy-left fortune-copy" />
+                    <div className="fortune-selection-copy-hc" />
                   </div>
                 );
               })}
             </div>
           )}
           <div id="luckysheet-chart-rangeShow" />
-          <div
-            className="luckysheet-cell-selected-extend"
-            id="luckysheet-cell-selected-extend"
-          />
-          <div
-            className="luckysheet-cell-selected-move"
-            id="luckysheet-cell-selected-move"
-          />
+          <div className="fortune-cell-selected-extend" />
+          <div className="fortune-cell-selected-move" />
           {(context.luckysheet_select_save?.length ?? 0) > 0 && (
             <div id="luckysheet-cell-selected-boxs">
               {context.luckysheet_select_save!.map((selection, index) => (

@@ -83,12 +83,13 @@ const ColumnHeader: React.FC = () => {
           refs.globalCache,
           e.nativeEvent,
           containerRef.current!,
+          refs.workbookContainer.current!,
           refs.cellArea.current!
         );
       });
       e.stopPropagation();
     },
-    [refs.cellArea, refs.globalCache, setContext]
+    [refs.cellArea, refs.globalCache, refs.workbookContainer, setContext]
   );
 
   const onContextMenu = useCallback(
@@ -146,9 +147,9 @@ const ColumnHeader: React.FC = () => {
       onContextMenu={onContextMenu}
     >
       <div
-        className="luckysheet-cols-change-size"
+        className="fortune-cols-change-size"
         ref={colChangeSizeRef}
-        id="luckysheet-cols-change-size"
+        id="fortune-cols-change-size"
         onMouseDown={onColSizeHandleMouseDown}
         style={{
           left: hoverLocation.col - 5,

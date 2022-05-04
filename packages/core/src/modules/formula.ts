@@ -2279,7 +2279,7 @@ export function createRangeHightlight(ctx: Context, inputInnerHtmlStr: string) {
     backgroundColor: string;
   }[] = [];
   $span
-    .querySelectorAll("span.luckysheet-formula-functionrange-cell")
+    .querySelectorAll("span.fortune-formula-functionrange-cell")
     .forEach((ele) => {
       const rangeIndex = parseInt(ele.getAttribute("rangeindex") || "0", 10);
       const cellrange = getcellrange(ctx, ele.textContent || "");
@@ -2589,12 +2589,12 @@ export function rangeHightlightselected(ctx: Context, $editor: HTMLDivElement) {
   const currSelection = getrangeseleciton();
   // $("#luckysheet-formula-search-c, #luckysheet-formula-help-c").hide();
   // $(
-  //   "#luckysheet-formula-functionrange .luckysheet-formula-functionrange-highlight .luckysheet-selection-copy-hc"
+  //   "#fortune-formula-functionrange .fortune-formula-functionrange-highlight .fortune-selection-copy-hc"
   // ).css("opacity", "0.03");
   // $("#luckysheet-formula-search-c, #luckysheet-formula-help-c").hide();
 
   // if (
-  //   $(currSelection).closest(".luckysheet-formula-functionrange-cell").length ==
+  //   $(currSelection).closest(".fortune-formula-functionrange-cell").length ==
   //   0
   // ) {
   if (!currSelection) return;
@@ -2612,12 +2612,12 @@ export function rangeHightlightselected(ctx: Context, $editor: HTMLDivElement) {
   // }
 
   // const $anchorOffset = $(currSelection).closest(
-  //   ".luckysheet-formula-functionrange-cell"
+  //   ".fortune-formula-functionrange-cell"
   // );
   // const rangeindex = $anchorOffset.attr("rangeindex");
-  // const rangeid = `luckysheet-formula-functionrange-highlight-${rangeindex}`;
+  // const rangeid = `fortune-formula-functionrange-highlight-${rangeindex}`;
 
-  // $(`#${rangeid}`).find(".luckysheet-selection-copy-hc").css({
+  // $(`#${rangeid}`).find(".fortune-selection-copy-hc").css({
   //   opacity: "0.13",
   // });
 }
@@ -2719,7 +2719,7 @@ function functionHTML(txt: string) {
         str = "";
       }
     }
-    // 修正例如输入公式='1-2'!A1时，只有2'!A1是luckysheet-formula-functionrange-cell色，'1-是黑色的问题。
+    // 修正例如输入公式='1-2'!A1时，只有2'!A1是fortune-formula-functionrange-cell色，'1-是黑色的问题。
     else if (s === "'" && matchConfig.dquote === 0) {
       str += "'";
       matchConfig.squote = matchConfig.squote === 0 ? 1 : 0;
@@ -2811,7 +2811,7 @@ function functionHTML(txt: string) {
     if (i === funcstack.length - 1) {
       // function_str += str;
       if (iscelldata(_.trim(str))) {
-        function_str += `<span class="luckysheet-formula-functionrange-cell" rangeindex="${
+        function_str += `<span class="fortune-formula-functionrange-cell" rangeindex="${
           formulaCache.functionHTMLIndex
         }" dir="auto" style="color:${
           colors[formulaCache.functionHTMLIndex]
@@ -3601,7 +3601,7 @@ export function rangeSetValue(
     }
     //   }
   } else {
-    const function_str = `<span class="luckysheet-formula-functionrange-cell" rangeindex="${
+    const function_str = `<span class="fortune-formula-functionrange-cell" rangeindex="${
       formulaCache.functionHTMLIndex
     }" dir="auto" style="color:${
       colors[formulaCache.functionHTMLIndex]
@@ -3759,8 +3759,8 @@ export function rangeDrag(
 
   // luckysheet_count_show(left, top, width, height, rowseleted, columnseleted);
 
-  const rangeElement = document.querySelector(
-    "#luckysheet-formula-functionrange-select"
+  const rangeElement = container.querySelector(
+    ".fortune-formula-functionrange-select"
   ) as HTMLDivElement;
 
   // if ($("#luckysheet-ifFormulaGenerator-multiRange-dialog").is(":visible")) {

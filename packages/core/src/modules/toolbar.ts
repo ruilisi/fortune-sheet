@@ -367,7 +367,7 @@ function activeFormulaInput(
   const col_pre = colLocationByIndex(columnh[0], ctx.visibledatacolumn)[0];
   const col = colLocationByIndex(columnh[1], ctx.visibledatacolumn)[1];
 
-  const formulaTxt = `<span dir="auto" class="luckysheet-formula-text-color">=</span><span dir="auto" class="luckysheet-formula-text-color">${formula.toUpperCase()}</span><span dir="auto" class="luckysheet-formula-text-color">(</span><span class="luckysheet-formula-functionrange-cell" rangeindex="0" dir="auto" style="color:${
+  const formulaTxt = `<span dir="auto" class="luckysheet-formula-text-color">=</span><span dir="auto" class="luckysheet-formula-text-color">${formula.toUpperCase()}</span><span dir="auto" class="luckysheet-formula-text-color">(</span><span class="fortune-formula-functionrange-cell" rangeindex="0" dir="auto" style="color:${
     colors[0]
   };">${getRangetxt(
     ctx,
@@ -403,7 +403,7 @@ function activeFormulaInput(
     top: row_pre,
     height: row - row_pre - 1,
   });
-  // $("#luckysheet-formula-functionrange-select")
+  // $("#fortune-formula-functionrange-select")
   //   .css({
   //     left: col_pre,
   //     width: col - col_pre - 1,

@@ -83,12 +83,13 @@ const RowHeader: React.FC = () => {
           refs.globalCache,
           e.nativeEvent,
           containerRef.current!,
+          refs.workbookContainer.current!,
           refs.cellArea.current!
         );
       });
       e.stopPropagation();
     },
-    [refs.cellArea, refs.globalCache, setContext]
+    [refs.cellArea, refs.globalCache, refs.workbookContainer, setContext]
   );
 
   const onContextMenu = useCallback(
@@ -145,9 +146,8 @@ const RowHeader: React.FC = () => {
       onContextMenu={onContextMenu}
     >
       <div
-        className="luckysheet-rows-change-size"
+        className="fortune-rows-change-size"
         ref={rowChangeSizeRef}
-        id="luckysheet-rows-change-size"
         onMouseDown={onRowSizeHandleMouseDown}
         style={{
           top: hoverLocation.row - 3,

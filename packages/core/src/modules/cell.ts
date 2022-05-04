@@ -640,7 +640,7 @@ export function cancelNormalSelected(ctx: Context) {
 
   ctx.luckysheetCellUpdate = [];
   ctx.formulaRangeHighlight = [];
-  // $("#luckysheet-formula-functionrange .luckysheet-formula-functionrange-highlight").remove();
+  // $("#fortune-formula-functionrange .fortune-formula-functionrange-highlight").remove();
   // $("#luckysheet-input-box").removeAttr("style");
   // $("#luckysheet-input-box-index").hide();
   // $("#luckysheet-wa-functionbox-cancel, #luckysheet-wa-functionbox-confirm").removeClass("luckysheet-wa-calculate-active");
