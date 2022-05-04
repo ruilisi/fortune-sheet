@@ -392,7 +392,6 @@ const SheetOverlay: React.FC = () => {
                       setContext((draftContext) => {
                         createDropCellRange(
                           draftContext,
-                          setContext,
                           e.nativeEvent,
                           containerRef.current!
                         );

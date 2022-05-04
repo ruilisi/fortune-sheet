@@ -1,5 +1,4 @@
 import _ from "lodash";
-import { SetContextOptions } from "packages/react/src/context";
 import dayjs from "dayjs";
 
 import { Context, getFlowdata } from "../context";
@@ -407,10 +406,6 @@ export function hideDropCellSelection() {
 
 export function createDropCellRange(
   ctx: Context,
-  setContext: (
-    recipe: (draftContext: Context) => void,
-    options?: SetContextOptions | undefined
-  ) => void,
   e: MouseEvent,
   container: HTMLDivElement
 ) {
