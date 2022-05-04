@@ -6,7 +6,7 @@ import {
   handleCellAreaDoubleClick,
 } from "../../src/events/mouse";
 
-describe("keyboard", () => {
+describe("mouse", () => {
   const getContext = () =>
     contextFactory({
       luckysheet_select_save: selectionFactory([0, 0], [0, 0], 0, 0),
