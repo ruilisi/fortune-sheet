@@ -174,7 +174,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         (draftCtx) => {
           if (_.isEmpty(draftCtx.luckysheetfile)) {
             const newData = produce(originalData, (draftData) => {
-              ensureSheetIndex(draftData);
+              ensureSheetIndex(draftData, mergedSettings.generateSheetId);
             });
             draftCtx.luckysheetfile = newData;
           }
@@ -314,6 +314,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       mergedSettings.defaultFontSize,
       mergedSettings.lang,
       mergedSettings.allowEdit,
+      mergedSettings.generateSheetId,
       setContextWithProduce,
     ]);
 
@@ -361,11 +362,12 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         generateAPIs(
           context,
           setContextWithProduce,
+          mergedSettings,
           cellInput.current,
           scrollbarX.current,
           scrollbarY.current
         ),
-      [context, setContextWithProduce]
+      [context, mergedSettings, setContextWithProduce]
     );
 
     const i = getSheetIndex(context, context.currentSheetIndex);

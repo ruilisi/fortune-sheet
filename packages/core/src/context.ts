@@ -2,7 +2,7 @@ import _ from "lodash";
 import { SheetConfig } from ".";
 import { normalizeSelection } from "./modules/selection";
 import { Sheet, Selection, Cell, CommentBox, Rect, Image } from "./types";
-import { generateRandomSheetIndex, getSheetIndex } from "./utils";
+import { getSheetIndex } from "./utils";
 
 export type Context = {
   container: any;
@@ -410,16 +410,16 @@ function calcRowColSize(ctx: Context, rowCount: number, colCount: number) {
   ctx.ch_width += maxColumnlen;
 }
 
-export function ensureSheetIndex(data: Sheet[]) {
+export function ensureSheetIndex(data: Sheet[], generateSheetId: () => string) {
   if (data?.length > 0) {
     let hasActive = false;
     const indexs: (string | number)[] = [];
     data.forEach((item) => {
       if (item.index == null) {
-        item.index = generateRandomSheetIndex();
+        item.index = generateSheetId();
       }
       if (indexs.includes(item.index)) {
-        item.index = generateRandomSheetIndex();
+        item.index = generateSheetId();
       } else {
         indexs.push(item.index);
       }

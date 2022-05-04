@@ -1,11 +1,8 @@
 import { Context } from "../context";
 import { locale } from "../locale";
+import { Settings } from "../settings";
 import { Sheet } from "../types";
-import {
-  generateRandomSheetIndex,
-  generateRandomSheetName,
-  getSheetIndex,
-} from "../utils";
+import { generateRandomSheetName, getSheetIndex } from "../utils";
 
 function storeSheetParam(ctx: Context) {
   const index = getSheetIndex(ctx, ctx.currentSheetIndex);
@@ -94,7 +91,11 @@ export function changeSheet(
   //   _this.restoreselect();
 }
 
-export function addSheet(ctx: Context, isPivotTable = false) {
+export function addSheet(
+  ctx: Context,
+  settings: Required<Settings>,
+  isPivotTable = false
+) {
   if (/* isEditMode() || */ ctx.allowEdit === false) {
     // alert("非编辑模式下不允许该操作！");
     return;
@@ -105,7 +106,7 @@ export function addSheet(ctx: Context, isPivotTable = false) {
   //   }
 
   const order = ctx.luckysheetfile.length;
-  const index = generateRandomSheetIndex();
+  const index = settings.generateSheetId();
 
   const sheetname = generateRandomSheetName(
     ctx.luckysheetfile,

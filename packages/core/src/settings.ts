@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { Sheet } from "./types";
 
 export type Settings = {
@@ -20,6 +21,7 @@ export type Settings = {
   toolbarItems?: string[];
   cellContextMenu?: string[];
   sheetTabContextMenu?: string[];
+  generateSheetId?: () => string;
 };
 
 export const defaultSettings: Required<Settings> = {
@@ -94,4 +96,5 @@ export const defaultSettings: Required<Settings> = {
     "cell-format", // 设置单元格格式
   ], // 自定义单元格右键菜单
   sheetTabContextMenu: ["delete", "copy", "rename", "color", "hide", "move"], // 自定义底部sheet页右击菜单
+  generateSheetId: () => uuidv4(),
 };

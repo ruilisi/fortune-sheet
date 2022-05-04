@@ -10,6 +10,7 @@ import {
   opToPatch,
   Range,
   Selection,
+  Settings,
   SingleRange,
 } from "@fortune-sheet/core";
 import produce, { applyPatches } from "immer";
@@ -21,6 +22,7 @@ export function generateAPIs(
     recipe: (ctx: Context) => void,
     options?: SetContextOptions
   ) => void,
+  settings: Required<Settings>,
   cellInput: HTMLDivElement | null,
   scrollbarX: HTMLDivElement | null,
   scrollbarY: HTMLDivElement | null
@@ -41,7 +43,7 @@ export function generateAPIs(
             });
           } else if (specialOp.op === "addSheet") {
             ctx_ = produce(ctx_, (draftCtx) => {
-              addSheet(draftCtx);
+              addSheet(draftCtx, settings);
             });
           } else if (specialOp.op === "deleteSheet") {
             ctx_ = produce(ctx_, (draftCtx) => {
@@ -182,7 +184,7 @@ export function generateAPIs(
     getSheet: (options: api.CommonOptions = {}) =>
       api.getSheet(context, options),
 
-    addSheet: () => setContext((draftCtx) => api.addSheet(draftCtx)),
+    addSheet: () => setContext((draftCtx) => api.addSheet(draftCtx, settings)),
 
     deleteSheet: (options: api.CommonOptions = {}) =>
       setContext((draftCtx) => api.deleteSheet(draftCtx, options)),

@@ -4,11 +4,12 @@ import {
   addSheet as addSheetInternal,
   deleteSheet as deleteSheetInternal,
 } from "../modules";
+import { Settings } from "../settings";
 import { CommonOptions, getSheet } from "./common";
 import { INVALID_PARAMS } from "./errors";
 
-export function addSheet(ctx: Context) {
-  addSheetInternal(ctx, false);
+export function addSheet(ctx: Context, settings: Required<Settings>) {
+  addSheetInternal(ctx, settings, false);
 }
 
 export function deleteSheet(ctx: Context, options: CommonOptions = {}) {

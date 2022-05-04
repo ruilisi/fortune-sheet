@@ -7,7 +7,7 @@ import "./index.css";
 import SheetItem from "./SheetItem";
 
 const SheetTab: React.FC = () => {
-  const { context, setContext, refs } = useContext(WorkbookContext);
+  const { context, setContext, settings, refs } = useContext(WorkbookContext);
   const tabContainerRef = useRef<HTMLDivElement>(null);
   const leftScrollRef = useRef<HTMLDivElement>(null);
   const rightScrollRef = useRef<HTMLDivElement>(null);
@@ -32,7 +32,7 @@ const SheetTab: React.FC = () => {
                     refs.cellInput.current!
                   );
                 }
-                addSheet(draftCtx);
+                addSheet(draftCtx, settings);
               },
               { addSheetOp: true }
             );
