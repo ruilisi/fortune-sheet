@@ -2293,7 +2293,7 @@ function getApplyData(
 
 function updateDropCell(ctx: Context) {
   // if (
-  //   !checkProtectionLockedRangeList([_this.applyRange], ctx.currentSheetIndex)
+  //   !checkProtectionLockedRangeList([_this.applyRange], ctx.currentSheetId)
   // ) {
   //   return;
   // }
@@ -2303,7 +2303,7 @@ function updateDropCell(ctx: Context) {
     return;
   }
 
-  const index = getSheetIndex(ctx, ctx.currentSheetIndex);
+  const index = getSheetIndex(ctx, ctx.currentSheetId);
   if (index == null) return;
   const file = ctx.luckysheetfile[index];
 
@@ -2311,7 +2311,7 @@ function updateDropCell(ctx: Context) {
   if (cfg.borderInfo == null) {
     cfg.borderInfo = [];
   }
-  const borderInfoCompute = getBorderInfoCompute(ctx, ctx.currentSheetIndex);
+  const borderInfoCompute = getBorderInfoCompute(ctx, ctx.currentSheetId);
   const dataVerification = _.cloneDeep(file.dataVerification);
 
   const { direction } = dropCellCache;
@@ -2820,7 +2820,7 @@ export function onDropCellSelectEnd(
   // if (
   //   !checkProtectionLockedRangeList(
   //     ctx.luckysheet_select_save,
-  //     ctx.currentSheetIndex
+  //     ctx.currentSheetId
   //   )
   // ) {
   //   return;

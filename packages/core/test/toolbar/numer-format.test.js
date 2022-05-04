@@ -13,7 +13,7 @@ describe("number format", () => {
       luckysheet_select_save: selectionFactory([1, 1], [1, 1], 1, 1),
       luckysheetfile: [
         {
-          index: "index_1",
+          id: "id_1",
           data: [
             [null, null],
             [null, { m: "5", v: "5" }],

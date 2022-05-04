@@ -66,7 +66,7 @@ const ContextMenu: React.FC = () => {
                   index: position,
                   count,
                   direction,
-                  sheetIndex: context.currentSheetIndex,
+                  id: context.currentSheetId,
                 };
                 setContext(
                   (draftCtx) => {
@@ -126,7 +126,7 @@ const ContextMenu: React.FC = () => {
                   index: position,
                   count,
                   direction,
-                  sheetIndex: context.currentSheetIndex,
+                  id: context.currentSheetId,
                 };
                 setContext(
                   (draftCtx) => {
@@ -176,7 +176,7 @@ const ContextMenu: React.FC = () => {
               type: "column",
               start: st_index,
               end: ed_index,
-              sheetIndex: context.currentSheetIndex,
+              id: context.currentSheetId,
             };
             setContext(
               (draftCtx) => {
@@ -201,7 +201,7 @@ const ContextMenu: React.FC = () => {
               type: "row",
               start: st_index,
               end: ed_index,
-              sheetIndex: context.currentSheetIndex,
+              id: context.currentSheetId,
             };
             setContext(
               (draftCtx) => {
@@ -218,7 +218,7 @@ const ContextMenu: React.FC = () => {
       ),
     };
   }, [
-    context.currentSheetIndex,
+    context.currentSheetId,
     context.lang,
     context.luckysheet_select_save,
     rightclick,

@@ -1321,7 +1321,7 @@ const data = {
       "2": 1,
     },
   },
-  index: "0",
+  id: "0",
   zoomRatio: 1,
   order: "0",
   column: 18,
@@ -6032,7 +6032,7 @@ const data = {
     {
       r: 0,
       c: 3,
-      index: "0",
+      id: "0",
       func: [true, 3, "=Formula!A1+Formula!B1"],
       color: "w",
       parent: null,

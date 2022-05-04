@@ -663,11 +663,11 @@ export function updateCell(
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
 
-  // if (!_.isNil(rangetosheet) && rangetosheet !== ctx.currentSheetIndex) {
+  // if (!_.isNil(rangetosheet) && rangetosheet !== ctx.currentSheetId) {
   //   sheetmanage.changeSheetExec(rangetosheet);
   // }
 
-  // if (!checkProtectionLocked(r, c, ctx.currentSheetIndex)) {
+  // if (!checkProtectionLocked(r, c, ctx.currentSheetId)) {
   //   return;
   // }
 
@@ -956,7 +956,7 @@ export function updateCell(
   /*
   let RowlChange = false;
   const cfg =
-    ctx.luckysheetfile?.[getSheetIndex(ctx, ctx.currentSheetIndex)]?.config ||
+    ctx.luckysheetfile?.[getSheetIndex(ctx, ctx.currentSheetId)]?.config ||
     {};
   if (!cfg.rowlen) {
     cfg.rowlen = {};
@@ -1008,7 +1008,7 @@ export function updateCell(
   /*
   let dynamicArray = null;
   if (dynamicArrayItem) {
-    // let file = ctx.luckysheetfile[getSheetIndex(ctx.currentSheetIndex)];
+    // let file = ctx.luckysheetfile[getSheetIndex(ctx.currentSheetId)];
     dynamicArray = $.extend(
       true,
       [],
@@ -1139,19 +1139,19 @@ export function getFlattenedRange(ctx: Context, range?: Range) {
 
 export function getRangetxt(
   ctx: Context,
-  sheetIndex: string,
+  sheetId: string,
   range: SingleRange,
-  currentIndex?: string
+  currentId?: string
 ) {
   let sheettxt = "";
 
-  if (currentIndex == null) {
-    currentIndex = ctx.currentSheetIndex;
+  if (currentId == null) {
+    currentId = ctx.currentSheetId;
   }
 
-  if (sheetIndex !== currentIndex) {
+  if (sheetId !== currentId) {
     // sheet名字包含'的，引用时应该替换为''
-    const index = getSheetIndex(ctx, sheetIndex);
+    const index = getSheetIndex(ctx, sheetId);
     if (index == null) return "";
     sheettxt = ctx.luckysheetfile[index].name.replace(/'/g, "''");
     // 如果包含除a-z、A-Z、0-9、下划线等以外的字符那么就用单引号包起来
@@ -1511,7 +1511,7 @@ export function rowlenByRange(
 export function getdatabyselection(
   ctx: Context,
   range: Selection | undefined,
-  sheetIndex: string
+  sheetId: string
 ) {
   if (range == null && ctx.luckysheet_select_save) {
     [range] = ctx.luckysheet_select_save;
@@ -1526,9 +1526,9 @@ export function getdatabyselection(
   // 取数据
   let d;
   let cfg;
-  if (sheetIndex != null && sheetIndex !== ctx.currentSheetIndex) {
-    d = ctx.luckysheetfile[getSheetIndex(ctx, sheetIndex)!].data;
-    cfg = ctx.luckysheetfile[getSheetIndex(ctx, sheetIndex)!].config;
+  if (sheetId != null && sheetId !== ctx.currentSheetId) {
+    d = ctx.luckysheetfile[getSheetIndex(ctx, sheetId)!].data;
+    cfg = ctx.luckysheetfile[getSheetIndex(ctx, sheetId)!].config;
   } else {
     d = getFlowdata(ctx);
     cfg = ctx.config;

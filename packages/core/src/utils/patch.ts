@@ -10,18 +10,18 @@ export type PatchOptions = {
     index: number;
     count: number;
     direction: "lefttop" | "rightbottom";
-    sheetIndex: string;
+    id: string;
   };
   deleteRowColOp?: {
     type: "row" | "column";
     start: number;
     end: number;
-    sheetIndex: string;
+    id: string;
   };
   restoreDeletedCells?: boolean;
   addSheetOp?: boolean;
   deleteSheetOp?: {
-    index: string;
+    id: string;
   };
 };
 
@@ -44,7 +44,7 @@ export function extractFormulaCellOps(ops: Op[]) {
         if (op.value[i]?.f) {
           formulaOps.push({
             op: "replace",
-            index: op.index,
+            id: op.id,
             path: [...op.path, i],
             value: op.value[i],
           });
@@ -69,8 +69,8 @@ export function patchToOp(
       path: p.path,
     };
     if (p.path[0] === "luckysheetfile" && _.isNumber(p.path[1])) {
-      const index = ctx.luckysheetfile[p.path[1]].index!;
-      op.index = index;
+      const id = ctx.luckysheetfile[p.path[1]].id!;
+      op.id = id;
       op.path = p.path.slice(2);
     }
     return op;
@@ -82,7 +82,7 @@ export function patchToOp(
     ops = nonDataOps;
     ops.push({
       op: "insertRowCol",
-      index: options.insertRowColOp.sheetIndex,
+      id: options.insertRowColOp.id,
       path: [],
       value: options.insertRowColOp,
     });
@@ -111,7 +111,7 @@ export function patchToOp(
               restoreCellsOps.push({
                 op: "replace",
                 path: ["data", i, j],
-                index: ctx.currentSheetIndex,
+                id: ctx.currentSheetId,
                 value: cell,
               });
             }
@@ -127,7 +127,7 @@ export function patchToOp(
     ops = nonDataOps;
     ops.push({
       op: "deleteRowCol",
-      index: options.deleteRowColOp.sheetIndex,
+      id: options.deleteRowColOp.id,
       path: [],
       value: options.deleteRowColOp,
     });
@@ -147,7 +147,7 @@ export function patchToOp(
     ops = [
       {
         op: "deleteSheet",
-        index: options.deleteSheetOp.index,
+        id: options.deleteSheetOp.id,
         path: [],
         value: options.deleteSheetOp,
       },
@@ -167,12 +167,12 @@ export function opToPatch(ctx: Context, ops: Op[]): [Patch[], Op[]] {
       value: op.value,
       path: op.path,
     };
-    if (op.index) {
-      const i = getSheetIndex(ctx, op.index);
+    if (op.id) {
+      const i = getSheetIndex(ctx, op.id);
       if (i != null) {
         patch.path = ["luckysheetfile", i, ...op.path];
       } else {
-        throw new Error(`sheet index: ${op.index} not found`);
+        throw new Error(`sheet id: ${op.id} not found`);
       }
     }
     return patch;
@@ -192,7 +192,7 @@ export function inverseRowColOptions(
     return {
       deleteRowColOp: {
         type: options.insertRowColOp.type,
-        sheetIndex: options.insertRowColOp.sheetIndex,
+        id: options.insertRowColOp.id,
         start: index,
         end: index + options.insertRowColOp.count - 1,
       },
@@ -202,7 +202,7 @@ export function inverseRowColOptions(
     return {
       insertRowColOp: {
         type: options.deleteRowColOp.type,
-        sheetIndex: options.deleteRowColOp.sheetIndex,
+        id: options.deleteRowColOp.id,
         index: options.deleteRowColOp.start,
         count: options.deleteRowColOp.end - options.deleteRowColOp.start + 1,
         direction: "lefttop",

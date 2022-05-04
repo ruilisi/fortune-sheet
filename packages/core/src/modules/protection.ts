@@ -6,11 +6,11 @@ export function checkProtectionSelectLockedOrUnLockedCells(
   ctx: Context,
   r: number,
   c: number,
-  sheetIndex: string
+  sheetId: string
 ) {
   //   const _locale = locale();
   //   const local_protection = _locale.protection;
-  const sheetFile = getSheetByIndex(ctx, sheetIndex);
+  const sheetFile = getSheetByIndex(ctx, sheetId);
   if (_.isNil(sheetFile)) {
     return true;
   }
@@ -58,8 +58,8 @@ export function checkProtectionSelectLockedOrUnLockedCells(
   return false;
 }
 
-export function checkProtectionAllSelected(ctx: Context, sheetIndex: string) {
-  const sheetFile = getSheetByIndex(ctx, sheetIndex);
+export function checkProtectionAllSelected(ctx: Context, sheetId: string) {
+  const sheetFile = getSheetByIndex(ctx, sheetId);
   if (_.isNil(sheetFile)) {
     return true;
   }

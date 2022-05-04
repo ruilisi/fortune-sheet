@@ -16,7 +16,7 @@ describe("keyboard", () => {
       luckysheet_select_save: selectionFactory([0, 0], [0, 0], 0, 0),
       luckysheetfile: [
         {
-          index: "index_1",
+          id: "id_1",
           data: [
             [{ v: "abc" }, { v: "abc" }],
             [{ v: "abc" }, { v: "abc" }],

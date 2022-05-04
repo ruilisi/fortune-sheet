@@ -213,7 +213,7 @@ export function handleCellAreaMouseDown(
   if (x >= rect.width + ctx.scrollLeft || y >= rect.height + ctx.scrollTop) {
     return;
   }
-  const freeze = globalCache.freezen?.[ctx.currentSheetIndex];
+  const freeze = globalCache.freezen?.[ctx.currentSheetId];
   [x, y] = fixPositionOnFrozenCells(freeze, x, y, mouseX, mouseY);
 
   const row_location = rowLocation(y, ctx.visibledatarow);
@@ -608,7 +608,7 @@ export function handleCellAreaMouseDown(
       ctx,
       row_index,
       col_index,
-      ctx.currentSheetIndex
+      ctx.currentSheetId
     )
   ) {
     ctx.luckysheet_select_status = true;
@@ -758,9 +758,9 @@ export function handleCellAreaMouseDown(
   //   ]);
 
   //   let range = getRangetxt(
-  //     ctx.currentSheetIndex,
+  //     ctx.currentSheetId,
   //     { row: [row_index, row_index], column: [col_index, col_index] },
-  //     ctx.currentSheetIndex
+  //     ctx.currentSheetId
   //   );
   //   $("#luckysheet-singleRange-dialog input").val(range);
 
@@ -884,9 +884,9 @@ export function handleCellAreaMouseDown(
   //   let range = dataVerificationCtrl.getTxtByRange(
   //     dataVerificationCtrl.selectRange
   //   );
-  //   if (formula.rangetosheet != ctx.currentSheetIndex) {
+  //   if (formula.rangetosheet != ctx.currentSheetId) {
   //     range =
-  //       ctx.luckysheetfile[getSheetIndex(ctx.currentSheetIndex)].name +
+  //       ctx.luckysheetfile[getSheetIndex(ctx.currentSheetId)].name +
   //       "!" +
   //       range;
   //   }
@@ -920,9 +920,9 @@ export function handleCellAreaMouseDown(
   //   $("#luckysheet-formula-help-c").hide();
 
   //   let range = getRangetxt(
-  //     ctx.currentSheetIndex,
+  //     ctx.currentSheetId,
   //     { row: [row_index, row_index], column: [col_index, col_index] },
-  //     ctx.currentSheetIndex
+  //     ctx.currentSheetId
   //   );
   //   $("#luckysheet-ifFormulaGenerator-singleRange-dialog input").val(range);
 
@@ -960,9 +960,9 @@ export function handleCellAreaMouseDown(
   //   $("#luckysheet-formula-help-c").hide();
 
   //   let range = getRangetxt(
-  //     ctx.currentSheetIndex,
+  //     ctx.currentSheetId,
   //     { row: [row_index, row_index], column: [col_index, col_index] },
-  //     ctx.currentSheetIndex
+  //     ctx.currentSheetId
   //   );
   //   $("#luckysheet-ifFormulaGenerator-multiRange-dialog input").val(range);
 
@@ -1055,13 +1055,13 @@ export function handleCellAreaMouseDown(
         // // 交替颜色选择范围
         // if ($("#luckysheet-alternateformat-rangeDialog").is(":visible")) {
         //   $("#luckysheet-alternateformat-rangeDialog input").val(
-        //     getRangetxt(ctx.currentSheetIndex, ctx.luckysheet_select_save)
+        //     getRangetxt(ctx.currentSheetId, ctx.luckysheet_select_save)
         //   );
         // }
         // if (pivotTable.luckysheet_pivotTable_select_state) {
         //   $("#luckysheet-pivotTable-range-selection-input").val(
         //     `${
-        //       ctx.luckysheetfile[getSheetIndex(ctx.currentSheetIndex)]
+        //       ctx.luckysheetfile[getSheetIndex(ctx.currentSheetId)]
         //         .name
         //     }!${chatatABC(ctx.luckysheet_select_save[0].column[0])}${
         //       ctx.luckysheet_select_save[0].row[0] + 1
@@ -1129,7 +1129,7 @@ export function handleCellAreaMouseDown(
   //   // 允许编辑后的后台更新时
   //   server.saveParam(
   //     "mv",
-  //     ctx.currentSheetIndex,
+  //     ctx.currentSheetId,
   //     ctx.luckysheet_select_save
   //   );
   // }
@@ -1150,7 +1150,7 @@ export function handleCellAreaMouseDown(
   // // selectHelpboxFill();
 
   // // 数据透视表
-  // pivotTable.pivotclick(row_index, col_index, ctx.currentSheetIndex);
+  // pivotTable.pivotclick(row_index, col_index, ctx.currentSheetId);
 
   // luckysheetContainerFocus();
 
@@ -1222,7 +1222,7 @@ export function handleCellAreaDoubleClick(
   let x = mouseX + ctx.scrollLeft;
   let y = mouseY + ctx.scrollTop;
 
-  const freeze = globalCache.freezen?.[ctx.currentSheetIndex];
+  const freeze = globalCache.freezen?.[ctx.currentSheetId];
   [x, y] = fixPositionOnFrozenCells(freeze, x, y, mouseX, mouseY);
 
   const row_location = rowLocation(y, ctx.visibledatarow);
@@ -1463,7 +1463,7 @@ function mouseRender(
         ctx,
         row_index,
         col_index,
-        ctx.currentSheetIndex
+        ctx.currentSheetId
       )
     ) {
       ctx.luckysheet_select_status = false;
@@ -1565,7 +1565,7 @@ function mouseRender(
 
     ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1] = last;
 
-    scrollToFrozenRowCol(ctx, globalCache.freezen?.[ctx.currentSheetIndex]);
+    scrollToFrozenRowCol(ctx, globalCache.freezen?.[ctx.currentSheetId]);
     // luckysheetFreezen.scrollFreezen();
 
     // selectHelpboxFill();
@@ -1574,7 +1574,7 @@ function mouseRender(
     // if ($("#luckysheet-alternateformat-rangeDialog").is(":visible")) {
     //   $("#luckysheet-alternateformat-rangeDialog input").val(
     //     getRangetxt(
-    //       ctx.currentSheetIndex,
+    //       ctx.currentSheetId,
     //       ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1]
     //     )
     //   );
@@ -1583,7 +1583,7 @@ function mouseRender(
     // if (pivotTable.luckysheet_pivotTable_select_state) {
     //   $("#luckysheet-pivotTable-range-selection-input").val(
     //     `${
-    //       ctx.luckysheetfile[getSheetIndex(ctx.currentSheetIndex)].name
+    //       ctx.luckysheetfile[getSheetIndex(ctx.currentSheetId)].name
     //     }!${chatatABC(ctx.luckysheet_select_save[0].column[0])}${
     //       ctx.luckysheet_select_save[0].row[0] + 1
     //     }:${chatatABC(ctx.luckysheet_select_save[0].column[1])}${
@@ -1802,9 +1802,9 @@ function mouseRender(
     //   let range = dataVerificationCtrl.getTxtByRange(
     //     dataVerificationCtrl.selectRange
     //   );
-    //   if (formula.rangetosheet != ctx.currentSheetIndex) {
+    //   if (formula.rangetosheet != ctx.currentSheetId) {
     //     range = `${
-    //       ctx.luckysheetfile[getSheetIndex(ctx.currentSheetIndex)].name
+    //       ctx.luckysheetfile[getSheetIndex(ctx.currentSheetId)].name
     //     }!${range}`;
     //   }
     //   $("#luckysheet-dataVerificationRange-dialog input").val(range);
@@ -3496,7 +3496,7 @@ export function handleOverlayMouseUp(
         ctx.jfredo.push({
           type: "moveChart",
           chart_id,
-          sheetIndex: ctx.currentSheetIndex,
+          sheetId: ctx.currentSheetId,
           myTop,
           myLeft,
           scrollTop,
@@ -3507,9 +3507,9 @@ export function handleOverlayMouseUp(
           scrollLeft1,
         });
   
-        // luckysheet.sheetmanage.saveChart({ "chart_id": chart_id, "sheetIndex": sheetIndex, "top": myTop, "left": myLeft });
+        // luckysheet.sheetmanage.saveChart({ "chart_id": chart_id, "sheetId": sheetId, "top": myTop, "left": myLeft });
         // 存储滚动条位置//协同编辑时可能影响用户操作，可以考虑不存储滚动条位置,或者滚动条信息仅仅保存到后台，但是不分发到其他设备（google sheet没有存储滚动条位置）
-        // ctx.server.saveParam("c", sheetIndex, { "left":myLeft, "top":myTop,"scrollTop": scrollTop, "scrollLeft": scrollLeft }, { "op":"xy", "cid": chart_id});
+        // ctx.server.saveParam("c", sheetId, { "left":myLeft, "top":myTop,"scrollTop": scrollTop, "scrollLeft": scrollLeft }, { "op":"xy", "cid": chart_id});
       }
     }
   
@@ -3540,7 +3540,7 @@ export function handleOverlayMouseUp(
         ctx.jfredo.push({
           type: "resizeChart",
           chart_id,
-          sheetIndex: ctx.currentSheetIndex,
+          sheetId: ctx.currentSheetId,
           myTop,
           myLeft,
           myHeight,
@@ -3556,9 +3556,9 @@ export function handleOverlayMouseUp(
         });
   
         // 加上滚动条的位置
-        // luckysheet.sheetmanage.saveChart({ "chart_id": chart_id, "sheetIndex": sheetIndex, "height": myHeight, "width": myWidth, "top": myTop, "left": myLeft, "scrollTop": scrollTop, "scrollLeft": scrollLeft });
+        // luckysheet.sheetmanage.saveChart({ "chart_id": chart_id, "sheetId": sheetId, "height": myHeight, "width": myWidth, "top": myTop, "left": myLeft, "scrollTop": scrollTop, "scrollLeft": scrollLeft });
   
-        // ctx.server.saveParam("c", sheetIndex, { "width":myWidth, "height":myHeight, "top": myTop, "left": myLeft, "scrollTop": scrollTop, "scrollLeft": scrollLeft}, { "op":"wh", "cid": chart_id});
+        // ctx.server.saveParam("c", sheetId, { "width":myWidth, "height":myHeight, "top": myTop, "left": myLeft, "scrollTop": scrollTop, "scrollLeft": scrollLeft}, { "op":"wh", "cid": chart_id});
       }
     }
   
@@ -3666,7 +3666,7 @@ export function handleOverlayMouseUp(
     //   ctx.jfredo.push({
     //     type: "resize",
     //     ctrlType: "resizeR",
-    //     sheetIndex: ctx.currentSheetIndex,
+    //     sheetId: ctx.currentSheetId,
     //     config: $.extend(true, {}, ctx.config),
     //     curconfig: $.extend(true, {}, cfg),
     //     images: $.extend(true, {}, imageCtrl.images),
@@ -3676,17 +3676,17 @@ export function handleOverlayMouseUp(
 
     // config
     ctx.config = cfg;
-    const idx = getSheetIndex(ctx, ctx.currentSheetIndex);
+    const idx = getSheetIndex(ctx, ctx.currentSheetId);
     if (idx == null) return;
     ctx.luckysheetfile[idx].config = ctx.config;
 
-    // server.saveParam("cg", ctx.currentSheetIndex, cfg.rowlen, {
+    // server.saveParam("cg", ctx.currentSheetId, cfg.rowlen, {
     //   k: "rowlen",
     // });
 
     // images
-    // ctx.luckysheetfile[getSheetIndex(ctx.currentSheetIndex)].images = images;
-    // server.saveParam("all", ctx.currentSheetIndex, images, { k: "images" });
+    // ctx.luckysheetfile[getSheetIndex(ctx.currentSheetId)].images = images;
+    // server.saveParam("all", ctx.currentSheetId, images, { k: "images" });
     // imageCtrl.images = images;
     // imageCtrl.allImagesShow();
 
@@ -3776,7 +3776,7 @@ export function handleOverlayMouseUp(
     //   ctx.jfredo.push({
     //     type: "resize",
     //     ctrlType: "resizeC",
-    //     sheetIndex: ctx.currentSheetIndex,
+    //     sheetId: ctx.currentSheetId,
     //     config: $.extend(true, {}, ctx.config),
     //     curconfig: $.extend(true, {}, cfg),
     //     images: $.extend(true, {}, imageCtrl.images),
@@ -3786,18 +3786,18 @@ export function handleOverlayMouseUp(
 
     // config
     ctx.config = cfg;
-    const idx = getSheetIndex(ctx, ctx.currentSheetIndex);
+    const idx = getSheetIndex(ctx, ctx.currentSheetId);
     if (idx == null) return;
     ctx.luckysheetfile[idx].config = ctx.config;
 
-    // server.saveParam("cg", ctx.currentSheetIndex, cfg.columnlen, {
+    // server.saveParam("cg", ctx.currentSheetId, cfg.columnlen, {
     //   k: "columnlen",
     // });
 
     // images
-    // ctx.luckysheetfile[getSheetIndex(ctx.currentSheetIndex)].images =
+    // ctx.luckysheetfile[getSheetIndex(ctx.currentSheetId)].images =
     //   images;
-    // server.saveParam("all", ctx.currentSheetIndex, images, { k: "images" });
+    // server.saveParam("all", ctx.currentSheetId, images, { k: "images" });
     // imageCtrl.images = images;
     // imageCtrl.allImagesShow();
 
@@ -3823,7 +3823,7 @@ export function handleOverlayMouseUp(
       if (
         !checkProtectionLockedRangeList(
           ctx.luckysheet_select_save,
-          ctx.currentSheetIndex
+          ctx.currentSheetId
         )
       ) {
         return;
@@ -3889,7 +3889,7 @@ export function handleOverlayMouseUp(
       if (
         !checkProtectionLockedRangeList(
           [{ row: [row_s, row_e], column: [col_s, col_e] }],
-          ctx.currentSheetIndex
+          ctx.currentSheetId
         )
       ) {
         return;
@@ -3935,7 +3935,7 @@ export function handleOverlayMouseUp(
         return;
       }
   
-      const borderInfoCompute = getBorderInfoCompute(ctx.currentSheetIndex);
+      const borderInfoCompute = getBorderInfoCompute(ctx.currentSheetId);
   
       // 删除原本位置的数据
       let RowlChange = null;
@@ -4061,7 +4061,7 @@ export function handleOverlayMouseUp(
       const cdformat = $.extend(
         true,
         [],
-        ctx.luckysheetfile[getSheetIndex(ctx.currentSheetIndex)]
+        ctx.luckysheetfile[getSheetIndex(ctx.currentSheetId)]
           .luckysheet_conditionformat_save
       );
       if (cdformat != null && cdformat.length > 0) {
@@ -4154,7 +4154,7 @@ export function handleRowHeaderMouseDown(
   cellInput: HTMLDivElement,
   fxInput: HTMLDivElement
 ) {
-  if (!checkProtectionAllSelected(ctx, ctx.currentSheetIndex)) {
+  if (!checkProtectionAllSelected(ctx, ctx.currentSheetId)) {
     return;
   }
   // 有批注在编辑时
@@ -4406,9 +4406,9 @@ export function handleRowHeaderMouseDown(
       // ) {
       //   // if公式生成器
       //   const range = getRangetxt(
-      //     ctx.currentSheetIndex,
+      //     ctx.currentSheetId,
       //     { row: rowseleted, column: [0, col_index] },
-      //     ctx.currentSheetIndex
+      //     ctx.currentSheetId
       //   );
       //   $("#luckysheet-ifFormulaGenerator-multiRange-dialog input").val(range);
       // }
@@ -4559,7 +4559,7 @@ export function handleRowHeaderMouseDown(
     }
     // selectHightlightShow();
     // 允许编辑后的后台更新时
-    // server.saveParam("mv", ctx.currentSheetIndex, ctx.luckysheet_select_save);
+    // server.saveParam("mv", ctx.currentSheetId, ctx.luckysheet_select_save);
   }
 }
 
@@ -4571,7 +4571,7 @@ export function handleColumnHeaderMouseDown(
   cellInput: HTMLDivElement,
   fxInput: HTMLDivElement
 ) {
-  if (!checkProtectionAllSelected(ctx, ctx.currentSheetIndex)) {
+  if (!checkProtectionAllSelected(ctx, ctx.currentSheetId)) {
     return;
   }
   // 有批注在编辑时
@@ -4822,9 +4822,9 @@ export function handleColumnHeaderMouseDown(
       // ) {
       //   // if公式生成器
       //   const range = getRangetxt(
-      //     ctx.currentSheetIndex,
+      //     ctx.currentSheetId,
       //     { row: [0, row_index], column: columnseleted },
-      //     ctx.currentSheetIndex
+      //     ctx.currentSheetId
       //   );
       //   $("#luckysheet-ifFormulaGenerator-multiRange-dialog input").val(range);
       // }
@@ -4961,7 +4961,7 @@ export function handleColumnHeaderMouseDown(
     // selectHightlightShow();
 
     // // 允许编辑后的后台更新时
-    // server.saveParam("mv", ctx.currentSheetIndex, ctx.luckysheet_select_save);
+    // server.saveParam("mv", ctx.currentSheetId, ctx.luckysheet_select_save);
   }
 }
 

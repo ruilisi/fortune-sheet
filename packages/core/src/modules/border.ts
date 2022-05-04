@@ -10,18 +10,18 @@ export function getBorderInfoComputeRange(
   dataset_row_ed: number,
   dataset_col_st: number,
   dataset_col_ed: number,
-  sheetIndex?: string
+  sheetId?: string
 ) {
   const borderInfoCompute: any = {};
   const flowdata = getFlowdata(ctx);
 
   let cfg;
   let data: CellMatrix | null | undefined;
-  if (!sheetIndex) {
+  if (!sheetId) {
     cfg = ctx.config;
     data = flowdata;
   } else {
-    const index = getSheetIndex(ctx, sheetIndex);
+    const index = getSheetIndex(ctx, sheetId);
     if (!_.isNil(index)) {
       cfg = ctx.luckysheetfile[index].config;
       data = ctx.luckysheetfile[index].data;
@@ -1467,15 +1467,15 @@ export function getBorderInfoComputeRange(
   return borderInfoCompute;
 }
 
-export function getBorderInfoCompute(ctx: Context, sheetIndex?: string) {
+export function getBorderInfoCompute(ctx: Context, sheetId?: string) {
   let borderInfoCompute: any = {};
   const flowdata = getFlowdata(ctx);
 
   let data: any = {};
-  if (sheetIndex === undefined) {
+  if (sheetId === undefined) {
     data = flowdata;
   } else {
-    const index = getSheetIndex(ctx, sheetIndex);
+    const index = getSheetIndex(ctx, sheetId);
     if (!_.isNil(index)) {
       data = ctx.luckysheetfile[index].data;
     } else {
@@ -1489,7 +1489,7 @@ export function getBorderInfoCompute(ctx: Context, sheetIndex?: string) {
     data.length,
     0,
     data[0].length,
-    sheetIndex
+    sheetId
   );
 
   return borderInfoCompute;

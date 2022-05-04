@@ -5,7 +5,7 @@ describe("freeze", () => {
   const getContext = () =>
     contextFactory({
       luckysheet_select_save: selectionFactory([0, 1], [0, 1], 1, 1),
-      luckysheetfile: [{ index: "index_1" }],
+      luckysheetfile: [{ id: "id_1" }],
     });
 
   test("freeze row and cancel", async () => {

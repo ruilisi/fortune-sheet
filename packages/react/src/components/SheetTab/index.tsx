@@ -57,12 +57,12 @@ const SheetTab: React.FC = () => {
           >
             {_.sortBy(context.luckysheetfile, (s) => Number(s.order)).map(
               (sheet) => {
-                return <SheetItem key={sheet.index} sheet={sheet} />;
+                return <SheetItem key={sheet.id} sheet={sheet} />;
               }
             )}
             <SheetItem
               isDropPlaceholder
-              sheet={{ name: "", index: "drop-placeholder" }}
+              sheet={{ name: "", id: "drop-placeholder" }}
             />
           </div>
         </div>

@@ -5,7 +5,7 @@ import { Sheet } from "../types";
 import { generateRandomSheetName, getSheetIndex } from "../utils";
 
 function storeSheetParam(ctx: Context) {
-  const index = getSheetIndex(ctx, ctx.currentSheetIndex);
+  const index = getSheetIndex(ctx, ctx.currentSheetId);
   if (index == null) return;
   const file = ctx.luckysheetfile[index];
   file.config = ctx.config;
@@ -20,14 +20,14 @@ function storeSheetParam(ctx: Context) {
 
 export function storeSheetParamALL(ctx: Context) {
   storeSheetParam(ctx);
-  const index = getSheetIndex(ctx, ctx.currentSheetIndex);
+  const index = getSheetIndex(ctx, ctx.currentSheetId);
   if (index == null) return;
   ctx.luckysheetfile[index].config = ctx.config;
 }
 
 export function changeSheet(
   ctx: Context,
-  index: string,
+  id: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isPivotInitial?: boolean,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -40,7 +40,7 @@ export function changeSheet(
   //     return;
   //   }
 
-  if (index === ctx.currentSheetIndex) {
+  if (id === ctx.currentSheetId) {
     return;
   }
 
@@ -48,7 +48,7 @@ export function changeSheet(
   //     $("#luckysheet-cell-main #luckysheet-multipleRange-show").empty();
   //     server.multipleIndex = 0;
   //   }
-  const file = ctx.luckysheetfile[getSheetIndex(ctx, index)!];
+  const file = ctx.luckysheetfile[getSheetIndex(ctx, id)!];
   //   // 钩子 sheetCreateAfter
   //   if (isNewSheet) {
   //     method.createHookFunction("sheetCreateAfter", { sheet: file });
@@ -64,14 +64,14 @@ export function changeSheet(
   storeSheetParamALL(ctx);
 
   for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
-    if (ctx.luckysheetfile[i].index === index) {
+    if (ctx.luckysheetfile[i].id === id) {
       ctx.luckysheetfile[i].status = 1;
     } else {
       ctx.luckysheetfile[i].status = 0;
     }
   }
 
-  ctx.currentSheetIndex = index;
+  ctx.currentSheetId = id;
 
   if (file.isPivotTable) {
     ctx.luckysheetcurrentisPivotTable = true;
@@ -106,7 +106,7 @@ export function addSheet(
   //   }
 
   const order = ctx.luckysheetfile.length;
-  const index = settings.generateSheetId();
+  const id = settings.generateSheetId();
 
   const sheetname = generateRandomSheetName(
     ctx.luckysheetfile,
@@ -118,7 +118,7 @@ export function addSheet(
     name: sheetname,
     status: 0,
     order,
-    index,
+    id,
     row: ctx.defaultrowNum,
     column: ctx.defaultcolumnNum,
     config: {},
@@ -135,19 +135,19 @@ export function addSheet(
   //     redo.type = "addSheet";
   //     redo.sheetconfig = $.extend(true, {}, sheetconfig);
   //     redo.index = index;
-  //     redo.currentSheetIndex = ctx.currentSheetIndex;
+  //     redo.currentSheetId = ctx.currentSheetId;
   //     ctx.jfredo.push(redo);
   //   }
 
-  changeSheet(ctx, index, isPivotTable, true);
+  changeSheet(ctx, id, isPivotTable, true);
 }
 
-export function deleteSheet(ctx: Context, index: string) {
+export function deleteSheet(ctx: Context, id: string) {
   if (ctx.allowEdit === false) {
     return;
   }
 
-  const arrIndex = getSheetIndex(ctx, index);
+  const arrIndex = getSheetIndex(ctx, id);
   if (arrIndex == null) return;
 
   // const file = ctx.luckysheetfile[arrIndex];
@@ -198,7 +198,7 @@ export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
     throw new Error(sheetconfig.sheetNameSpecCharError);
   }
 
-  const index = getSheetIndex(ctx, ctx.currentSheetIndex);
+  const index = getSheetIndex(ctx, ctx.currentSheetId);
   if (index == null) return;
 
   for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
@@ -216,7 +216,7 @@ export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
   // sheetmanage.sheetArrowShowAndHide();
 
   ctx.luckysheetfile[index].name = txt;
-  // server.saveParam("all", ctx.currentSheetIndex, txt, { k: "name" });
+  // server.saveParam("all", ctx.currentSheetId, txt, { k: "name" });
 
   // $t.attr("contenteditable", "false").removeClass(
   //   "luckysheet-mousedown-cancel"
@@ -225,7 +225,7 @@ export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
   // if (ctx.clearjfundo) {
   //   const redo = {};
   //   redo.type = "sheetName";
-  //   redo.sheetIndex = ctx.currentSheetIndex;
+  //   redo.sheetId = ctx.currentSheetId;
 
   //   redo.oldtxt = oldtxt;
   //   redo.txt = txt;
@@ -235,7 +235,7 @@ export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
   // }
   // // 钩子： sheetEditNameAfter
   // method.createHookFunction("sheetEditNameAfter", {
-  //   i: ctx.luckysheetfile[index].index,
+  //   i: ctx.luckysheetfile[index].id,
   //   oldName: oldtxt,
   //   newName: txt,
   // });

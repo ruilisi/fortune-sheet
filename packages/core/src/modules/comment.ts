@@ -267,7 +267,7 @@ export function newComment(
   r: number,
   c: number
 ) {
-  // if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "editObjects")){
+  // if(!checkProtectionAuthorityNormal(Store.currentSheetId, "editObjects")){
   //     return;
   // }
 
@@ -304,7 +304,7 @@ export function editComment(
   r: number,
   c: number
 ) {
-  // if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "editObjects")){
+  // if(!checkProtectionAuthorityNormal(Store.currentSheetId, "editObjects")){
   //     return;
   // }
   const flowdata = getFlowdata(ctx);
@@ -331,7 +331,7 @@ export function deleteComment(
   r: number,
   c: number
 ) {
-  // if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "editObjects")){
+  // if(!checkProtectionAuthorityNormal(Store.currentSheetId, "editObjects")){
   //     return;
   // }
 

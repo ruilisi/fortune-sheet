@@ -53,7 +53,7 @@ export function insertRowOrColumn(
     index,
     count,
     direction,
-    sheetIndex: sheet.index!,
+    id: sheet.id!,
   });
 }
 
@@ -74,7 +74,7 @@ export function deleteRowOrColumn(
 
   const sheet = getSheet(ctx, options);
 
-  deleteRowCol(ctx, { type, start, end, sheetIndex: sheet.index! });
+  deleteRowCol(ctx, { type, start, end, id: sheet.id! });
 }
 
 export function setRowHeight(
@@ -103,11 +103,11 @@ export function setRowHeight(
 
   sheet.config = cfg;
 
-  if (ctx.currentSheetIndex === sheet.index) {
+  if (ctx.currentSheetId === sheet.id) {
     ctx.config = cfg;
   }
 
-  // server.saveParam("cg", file.index, cfg.rowlen, { k: "rowlen" });
+  // server.saveParam("cg", file.id, cfg.rowlen, { k: "rowlen" });
 }
 
 export function setColumnWidth(
@@ -136,11 +136,11 @@ export function setColumnWidth(
 
   sheet.config = cfg;
 
-  if (ctx.currentSheetIndex === sheet.index) {
+  if (ctx.currentSheetId === sheet.id) {
     ctx.config = cfg;
   }
 
-  // server.saveParam("cg", file.index, cfg.columnlen, { k: "columnlen" });
+  // server.saveParam("cg", file.id, cfg.columnlen, { k: "columnlen" });
 }
 
 export function getRowHeight(

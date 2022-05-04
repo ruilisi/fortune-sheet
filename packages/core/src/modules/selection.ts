@@ -175,7 +175,7 @@ export function pasteHandlerOfPaintModel(
   ctx: Context,
   copyRange: Context["luckysheet_copy_save"]
 ) {
-  // if (!checkProtectionLockedRangeList(ctx.luckysheet_select_save, ctx.currentSheetIndex)) {
+  // if (!checkProtectionLockedRangeList(ctx.luckysheet_select_save, ctx.currentSheetId)) {
   //   return;
   // }
   const cfg = ctx.config;
@@ -187,7 +187,7 @@ export function pasteHandlerOfPaintModel(
   // 复制范围
   const copyHasMC = copyRange.HasMC;
   // let copyRowlChange = copyRange["RowlChange"];
-  const copySheetIndex = copyRange.dataSheetIndex;
+  const copySheetIndex = copyRange.dataSheetId;
 
   const c_r1 = copyRange.copyRange[0].row[0];
   const c_r2 = copyRange.copyRange[0].row[1];
@@ -329,7 +329,7 @@ export function pasteHandlerOfPaintModel(
           if (c_dataVerification[`${c_r1 + h - mth}_${c_c1 + c - mtc}`]) {
             if (dataVerification == null) {
               dataVerification = _.cloneDeep(
-                ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!]
+                ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!]
                   .dataVerification
               );
             }
@@ -430,8 +430,7 @@ export function pasteHandlerOfPaintModel(
     }
   }
 
-  const currFile =
-    ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!];
+  const currFile = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!];
   currFile.config = cfg;
   currFile.dataVerification = dataVerification;
 
@@ -442,7 +441,7 @@ export function pasteHandlerOfPaintModel(
   // let ruleArr = _.cloneDeep(ctx.luckysheetfile[copyIndex]["luckysheet_conditionformat_save"]);
 
   // if (ruleArr != null && ruleArr.length > 0) {
-  //   const currentIndex = getSheetIndex(ctx, ctx.currentSheetIndex)
+  //   const currentIndex = getSheetIndex(ctx, ctx.currentSheetId)
   //   if (!currentIndex) return;
   //   cdformat = _.cloneDeep(ctx.luckysheetfile[currentIndex]["luckysheet_conditionformat_save"]);
 
@@ -852,7 +851,7 @@ export function moveHighlightCell(
   */
 
   // 移动单元格通知后台
-  // server.saveParam("mv", ctx.currentSheetIndex, ctx.luckysheet_select_save);
+  // server.saveParam("mv", ctx.currentSheetId, ctx.luckysheet_select_save);
 }
 
 function getHtmlBorderStyle(type: string, color: string) {
@@ -902,10 +901,10 @@ function getHtmlBorderStyle(type: string, color: string) {
 
 export function rangeValueToHtml(
   ctx: Context,
-  sheetIndex: string,
+  sheetId: string,
   ranges?: Range
 ) {
-  const idx = getSheetIndex(ctx, sheetIndex);
+  const idx = getSheetIndex(ctx, sheetId);
   if (idx == null) return "";
   const sheet = ctx.luckysheetfile[idx];
 
@@ -950,7 +949,7 @@ export function rangeValueToHtml(
   let borderInfoCompute;
   if (sheet.config?.borderInfo && sheet.config.borderInfo.length > 0) {
     // 边框
-    borderInfoCompute = getBorderInfoCompute(ctx, sheetIndex);
+    borderInfoCompute = getBorderInfoCompute(ctx, sheetId);
   }
 
   let cpdata = "";
@@ -1433,7 +1432,7 @@ export function copy(ctx: Context) {
 
   // luckysheet内copy保存
   ctx.luckysheet_copy_save = {
-    dataSheetIndex: ctx.currentSheetIndex,
+    dataSheetId: ctx.currentSheetId,
     copyRange,
     RowlChange,
     HasMC,
@@ -1441,7 +1440,7 @@ export function copy(ctx: Context) {
 
   const cpdata = rangeValueToHtml(
     ctx,
-    ctx.currentSheetIndex,
+    ctx.currentSheetId,
     ctx.luckysheet_select_save
   );
 
@@ -1455,7 +1454,7 @@ export function deleteSelectedCellText(ctx: Context) {
   // if (
   //   !checkProtectionLockedRangeList(
   //     ctx.luckysheet_select_save,
-  //     ctx.currentSheetIndex
+  //     ctx.currentSheetId
   //   )
   // ) {
   //   return;
@@ -1499,7 +1498,7 @@ export function deleteSelectedCellText(ctx: Context) {
       return;
     }
     const hyperlinkMap =
-      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!].hyperlink;
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!].hyperlink;
 
     for (let s = 0; s < selection.length; s += 1) {
       const r1 = selection[s].row[0];
@@ -1520,7 +1519,7 @@ export function deleteSelectedCellText(ctx: Context) {
 
             if (cell.f != null) {
               delete cell.f;
-              delFunctionGroup(ctx, r, c, ctx.currentSheetIndex);
+              delFunctionGroup(ctx, r, c, ctx.currentSheetId);
 
               delete cell.spl;
             }
@@ -1580,7 +1579,7 @@ export function selectIsOverlap(ctx: Context, range?: any) {
 
 export function selectAll(ctx: Context) {
   // 全选表格
-  // if (!checkProtectionAllSelected(ctx.currentSheetIndex)) {
+  // if (!checkProtectionAllSelected(ctx.currentSheetId)) {
   //   return;
   // }
 

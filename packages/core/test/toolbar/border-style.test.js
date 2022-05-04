@@ -1,11 +1,11 @@
 import { handleBorder } from "../../src/modules/toolbar";
 
 const context = {
-  currentSheetIndex: "0",
+  currentSheetId: "0",
   config: {},
   luckysheetfile: [
     {
-      index: "0",
+      id: "0",
       data: [
         [null, null],
         [null, null],

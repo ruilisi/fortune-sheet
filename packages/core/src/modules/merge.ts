@@ -6,7 +6,7 @@ import { isInlineStringCT } from "./inline-string";
 
 export function mergeCells(
   ctx: Context,
-  sheetIndex: string,
+  sheetId: string,
   ranges: Range,
   type: string
 ) {
@@ -14,7 +14,7 @@ export function mergeCells(
   //   tooltip.info("", locale().pivotTable.errorNotAllowEdit);
   //   return;
   // }
-  const idx = getSheetIndex(ctx, sheetIndex);
+  const idx = getSheetIndex(ctx, sheetId);
   if (idx == null) return;
 
   const sheet = ctx.luckysheetfile[idx];
@@ -26,7 +26,7 @@ export function mergeCells(
 
   const d = sheet.data!;
 
-  // if (!checkProtectionNotEnable(ctx.currentSheetIndex)) {
+  // if (!checkProtectionNotEnable(ctx.currentSheetId)) {
   //   return;
   // }
   if (type === "merge-cancel") {
@@ -253,7 +253,7 @@ export function mergeCells(
     }
   }
   sheet.config = cfg;
-  if (sheet.index === ctx.currentSheetIndex) {
+  if (sheet.id === ctx.currentSheetId) {
     ctx.config = cfg;
   }
 }

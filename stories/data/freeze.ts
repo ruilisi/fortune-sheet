@@ -2,7 +2,7 @@ const data = {
   name: "Freeze",
   color: "",
   status: 1,
-  index: "0",
+  id: "0",
   row: 84,
   column: 60,
   config: {

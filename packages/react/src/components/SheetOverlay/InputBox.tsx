@@ -47,7 +47,7 @@ const InputBox: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     context.luckysheetfile,
-    context.currentSheetIndex,
+    context.currentSheetId,
     context.luckysheetCellUpdate,
     firstSelection,
   ]);
@@ -91,7 +91,7 @@ const InputBox: React.FC = () => {
   }, [
     context.luckysheetCellUpdate,
     context.luckysheetfile,
-    context.currentSheetIndex,
+    context.currentSheetId,
     firstSelection,
   ]);
 

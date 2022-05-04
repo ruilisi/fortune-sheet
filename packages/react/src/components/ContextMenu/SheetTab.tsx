@@ -52,11 +52,11 @@ const SheetTabContextMenu: React.FC = () => {
                 showAlert(sheetconfig.confirmDelete, "yesno", () => {
                   setContext(
                     (draftCtx) => {
-                      deleteSheet(draftCtx, sheet.index!);
+                      deleteSheet(draftCtx, sheet.id!);
                     },
                     {
                       deleteSheetOp: {
-                        index: sheet.index!,
+                        id: sheet.id!,
                       },
                     }
                   );

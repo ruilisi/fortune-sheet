@@ -193,7 +193,7 @@ function updateFormat(
   attr: keyof Cell,
   foucsStatus: any
 ) {
-  //   if (!checkProtectionFormatCells(ctx.currentSheetIndex)) {
+  //   if (!checkProtectionFormatCells(ctx.currentSheetId)) {
   //     return;
   //   }
 
@@ -371,9 +371,9 @@ function activeFormulaInput(
     colors[0]
   };">${getRangetxt(
     ctx,
-    ctx.currentSheetIndex,
+    ctx.currentSheetId,
     { row: rowh, column: columnh },
-    ctx.currentSheetIndex
+    ctx.currentSheetId
   )}</span><span dir="auto" class="luckysheet-formula-text-color">)</span>`;
   cellInput.innerHTML = formulaTxt;
 
@@ -426,9 +426,9 @@ function backFormulaInput(
 ) {
   const f = `=${formula.toUpperCase()}(${getRangetxt(
     ctx,
-    ctx.currentSheetIndex,
+    ctx.currentSheetId,
     { row: rowh, column: columnh },
-    ctx.currentSheetIndex
+    ctx.currentSheetId
   )})`;
   const v = execfunction(ctx, f, r, c);
   const value = { v: v[1], f: v[2] };
@@ -436,10 +436,10 @@ function backFormulaInput(
   formulaCache.execFunctionExist.push({
     r,
     c,
-    i: ctx.currentSheetIndex,
+    i: ctx.currentSheetId,
   });
 
-  // server.historyParam(d, ctx.currentSheetIndex, {
+  // server.historyParam(d, ctx.currentSheetId, {
   //   row: [r, r],
   //   column: [c, c],
   // }); 目前没有server
@@ -852,22 +852,19 @@ export function autoSelectionFormula(
 export function cancelPaintModel(ctx: Context) {
   // $("#luckysheet-sheettable_0").removeClass("luckysheetPaintCursor");
   if (ctx.luckysheet_copy_save === null) return;
-  if (ctx.luckysheet_copy_save?.dataSheetIndex === ctx.currentSheetIndex) {
+  if (ctx.luckysheet_copy_save?.dataSheetId === ctx.currentSheetId) {
     ctx.luckysheet_selection_range = [];
     selectionCopyShow(ctx.luckysheet_selection_range, ctx);
   } else {
     if (!ctx.luckysheet_copy_save) return;
-    const sheetIndex = getSheetIndex(
-      ctx,
-      ctx.luckysheet_copy_save.dataSheetIndex
-    );
-    if (!sheetIndex) return;
+    const index = getSheetIndex(ctx, ctx.luckysheet_copy_save.dataSheetId);
+    if (!index) return;
     // ctx.luckysheetfile[getSheetIndex(ctx.luckysheet_copy_save["dataSheetIndex"])].luckysheet_selection_range = [];
-    ctx.luckysheetfile[sheetIndex].luckysheet_selection_range = [];
+    ctx.luckysheetfile[index].luckysheet_selection_range = [];
   }
 
   ctx.luckysheet_copy_save = {
-    dataSheetIndex: "",
+    dataSheetId: "",
     copyRange: [{ row: [0], column: [0] }],
     RowlChange: false,
     HasMC: false,
@@ -1199,7 +1196,7 @@ export function handleFormatPainter(ctx: Context) {
     }
   }
   ctx.luckysheet_copy_save = {
-    dataSheetIndex: ctx.currentSheetIndex,
+    dataSheetId: ctx.currentSheetId,
     copyRange: [
       {
         row: ctx.luckysheet_select_save[0].row,
@@ -1258,7 +1255,7 @@ export function handleBorder(ctx: Context, type: string) {
   //   tooltip.info("", locale().pivotTable.errorNotAllowEdit);
   //   return;
   // }
-  // if (!checkProtectionFormatCells(Store.currentSheetIndex)) {
+  // if (!checkProtectionFormatCells(Store.currentSheetId)) {
   //   return;
   // }
 
@@ -1299,11 +1296,11 @@ export function handleBorder(ctx: Context, type: string) {
 
   cfg.borderInfo.push(borderInfo);
 
-  // server.saveParam("cg", ctx.currentSheetIndex, cfg.borderInfo, {
+  // server.saveParam("cg", ctx.currentSheetId, cfg.borderInfo, {
   //   k: "borderInfo",
   // });
 
-  const index = getSheetIndex(ctx, ctx.currentSheetIndex);
+  const index = getSheetIndex(ctx, ctx.currentSheetId);
   if (index == null) return;
 
   ctx.luckysheetfile[index].config = ctx.config;
@@ -1314,7 +1311,7 @@ export function handleBorder(ctx: Context, type: string) {
 }
 
 export function handleMerge(ctx: Context, type: string) {
-  // if (!checkProtectionNotEnable(ctx.currentSheetIndex)) {
+  // if (!checkProtectionNotEnable(ctx.currentSheetId)) {
   //   return;
   // }
 
@@ -1358,13 +1355,13 @@ export function handleMerge(ctx: Context, type: string) {
 
   if (!ctx.luckysheet_select_save) return;
 
-  mergeCells(ctx, ctx.currentSheetIndex, ctx.luckysheet_select_save, type);
+  mergeCells(ctx, ctx.currentSheetId, ctx.luckysheet_select_save, type);
 }
 
 export function handleFreeze(ctx: Context, type: string) {
   if (!ctx.allowEdit) return;
 
-  const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!];
+  const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!];
   if (!file) return;
 
   if (type === "freeze-cancel") {

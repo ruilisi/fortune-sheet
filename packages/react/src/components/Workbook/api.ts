@@ -29,44 +29,47 @@ export function generateAPIs(
 ) {
   return {
     applyOp: (ops: Op[]) => {
-      setContext((ctx_) => {
-        const [patches, specialOps] = opToPatch(ctx_, ops);
-        if (specialOps.length > 0) {
-          const [specialOp] = specialOps;
-          if (specialOp.op === "insertRowCol") {
-            ctx_ = produce(ctx_, (draftCtx) => {
-              insertRowCol(draftCtx, specialOp.value);
-            });
-          } else if (specialOp.op === "deleteRowCol") {
-            ctx_ = produce(ctx_, (draftCtx) => {
-              deleteRowCol(draftCtx, specialOp.value);
-            });
-          } else if (specialOp.op === "addSheet") {
-            ctx_ = produce(ctx_, (draftCtx) => {
-              addSheet(draftCtx, settings);
-            });
-          } else if (specialOp.op === "deleteSheet") {
-            ctx_ = produce(ctx_, (draftCtx) => {
-              deleteSheet(draftCtx, specialOp.value.index);
-            });
+      setContext(
+        (ctx_) => {
+          const [patches, specialOps] = opToPatch(ctx_, ops);
+          if (specialOps.length > 0) {
+            const [specialOp] = specialOps;
+            if (specialOp.op === "insertRowCol") {
+              ctx_ = produce(ctx_, (draftCtx) => {
+                insertRowCol(draftCtx, specialOp.value);
+              });
+            } else if (specialOp.op === "deleteRowCol") {
+              ctx_ = produce(ctx_, (draftCtx) => {
+                deleteRowCol(draftCtx, specialOp.value);
+              });
+            } else if (specialOp.op === "addSheet") {
+              ctx_ = produce(ctx_, (draftCtx) => {
+                addSheet(draftCtx, settings);
+              });
+            } else if (specialOp.op === "deleteSheet") {
+              ctx_ = produce(ctx_, (draftCtx) => {
+                deleteSheet(draftCtx, specialOp.value.id);
+              });
+            }
           }
-        }
-        const newContext = applyPatches(ctx_, patches);
-        return newContext;
-      });
+          const newContext = applyPatches(ctx_, patches);
+          return newContext;
+        },
+        { noHistory: true }
+      );
     },
 
     getCellValue: (
       row: number,
       column: number,
-      options: { type?: keyof Cell; order?: number } = {}
+      options: api.CommonOptions & { type?: keyof Cell } = {}
     ) => api.getCellValue(context, row, column, options),
 
     setCellValue: (
       row: number,
       column: number,
       value: any,
-      options: { type?: keyof Cell; order?: number } = {}
+      options: api.CommonOptions & { type?: keyof Cell } = {}
     ) =>
       setContext((draftCtx) =>
         api.setCellValue(draftCtx, row, column, value, cellInput, options)

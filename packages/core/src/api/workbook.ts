@@ -14,12 +14,12 @@ export function addSheet(ctx: Context, settings: Required<Settings>) {
 
 export function deleteSheet(ctx: Context, options: CommonOptions = {}) {
   const sheet = getSheet(ctx, options);
-  deleteSheetInternal(ctx, sheet.index!);
+  deleteSheetInternal(ctx, sheet.id!);
 }
 
 export function activateSheet(ctx: Context, options: CommonOptions = {}) {
   const sheet = getSheet(ctx, options);
-  ctx.currentSheetIndex = sheet.index!;
+  ctx.currentSheetId = sheet.id!;
 }
 
 export function setSheetName(
@@ -33,8 +33,8 @@ export function setSheetName(
 
 export function setSheetOrder(ctx: Context, orderList: Record<string, number>) {
   ctx.luckysheetfile?.forEach((sheet) => {
-    if (sheet.index! in orderList) {
-      sheet.order = orderList[sheet.index!];
+    if (sheet.id! in orderList) {
+      sheet.order = orderList[sheet.id!];
     }
   });
   // re-order starting from 0

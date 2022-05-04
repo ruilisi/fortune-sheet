@@ -8,8 +8,8 @@ const _ = require("lodash");
 async function applyOp(collection, ops) {
   // eslint-disable-next-line no-restricted-syntax
   for (const op of ops) {
-    const { path, index } = op;
-    const filter = { index };
+    const { path, id } = op;
+    const filter = { id };
     if (op.op === "insertRowCol") {
       /**
        * special op: insertRowCol

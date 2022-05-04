@@ -21,7 +21,7 @@ describe("auto formula", () => {
       luckysheet_select_save: selectionFactory([0, 1], [0, 1], 0, 0),
       luckysheetfile: [
         {
-          index: "index_1",
+          id: "id_1",
           data: [
             [{ v: "30", ct: { t: "n" } }, { v: "40", ct: { t: "n" } }, null],
             [{ v: "30", ct: { t: "n" } }, { v: "50", ct: { t: "n" } }, null],

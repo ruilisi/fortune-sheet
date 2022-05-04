@@ -73,7 +73,7 @@ op对后端数据修改和同步在线协同数据非常有用。
   index: number;
   count: number;
   direction: "lefttop" | "rightbottom";
-  sheetIndex: string;
+  id: string;
 }
 ```
 
@@ -85,7 +85,7 @@ where
 | index | 要插入行列的起始位置 |
 | count | 插入的数量 |
 | direction | 插入的方向，`lefttop` 或 `rightbottom` |
-| sheetIndex | 当前操作表格的index |
+| id | 当前操作表格的id |
 
 ### deleteRowCol
 
@@ -98,7 +98,7 @@ where
   type: "row" | "column";
   start: number;
   end: number;
-  sheetIndex: string;
+  id: string;
 }
 ```
 
@@ -109,7 +109,7 @@ where
 | type | `row` 或 `column` |
 | start | 删除行列的起始位置 |
 | end | 删除行列的终止位置 |
-| sheetIndex | 当前操作表格的index |
+| id | 当前操作表格的id |
 
 ### addSheet
 

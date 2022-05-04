@@ -27,8 +27,8 @@ export type Context = {
     onRename?: () => void;
   };
 
-  currentSheetIndex: string;
-  calculateSheetIndex: string;
+  currentSheetId: string;
+  calculateSheetId: string;
   config: SheetConfig;
 
   visibledatarow: number[];
@@ -69,7 +69,7 @@ export type Context = {
   functionHint: string | null | undefined;
 
   luckysheet_copy_save?: {
-    dataSheetIndex: string;
+    dataSheetId: string;
     copyRange: { row: number[]; column: number[] }[];
     RowlChange: boolean;
     HasMC: boolean;
@@ -175,8 +175,8 @@ export function defaultContext(): Context {
     contextMenu: {},
     sheetTabContextMenu: {},
 
-    currentSheetIndex: "",
-    calculateSheetIndex: "",
+    currentSheetId: "",
+    calculateSheetId: "",
     config: {},
 
     visibledatarow: [],
@@ -316,7 +316,7 @@ export function defaultContext(): Context {
 
 export function getFlowdata(ctx?: Context) {
   if (!ctx) return null;
-  const i = getSheetIndex(ctx, ctx.currentSheetIndex);
+  const i = getSheetIndex(ctx, ctx.currentSheetId);
   if (_.isNil(i)) {
     return null;
   }
@@ -415,13 +415,13 @@ export function ensureSheetIndex(data: Sheet[], generateSheetId: () => string) {
     let hasActive = false;
     const indexs: (string | number)[] = [];
     data.forEach((item) => {
-      if (item.index == null) {
-        item.index = generateSheetId();
+      if (item.id == null) {
+        item.id = generateSheetId();
       }
-      if (indexs.includes(item.index)) {
-        item.index = generateSheetId();
+      if (indexs.includes(item.id)) {
+        item.id = generateSheetId();
       } else {
-        indexs.push(item.index);
+        indexs.push(item.id);
       }
 
       if (item.status == null) {
@@ -443,11 +443,11 @@ export function ensureSheetIndex(data: Sheet[], generateSheetId: () => string) {
 
 export function initSheetIndex(ctx: Context) {
   // get current sheet
-  ctx.currentSheetIndex = ctx.luckysheetfile[0].index!;
+  ctx.currentSheetId = ctx.luckysheetfile[0].id!;
 
   for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
     if (ctx.luckysheetfile[i].status === 1) {
-      ctx.currentSheetIndex = ctx.luckysheetfile[i].index!;
+      ctx.currentSheetId = ctx.luckysheetfile[i].id!;
       break;
     }
   }

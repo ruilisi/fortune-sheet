@@ -29,23 +29,23 @@ function postPasteCut(
   // clearTimeout(refreshCanvasTimeOut);
   for (let r = source.range.row[0]; r <= source.range.row[1]; r += 1) {
     for (let c = source.range.column[0]; c <= source.range.column[1]; c += 1) {
-      if (`${r}_${c}_${source.sheetIndex}` in execF_rc) {
+      if (`${r}_${c}_${source.sheetId}` in execF_rc) {
         continue;
       }
 
-      execF_rc[`${r}_${c}_${source.sheetIndex}`] = 0;
-      formulaCache.execFunctionExist.push({ r, c, i: source.sheetIndex });
+      execF_rc[`${r}_${c}_${source.sheetId}`] = 0;
+      formulaCache.execFunctionExist.push({ r, c, i: source.sheetId });
     }
   }
 
   for (let r = target.range.row[0]; r <= target.range.row[1]; r += 1) {
     for (let c = target.range.column[0]; c <= target.range.column[1]; c += 1) {
-      if (`${r}_${c}_${target.sheetIndex}` in execF_rc) {
+      if (`${r}_${c}_${target.sheetId}` in execF_rc) {
         continue;
       }
 
-      execF_rc[`${r}_${c}_${target.sheetIndex}`] = 0;
-      formulaCache.execFunctionExist.push({ r, c, i: target.sheetIndex });
+      execF_rc[`${r}_${c}_${target.sheetId}`] = 0;
+      formulaCache.execFunctionExist.push({ r, c, i: target.sheetId });
     }
   }
 
@@ -62,15 +62,15 @@ function postPasteCut(
 
   // config
   let rowHeight;
-  if (ctx.currentSheetIndex === source.sheetIndex) {
+  if (ctx.currentSheetId === source.sheetId) {
     ctx.config = source.curConfig;
     rowHeight = source.curData.length;
-    ctx.luckysheetfile[getSheetIndex(ctx, target.sheetIndex)!].config =
+    ctx.luckysheetfile[getSheetIndex(ctx, target.sheetId)!].config =
       target.curConfig;
-  } else if (ctx.currentSheetIndex === target.sheetIndex) {
+  } else if (ctx.currentSheetId === target.sheetId) {
     ctx.config = target.curConfig;
     rowHeight = target.curData.length;
-    ctx.luckysheetfile[getSheetIndex(ctx, source.sheetIndex)!].config =
+    ctx.luckysheetfile[getSheetIndex(ctx, source.sheetId)!].config =
       source.curConfig;
   }
 
@@ -98,41 +98,41 @@ function postPasteCut(
     ctx.rh_height += 80;
     // sheetmanage.showSheet();
 
-    if (ctx.currentSheetIndex === source.sheetIndex) {
+    if (ctx.currentSheetId === source.sheetId) {
       // const rowlenArr = computeRowlenArr(
       //   ctx,
       //   target.curData.length,
       //   target.curConfig
       // );
       // ctx.luckysheetfile[
-      //   getSheetIndex(ctx, target.sheetIndex)!
+      //   getSheetIndex(ctx, target.sheetId)!
       // ].visibledatarow = rowlenArr;
-    } else if (ctx.currentSheetIndex === target.sheetIndex) {
+    } else if (ctx.currentSheetId === target.sheetId) {
       // const rowlenArr = computeRowlenArr(
       //   ctx,
       //   source.curData.length,
       //   source.curConfig
       // );
-      // ctx.luckysheetfile[getSheetIndex(ctx, source.sheetIndex)].visibledatarow =
+      // ctx.luckysheetfile[getSheetIndex(ctx, source.sheetId)].visibledatarow =
       //   rowlenArr;
     }
   }
 
   // ctx.flowdata
-  if (ctx.currentSheetIndex === source.sheetIndex) {
+  if (ctx.currentSheetId === source.sheetId) {
     // ctx.flowdata = source.curData;
-    ctx.luckysheetfile[getSheetIndex(ctx, target.sheetIndex)!].data =
+    ctx.luckysheetfile[getSheetIndex(ctx, target.sheetId)!].data =
       target.curData;
-  } else if (ctx.currentSheetIndex === target.sheetIndex) {
+  } else if (ctx.currentSheetId === target.sheetId) {
     // ctx.flowdata = target.curData;
-    ctx.luckysheetfile[getSheetIndex(ctx, source.sheetIndex)!].data =
+    ctx.luckysheetfile[getSheetIndex(ctx, source.sheetId)!].data =
       source.curData;
   }
   // editor.webWorkerFlowDataCache(ctx.flowdata); // worker存数据
-  // ctx.luckysheetfile[getSheetIndex(ctx.currentSheetIndex)].data = ctx.flowdata;
+  // ctx.luckysheetfile[getSheetIndex(ctx.currentSheetId)].data = ctx.flowdata;
 
   // luckysheet_select_save
-  if (ctx.currentSheetIndex === target.sheetIndex) {
+  if (ctx.currentSheetId === target.sheetId) {
     ctx.luckysheet_select_save = [
       { row: target.range.row, column: target.range.column },
     ];
@@ -148,21 +148,21 @@ function postPasteCut(
 
   // 条件格式
   ctx.luckysheetfile[
-    getSheetIndex(ctx, source.sheetIndex)!
+    getSheetIndex(ctx, source.sheetId)!
   ].luckysheet_conditionformat_save = source.curCdformat;
   ctx.luckysheetfile[
-    getSheetIndex(ctx, target.sheetIndex)!
+    getSheetIndex(ctx, target.sheetId)!
   ].luckysheet_conditionformat_save = target.curCdformat;
 
   // 数据验证
-  // if (ctx.currentSheetIndex === source.sheetIndex) {
+  // if (ctx.currentSheetId === source.sheetId) {
   //   dataVerificationCtrl.dataVerification = source.curDataVerification;
-  // } else if (ctx.currentSheetIndex === target.sheetIndex) {
+  // } else if (ctx.currentSheetId === target.sheetId) {
   //   dataVerificationCtrl.dataVerification = target.curDataVerification;
   // }
-  ctx.luckysheetfile[getSheetIndex(ctx, source.sheetIndex)!].dataVerification =
+  ctx.luckysheetfile[getSheetIndex(ctx, source.sheetId)!].dataVerification =
     source.curDataVerification;
-  ctx.luckysheetfile[getSheetIndex(ctx, target.sheetIndex)!].dataVerification =
+  ctx.luckysheetfile[getSheetIndex(ctx, target.sheetId)!].dataVerification =
     target.curDataVerification;
 
   formulaCache.execFunctionExist.reverse();
@@ -170,7 +170,7 @@ function postPasteCut(
   execFunctionGroup(ctx, null, null, null, null, target.curData);
   formulaCache.execFunctionGlobalData = null;
 
-  // const index = getSheetIndex(ctx, ctx.currentSheetIndex);
+  // const index = getSheetIndex(ctx, ctx.currentSheetId);
   // const file = ctx.luckysheetfile[index];
   // file.scrollTop = $("#luckysheet-cell-main").scrollTop();
   // file.scrollLeft = $("#luckysheet-cell-main").scrollLeft();
@@ -185,40 +185,40 @@ function postPasteCut(
 
   // saveparam
   // //来源表
-  // server.saveParam("all", source["sheetIndex"], source["curConfig"], {
+  // server.saveParam("all", source["sheetId"], source["curConfig"], {
   //   k: "config",
   // });
   // //目的表
-  // server.saveParam("all", target["sheetIndex"], target["curConfig"], {
+  // server.saveParam("all", target["sheetId"], target["curConfig"], {
   //   k: "config",
   // });
 
   // //来源表
-  // server.historyParam(source["curData"], source["sheetIndex"], {
+  // server.historyParam(source["curData"], source["sheetId"], {
   //   row: source["range"]["row"],
   //   column: source["range"]["column"],
   // });
   // //目的表
-  // server.historyParam(target["curData"], target["sheetIndex"], {
+  // server.historyParam(target["curData"], target["sheetId"], {
   //   row: target["range"]["row"],
   //   column: target["range"]["column"],
   // });
 
   // //来源表
-  // server.saveParam("all", source["sheetIndex"], source["curCdformat"], {
+  // server.saveParam("all", source["sheetId"], source["curCdformat"], {
   //   k: "luckysheet_conditionformat_save",
   // });
   // //目的表
-  // server.saveParam("all", target["sheetIndex"], target["curCdformat"], {
+  // server.saveParam("all", target["sheetId"], target["curCdformat"], {
   //   k: "luckysheet_conditionformat_save",
   // });
 
   // //来源表
-  // server.saveParam("all", source["sheetIndex"], source["curDataVerification"], {
+  // server.saveParam("all", source["sheetId"], source["curDataVerification"], {
   //   k: "dataVerification",
   // });
   // //目的表
-  // server.saveParam("all", target["sheetIndex"], target["curDataVerification"], {
+  // server.saveParam("all", target["sheetId"], target["curDataVerification"], {
   //   k: "dataVerification",
   // });
 }
@@ -227,7 +227,7 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
   // if (
   //   !checkProtectionLockedRangeList(
   //     ctx.luckysheet_select_save,
-  //     ctx.currentSheetIndex
+  //     ctx.currentSheetId
   //   )
   // ) {
   //   return;
@@ -391,15 +391,13 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
       //   cfg,
       //   RowlChange: true,
       // };
-      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!].config =
-        cfg;
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!].config = cfg;
       // jfrefreshgrid(d, ctx.luckysheet_select_save, allParam);
     } else {
       // const allParam = {
       //   cfg,
       // };
-      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!].config =
-        cfg;
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!].config = cfg;
       // jfrefreshgrid(d, ctx.luckysheet_select_save, allParam);
       // selectHightlightShow();
     }
@@ -484,7 +482,7 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
 
           if (originCell.f != null && originCell.f.length > 0) {
             originCell.f = "";
-            delFunctionGroup(ctx, r + curR, c + curC, ctx.currentSheetIndex);
+            delFunctionGroup(ctx, r + curR, c + curC, ctx.currentSheetId);
           }
         } else {
           const cell: Cell = {};
@@ -519,7 +517,7 @@ function pasteHandlerOfCutPaste(
   // if (
   //   !checkProtectionLockedRangeList(
   //     ctx.luckysheet_select_save,
-  //     ctx.currentSheetIndex
+  //     ctx.currentSheetId
   //   )
   // ) {
   //   return;
@@ -537,7 +535,7 @@ function pasteHandlerOfCutPaste(
   // 复制范围
   const copyHasMC = copyRange.HasMC;
   const copyRowlChange = copyRange.RowlChange;
-  const copySheetIndex = copyRange.dataSheetIndex;
+  const copySheetId = copyRange.dataSheetId;
 
   const c_r1 = copyRange.copyRange[0].row[0];
   const c_r2 = copyRange.copyRange[0].row[1];
@@ -548,7 +546,7 @@ function pasteHandlerOfCutPaste(
     getdatabyselection(
       ctx,
       { row: [c_r1, c_r2], column: [c_c1, c_c2] },
-      copySheetIndex
+      copySheetId
     )
   );
 
@@ -594,19 +592,19 @@ function pasteHandlerOfCutPaste(
     // TODO d = datagridgrowth([].concat(d), addr, addc, true);
   }
 
-  const borderInfoCompute = getBorderInfoCompute(ctx, copySheetIndex);
+  const borderInfoCompute = getBorderInfoCompute(ctx, copySheetId);
   const c_dataVerification =
     _.cloneDeep(
-      ctx.luckysheetfile[getSheetIndex(ctx, copySheetIndex)!].dataVerification
+      ctx.luckysheetfile[getSheetIndex(ctx, copySheetId)!].dataVerification
     ) || {};
   const dataVerification =
     _.cloneDeep(
-      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!]
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!]
         .dataVerification
     ) || {};
 
   // 剪切粘贴在当前表操作，删除剪切范围内数据、合并单元格和数据验证
-  if (ctx.currentSheetIndex === copySheetIndex) {
+  if (ctx.currentSheetId === copySheetId) {
     for (let i = c_r1; i <= c_r2; i += 1) {
       for (let j = c_c1; j <= c_c2; j += 1) {
         const cell = d[i][j];
@@ -757,7 +755,7 @@ function pasteHandlerOfCutPaste(
 
   // 若有行高改变，重新计算行高改变
   if (copyRowlChange) {
-    // if (ctx.currentSheetIndex !== copySheetIndex) {
+    // if (ctx.currentSheetId !== copySheetIndex) {
     //   cfg = rowlenByRange(d, minh, maxh, cfg);
     // } else {
     //   cfg = rowlenByRange(d, c_r1, c_r2, cfg);
@@ -767,13 +765,13 @@ function pasteHandlerOfCutPaste(
 
   let source;
   let target;
-  if (ctx.currentSheetIndex !== copySheetIndex) {
+  if (ctx.currentSheetId !== copySheetId) {
     // 跨表操作
     const sourceData = _.cloneDeep(
-      ctx.luckysheetfile[getSheetIndex(ctx, copySheetIndex)!].data!
+      ctx.luckysheetfile[getSheetIndex(ctx, copySheetId)!].data!
     );
     const sourceConfig = _.cloneDeep(
-      ctx.luckysheetfile[getSheetIndex(ctx, copySheetIndex)!].config
+      ctx.luckysheetfile[getSheetIndex(ctx, copySheetId)!].config
     );
 
     const sourceCurData = _.cloneDeep(sourceData);
@@ -845,7 +843,7 @@ function pasteHandlerOfCutPaste(
 
     // 条件格式
     const source_cdformat = _.cloneDeep(
-      ctx.luckysheetfile[getSheetIndex(ctx, copySheetIndex)!]
+      ctx.luckysheetfile[getSheetIndex(ctx, copySheetId)!]
         .luckysheet_conditionformat_save
     );
     const source_curCdformat = _.cloneDeep(source_cdformat);
@@ -891,7 +889,7 @@ function pasteHandlerOfCutPaste(
     */
 
     const target_cdformat = _.cloneDeep(
-      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!]
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!]
         .luckysheet_conditionformat_save
     );
     let target_curCdformat = _.cloneDeep(target_cdformat);
@@ -907,7 +905,7 @@ function pasteHandlerOfCutPaste(
     }
 
     source = {
-      sheetIndex: copySheetIndex,
+      sheetId: copySheetId,
       data: sourceData,
       curData: sourceCurData,
       config: sourceConfig,
@@ -915,7 +913,7 @@ function pasteHandlerOfCutPaste(
       cdformat: source_cdformat,
       curCdformat: source_curCdformat,
       dataVerification: _.cloneDeep(
-        ctx.luckysheetfile[getSheetIndex(ctx, copySheetIndex)!].dataVerification
+        ctx.luckysheetfile[getSheetIndex(ctx, copySheetId)!].dataVerification
       ),
       curDataVerification: c_dataVerification,
       range: {
@@ -924,7 +922,7 @@ function pasteHandlerOfCutPaste(
       },
     };
     target = {
-      sheetIndex: ctx.currentSheetIndex,
+      sheetId: ctx.currentSheetId,
       data: getFlowdata(ctx),
       curData: d,
       config: _.cloneDeep(ctx.config),
@@ -932,7 +930,7 @@ function pasteHandlerOfCutPaste(
       cdformat: target_cdformat,
       curCdformat: target_curCdformat,
       dataVerification: _.cloneDeep(
-        ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!]
+        ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!]
           .dataVerification
       ),
       curDataVerification: dataVerification,
@@ -944,7 +942,7 @@ function pasteHandlerOfCutPaste(
   } else {
     // 条件格式
     const cdformat = _.cloneDeep(
-      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!]
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!]
         .luckysheet_conditionformat_save
     );
     const curCdformat = _.cloneDeep(cdformat);
@@ -967,7 +965,7 @@ function pasteHandlerOfCutPaste(
 
     // 当前表操作
     source = {
-      sheetIndex: ctx.currentSheetIndex,
+      sheetId: ctx.currentSheetId,
       data: getFlowdata(ctx),
       curData: d,
       config: _.cloneDeep(ctx.config),
@@ -975,7 +973,7 @@ function pasteHandlerOfCutPaste(
       cdformat,
       curCdformat,
       dataVerification: _.cloneDeep(
-        ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!]
+        ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!]
           .dataVerification
       ),
       curDataVerification: dataVerification,
@@ -985,7 +983,7 @@ function pasteHandlerOfCutPaste(
       },
     };
     target = {
-      sheetIndex: ctx.currentSheetIndex,
+      sheetId: ctx.currentSheetId,
       data: getFlowdata(ctx),
       curData: d,
       config: _.cloneDeep(ctx.config),
@@ -993,7 +991,7 @@ function pasteHandlerOfCutPaste(
       cdformat,
       curCdformat,
       dataVerification: _.cloneDeep(
-        ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!]
+        ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!]
           .dataVerification
       ),
       curDataVerification: dataVerification,
@@ -1018,7 +1016,7 @@ function pasteHandlerOfCopyPaste(
   // if (
   //   !checkProtectionLockedRangeList(
   //     ctx.luckysheet_select_save,
-  //     ctx.currentSheetIndex
+  //     ctx.currentSheetId
   //   )
   // ) {
   //   return;
@@ -1036,7 +1034,7 @@ function pasteHandlerOfCopyPaste(
   // 复制范围
   const copyHasMC = copyRange.HasMC;
   const copyRowlChange = copyRange.RowlChange;
-  const copySheetIndex = copyRange.dataSheetIndex;
+  const copySheetIndex = copyRange.dataSheetId;
 
   const c_r1 = copyRange.copyRange[0].row[0];
   const c_r2 = copyRange.copyRange[0].row[1];
@@ -1225,7 +1223,7 @@ function pasteHandlerOfCopyPaste(
           if (c_dataVerification[`${c_r1 + h - mth}_${c_c1 + c - mtc}`]) {
             if (_.isNil(dataVerification)) {
               dataVerification = _.cloneDeep(
-                ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!]
+                ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!]
                   ?.dataVerification || {}
               );
             }
@@ -1316,7 +1314,7 @@ function pasteHandlerOfCopyPaste(
   if (copyRange.copyRange.length === 1) {
     const c_file = ctx.luckysheetfile[getSheetIndex(ctx, copySheetIndex)];
     const a_file =
-      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)];
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)];
 
     const ruleArr_cf = _.cloneDeep(c_file.luckysheet_conditionformat_save);
 
@@ -1362,7 +1360,7 @@ function pasteHandlerOfCopyPaste(
   last.row = [minh, maxh];
   last.column = [minc, maxc];
 
-  const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)!];
+  const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!];
   file.config = cfg;
   file.luckysheet_conditionformat_save = cdformat;
   file.dataVerification = dataVerification;
@@ -1451,15 +1449,15 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
       const copy_c1 = ctx.luckysheet_copy_save.copyRange[0].column[0];
       const copy_c2 = ctx.luckysheet_copy_save.copyRange[0].column[1];
 
-      const copy_index = ctx.luckysheet_copy_save.dataSheetIndex;
+      const copy_index = ctx.luckysheet_copy_save.dataSheetId;
 
       let d;
-      if (copy_index === ctx.currentSheetIndex) {
+      if (copy_index === ctx.currentSheetId) {
         d = getFlowdata(ctx);
       } else {
-        const sheetIndex = getSheetIndex(ctx, copy_index);
-        if (_.isNil(sheetIndex)) return;
-        d = ctx.luckysheetfile[sheetIndex].data;
+        const index = getSheetIndex(ctx, copy_index);
+        if (_.isNil(index)) return;
+        d = ctx.luckysheetfile[index].data;
       }
       if (!d) return;
 

@@ -380,7 +380,7 @@ const SheetOverlay: React.FC = () => {
                     ...getSelectionStyle(
                       context,
                       selection,
-                      refs.globalCache.freezen?.[context.currentSheetIndex]
+                      refs.globalCache.freezen?.[context.currentSheetId]
                     ),
                     border: "1px solid #0188fb",
                   }}

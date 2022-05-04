@@ -7,7 +7,7 @@ const { applyOp } = require("./op");
 
 const defaultData = {
   name: "Demo",
-  index: uuid.v4(),
+  id: uuid.v4(),
   celldata: [{ r: 0, c: 0, v: null }],
 };
 

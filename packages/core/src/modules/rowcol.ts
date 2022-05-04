@@ -10,7 +10,7 @@ import { functionStrChange } from "./formula";
  * @param {number} index 插入的位置 index
  * @param {number} count 插入 多少 行（列）
  * @param {string} direction 哪个方向插入 ['lefttop','rightbottom'] 之一
- * @param {string | number} sheetIndex 操作的 sheet 的 index 属性
+ * @param {string | number} id 操作的 sheet 的 id
  * @returns
  */
 export function insertRowCol(
@@ -20,26 +20,26 @@ export function insertRowCol(
     index: number;
     count: number;
     direction: "lefttop" | "rightbottom";
-    sheetIndex: string;
+    id: string;
   }
 ) {
-  let { count, sheetIndex } = op;
+  let { count, id } = op;
   const { type, index, direction } = op;
-  sheetIndex = sheetIndex || ctx.currentSheetIndex;
+  id = id || ctx.currentSheetId;
 
   // if (
   //   type === "row" &&
-  //   !checkProtectionAuthorityNormal(sheetIndex, "insertRows")
+  //   !checkProtectionAuthorityNormal(sheetId, "insertRows")
   // ) {
   //   return;
   // } else if (
   //   type === "column" &&
-  //   !checkProtectionAuthorityNormal(sheetIndex, "insertColumns")
+  //   !checkProtectionAuthorityNormal(sheetId, "insertColumns")
   // ) {
   //   return;
   // }
 
-  const curOrder = getSheetIndex(ctx, sheetIndex);
+  const curOrder = getSheetIndex(ctx, id);
   if (curOrder == null) return;
 
   const file = ctx.luckysheetfile[curOrder];
@@ -127,7 +127,7 @@ export function insertRowCol(
       const calc = _.cloneDeep(calcChain[i]);
       const calc_r = calc.r;
       const calc_c = calc.c;
-      const calc_i = calc.index;
+      const calc_i = calc.id;
       const calc_funcStr = getcellFormula(ctx, calc_r, calc_c, calc_i);
 
       if (type === "row") {
@@ -913,7 +913,7 @@ export function insertRowCol(
   file.luckysheet_alternateformat_save = newAFarr;
   file.dataVerification = newDataVerification;
   file.hyperlink = newHyperlink;
-  if (file.index === ctx.currentSheetIndex) {
+  if (file.id === ctx.currentSheetId) {
     ctx.config = cfg;
     // jfrefreshgrid_adRC(
     //   d,
@@ -956,7 +956,7 @@ export function insertRowCol(
   }
 
   file.luckysheet_select_save = range;
-  if (file.index === ctx.currentSheetIndex) {
+  if (file.id === ctx.currentSheetId) {
     ctx.luckysheet_select_save = range;
     // selectHightlightShow();
   }
@@ -989,27 +989,27 @@ export function deleteRowCol(
     type: "row" | "column";
     start: number;
     end: number;
-    sheetIndex?: string;
+    id?: string;
   }
 ) {
   const { type } = op;
-  let { start, end, sheetIndex } = op;
-  sheetIndex = sheetIndex || ctx.currentSheetIndex;
+  let { start, end, id } = op;
+  id = id || ctx.currentSheetId;
 
   // if (
   //   type == "row" &&
-  //   !checkProtectionAuthorityNormal(sheetIndex, "deleteRows")
+  //   !checkProtectionAuthorityNormal(sheetId, "deleteRows")
   // ) {
   //   return;
   // }
   // if (
   //   type == "column" &&
-  //   !checkProtectionAuthorityNormal(sheetIndex, "deleteColumns")
+  //   !checkProtectionAuthorityNormal(sheetId, "deleteColumns")
   // ) {
   //   return;
   // }
 
-  const curOrder = getSheetIndex(ctx, sheetIndex);
+  const curOrder = getSheetIndex(ctx, id);
   if (curOrder == null) return;
 
   const file = ctx.luckysheetfile[curOrder];
@@ -1117,7 +1117,7 @@ export function deleteRowCol(
       const calc = _.cloneDeep(calcChain[i]);
       const calc_r = calc.r;
       const calc_c = calc.c;
-      const calc_i = calc.index;
+      const calc_i = calc.id;
       const calc_funcStr = getcellFormula(ctx, calc_r, calc_c, calc_i);
 
       if (type === "row") {
@@ -1818,7 +1818,7 @@ export function deleteRowCol(
   file.dataVerification = newDataVerification;
   file.hyperlink = newHyperlink;
 
-  if (file.index === ctx.currentSheetIndex) {
+  if (file.id === ctx.currentSheetId) {
     ctx.config = cfg;
     // jfrefreshgrid_adRC(
     //   d,

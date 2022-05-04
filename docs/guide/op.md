@@ -73,7 +73,7 @@ Indicates that user performed row or column insertion.
   index: number;
   count: number;
   direction: "lefttop" | "rightbottom";
-  sheetIndex: string;
+  id: string;
 }
 ```
 
@@ -85,7 +85,7 @@ where
 | index | Start index of row or column to be inserted |
 | count | Amount of the rows or columns to insert |
 | direction | Insert direction, `lefttop` or `rightbottom` |
-| sheetIndex | index of the operated sheet |
+| id | id of the operated sheet |
 
 ### deleteRowCol
 
@@ -98,7 +98,7 @@ Indicates that user performed row or column deletion.
   type: "row" | "column";
   start: number;
   end: number;
-  sheetIndex: string;
+  id: string;
 }
 ```
 
@@ -109,7 +109,7 @@ where
 | type | `row` or `column` |
 | start | Start index of row or column to be deleted |
 | end | End index of row or column to be deleted |
-| sheetIndex | index of the operated sheet |
+| id | id of the operated sheet |
 
 ### addSheet
 

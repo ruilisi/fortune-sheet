@@ -10,7 +10,7 @@ export type Op = {
     | "deleteRowCol"
     | "addSheet"
     | "deleteSheet";
-  index?: string;
+  id?: string;
   path: (string | number)[];
   value?: any;
 };
@@ -110,7 +110,7 @@ export type Sheet = {
   order?: number;
   data?: CellMatrix;
   celldata?: CellWithRowAndCol[];
-  index?: string;
+  id?: string;
   images?: Image[];
   zoomRatio?: number;
   column?: number;

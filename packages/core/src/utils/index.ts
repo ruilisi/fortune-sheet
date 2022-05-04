@@ -96,20 +96,20 @@ export function escapeScriptTag(str: string) {
     .replace(/<\/script>/, "&lt;/script&gt;");
 }
 
-export function getSheetIndex(ctx: Context, index: string) {
+export function getSheetIndex(ctx: Context, id: string) {
   for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
-    if (ctx.luckysheetfile[i].index?.toString() === index.toString()) {
+    if (ctx.luckysheetfile[i].id?.toString() === id.toString()) {
       return i;
     }
   }
   return null;
 }
 
-export function getSheetByIndex(ctx: Context, index: string) {
-  if (_.isNil(index)) {
-    index = ctx.currentSheetIndex;
+export function getSheetByIndex(ctx: Context, id: string) {
+  if (_.isNil(id)) {
+    id = ctx.currentSheetId;
   }
-  const i = getSheetIndex(ctx, index);
+  const i = getSheetIndex(ctx, id);
   if (_.isNil(i)) {
     return null;
   }

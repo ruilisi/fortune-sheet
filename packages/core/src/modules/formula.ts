@@ -78,10 +78,10 @@ const parser = new Parser();
 
 parser.on("callCellValue", (cellCoord: any, done: any) => {
   const flowdata = getFlowdata(currentContext);
-  const index = currentContext?.currentSheetIndex;
+  const id = currentContext?.currentSheetId;
   const cell =
     formulaCache.execFunctionGlobalData?.[
-      `${cellCoord.row.index}_${cellCoord.column.index}_${index}`
+      `${cellCoord.row.index}_${cellCoord.column.index}_${id}`
     ] || flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
   const v = tryGetCellAsNumber(cell);
   done(v);
@@ -91,7 +91,7 @@ parser.on(
   "callRangeValue",
   (startCellCoord: any, endCellCoord: any, done: any) => {
     const flowdata = getFlowdata(currentContext);
-    const index = currentContext?.currentSheetIndex;
+    const id = currentContext?.currentSheetId;
     const fragment = [];
 
     for (
@@ -107,7 +107,7 @@ parser.on(
         col += 1
       ) {
         const cell =
-          formulaCache.execFunctionGlobalData?.[`${row}_${col}_${index}`] ||
+          formulaCache.execFunctionGlobalData?.[`${row}_${col}_${id}`] ||
           flowdata?.[row]?.[col];
         const v = tryGetCellAsNumber(cell);
         colFragment.push(v);
@@ -203,7 +203,7 @@ function addToCellIndexList(txt: string, infoObj: any) {
     txt = txt.replace(/\\'/g, "'").replace(/''/g, "'");
     cellTextToIndexList[txt] = infoObj;
   } else {
-    cellTextToIndexList[`${txt}_${infoObj.sheetIndex}`] = infoObj;
+    cellTextToIndexList[`${txt}_${infoObj.sheetId}`] = infoObj;
   }
 }
 
@@ -211,15 +211,15 @@ function addToCellIndexList(txt: string, infoObj: any) {
 function addToSheetIndexList(
   ctx: Context,
   formulaTxt: string,
-  sheetIndex: string,
+  sheetId: string,
   obIndex: string
 ) {
   if (_.isEmpty(formulaTxt)) {
     return;
   }
 
-  if (_.isEmpty(sheetIndex)) {
-    sheetIndex = ctx.currentSheetIndex;
+  if (_.isEmpty(sheetId)) {
+    sheetId = ctx.currentSheetId;
   }
 
   if (_.isEmpty(obIndex)) {
@@ -234,10 +234,10 @@ function addToSheetIndexList(
     formulaContainSheetList[formulaTxt] = {};
   }
 
-  formulaContainSheetList[formulaTxt][sheetIndex] = obIndex;
+  formulaContainSheetList[formulaTxt][sheetId] = obIndex;
 }
 
-function getcellrange(ctx: Context, txt: string, formulaIndex?: string) {
+function getcellrange(ctx: Context, txt: string, formulaId?: string) {
   if (_.isNil(txt) || txt.length === 0) {
     return null;
   }
@@ -245,7 +245,7 @@ function getcellrange(ctx: Context, txt: string, formulaIndex?: string) {
 
   let sheettxt = "";
   let rangetxt = "";
-  let sheetIndex = null;
+  let sheetId = null;
   let sheetdata = null;
 
   const { luckysheetfile } = ctx;
@@ -267,16 +267,16 @@ function getcellrange(ctx: Context, txt: string, formulaIndex?: string) {
     }
     _.forEach(luckysheetfile, (f) => {
       if (sheettxt === f.name) {
-        sheetIndex = f.index;
+        sheetId = f.id;
         sheetdata = f.data;
         return false;
       }
       return true;
     });
   } else {
-    let i = formulaIndex;
+    let i = formulaId;
     if (_.isNil(i)) {
-      i = ctx.currentSheetIndex;
+      i = ctx.currentSheetId;
     }
     if (`${txt}_${i}` in cellTextToIndexList) {
       return cellTextToIndexList[`${txt}_${i}`];
@@ -286,7 +286,7 @@ function getcellrange(ctx: Context, txt: string, formulaIndex?: string) {
       return null;
     }
     sheettxt = luckysheetfile[index].name;
-    sheetIndex = luckysheetfile[index].index;
+    sheetId = luckysheetfile[index].id;
     sheetdata = flowdata;
     rangetxt = txt;
   }
@@ -303,7 +303,7 @@ function getcellrange(ctx: Context, txt: string, formulaIndex?: string) {
       const item = {
         row: [row, row],
         column: [col, col],
-        sheetIndex,
+        sheetId,
       };
       addToCellIndexList(txt, item);
       return item;
@@ -339,7 +339,7 @@ function getcellrange(ctx: Context, txt: string, formulaIndex?: string) {
   const item = {
     row,
     column: col,
-    sheetIndex,
+    sheetId,
   };
   addToCellIndexList(txt, item);
   return item;
@@ -350,21 +350,21 @@ function isFunctionRangeSaveChange(
   str: string,
   r: number | null,
   c: number | null,
-  index: string,
+  id: string,
   dynamicArray_compute?: any
 ) {
   if (r != null && c != null) {
-    const range = getcellrange(ctx, _.trim(str), index);
+    const range = getcellrange(ctx, _.trim(str), id);
     if (_.isNil(range)) {
       return;
     }
     const { row } = range;
     const col = range.column;
-    const { sheetIndex } = range;
+    const { sheetId } = range;
 
     if (
       `${r}_${c}` in dynamicArray_compute &&
-      (index === sheetIndex || _.isNil(index))
+      (id === sheetId || _.isNil(id))
     ) {
       let isd_range = false;
 
@@ -391,7 +391,7 @@ function isFunctionRangeSaveChange(
         r <= row[1] &&
         c >= col[0] &&
         c <= col[1] &&
-        (index === sheetIndex || _.isNil(index))
+        (id === sheetId || _.isNil(id))
       ) {
         isFunctionRangeSave ||= true;
       } else {
@@ -433,7 +433,7 @@ function checkSpecialFunctionRange(
   function_str: string,
   r: number | null,
   c: number | null,
-  index: string,
+  id: string,
   dynamicArray_compute?: any,
   cellRangeFunction?: any
 ) {
@@ -455,7 +455,7 @@ function checkSpecialFunctionRange(
       }
     }
     try {
-      ctx.calculateSheetIndex = index;
+      ctx.calculateSheetId = id;
       let str = new Function(`return ${function_str}`)();
 
       if (str instanceof Object && !_.isNil(str.startCell)) {
@@ -479,7 +479,7 @@ function isFunctionRange(
   txt: string,
   r: number | null,
   c: number | null,
-  index: string,
+  id: string,
   dynamicArray_compute: any,
   cellRangeFunction: any
 ) {
@@ -513,7 +513,7 @@ function isFunctionRange(
   };
 
   // let luckysheetfile = getluckysheetfile();
-  // let dynamicArray_compute = luckysheetfile[getSheetIndex(Store.currentSheetIndex)_.isNil(]["dynamicArray_compute"]) ? {} : luckysheetfile[getSheetIndex(Store.currentSheetIndex)]["dynamicArray_compute"];
+  // let dynamicArray_compute = luckysheetfile[getSheetIndex(Store.currentSheetId)_.isNil(]["dynamicArray_compute"]) ? {} : luckysheetfile[getSheetIndex(Store.currentSheetId)]["dynamicArray_compute"];
 
   // bracket 0为运算符括号、1为函数括号
   const cal1: any[] = [];
@@ -568,7 +568,7 @@ function isFunctionRange(
           str,
           r,
           c,
-          index,
+          id,
           dynamicArray_compute,
           cellRangeFunction
         );
@@ -648,7 +648,7 @@ function isFunctionRange(
           str,
           r,
           c,
-          index,
+          id,
           dynamicArray_compute,
           cellRangeFunction
         );
@@ -682,7 +682,7 @@ function isFunctionRange(
                 _.trim(str),
                 r,
                 c,
-                index,
+                id,
                 dynamicArray_compute,
                 cellRangeFunction
               )
@@ -718,7 +718,7 @@ function isFunctionRange(
                 _.trim(str),
                 r,
                 c,
-                index,
+                id,
                 dynamicArray_compute,
                 cellRangeFunction
               )
@@ -764,7 +764,7 @@ function isFunctionRange(
       if (iscelldata(str_nb) && str_nb.substring(0, 1) !== ":") {
         // endstr = "luckysheet_getcelldata('" + _.trim(str) + "')";
         endstr = `luckysheet_getcelldata('${str_nb}')`;
-        isFunctionRangeSaveChange(ctx, str, r, c, index, dynamicArray_compute);
+        isFunctionRangeSaveChange(ctx, str, r, c, id, dynamicArray_compute);
       } else if (str_nb.substring(0, 1) === ":") {
         str_nb = str_nb.substring(1);
         if (iscelldata(str_nb)) {
@@ -826,7 +826,7 @@ function isFunctionRange(
     function_str,
     r,
     c,
-    index,
+    id,
     dynamicArray_compute,
     cellRangeFunction
   );
@@ -870,7 +870,7 @@ export function getAllFunctionGroup(ctx: Context) {
       ret.push({
         r: d.r,
         c: d.c,
-        index: d.index,
+        id: d.id,
       });
     }
   }
@@ -882,13 +882,13 @@ export function delFunctionGroup(
   ctx: Context,
   r: number,
   c: number,
-  index?: string
+  id?: string
 ) {
-  if (_.isNil(index)) {
-    index = ctx.currentSheetIndex;
+  if (_.isNil(id)) {
+    id = ctx.currentSheetId;
   }
 
-  const file = ctx.luckysheetfile[getSheetIndex(ctx, index)!];
+  const file = ctx.luckysheetfile[getSheetIndex(ctx, id)!];
 
   const { calcChain } = file;
   if (!_.isNil(calcChain)) {
@@ -896,7 +896,7 @@ export function delFunctionGroup(
     const calcChainClone = _.cloneDeep(calcChain);
     for (let i = 0; i < calcChainClone.length; i += 1) {
       const calc = calcChainClone[i];
-      if (calc.r === r && calc.c === c && calc.index === index) {
+      if (calc.r === r && calc.c === c && calc.id === id) {
         calcChainClone.splice(i, 1);
         modified = true;
         // server.saveParam("fc", index, calc, {
@@ -920,7 +920,7 @@ export function delFunctionGroup(
       if (
         calc.r === r &&
         calc.c === c &&
-        (_.isNil(calc.index) || calc.index === index)
+        (_.isNil(calc.id) || calc.id === id)
       ) {
         dynamicArrayClone.splice(i, 1);
         modified = true;
@@ -1323,10 +1323,10 @@ function insertUpdateFunctionGroup(
   ctx: Context,
   r: number,
   c: number,
-  index?: string
+  id?: string
 ) {
-  if (_.isNil(index)) {
-    index = ctx.currentSheetIndex;
+  if (_.isNil(id)) {
+    id = ctx.currentSheetId;
   }
 
   // let func = getcellFormula(r, c, index);
@@ -1336,7 +1336,7 @@ function insertUpdateFunctionGroup(
   // }
 
   const { luckysheetfile } = ctx;
-  const idx = getSheetIndex(ctx, index);
+  const idx = getSheetIndex(ctx, id);
   if (_.isNil(idx)) {
     return;
   }
@@ -1349,7 +1349,7 @@ function insertUpdateFunctionGroup(
 
   for (let i = 0; i < calcChain.length; i += 1) {
     const calc = calcChain[i];
-    if (calc.r === r && calc.c === c && calc.index === index) {
+    if (calc.r === r && calc.c === c && calc.id === id) {
       // server.saveParam("fc", index, calc, {
       //   op: "update",
       //   pos: i,
@@ -1361,7 +1361,7 @@ function insertUpdateFunctionGroup(
   const cc = {
     r,
     c,
-    index,
+    id,
   };
   calcChain.push(cc);
   file.calcChain = calcChain;
@@ -1378,7 +1378,7 @@ export function execfunction(
   txt: string,
   r: number,
   c: number,
-  index?: string,
+  id?: string,
   isrefresh?: boolean,
   notInsertFunc?: boolean
 ) {
@@ -1394,11 +1394,11 @@ export function execfunction(
     txt += ")";
   }
 
-  if (_.isNil(index)) {
-    index = ctx.currentSheetIndex;
+  if (_.isNil(id)) {
+    id = ctx.currentSheetId;
   }
 
-  ctx.calculateSheetIndex = index;
+  ctx.calculateSheetId = id;
 
   /*
   const fp = _.trim(functionParserExe(txt));
@@ -1435,7 +1435,7 @@ export function execfunction(
         }
 
         if (
-          funcgRange.sheetIndex === ctx.calculateSheetIndex &&
+          funcgRange.sheetId === ctx.calculateSheetId &&
           r >= funcgRange.row[0] &&
           r <= funcgRange.row[1] &&
           c >= funcgRange.column[0] &&
@@ -1509,7 +1509,7 @@ export function execfunction(
       ) {
         result = result[0][0];
       } else {
-        dynamicArrayItem = { r, c, f: txt, index, data: result };
+        dynamicArrayItem = { r, c, f: txt, id, data: result };
         result = "";
       }
     } else {
@@ -1533,12 +1533,12 @@ export function execfunction(
         r,
         c,
         _.isNil(formulaError) ? result : formulaError,
-        index
+        id
       );
     }
 
     if (!notInsertFunc) {
-      insertUpdateFunctionGroup(ctx, r, c, index);
+      insertUpdateFunctionGroup(ctx, r, c, id);
     }
   }
 
@@ -1563,13 +1563,13 @@ export function execfunction(
 
 function insertUpdateDynamicArray(ctx: Context, dynamicArrayItem: any) {
   const { r, c } = dynamicArrayItem;
-  let { index } = dynamicArrayItem;
-  if (_.isNil(index)) {
-    index = ctx.currentSheetIndex;
+  let { id } = dynamicArrayItem;
+  if (_.isNil(id)) {
+    id = ctx.currentSheetId;
   }
 
   const { luckysheetfile } = ctx;
-  const idx = getSheetIndex(ctx, index);
+  const idx = getSheetIndex(ctx, id);
   if (idx == null) return [];
 
   const file = luckysheetfile[idx];
@@ -1581,7 +1581,7 @@ function insertUpdateDynamicArray(ctx: Context, dynamicArrayItem: any) {
 
   for (let i = 0; i < dynamicArray.length; i += 1) {
     const calc = dynamicArray[i];
-    if (calc.r === r && calc.c === c && calc.index === index) {
+    if (calc.r === r && calc.c === c && calc.id === id) {
       calc.data = dynamicArrayItem.data;
       calc.f = dynamicArrayItem.f;
       return dynamicArray;
@@ -1598,11 +1598,11 @@ export function groupValuesRefresh(ctx: Context, refreshData: any[]) {
     for (let i = 0; i < refreshData.length; i += 1) {
       const item = refreshData[i];
 
-      // if(item.i !== ctx.currentSheetIndex){
+      // if(item.i !== ctx.currentSheetId){
       //     continue;
       // }
 
-      const idx = getSheetIndex(ctx, item.index);
+      const idx = getSheetIndex(ctx, item.id);
       if (idx == null) continue;
 
       const file = luckysheetfile[idx];
@@ -1622,7 +1622,7 @@ export function groupValuesRefresh(ctx: Context, refreshData: any[]) {
       updateValue.v = item.v;
       updateValue.f = item.f;
       setCellValue(ctx, item.r, item.c, data, updateValue);
-      // server.saveParam("v", item.index, data[item.r][item.c], {
+      // server.saveParam("v", item.id, data[item.r][item.c], {
       //     "r": item.r,
       //     "c": item.c
       // });
@@ -1638,7 +1638,7 @@ export function execFunctionGroup(
   origin_r: number,
   origin_c: number,
   value: any,
-  index?: string,
+  id?: string,
   data?: any,
   isForce = false
 ) {
@@ -1663,10 +1663,10 @@ export function execFunctionGroup(
     formulaCache.execFunctionGlobalData = {};
   }
   // let luckysheetfile = getluckysheetfile();
-  // let dynamicArray_compute = luckysheetfile[getSheetIndex(ctx.currentSheetIndex)_.isNil(]["dynamicArray_compute"]) ? {} : luckysheetfile[getSheetIndex(ctx.currentSheetIndex)]["dynamicArray_compute"];
+  // let dynamicArray_compute = luckysheetfile[getSheetIndex(ctx.currentSheetId)_.isNil(]["dynamicArray_compute"]) ? {} : luckysheetfile[getSheetIndex(ctx.currentSheetId)]["dynamicArray_compute"];
 
-  if (_.isNil(index)) {
-    index = ctx.currentSheetIndex;
+  if (_.isNil(id)) {
+    id = ctx.currentSheetId;
   }
 
   if (!_.isNil(value)) {
@@ -1674,12 +1674,11 @@ export function execFunctionGroup(
     // setcellvalue(origin_r, origin_c, _this.execFunctionGroupData, value);
     const cellCache: Cell[][] = [[{ v: undefined }]];
     setCellValue(ctx, 0, 0, cellCache, value);
-    [
-      [formulaCache.execFunctionGlobalData[`${origin_r}_${origin_c}_${index}`]],
-    ] = cellCache;
+    [[formulaCache.execFunctionGlobalData[`${origin_r}_${origin_c}_${id}`]]] =
+      cellCache;
   }
 
-  // { "r": r, "c": c, "index": index, "func": func}
+  // { "r": r, "c": c, "id": id, "func": func}
   const calcChains = getAllFunctionGroup(ctx);
   const formulaObjects: any = {};
 
@@ -1687,14 +1686,14 @@ export function execFunctionGroup(
   const sheetData: any = {};
   for (let i = 0; i < sheets.length; i += 1) {
     const sheet = sheets[i];
-    sheetData[sheet.index!] = sheet.data;
+    sheetData[sheet.id!] = sheet.data;
   }
 
   // 把修改涉及的单元格存储为对象
   const updateValueOjects: any = {};
   const updateValueArray: any = [];
   if (_.isNil(formulaCache.execFunctionExist)) {
-    const key = `r${origin_r}c${origin_c}i${index}`;
+    const key = `r${origin_r}c${origin_c}i${id}`;
     updateValueOjects[key] = 1;
   } else {
     for (let x = 0; x < formulaCache.execFunctionExist.length; x += 1) {
@@ -1706,7 +1705,7 @@ export function execFunctionGroup(
 
   const arrayMatchCache: Record<
     string,
-    { key: string; r: number; c: number; sheetIndex: string }[]
+    { key: string; r: number; c: number; sheetId: string }[]
   > = {};
   const arrayMatch = (
     formulaArray: any,
@@ -1716,19 +1715,19 @@ export function execFunctionGroup(
   ) => {
     for (let a = 0; a < formulaArray.length; a += 1) {
       const range = formulaArray[a];
-      const cacheKey = `r${range.row[0]}${range.row[1]}c${range.column[0]}${range.column[1]}index${range.sheetIndex}`;
+      const cacheKey = `r${range.row[0]}${range.row[1]}c${range.column[0]}${range.column[1]}id${range.sheetId}`;
       if (cacheKey in arrayMatchCache) {
         const amc = arrayMatchCache[cacheKey];
         // console.log(amc);
         amc.forEach((item) => {
-          func(item.key, item.r, item.c, item.sheetIndex);
+          func(item.key, item.r, item.c, item.sheetId);
         });
       } else {
         const functionArr = [];
         for (let r = range.row[0]; r <= range.row[1]; r += 1) {
           for (let c = range.column[0]; c <= range.column[1]; c += 1) {
-            const key = `r${r}c${c}i${range.sheetIndex}`;
-            func(key, r, c, range.sheetIndex);
+            const key = `r${r}c${c}i${range.sheetId}`;
+            func(key, r, c, range.sheetId);
             if (
               (_formulaObjects && key in _formulaObjects) ||
               (_updateValueOjects && key in _updateValueOjects)
@@ -1737,7 +1736,7 @@ export function execFunctionGroup(
                 key,
                 r,
                 c,
-                sheetIndex: range.sheetIndex,
+                sheetId: range.sheetId,
               });
             }
           }
@@ -1754,12 +1753,12 @@ export function execFunctionGroup(
   // console.time("1");
   for (let i = 0; i < calcChains.length; i += 1) {
     const formulaCell = calcChains[i];
-    const key = `r${formulaCell.r}c${formulaCell.c}i${formulaCell.index}`;
+    const key = `r${formulaCell.r}c${formulaCell.c}i${formulaCell.id}`;
     const calc_funcStr = getcellFormula(
       ctx,
       formulaCell.r,
       formulaCell.c,
-      formulaCell.index
+      formulaCell.id
     );
     if (_.isNil(calc_funcStr)) {
       continue;
@@ -1777,10 +1776,10 @@ export function execFunctionGroup(
         calc_funcStr,
         null,
         null,
-        formulaCell.index,
+        formulaCell.id,
         null,
         (str_nb: string) => {
-          const range = getcellrange(ctx, _.trim(str_nb), formulaCell.index);
+          const range = getcellrange(ctx, _.trim(str_nb), formulaCell.id);
           if (!_.isNil(range)) {
             formulaArray.push(range);
           }
@@ -1902,7 +1901,7 @@ export function execFunctionGroup(
           continue;
         }
 
-        const range = getcellrange(ctx, _.trim(t), formulaCell.index);
+        const range = getcellrange(ctx, _.trim(t), formulaCell.id);
 
         if (_.isNil(range)) {
           continue;
@@ -1918,7 +1917,7 @@ export function execFunctionGroup(
       key,
       r: formulaCell.r,
       c: formulaCell.c,
-      index: formulaCell.index,
+      id: formulaCell.id,
       parents: {},
       chidren: {},
       color: "w",
@@ -2030,7 +2029,7 @@ export function execFunctionGroup(
       calc_funcStr,
       formulaCell.r,
       formulaCell.c,
-      formulaCell.index
+      formulaCell.id
     );
 
     formulaCache.groupValuesRefreshData.push({
@@ -2039,12 +2038,12 @@ export function execFunctionGroup(
       v: v[1],
       f: v[2],
       spe: v[3],
-      index: formulaCell.index,
+      id: formulaCell.id,
     });
 
     // _this.execFunctionGroupData[u.r][u.c] = value;
     formulaCache.execFunctionGlobalData[
-      `${formulaCell.r}_${formulaCell.c}_${formulaCell.index}`
+      `${formulaCell.r}_${formulaCell.c}_${formulaCell.id}`
     ] = {
       v: v[1],
       f: v[2],
@@ -2287,9 +2286,9 @@ export function createRangeHightlight(ctx: Context, inputInnerHtmlStr: string) {
       if (rangeIndex === formulaCache.selectingRangeIndex || cellrange == null)
         return;
       if (
-        cellrange.sheetIndex === ctx.currentSheetIndex ||
-        (cellrange.sheetIndex === -1 &&
-          formulaCache.rangetosheet === ctx.currentSheetIndex)
+        cellrange.sheetId === ctx.currentSheetId ||
+        (cellrange.sheetId === -1 &&
+          formulaCache.rangetosheet === ctx.currentSheetId)
       ) {
         formulaRanges.push({
           rangeIndex,
@@ -3464,7 +3463,7 @@ export function rangeSetValue(
   if (ctx.config.merge != null && `${rf}_${cf}` in ctx.config.merge) {
     range = getRangetxt(
       ctx,
-      ctx.currentSheetIndex,
+      ctx.currentSheetId,
       {
         column: [cf, cf],
         row: [rf, rf],
@@ -3474,7 +3473,7 @@ export function rangeSetValue(
   } else {
     range = getRangetxt(
       ctx,
-      ctx.currentSheetIndex,
+      ctx.currentSheetId,
       selected,
       formulaCache.rangetosheet
     );
@@ -3768,9 +3767,9 @@ export function rangeDrag(
   //   // if公式生成器 选择范围
   //   const range = getRangetxt(
   //     ctx,
-  //     ctx.currentSheetIndex,
+  //     ctx.currentSheetId,
   //     { row: rowseleted, column: columnseleted },
-  //     ctx.currentSheetIndex
+  //     ctx.currentSheetId
   //   );
   //   $("#luckysheet-ifFormulaGenerator-multiRange-dialog input").val(range);
   // } else {

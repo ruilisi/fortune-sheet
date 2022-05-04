@@ -418,14 +418,14 @@ export const DeleteSheet: ComponentStory<typeof Workbook> = () => {
   return (
     <ApiExecContainer
       onRun={() => {
-        ref.current?.deleteSheet({ order: 0 });
+        ref.current?.deleteSheet({ id: "2" });
       }}
     >
       <Workbook
         ref={ref}
         data={[
-          { name: "Sheet1", data: [[{ v: "1" }]] },
-          { name: "Sheet2", data: [[{ v: "2" }]] },
+          { id: "1", name: "Sheet1", data: [[{ v: "1" }]] },
+          { id: "2", name: "Sheet2", data: [[{ v: "2" }]] },
         ]}
       />
     </ApiExecContainer>
@@ -437,14 +437,14 @@ export const ActivateSheet: ComponentStory<typeof Workbook> = () => {
   return (
     <ApiExecContainer
       onRun={() => {
-        ref.current?.activateSheet({ order: 1 });
+        ref.current?.activateSheet({ id: "2" });
       }}
     >
       <Workbook
         ref={ref}
         data={[
-          { name: "Sheet1", data: [[{ v: "1" }]] },
-          { name: "Sheet2", data: [[{ v: "2" }]] },
+          { id: "1", name: "Sheet1", data: [[{ v: "1" }]] },
+          { id: "2", name: "Sheet2", data: [[{ v: "2" }]] },
         ]}
       />
     </ApiExecContainer>
@@ -479,9 +479,9 @@ export const SetSheetOrder: ComponentStory<typeof Workbook> = () => {
       <Workbook
         ref={ref}
         data={[
-          { index: "1", name: "Sheet1" },
-          { index: "2", name: "Sheet2" },
-          { index: "3", name: "Sheet3" },
+          { id: "1", name: "Sheet1" },
+          { id: "2", name: "Sheet2" },
+          { id: "3", name: "Sheet3" },
         ]}
       />
     </ApiExecContainer>

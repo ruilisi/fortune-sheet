@@ -2,16 +2,17 @@ import { Context } from "../context";
 import { getSheetIndex } from "../utils";
 import { SHEET_NOT_FOUND } from "./errors";
 
-export type CommonOptions = { order?: number };
+export type CommonOptions = { index?: number; id?: string };
 
 export function getSheet(ctx: Context, options: CommonOptions = {}) {
-  const { order = getSheetIndex(ctx, ctx.currentSheetIndex) } = options;
+  const { index = getSheetIndex(ctx, options.id || ctx.currentSheetId) } =
+    options;
 
-  if (order == null) {
+  if (index == null) {
     throw SHEET_NOT_FOUND;
   }
 
-  const sheet = ctx.luckysheetfile[order];
+  const sheet = ctx.luckysheetfile[index];
 
   if (sheet == null) {
     throw SHEET_NOT_FOUND;

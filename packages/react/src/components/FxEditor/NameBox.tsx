@@ -19,14 +19,14 @@ const LocationBox: React.FC = () => {
     const rf = lastSelection.row_focus;
     const cf = lastSelection.column_focus;
     if (context.config.merge != null && `${rf}_${cf}` in context.config.merge) {
-      return getRangetxt(context, context.currentSheetIndex, {
+      return getRangetxt(context, context.currentSheetId, {
         column: [cf, cf],
         row: [rf, rf],
       });
     }
-    return getRangetxt(context, context.currentSheetIndex, lastSelection);
+    return getRangetxt(context, context.currentSheetId, lastSelection);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [context.currentSheetIndex, context.luckysheet_select_save]);
+  }, [context.currentSheetId, context.luckysheet_select_save]);
 
   return (
     <div className="fortune-name-box-container">

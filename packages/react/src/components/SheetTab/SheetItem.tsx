@@ -71,24 +71,24 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
 
   const onDragStart = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
-      e.dataTransfer.setData("index", `${sheet.index}`);
+      e.dataTransfer.setData("sheetId", `${sheet.id}`);
       e.stopPropagation();
     },
-    [sheet.index]
+    [sheet.id]
   );
 
   const onDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       setContext((draftCtx) => {
-        const draggingIndex = e.dataTransfer.getData("index");
-        const droppingIndex = sheet.index;
+        const draggingId = e.dataTransfer.getData("sheetId");
+        const droppingId = sheet.id;
         let draggingSheet: Sheet | undefined;
         let droppingSheet: Sheet | undefined;
         _.sortBy(draftCtx.luckysheetfile, ["order"]).forEach((f, i) => {
           f.order = i;
-          if (f.index === draggingIndex) {
+          if (f.id === draggingId) {
             draggingSheet = f;
-          } else if (f.index === droppingIndex) {
+          } else if (f.id === droppingId) {
             droppingSheet = f;
           }
         });
@@ -105,7 +105,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
       setDragOver(false);
       e.stopPropagation();
     },
-    [isDropPlaceholder, setContext, sheet.index]
+    [isDropPlaceholder, setContext, sheet.id]
   );
 
   return (
@@ -129,13 +129,13 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
       onDrop={onDrop}
       onDragStart={onDragStart}
       draggable
-      key={sheet.index}
+      key={sheet.id}
       ref={containerRef}
       className={
         isDropPlaceholder
           ? "fortune-sheettab-placeholder"
           : `luckysheet-sheets-item${
-              context.currentSheetIndex === sheet.index
+              context.currentSheetId === sheet.id
                 ? " luckysheet-sheets-item-active"
                 : ""
             }`
@@ -143,7 +143,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
       onClick={() => {
         if (isDropPlaceholder) return;
         setContext((draftCtx) => {
-          draftCtx.currentSheetIndex = sheet.index!;
+          draftCtx.currentSheetId = sheet.id!;
         });
       }}
       onContextMenu={(e) => {

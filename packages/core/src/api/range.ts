@@ -45,10 +45,10 @@ export function getCellsByFlattenRange(
 export function getSelectionCoordinates(ctx: Context) {
   const result: string[] = [];
   const rangeArr = _.cloneDeep(ctx.luckysheet_select_save);
-  const sheetIndex = ctx.currentSheetIndex;
+  const sheetId = ctx.currentSheetId;
 
   rangeArr?.forEach((ele) => {
-    const rangeText = getRangetxt(ctx, sheetIndex, {
+    const rangeText = getRangetxt(ctx, sheetId, {
       column: ele.column,
       row: ele.row,
     });
@@ -66,7 +66,7 @@ export function getCellsByRange(
   const sheet = getSheet(ctx, options);
 
   if (!range || typeof range === "object") {
-    return getdatabyselection(ctx, range, sheet.index!);
+    return getdatabyselection(ctx, range, sheet.id!);
   }
   throw INVALID_PARAMS;
 }
@@ -77,7 +77,7 @@ export function getHtmlByRange(
   options: CommonOptions = {}
 ) {
   const sheet = getSheet(ctx, options);
-  return rangeValueToHtml(ctx, sheet.index!, range);
+  return rangeValueToHtml(ctx, sheet.id!, range);
 }
 
 export function setSelection(
@@ -87,7 +87,7 @@ export function setSelection(
 ) {
   const sheet = getSheet(ctx, options);
   sheet.luckysheet_select_save = normalizeSelection(ctx, range);
-  if (ctx.currentSheetIndex === sheet.index) {
+  if (ctx.currentSheetId === sheet.id) {
     ctx.luckysheet_select_save = sheet.luckysheet_select_save;
   }
 }

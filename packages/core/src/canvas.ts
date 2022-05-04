@@ -806,7 +806,7 @@ export class Canvas {
     // 动态数组公式计算
     // const dynamicArrayCompute = dynamicArrayCompute(
     //   this.sheetCtx.luckysheetfile[
-    //     getSheetIndex(this.sheetCtx.currentSheetIndex)
+    //     getSheetIndex(this.sheetCtx.currentSheetId)
     //   ].dynamicArray
     // );
     const dynamicArrayCompute: any = {};

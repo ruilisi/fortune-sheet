@@ -5,7 +5,7 @@ describe("Cells", () => {
     config: {},
     luckysheetfile: [
       {
-        index: "0",
+        id: "0",
         data: [
           [
             {
@@ -17,7 +17,7 @@ describe("Cells", () => {
         ],
       },
     ],
-    currentSheetIndex: "0",
+    currentSheetId: "0",
     luckysheet_select_save: [
       {
         left: 0,

@@ -10,7 +10,7 @@ export function mergeCells(
   options: CommonOptions = {}
 ) {
   const sheet = getSheet(ctx, options);
-  mergeCellsInternal(ctx, sheet.index!, ranges, type);
+  mergeCellsInternal(ctx, sheet.id!, ranges, type);
 }
 
 export function cancelMerge(

@@ -48,7 +48,7 @@ export function handleCopy(ctx: Context) {
 
   // 多重选区 有条件格式时 提示
   // const cdformat =
-  //   ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)]
+  //   ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)]
   //     .luckysheet_conditionformat_save;
   // if (
   //   ctx.luckysheet_select_save.length > 1 &&

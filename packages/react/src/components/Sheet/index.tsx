@@ -71,12 +71,12 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
    * should be defined before redraw
    */
   useEffect(() => {
-    initFreeze(context, refs.globalCache, context.currentSheetIndex);
+    initFreeze(context, refs.globalCache, context.currentSheetId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     refs.globalCache,
     sheet.frozen,
-    context.currentSheetIndex,
+    context.currentSheetId,
     context.visibledatacolumn,
     context.visibledatarow,
   ]);
@@ -96,7 +96,7 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
       return;
     }
     const tableCanvas = new Canvas(canvasRef.current!, context);
-    const freeze = refs.globalCache.freezen?.[sheet.index!];
+    const freeze = refs.globalCache.freezen?.[sheet.id!];
     if (
       freeze?.horizontal?.freezenhorizontaldata ||
       freeze?.vertical?.freezenverticaldata
@@ -222,7 +222,7 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
       tableCanvas.drawColumnHeader(context.scrollLeft);
       tableCanvas.drawRowHeader(context.scrollTop);
     }
-  }, [context, refs.globalCache.freezen, setContext, sheet.index]);
+  }, [context, refs.globalCache.freezen, setContext, sheet.id]);
 
   const onWheel = useCallback(
     (e: WheelEvent) => {

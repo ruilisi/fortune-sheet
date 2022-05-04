@@ -814,7 +814,7 @@ example of `data`:
         "height": 250,
         "left": 20,
         "top": 120,
-        "sheetIndex": "Sheet_6az6nei65t1i_1596209937084",
+        "sheetId": "Sheet_6az6nei65t1i_1596209937084",
         "needRangeShow": true,
         "chartOptions": {
             "chart_id": "chart_p145W6i73otw_1596209943446",

@@ -8,10 +8,10 @@ describe("patch", () => {
   const context = {
     luckysheetfile: [
       {
-        index: "index_1",
+        id: "id_1",
       },
       {
-        index: "index_2",
+        id: "id_2",
       },
     ],
   };
@@ -19,13 +19,13 @@ describe("patch", () => {
     {
       op: "add",
       value: 1,
-      index: "index_1",
+      id: "id_1",
       path: ["data", 1, 1, "bl"],
     },
     {
       op: "add",
       value: 1,
-      index: "index_2",
+      id: "id_2",
       path: ["data", 2, 1, "cl"],
     },
   ];
@@ -33,19 +33,19 @@ describe("patch", () => {
     {
       op: "replace",
       value: ["1"],
-      index: "index_1",
+      id: "id_1",
       path: ["calcChain"],
     },
     {
       op: "insertRowCol",
-      index: "index_1",
+      id: "id_1",
       path: [],
       value: {
         type: "row",
         index: 2,
         count: 3,
         direction: "lefttop",
-        sheetIndex: "index_1",
+        id: "id_1",
       },
     },
   ];
@@ -53,18 +53,18 @@ describe("patch", () => {
     {
       op: "replace",
       value: ["1"],
-      index: "index_1",
+      id: "id_1",
       path: ["calcChain"],
     },
     {
       op: "deleteRowCol",
-      index: "index_1",
+      id: "id_1",
       path: [],
       value: {
         type: "column",
         start: 2,
         end: 3,
-        sheetIndex: "index_1",
+        id: "id_1",
       },
     },
   ];
@@ -112,7 +112,7 @@ describe("patch", () => {
           index: 2,
           count: 3,
           direction: "lefttop",
-          sheetIndex: "index_1",
+          id: "id_1",
         },
       }
     );
@@ -145,7 +145,7 @@ describe("patch", () => {
           type: "column",
           start: 2,
           end: 3,
-          sheetIndex: "index_1",
+          id: "id_1",
         },
       }
     );
@@ -156,10 +156,10 @@ describe("patch", () => {
   it("patchToOp with row/col insertion and restoreDeletedCells", async () => {
     const newOps = patchToOp(
       {
-        currentSheetIndex: "index_1",
+        currentSheetId: "id_1",
         luckysheetfile: [
           {
-            index: "index_1",
+            id: "id_1",
             data: [
               [{ v: "00" }, { v: "01" }, null, null, { v: "04" }],
               [{ v: "10" }, null, null, { v: "13" }, null],
@@ -192,7 +192,7 @@ describe("patch", () => {
           index: 1,
           count: 2,
           direction: "lefttop",
-          sheetIndex: "index_1",
+          id: "id_1",
         },
         restoreDeletedCells: true,
       }
@@ -202,43 +202,43 @@ describe("patch", () => {
       {
         op: "replace",
         value: ["1"],
-        index: "index_1",
+        id: "id_1",
         path: ["calcChain"],
       },
       {
         op: "insertRowCol",
-        index: "index_1",
+        id: "id_1",
         path: [],
         value: {
           type: "row",
           index: 1,
           count: 2,
           direction: "lefttop",
-          sheetIndex: "index_1",
+          id: "id_1",
         },
       },
       {
         op: "replace",
         value: { v: "10" },
-        index: "index_1",
+        id: "id_1",
         path: ["data", 1, 0],
       },
       {
         op: "replace",
         value: { v: "13" },
-        index: "index_1",
+        id: "id_1",
         path: ["data", 1, 3],
       },
       {
         op: "replace",
         value: { v: "21" },
-        index: "index_1",
+        id: "id_1",
         path: ["data", 2, 1],
       },
       {
         op: "replace",
         value: { v: "24" },
-        index: "index_1",
+        id: "id_1",
         path: ["data", 2, 4],
       },
     ]);
@@ -275,7 +275,7 @@ describe("patch", () => {
           index: 1,
           count: 2,
           direction: "lefttop",
-          sheetIndex: "index_1",
+          id: "id_1",
         },
       }
     );
@@ -283,31 +283,31 @@ describe("patch", () => {
       {
         op: "replace",
         value: ["1"],
-        index: "index_1",
+        id: "id_1",
         path: ["calcChain"],
       },
       {
         op: "insertRowCol",
-        index: "index_1",
+        id: "id_1",
         path: [],
         value: {
           type: "row",
           index: 1,
           count: 2,
           direction: "lefttop",
-          sheetIndex: "index_1",
+          id: "id_1",
         },
       },
       {
         op: "replace",
         value: { f: "f1" },
-        index: "index_1",
+        id: "id_1",
         path: ["data", 3, 3],
       },
       {
         op: "replace",
         value: { f: "f2" },
-        index: "index_1",
+        id: "id_1",
         path: ["data", 3, 5],
       },
     ]);
@@ -348,7 +348,7 @@ describe("patch", () => {
           type: "column",
           start: 2,
           end: 3,
-          sheetIndex: "index_1",
+          id: "id_1",
         },
       }
     );
@@ -356,30 +356,30 @@ describe("patch", () => {
       {
         op: "replace",
         value: ["1"],
-        index: "index_1",
+        id: "id_1",
         path: ["calcChain"],
       },
       {
         op: "deleteRowCol",
-        index: "index_1",
+        id: "id_1",
         path: [],
         value: {
           type: "column",
           start: 2,
           end: 3,
-          sheetIndex: "index_1",
+          id: "id_1",
         },
       },
       {
         op: "replace",
         value: { f: "f1" },
-        index: "index_1",
+        id: "id_1",
         path: ["data", 3, 3],
       },
       {
         op: "replace",
         value: { f: "f2" },
-        index: "index_1",
+        id: "id_1",
         path: ["data", 3, 5],
       },
     ]);
@@ -403,14 +403,14 @@ describe("patch", () => {
     expect(rowcolOps).toEqual([
       {
         op: "insertRowCol",
-        index: "index_1",
+        id: "id_1",
         path: [],
         value: {
           type: "row",
           index: 2,
           count: 3,
           direction: "lefttop",
-          sheetIndex: "index_1",
+          id: "id_1",
         },
       },
     ]);
@@ -420,7 +420,7 @@ describe("patch", () => {
     const wrongContext = {
       luckysheetfile: [
         {
-          index: "index_3",
+          id: "id_3",
         },
       ],
     };
@@ -436,7 +436,7 @@ describe("patch", () => {
         index: 2,
         count: 3,
         direction: "lefttop",
-        sheetIndex: "index_1",
+        id: "id_1",
       },
     });
     expect(reverseOp).toEqual({
@@ -444,7 +444,7 @@ describe("patch", () => {
         type: "row",
         start: 2,
         end: 4,
-        sheetIndex: "index_1",
+        id: "id_1",
       },
     });
   });
@@ -456,7 +456,7 @@ describe("patch", () => {
         index: 2,
         count: 3,
         direction: "rightbottom",
-        sheetIndex: "index_1",
+        id: "id_1",
       },
     });
     expect(reverseOp).toEqual({
@@ -464,7 +464,7 @@ describe("patch", () => {
         type: "row",
         start: 3,
         end: 5,
-        sheetIndex: "index_1",
+        id: "id_1",
       },
     });
   });
@@ -475,7 +475,7 @@ describe("patch", () => {
         type: "row",
         start: 2,
         end: 4,
-        sheetIndex: "index_1",
+        id: "id_1",
       },
     });
     expect(reverseOp).toEqual({
@@ -484,7 +484,7 @@ describe("patch", () => {
         index: 2,
         count: 3,
         direction: "lefttop",
-        sheetIndex: "index_1",
+        id: "id_1",
       },
     });
   });

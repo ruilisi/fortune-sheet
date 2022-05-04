@@ -184,14 +184,14 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           draftCtx.lang = mergedSettings.lang;
           draftCtx.allowEdit = mergedSettings.allowEdit;
           // draftCtx.fontList = mergedSettings.fontList;
-          if (_.isEmpty(draftCtx.currentSheetIndex)) {
+          if (_.isEmpty(draftCtx.currentSheetId)) {
             initSheetIndex(draftCtx);
           }
-          let sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetIndex);
+          let sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetId);
           if (sheetIdx == null) {
             if ((draftCtx.luckysheetfile?.length ?? 0) > 0) {
               sheetIdx = 0;
-              draftCtx.currentSheetIndex = draftCtx.luckysheetfile[0].index!;
+              draftCtx.currentSheetId = draftCtx.luckysheetfile[0].id!;
             }
           }
           if (sheetIdx == null) return;
@@ -304,7 +304,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         { noHistory: true }
       );
     }, [
-      context.currentSheetIndex,
+      context.currentSheetId,
       context.luckysheetfile.length,
       originalData,
       mergedSettings.defaultRowHeight,
@@ -370,7 +370,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       [context, mergedSettings, setContextWithProduce]
     );
 
-    const i = getSheetIndex(context, context.currentSheetIndex);
+    const i = getSheetIndex(context, context.currentSheetId);
     if (i == null) {
       return null;
     }

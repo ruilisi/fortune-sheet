@@ -9,9 +9,9 @@ function cutVolumn(arr: number[], cutindex: number) {
   return ret;
 }
 
-function frozenTofreezen(ctx: Context, cache: GlobalCache, sheetIndex: string) {
+function frozenTofreezen(ctx: Context, cache: GlobalCache, sheetId: string) {
   // get frozen type
-  const file = ctx.luckysheetfile[getSheetIndex(ctx, sheetIndex)!];
+  const file = ctx.luckysheetfile[getSheetIndex(ctx, sheetId)!];
   const { frozen } = file;
 
   if (frozen == null) {
@@ -98,15 +98,11 @@ function frozenTofreezen(ctx: Context, cache: GlobalCache, sheetIndex: string) {
   }
 
   cache.freezen ||= {};
-  cache.freezen[ctx.currentSheetIndex] = freezen;
+  cache.freezen[ctx.currentSheetId] = freezen;
 }
 
-export function initFreeze(
-  ctx: Context,
-  cache: GlobalCache,
-  sheetIndex: string
-) {
-  frozenTofreezen(ctx, cache, sheetIndex);
+export function initFreeze(ctx: Context, cache: GlobalCache, sheetId: string) {
+  frozenTofreezen(ctx, cache, sheetId);
 }
 
 export function scrollToFrozenRowCol(

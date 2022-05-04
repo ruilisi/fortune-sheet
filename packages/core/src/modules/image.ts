@@ -58,7 +58,7 @@ export function showImgChooser() {
 }
 
 export function saveImage(ctx: Context) {
-  const index = getSheetIndex(ctx, ctx.currentSheetIndex);
+  const index = getSheetIndex(ctx, ctx.currentSheetId);
   if (index == null) return;
   const file = ctx.luckysheetfile[index];
 
