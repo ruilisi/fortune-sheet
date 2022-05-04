@@ -6,7 +6,7 @@
 [
     {
         "op": "replace",
-        "index": "0",
+        "id": "0",
         "path": ["data", 1, 0, "bl"],
         "value": 1
     }
@@ -28,7 +28,7 @@ op对后端数据修改和同步在线协同数据非常有用。
 ```ts
 {
     "op": string,
-    "index": string,
+    "id": string,
     "path": any[],
     "value": any
 }
@@ -39,7 +39,7 @@ op对后端数据修改和同步在线协同数据非常有用。
 | 键 | 描述 |
 | ----- | ----------- |
 | op | 操作名, 应为 `add`, `remove`, `replce`, `insertRowCol`, `deleteRowCol`, `addSheet`, `deleteSheet` 其中之一 |
-| index | 当前Sheet的index  |
+| id | 当前Sheet的id  |
 | path | 要更新数据的路径 |
 | value | 更新的数据 |
 
@@ -125,7 +125,7 @@ where
 
 ```ts
 {
-  index: string;
+  id: string;
 }
 ```
 
@@ -133,4 +133,4 @@ where
 
 | 名称 | 描述 |
 | ----- | ----------- |
-| index | 要删除的表格index |
+| id | 要删除的表格id |

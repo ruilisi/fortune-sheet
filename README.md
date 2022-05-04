@@ -53,7 +53,7 @@ This project is in the state of early development, APIs may have significant cha
 
 ## Features
 
-- Data structure is compatible with Luckysheet.
+- Data structure is mostly compatible with Luckysheet (see [migration guide](#migrating-data-from-luckysheet)).
 - **Formatting**: style, text alignment and rotation, text truncation, overflow, automatic line wrapping, multiple data types, cell segmentation style
 - **Cells**: multiple selection, merge cells
 - **Row & column**: insert, delete rows or columns
@@ -153,6 +153,12 @@ A working example with `Express` (backend server) and `MongoDB` (data persistenc
 Run it with `node index.js` and visit [Collabration example](https://ruilisi.github.io/fortune-sheet-demo/?path=/story/collabration--example) (initialize data by visiting http://localhost:8081/init)
 
 For detailed doc about `Op`, refer to [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-docs/guide/op.html)
+
+## Migrating data from Luckysheet
+The overall data structure of FortuneSheet is the same as Luckysheet, with some naming differences:
+
+1. sheet.index -> sheet.id
+2. sheet.calcChain[].id -> sheet.calcChain[].id
 
 ## Contributing
 Expected workflow is: Fork -> Patch -> Push -> Pull Request

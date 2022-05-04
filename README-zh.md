@@ -49,7 +49,7 @@
 
 ## 特性
 
-- 数据结构兼容Luckysheet。
+- 数据结构总体兼容Luckysheet (见[迁移指南](#迁移luckysheet数据))。
 - **格式设置**：样式，文本对齐及旋转，文本截断、溢出、自动换行，多种数据类型，单元格内多样式
 - **单元格**：多选区，合并单元格
 - **行和列操作**：插入、删除行或列
@@ -150,6 +150,12 @@ op对后端数据修改和同步在线协同数据非常有用。
 通过 `node index.js` 运行后端服务器，然后访问 [Collabration example](https://ruilisi.github.io/fortune-sheet-demo/?path=/story/collabration--example) 即可体验。(可通过 http://localhost:8081/init 初始化数据)
 
 详细的 `Op` 文档, 请参考 [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-docs/zh/guide/op.html)
+
+## 迁移Luckysheet数据
+FortuneSheet的总体数据结构与Luckysheet相同，只有几处命名的区别：
+
+1. sheet.index -> sheet.id
+2. sheet.calcChain[].id -> sheet.calcChain[].id
 
 ## 贡献
 期望的工作流程为: Fork -> Patch -> Push -> Pull Request

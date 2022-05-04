@@ -6,7 +6,7 @@ Each time a user operates on the sheet, an array of `Op` will be emiited through
 [
     {
         "op": "replace",
-        "index": "0",
+        "id": "0",
         "path": ["data", 1, 0, "bl"],
         "value": 1
     }
@@ -28,7 +28,7 @@ Each `Op` has the following structure.
 ```ts
 {
     "op": string,
-    "index": string,
+    "id": string,
     "path": any[],
     "value": any
 }
@@ -39,7 +39,7 @@ where
 | Field | Description |
 | ----- | ----------- |
 | op | Operation name, should be one of `add`, `remove`, `replce`, `insertRowCol`, `deleteRowCol`, `addSheet`, `deleteSheet` |
-| index | Sheet index of the operation |
+| id | Sheet id of the operation |
 | path | Path of the value to be updated |
 | value | Value to be updated |
 
@@ -125,7 +125,7 @@ Indicates that user deleted a sheet.
 
 ```ts
 {
-  index: string;
+  id: string;
 }
 ```
 
@@ -133,4 +133,4 @@ where
 
 | Field | Description |
 | ----- | ----------- |
-| index | index of the sheet to be deleted |
+| id | id of the sheet to be deleted |

@@ -9,7 +9,7 @@ example of `data`:
     {
         "name": "Cell", //Worksheet name
         "color": "", //Worksheet color
-        "index": 0, //Worksheet index
+        "id": 0, //Worksheet id
         "status": 1, //Worksheet active status
         "order": 0, //The order of the worksheet
         "hide": 0,//Whether worksheet hide 
@@ -47,7 +47,7 @@ example of `data`:
     {
         "name": "Sheet2",
         "color": "",
-        "index": 1,
+        "id": "1",
         "status": 0,
         "order": 1,
         "celldata": [],
@@ -56,7 +56,7 @@ example of `data`:
     {
         "name": "Sheet3",
         "color": "",
-        "index": 2,
+        "id": "2",
         "status": 0,
         "order": 2,
         "celldata": [],
@@ -77,10 +77,10 @@ example of `data`:
 - usage：Sheet color, with a bottom border below the sheet name
 
 ------------
-### index
+### id
 - type：String
 - default：""
-- usage：The worksheet index is used as a unique key value, and a random string is automatically assigned when a worksheet is added. Note that `index` is not the order of worksheets, and is distinguished from `order`.
+- usage：The worksheet id is used as a unique key value, and a random string is automatically assigned when a worksheet is added.
 
 ------------
 ### status
@@ -439,7 +439,7 @@ example of `data`:
     [{
         "r": 6, //the number of rows
         "c": 3, //the number of columns
-        "index": 1, //sheet id
+        "id": "1", //sheet id
         "func": [true, 23.75, "=AVERAGE(D3:D6)"], //Formula information, including formula calculation results and formula string
         "color": "w", //"w"：use Depth-First-Search "b":Normal search
         "parent": null,
@@ -448,7 +448,7 @@ example of `data`:
     }, {
         "r": 7,
         "c": 3,
-        "index": 1,
+        "id": "1",
         "func": [true, 30, "=MAX(D3:D6)"],
         "color": "w",
         "parent": null,
@@ -1336,7 +1336,7 @@ At this point, the lucky sheet file contains many local parameters that are not 
     {
         "name": "Cell", //Worksheet name
         "color": "", //Worksheet color
-        "index": 0, //Worksheet index
+        "id": "0", //Worksheet id
         "status": 1, //Worksheet active status
         "order": 0, //The order of the worksheet
         "hide": 0,//Whether worksheet hide 
@@ -1381,7 +1381,7 @@ At this point, the lucky sheet file contains many local parameters that are not 
     {
         "name": "Sheet2",
         "color": "",
-        "index": 1,
+        "id": "1",
         "status": 0,
         "order": 1,
         "celldata": [],
@@ -1390,7 +1390,7 @@ At this point, the lucky sheet file contains many local parameters that are not 
     {
         "name": "Sheet3",
         "color": "",
-        "index": 2,
+        "id": "2",
         "status": 0,
         "order": 2,
         "celldata": [],
