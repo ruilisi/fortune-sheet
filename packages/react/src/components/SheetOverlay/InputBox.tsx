@@ -255,8 +255,8 @@ const InputBox: React.FC = () => {
       style={
         firstSelection && !_.isEmpty(context.luckysheetCellUpdate)
           ? {
-              left: firstSelection.left_move,
-              top: firstSelection.top_move,
+              left: firstSelection.left,
+              top: firstSelection.top,
               display: "block",
             }
           : { left: -10000, top: -10000, display: "block" }
@@ -267,7 +267,8 @@ const InputBox: React.FC = () => {
         style={
           firstSelection
             ? {
-                minWidth: firstSelection.width_move,
+                minWidth: firstSelection.width,
+                minHeight: firstSelection.height,
                 ...inputBoxStyle,
               }
             : {}

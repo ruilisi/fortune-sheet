@@ -320,7 +320,17 @@ const SheetOverlay: React.FC = () => {
           />
           <div
             className="luckysheet-cell-selected-focus"
-            id="luckysheet-cell-selected-focus"
+            style={
+              (context.luckysheet_select_save?.length ?? 0) > 0
+                ? {
+                    display: "block",
+                    left: _.last(context.luckysheet_select_save)?.left,
+                    width: _.last(context.luckysheet_select_save)?.width,
+                    top: _.last(context.luckysheet_select_save)?.top,
+                    height: _.last(context.luckysheet_select_save)?.height,
+                  }
+                : {}
+            }
           />
           {(context.luckysheet_selection_range?.length ?? 0) > 0 && (
             <div id="fortune-selection-copy">
@@ -368,14 +378,11 @@ const SheetOverlay: React.FC = () => {
                   key={index}
                   id="luckysheet-cell-selected"
                   className="luckysheet-cell-selected"
-                  style={{
-                    ...getSelectionStyle(
-                      context,
-                      selection,
-                      refs.globalCache.freezen?.[context.currentSheetId]
-                    ),
-                    border: "1px solid #0188fb",
-                  }}
+                  style={getSelectionStyle(
+                    context,
+                    selection,
+                    refs.globalCache.freezen?.[context.currentSheetId]
+                  )}
                 >
                   <div className="luckysheet-cs-inner-border" />
                   <div

@@ -312,7 +312,7 @@
   text-align: left;
   max-height: 9900px;
   max-width: 9900px;
-  border: 2px #5292f7 solid;
+  border: 1px #5292f7 solid;
   padding: 0 2px;
   margin: 0;
   resize: none;
@@ -327,6 +327,7 @@
   font-size: 13px;
   right: auto;
   overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .luckysheet-cell-input {
