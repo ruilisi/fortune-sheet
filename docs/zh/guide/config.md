@@ -123,7 +123,7 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 		"freeze",
 		"image",
 		"comment",
-		"formula-sum"
+		"quick-formula"
 	]
 	```
 

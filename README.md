@@ -63,16 +63,16 @@ This project is in the state of early development, APIs may have significant cha
 ## Roadmap
 - ✅ Support cooperative editing with backend storage.
 - ✅ Support undo/redo.
-- Mobile adaption.
-- Expose APIs.
-- Add tests.
+- ✅ Mobile adaption.
+- ✅ Expose APIs.
+- ✅ Add tests.
 - More basic features:
-  - fill handle
+  - ✅ fill handle
   - fonts
   - ✅ format painter
   - ✅ comments
   - ✅ insert images
-  - more toolbar buttons
+  - ✅ more toolbar buttons
 - Excel import and export.
 - Support Vue.
 - More features:

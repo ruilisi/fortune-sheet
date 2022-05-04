@@ -72,7 +72,7 @@ export const defaultSettings: Required<Settings> = {
     "freeze",
     "image",
     "comment",
-    "formula-sum",
+    "quick-formula",
   ], // 自定义工具栏
   cellContextMenu: [
     "copy", // 复制

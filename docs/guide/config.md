@@ -121,7 +121,7 @@ The following are all supported setting parameters
 		"|",
 		"freeze",
 		"comment",
-		"formula-sum",
+		"quick-formula",
 	]
 ```
 

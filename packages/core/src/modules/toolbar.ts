@@ -1427,7 +1427,6 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
     handleVerticalAlign(ctx, cellInput, "bottom"),
   "clear-format": handleClearFormat,
   "format-painter": handleFormatPainter,
-  "formula-sum": handleSum,
 };
 
 const selectedMap: Record<string, ToolbarItemSelectedFunc> = {

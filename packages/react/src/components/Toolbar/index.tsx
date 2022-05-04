@@ -321,7 +321,7 @@ const Toolbar: React.FC<{
         );
       }
 
-      if (name === "formula-sum") {
+      if (name === "quick-formula") {
         const itemData = [
           { text: "求和", key: "SUM" },
           { text: "平均", key: "AVERAGE" },
@@ -331,7 +331,7 @@ const Toolbar: React.FC<{
         ];
         return (
           <Combo
-            iconId={name}
+            iconId="formula-sum"
             key={name}
             tooltip={tooltip}
             text="求和"
