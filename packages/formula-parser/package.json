@@ -1,6 +1,6 @@
 {
   "name": "@fortune-sheet/formula-parser",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Formula parser",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -47,7 +47,7 @@
     "webpack-cli": "^4.2.0"
   },
   "dependencies": {
-    "@formulajs/formulajs": "^3.1.1",
+    "@formulajs/formulajs": "^2.9.3",
     "tiny-emitter": "^2.1.0"
   },
   "jest": {

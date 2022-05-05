@@ -18,7 +18,7 @@ module.exports = {
   collectCoverageFrom: ["packages/**/src/**/*.{ts,tsx}"],
   testEnvironment: "jsdom",
   moduleNameMapper,
-  moduleFileExtensions: ["js", "jsx", "cjs", "ts", "tsx"],
+  moduleFileExtensions: ["js", "jsx", "ts", "tsx"],
   transform: {
     "\\.(t|j)sx?$": require.resolve("./tests/transformer"),
   },
