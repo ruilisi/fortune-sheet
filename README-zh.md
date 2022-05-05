@@ -7,7 +7,7 @@
 
 <div align="center">
 
-[![Build Status](https://drone.ruilisi.com/api/badges/ruilisi/fortune-sheet/status.svg)](https://drone.ruilisi.com/ruilisi/fortune-sheet)
+[![CircleCI Status](https://circleci.com/gh/ruilisi/fortune-sheet.svg?style=shield)](https://circleci.com/gh/ruilisi/fortune-sheet)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet?ref=badge_shield)
 [![Known Vulnerabilities](https://snyk.io/test/github/ruilisi/fortune-sheet/badge.svg)](https://snyk.io/test/github/ruilisi/fortune-sheet)
 [![Build with father](https://img.shields.io/badge/build%20with-father-028fe4.svg)](https://github.com/umijs/father/)
