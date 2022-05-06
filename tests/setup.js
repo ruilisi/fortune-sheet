@@ -1,5 +1,3 @@
-import Enzyme from "enzyme";
-import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
 import "jest-canvas-mock";
 
 import React from "react";
@@ -12,8 +10,6 @@ jest.mock("react", () => ({
 }));
 
 jest.setTimeout(60000);
-
-Enzyme.configure({ adapter: new Adapter() });
 
 Object.defineProperty(window, "open", {
   value: jest.fn,

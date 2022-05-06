@@ -1,12 +1,13 @@
-import { mount } from "enzyme";
+import { render } from "@testing-library/react";
 import React from "react";
 import Workbook from "../src/components/Workbook";
-import { waitForComponentToPaint } from "../../../tests/util";
 
 describe("Worksheet", () => {
   it("should render", async () => {
-    const wrapper = mount(<Workbook data={[{ name: "Sheet1" }]} />);
-    await waitForComponentToPaint(wrapper);
-    expect(wrapper.exists(".fortune-sheet-container")).toBeTruthy();
+    const { queryByText, container } = render(
+      <Workbook data={[{ name: "Sheet1" }]} />
+    );
+    expect(container.querySelector(".fortune-sheet-container")).toBeTruthy();
+    expect(queryByText("Sheet1")).toBeTruthy();
   });
 });
