@@ -7,7 +7,7 @@ import {
   getStyleByCell,
   mergeBorder,
 } from "./cell";
-import { delFunctionGroup, formulaCache } from "./formula";
+import { delFunctionGroup } from "./formula";
 import clipboard from "./clipboard";
 import { getBorderInfoCompute } from "./border";
 import { getSheetIndex, replaceHtml } from "../utils";
@@ -674,7 +674,7 @@ export function moveHighlightCell(
     // TODO pivotTable.pivotclick(row_index, col_index);
     // TODO formula.fucntionboxshow(row_index, col_index);
   } else if (type === "rangeOfFormula") {
-    const last = formulaCache.func_selectedrange;
+    const last = ctx.formulaCache.func_selectedrange;
     if (!last) return;
 
     let curR;
@@ -783,7 +783,7 @@ export function moveHighlightCell(
       return;
     }
 
-    formulaCache.func_selectedrange = {
+    ctx.formulaCache.func_selectedrange = {
       left: col_pre,
       width: col - col_pre - 1,
       top: row_pre,

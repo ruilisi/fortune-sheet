@@ -5,7 +5,6 @@ import {
   delFunctionGroup,
   execfunction,
   execFunctionGroup,
-  formulaCache,
   functionCopy,
 } from "../modules/formula";
 import { getdatabyselection, getQKBorder } from "../modules/cell";
@@ -25,7 +24,7 @@ function postPasteCut(
 ) {
   // 单元格数据更新联动
   const execF_rc: any = {};
-  formulaCache.execFunctionExist = [];
+  ctx.formulaCache.execFunctionExist = [];
   // clearTimeout(refreshCanvasTimeOut);
   for (let r = source.range.row[0]; r <= source.range.row[1]; r += 1) {
     for (let c = source.range.column[0]; c <= source.range.column[1]; c += 1) {
@@ -34,7 +33,7 @@ function postPasteCut(
       }
 
       execF_rc[`${r}_${c}_${source.sheetId}`] = 0;
-      formulaCache.execFunctionExist.push({ r, c, i: source.sheetId });
+      ctx.formulaCache.execFunctionExist.push({ r, c, i: source.sheetId });
     }
   }
 
@@ -45,7 +44,7 @@ function postPasteCut(
       }
 
       execF_rc[`${r}_${c}_${target.sheetId}`] = 0;
-      formulaCache.execFunctionExist.push({ r, c, i: target.sheetId });
+      ctx.formulaCache.execFunctionExist.push({ r, c, i: target.sheetId });
     }
   }
 
@@ -154,10 +153,10 @@ function postPasteCut(
   ctx.luckysheetfile[getSheetIndex(ctx, target.sheetId)!].dataVerification =
     target.curDataVerification;
 
-  formulaCache.execFunctionExist.reverse();
+  ctx.formulaCache.execFunctionExist.reverse();
   // @ts-ignore
   execFunctionGroup(ctx, null, null, null, null, target.curData);
-  formulaCache.execFunctionGlobalData = null;
+  ctx.formulaCache.execFunctionGlobalData = null;
 
   // const index = getSheetIndex(ctx, ctx.currentSheetId);
   // const file = ctx.luckysheetfile[index];

@@ -1,4 +1,4 @@
-import { Context } from "../../src";
+import { Context, FormulaCache } from "../../src";
 
 export function selectionFactory(
   row: number[],
@@ -60,6 +60,8 @@ export function contextFactory({
     scrollTop: 0,
     luckysheet_shiftkeydown: false,
     zoomRatio: 1,
+    groupValuesRefreshData: [],
+    formulaCache: new FormulaCache(),
     ...params,
   };
 }

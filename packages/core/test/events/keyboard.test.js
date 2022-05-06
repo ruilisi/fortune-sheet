@@ -6,7 +6,7 @@ import {
   handleWithCtrlOrMetaKey,
 } from "../../src/events/keyboard";
 import { getFlowdata } from "../../src/context";
-import { formulaCache, groupValuesRefresh } from "../../src";
+import { groupValuesRefresh } from "../../src";
 
 describe("keyboard", () => {
   const keypressWithCtrlPressed = (key) => {
@@ -232,8 +232,7 @@ describe("keyboard", () => {
       cellInput.innerText = item.newCell;
       ctx.luckysheetCellUpdate = [0, 1];
       handleGlobalEnter(ctx, cellInput, keyboardEvent);
-      const refreshData = formulaCache.groupValuesRefreshData;
-      groupValuesRefresh(ctx, refreshData);
+      groupValuesRefresh(ctx);
       expect(getFlowdata(ctx)[0][2].v).toBe(item.v3);
       expect(getFlowdata(ctx)[0][3].v).toBe(item.v4);
     });

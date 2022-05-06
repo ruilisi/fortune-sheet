@@ -15,7 +15,6 @@ import { genarate, is_date, update } from "./format";
 import {
   execfunction,
   execFunctionGroup,
-  formulaCache,
   israngeseleciton,
   rangeSetValue,
   setCaretPosition,
@@ -357,7 +356,7 @@ function activeFormulaInput(
     cellInput.innerHTML = formulaTxt;
 
     const spanList = cellInput.querySelectorAll("span");
-    setCaretPosition(spanList[spanList.length - 2], 0, 1);
+    setCaretPosition(ctx, spanList[spanList.length - 2], 0, 1);
 
     return;
   }
@@ -377,13 +376,13 @@ function activeFormulaInput(
   )}</span><span dir="auto" class="luckysheet-formula-text-color">)</span>`;
   cellInput.innerHTML = formulaTxt;
 
-  israngeseleciton();
-  formulaCache.rangestart = true;
-  formulaCache.rangedrag_column_start = false;
-  formulaCache.rangedrag_row_start = false;
-  formulaCache.rangechangeindex = 0;
+  israngeseleciton(ctx);
+  ctx.formulaCache.rangestart = true;
+  ctx.formulaCache.rangedrag_column_start = false;
+  ctx.formulaCache.rangedrag_row_start = false;
+  ctx.formulaCache.rangechangeindex = 0;
   rangeSetValue(ctx, cellInput, { row: rowh, column: columnh });
-  formulaCache.func_selectedrange = {
+  ctx.formulaCache.func_selectedrange = {
     left: col_pre,
     width: col - col_pre - 1,
     top: row_pre,
@@ -397,7 +396,7 @@ function activeFormulaInput(
   };
 
   createFormulaRangeSelect(ctx, {
-    rangeIndex: formulaCache.rangeIndex,
+    rangeIndex: ctx.formulaCache.rangeIndex || 0,
     left: col_pre,
     width: col - col_pre - 1,
     top: row_pre,
@@ -433,7 +432,8 @@ function backFormulaInput(
   const v = execfunction(ctx, f, r, c);
   const value = { v: v[1], f: v[2] };
   setCellValue(ctx, r, c, d, value);
-  formulaCache.execFunctionExist.push({
+  ctx.formulaCache.execFunctionExist ||= [];
+  ctx.formulaCache.execFunctionExist.push({
     r,
     c,
     i: ctx.currentSheetId,
@@ -668,7 +668,7 @@ export function autoSelectionFormula(
   if (flowdata == null) return;
   // const nullfindnum = 40;
   let isfalse = true;
-  formulaCache.execFunctionExist = [];
+  ctx.formulaCache.execFunctionExist = [];
 
   function execFormulaInput_c(
     d: CellMatrix,
@@ -836,10 +836,10 @@ export function autoSelectionFormula(
   }
 
   if (!isfalse) {
-    formulaCache.execFunctionExist.reverse();
+    ctx.formulaCache.execFunctionExist.reverse();
     // @ts-ignore
     execFunctionGroup(ctx, null, null, null, null, flowdata);
-    formulaCache.execFunctionGlobalData = null;
+    ctx.formulaCache.execFunctionGlobalData = null;
   }
 }
 

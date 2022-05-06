@@ -5,7 +5,6 @@ import {
   updateContextWithSheetData,
   groupValuesRefresh,
   handleGlobalWheel,
-  formulaCache,
   initFreeze,
   Sheet as SheetType,
 } from "@fortune-sheet/core";
@@ -87,12 +86,8 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
    */
   useEffect(() => {
     // update formula chains value first if not empty
-    if (formulaCache.groupValuesRefreshData.length > 0) {
-      const refreshData = formulaCache.groupValuesRefreshData;
-      formulaCache.groupValuesRefreshData = [];
-      setContext((draftCtx) => {
-        groupValuesRefresh(draftCtx, refreshData);
-      });
+    if (context.groupValuesRefreshData.length > 0) {
+      // wait for it to be refreshed
       return;
     }
     const tableCanvas = new Canvas(canvasRef.current!, context);
@@ -223,6 +218,17 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
       tableCanvas.drawRowHeader(context.scrollTop);
     }
   }, [context, refs.globalCache.freezen, setContext, sheet.id]);
+
+  /**
+   * Apply the calculation results
+   */
+  useEffect(() => {
+    if (context.groupValuesRefreshData.length > 0) {
+      setContext((draftCtx) => {
+        groupValuesRefresh(draftCtx);
+      });
+    }
+  }, [context.groupValuesRefreshData.length, setContext]);
 
   const onWheel = useCallback(
     (e: WheelEvent) => {

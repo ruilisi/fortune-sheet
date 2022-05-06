@@ -1,4 +1,3 @@
-import { formulaCache } from "@fortune-sheet/core";
 import React, { useContext } from "react";
 import WorkbookContext from "../../../context";
 import "./index.css";
@@ -7,7 +6,7 @@ const FormulaHint: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
   const { context } = useContext(WorkbookContext);
   if (!context.functionHint) return null;
 
-  const fn = formulaCache.functionlistMap[context.functionHint];
+  const fn = context.formulaCache.functionlistMap[context.functionHint];
   if (!fn) return null;
 
   return (

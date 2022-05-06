@@ -13,7 +13,6 @@ import {
   execfunction,
   execFunctionGroup,
   functionHTMLGenerate,
-  formulaCache,
 } from "./formula";
 import {
   convertSpanToShareString,
@@ -627,7 +626,7 @@ export function mergeMoveMain(
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function cancelFunctionrangeSelected(ctx: Context) {
-  if (formulaCache.selectingRangeIndex === -1) {
+  if (ctx.formulaCache.selectingRangeIndex === -1) {
     ctx.formulaRangeSelect = undefined;
   }
   // $("#luckysheet-row-count-show, #luckysheet-column-count-show").hide();
@@ -645,9 +644,9 @@ export function cancelNormalSelected(ctx: Context) {
   // $("#luckysheet-input-box-index").hide();
   // $("#luckysheet-wa-functionbox-cancel, #luckysheet-wa-functionbox-confirm").removeClass("luckysheet-wa-calculate-active");
 
-  formulaCache.rangestart = false;
-  formulaCache.rangedrag_column_start = false;
-  formulaCache.rangedrag_row_start = false;
+  ctx.formulaCache.rangestart = false;
+  ctx.formulaCache.rangedrag_column_start = false;
+  ctx.formulaCache.rangedrag_row_start = false;
 }
 
 // formula.updatecell
@@ -1042,7 +1041,7 @@ export function updateCell(
   //   );
   // }, 0);
 
-  formulaCache.execFunctionGlobalData = null;
+  ctx.formulaCache.execFunctionGlobalData = null;
   /*
   if (isRefresh) {
     jfrefreshgrid(

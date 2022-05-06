@@ -4,7 +4,6 @@ import { Context, getFlowdata } from "../context";
 import {
   cancelActiveImgItem,
   cancelPaintModel,
-  formulaCache,
   functionHTMLGenerate,
   israngeseleciton,
   rangeHightlightselected,
@@ -323,10 +322,10 @@ export function handleCellAreaMouseDown(
   // 公式相关
   if (ctx.luckysheetCellUpdate.length > 0) {
     if (
-      formulaCache.rangestart ||
-      formulaCache.rangedrag_column_start ||
-      formulaCache.rangedrag_row_start ||
-      israngeseleciton()
+      ctx.formulaCache.rangestart ||
+      ctx.formulaCache.rangedrag_column_start ||
+      ctx.formulaCache.rangedrag_row_start ||
+      israngeseleciton(ctx)
     ) {
       // 公式选区
       let rowseleted = [row_index, row_index_ed];
@@ -338,7 +337,7 @@ export function handleCellAreaMouseDown(
       let height = row - row_pre - 1;
 
       if (e.shiftKey) {
-        const last = formulaCache.func_selectedrange;
+        const last = ctx.formulaCache.func_selectedrange;
 
         top = 0;
         height = 0;
@@ -437,7 +436,7 @@ export function handleCellAreaMouseDown(
         last.top_move = top;
         last.height_move = height;
 
-        formulaCache.func_selectedrange = last;
+        ctx.formulaCache.func_selectedrange = last;
       } else if (
         e.ctrlKey &&
         _.last(cellInput.querySelectorAll("span"))?.innerText !== ","
@@ -462,7 +461,7 @@ export function handleCellAreaMouseDown(
             // all browsers, except IE before version 9
             const currSelection = window.getSelection();
             if (currSelection == null) return;
-            formulaCache.functionRangeIndex = [
+            ctx.formulaCache.functionRangeIndex = [
               _.indexOf(
                 currSelection.anchorNode?.parentNode?.parentNode?.childNodes,
                 // @ts-ignore
@@ -474,7 +473,7 @@ export function handleCellAreaMouseDown(
             // Internet Explorer before version 9
             // @ts-ignore
             const textRange = document.selection.createRange();
-            formulaCache.functionRangeIndex = textRange;
+            ctx.formulaCache.functionRangeIndex = textRange;
           }
 
           /* 在显示前重新 + 右侧的圆括号) */
@@ -484,17 +483,17 @@ export function handleCellAreaMouseDown(
           createRangeHightlight(ctx, vText);
         }
 
-        formulaCache.rangestart = false;
-        formulaCache.rangedrag_column_start = false;
-        formulaCache.rangedrag_row_start = false;
+        ctx.formulaCache.rangestart = false;
+        ctx.formulaCache.rangedrag_column_start = false;
+        ctx.formulaCache.rangedrag_row_start = false;
 
         fxInput.innerHTML = vText;
 
         rangeHightlightselected(ctx, cellInput);
 
         // 再进行 选区的选择
-        israngeseleciton();
-        formulaCache.func_selectedrange = {
+        israngeseleciton(ctx);
+        ctx.formulaCache.func_selectedrange = {
           left,
           width,
           top,
@@ -509,7 +508,7 @@ export function handleCellAreaMouseDown(
           column_focus: col_index,
         };
       } else {
-        formulaCache.func_selectedrange = {
+        ctx.formulaCache.func_selectedrange = {
           left,
           width,
           top,
@@ -527,13 +526,13 @@ export function handleCellAreaMouseDown(
 
       rangeSetValue(ctx, cellInput, { row: rowseleted, column: columnseleted });
 
-      formulaCache.rangestart = true;
-      formulaCache.rangedrag_column_start = false;
-      formulaCache.rangedrag_row_start = false;
+      ctx.formulaCache.rangestart = true;
+      ctx.formulaCache.rangedrag_column_start = false;
+      ctx.formulaCache.rangedrag_row_start = false;
 
-      formulaCache.selectingRangeIndex = formulaCache.rangechangeindex;
+      ctx.formulaCache.selectingRangeIndex = ctx.formulaCache.rangechangeindex!;
       createFormulaRangeSelect(ctx, {
-        rangeIndex: formulaCache.rangechangeindex,
+        rangeIndex: ctx.formulaCache.rangechangeindex || 0,
         left,
         top,
         width,
@@ -1188,10 +1187,10 @@ export function handleCellAreaDoubleClick(
   if (!flowdata) return;
 
   if (
-    (ctx.luckysheetCellUpdate.length > 0 && formulaCache.rangestart) ||
-    formulaCache.rangedrag_column_start ||
-    formulaCache.rangedrag_row_start ||
-    israngeseleciton()
+    (ctx.luckysheetCellUpdate.length > 0 && ctx.formulaCache.rangestart) ||
+    ctx.formulaCache.rangedrag_column_start ||
+    ctx.formulaCache.rangedrag_row_start ||
+    israngeseleciton(ctx)
   ) {
     return;
   }
@@ -1808,7 +1807,7 @@ function mouseRender(
     //     }!${range}`;
     //   }
     //   $("#luckysheet-dataVerificationRange-dialog input").val(range);
-  } else if (formulaCache.rangestart) {
+  } else if (ctx.formulaCache.rangestart) {
     rangeDrag(
       ctx,
       e,
@@ -4187,10 +4186,10 @@ export function handleRowHeaderMouseDown(
 
   if (!_.isEmpty(ctx.luckysheetCellUpdate)) {
     if (
-      formulaCache.rangestart ||
-      formulaCache.rangedrag_column_start ||
-      formulaCache.rangedrag_row_start ||
-      israngeseleciton()
+      ctx.formulaCache.rangestart ||
+      ctx.formulaCache.rangedrag_column_start ||
+      ctx.formulaCache.rangedrag_row_start ||
+      israngeseleciton(ctx)
       // ||$("#luckysheet-ifFormulaGenerator-multiRange-dialog").is(":visible")
     ) {
       // 公式选区
@@ -4217,7 +4216,7 @@ export function handleRowHeaderMouseDown(
       }
 
       if (e.shiftKey) {
-        const last = formulaCache.func_selectedrange;
+        const last = ctx.formulaCache.func_selectedrange;
 
         top = 0;
         height = 0;
@@ -4281,7 +4280,7 @@ export function handleRowHeaderMouseDown(
         last.top_move = top;
         last.height_move = height;
 
-        formulaCache.func_selectedrange = last;
+        ctx.formulaCache.func_selectedrange = last;
       } else if (
         e.ctrlKey &&
         _.last(cellInput.querySelectorAll("span"))?.innerText !== ","
@@ -4295,7 +4294,7 @@ export function handleRowHeaderMouseDown(
             // all browsers, except IE before version 9
             const currSelection = window.getSelection();
             if (currSelection == null) return;
-            formulaCache.functionRangeIndex = [
+            ctx.formulaCache.functionRangeIndex = [
               _.indexOf(
                 currSelection.anchorNode?.parentNode?.parentNode?.childNodes,
                 // @ts-ignore
@@ -4307,7 +4306,7 @@ export function handleRowHeaderMouseDown(
             // Internet Explorer before version 9
             // @ts-ignore
             const textRange = document.selection.createRange();
-            formulaCache.functionRangeIndex = textRange;
+            ctx.formulaCache.functionRangeIndex = textRange;
           }
 
           cellInput.innerHTML = vText;
@@ -4315,16 +4314,16 @@ export function handleRowHeaderMouseDown(
           createRangeHightlight(ctx, vText);
         }
 
-        formulaCache.rangestart = false;
-        formulaCache.rangedrag_column_start = false;
-        formulaCache.rangedrag_row_start = false;
+        ctx.formulaCache.rangestart = false;
+        ctx.formulaCache.rangedrag_column_start = false;
+        ctx.formulaCache.rangedrag_row_start = false;
 
         fxInput.innerHTML = vText;
         rangeHightlightselected(ctx, cellInput);
 
         // 再进行 选区的选择
-        israngeseleciton();
-        formulaCache.func_selectedrange = {
+        israngeseleciton(ctx);
+        ctx.formulaCache.func_selectedrange = {
           left: colLocationByIndex(0, ctx.visibledatacolumn)[0],
           width:
             colLocationByIndex(0, ctx.visibledatacolumn)[1] -
@@ -4342,7 +4341,7 @@ export function handleRowHeaderMouseDown(
           column_focus: 0,
         };
       } else {
-        formulaCache.func_selectedrange = {
+        ctx.formulaCache.func_selectedrange = {
           left: colLocationByIndex(0, ctx.visibledatacolumn)[0],
           width:
             colLocationByIndex(0, ctx.visibledatacolumn)[1] -
@@ -4362,10 +4361,10 @@ export function handleRowHeaderMouseDown(
       }
 
       if (
-        formulaCache.rangestart ||
-        formulaCache.rangedrag_column_start ||
-        formulaCache.rangedrag_row_start ||
-        israngeseleciton()
+        ctx.formulaCache.rangestart ||
+        ctx.formulaCache.rangedrag_column_start ||
+        ctx.formulaCache.rangedrag_row_start ||
+        israngeseleciton(ctx)
       ) {
         rangeSetValue(ctx, cellInput, {
           row: rowseleted,
@@ -4384,9 +4383,9 @@ export function handleRowHeaderMouseDown(
       //   $("#luckysheet-ifFormulaGenerator-multiRange-dialog input").val(range);
       // }
 
-      formulaCache.rangedrag_row_start = true;
-      formulaCache.rangestart = false;
-      formulaCache.rangedrag_column_start = false;
+      ctx.formulaCache.rangedrag_row_start = true;
+      ctx.formulaCache.rangestart = false;
+      ctx.formulaCache.rangedrag_column_start = false;
 
       // $("#fortune-formula-functionrange-select")
       //   .css({
@@ -4607,10 +4606,10 @@ export function handleColumnHeaderMouseDown(
   // 公式相关
   if (!_.isEmpty(ctx.luckysheetCellUpdate)) {
     if (
-      formulaCache.rangestart ||
-      formulaCache.rangedrag_column_start ||
-      formulaCache.rangedrag_row_start ||
-      israngeseleciton()
+      ctx.formulaCache.rangestart ||
+      ctx.formulaCache.rangedrag_column_start ||
+      ctx.formulaCache.rangedrag_row_start ||
+      israngeseleciton(ctx)
       //  ||
       // $("#luckysheet-ifFormulaGenerator-multiRange-dialog").is(":visible")
     ) {
@@ -4635,7 +4634,7 @@ export function handleColumnHeaderMouseDown(
       }
 
       if (e.shiftKey) {
-        const last = formulaCache.func_selectedrange;
+        const last = ctx.formulaCache.func_selectedrange;
 
         left = 0;
         width = 0;
@@ -4696,7 +4695,7 @@ export function handleColumnHeaderMouseDown(
         last.left_move = left;
         last.width_move = width;
 
-        formulaCache.func_selectedrange = last;
+        ctx.formulaCache.func_selectedrange = last;
       } else if (
         e.ctrlKey &&
         _.last(cellInput.querySelectorAll("span"))?.innerText !== ","
@@ -4710,7 +4709,7 @@ export function handleColumnHeaderMouseDown(
             // all browsers, except IE before version 9
             const currSelection = window.getSelection();
             if (currSelection == null) return;
-            formulaCache.functionRangeIndex = [
+            ctx.formulaCache.functionRangeIndex = [
               _.indexOf(
                 currSelection.anchorNode?.parentNode?.parentNode?.childNodes,
                 // @ts-ignore
@@ -4722,7 +4721,7 @@ export function handleColumnHeaderMouseDown(
             // Internet Explorer before version 9
             // @ts-ignore
             const textRange = document.selection.createRange();
-            formulaCache.functionRangeIndex = textRange;
+            ctx.formulaCache.functionRangeIndex = textRange;
           }
 
           cellInput.innerHTML = vText;
@@ -4731,16 +4730,16 @@ export function handleColumnHeaderMouseDown(
           createRangeHightlight(ctx, vText);
         }
 
-        formulaCache.rangestart = false;
-        formulaCache.rangedrag_column_start = false;
-        formulaCache.rangedrag_row_start = false;
+        ctx.formulaCache.rangestart = false;
+        ctx.formulaCache.rangedrag_column_start = false;
+        ctx.formulaCache.rangedrag_row_start = false;
 
         fxInput.innerHTML = vText;
         rangeHightlightselected(ctx, cellInput);
 
         // 再进行 选区的选择
-        israngeseleciton();
-        formulaCache.func_selectedrange = {
+        israngeseleciton(ctx);
+        ctx.formulaCache.func_selectedrange = {
           left,
           width,
           top: rowLocationByIndex(0, ctx.visibledatarow)[0],
@@ -4758,7 +4757,7 @@ export function handleColumnHeaderMouseDown(
           column_focus: col_index,
         };
       } else {
-        formulaCache.func_selectedrange = {
+        ctx.formulaCache.func_selectedrange = {
           left,
           width,
           top: rowLocationByIndex(0, ctx.visibledatarow)[0],
@@ -4778,10 +4777,10 @@ export function handleColumnHeaderMouseDown(
       }
 
       if (
-        formulaCache.rangestart ||
-        formulaCache.rangedrag_column_start ||
-        formulaCache.rangedrag_row_start ||
-        israngeseleciton()
+        ctx.formulaCache.rangestart ||
+        ctx.formulaCache.rangedrag_column_start ||
+        ctx.formulaCache.rangedrag_row_start ||
+        israngeseleciton(ctx)
       ) {
         rangeSetValue(ctx, cellInput, {
           row: [null, null],
@@ -4800,9 +4799,9 @@ export function handleColumnHeaderMouseDown(
       //   $("#luckysheet-ifFormulaGenerator-multiRange-dialog input").val(range);
       // }
 
-      formulaCache.rangedrag_column_start = true;
-      formulaCache.rangestart = false;
-      formulaCache.rangedrag_row_start = false;
+      ctx.formulaCache.rangedrag_column_start = true;
+      ctx.formulaCache.rangestart = false;
+      ctx.formulaCache.rangedrag_row_start = false;
 
       // $("#fortune-formula-functionrange-select")
       //   .css({

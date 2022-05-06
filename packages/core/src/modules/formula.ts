@@ -22,38 +22,7 @@ import { colors } from "./color";
 import { colLocation, rowLocation } from "./location";
 import { cancelFunctionrangeSelected, seletedHighlistByindex } from ".";
 
-export const formulaCache: {
-  func_selectedrange: Selection | undefined;
-} & Record<string, any> = {
-  func_selectedrange: undefined,
-  data_parm_index: 0,
-  rangechangeindex: null,
-  selectingRangeIndex: -1,
-  rangedragged: () => {},
-  rangeResizeObj: null,
-  rangeResize: null,
-  rangeResizeIndex: null,
-  rangeResizexy: null,
-  rangeResizeWinH: null,
-  rangeResizeWinW: null,
-  rangeResizeTo: null,
-  rangeSetValueTo: null,
-  rangestart: false,
-  rangetosheet: null,
-  rangedrag_column_start: false,
-  rangedrag_row_start: false,
-  functionHTMLIndex: 0,
-  functionRangeIndex: null,
-  functionlistMap: {},
-  execFunctionExist: null,
-  execFunctionGlobalData: {},
-  groupValuesRefreshData: [],
-};
-
-let formulaContainSheetList: any = {};
-let cellTextToIndexList: any = {};
-let operatorjson: any = null;
-const operator = "==|!=|<>|<=|>=|=|+|-|>|<|/|*|%|&|^";
+let functionHTMLIndex = 0;
 const operatorPriority: any = {
   "^": 0,
   "%": 1,
@@ -62,64 +31,125 @@ const operatorPriority: any = {
   "+": 2,
   "-": 2,
 };
-let isFunctionRangeSave = false;
-
-let currentContext: Context | undefined;
-
-function tryGetCellAsNumber(cell: Cell) {
-  if (cell?.ct?.t === "n") {
-    const n = Number(cell?.v);
-    return Number.isNaN(n) ? cell.v : n;
-  }
-  return cell?.v;
+const operatorArr = "==|!=|<>|<=|>=|=|+|-|>|<|/|*|%|&|^".split("|");
+const operatorjson: Record<string, number> = {};
+for (let i = 0; i < operatorArr.length; i += 1) {
+  operatorjson[operatorArr[i].toString()] = 1;
 }
 
-const parser = new Parser();
+// FormulaCache is defined as class to avoid being frozen by immer
+export class FormulaCache {
+  parser: any;
 
-parser.on("callCellValue", (cellCoord: any, done: any) => {
-  const flowdata = getFlowdata(currentContext);
-  const id = currentContext?.currentSheetId;
-  const cell =
-    formulaCache.execFunctionGlobalData?.[
-      `${cellCoord.row.index}_${cellCoord.column.index}_${id}`
-    ] || flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
-  const v = tryGetCellAsNumber(cell);
-  done(v);
-});
+  func_selectedrange?: Selection;
 
-parser.on(
-  "callRangeValue",
-  (startCellCoord: any, endCellCoord: any, done: any) => {
-    const flowdata = getFlowdata(currentContext);
-    const id = currentContext?.currentSheetId;
-    const fragment = [];
+  data_parm_index: number;
 
-    for (
-      let row = startCellCoord.row.index;
-      row <= endCellCoord.row.index;
-      row += 1
-    ) {
-      const colFragment = [];
+  cellTextToIndexList: any;
 
-      for (
-        let col = startCellCoord.column.index;
-        col <= endCellCoord.column.index;
-        col += 1
-      ) {
-        const cell =
-          formulaCache.execFunctionGlobalData?.[`${row}_${col}_${id}`] ||
-          flowdata?.[row]?.[col];
-        const v = tryGetCellAsNumber(cell);
-        colFragment.push(v);
+  rangechangeindex?: number;
+
+  selectingRangeIndex: number;
+
+  rangeResizeObj?: any;
+
+  rangeResize?: any;
+
+  rangeResizeIndex?: number;
+
+  rangeResizexy?: any;
+
+  rangeResizeWinH?: any;
+
+  rangeResizeWinW?: any;
+
+  rangeResizeTo?: any;
+
+  rangeSetValueTo?: any;
+
+  rangeIndex?: number;
+
+  rangestart?: boolean;
+
+  rangetosheet?: string;
+
+  rangedrag_column_start?: boolean;
+
+  rangedrag_row_start?: boolean;
+
+  functionRangeIndex?: number[];
+
+  functionlistMap: any;
+
+  execFunctionExist?: any[];
+
+  execFunctionGlobalData: any;
+
+  constructor() {
+    const that = this;
+    this.data_parm_index = 0;
+    this.selectingRangeIndex = -1;
+    this.functionlistMap = {};
+    this.execFunctionGlobalData = {};
+    this.cellTextToIndexList = {};
+    this.parser = new Parser();
+    this.parser.on("callCellValue", (cellCoord: any, done: any) => {
+      const context = that.parser.context as Context;
+      const flowdata = getFlowdata(context);
+      const id = context?.currentSheetId;
+      const cell =
+        context?.formulaCache.execFunctionGlobalData?.[
+          `${cellCoord.row.index}_${cellCoord.column.index}_${id}`
+        ] || flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
+      const v = that.tryGetCellAsNumber(cell);
+      done(v);
+    });
+
+    this.parser.on(
+      "callRangeValue",
+      (startCellCoord: any, endCellCoord: any, done: any) => {
+        const context = that.parser.context as Context;
+        const flowdata = getFlowdata(context);
+        const id = context?.currentSheetId;
+        const fragment = [];
+
+        for (
+          let row = startCellCoord.row.index;
+          row <= endCellCoord.row.index;
+          row += 1
+        ) {
+          const colFragment = [];
+
+          for (
+            let col = startCellCoord.column.index;
+            col <= endCellCoord.column.index;
+            col += 1
+          ) {
+            const cell =
+              context?.formulaCache.execFunctionGlobalData?.[
+                `${row}_${col}_${id}`
+              ] || flowdata?.[row]?.[col];
+            const v = that.tryGetCellAsNumber(cell);
+            colFragment.push(v);
+          }
+          fragment.push(colFragment);
+        }
+
+        if (fragment) {
+          done(fragment);
+        }
       }
-      fragment.push(colFragment);
-    }
-
-    if (fragment) {
-      done(fragment);
-    }
+    );
   }
-);
+
+  tryGetCellAsNumber(cell: Cell) {
+    if (cell?.ct?.t === "n") {
+      const n = Number(cell?.v);
+      return Number.isNaN(n) ? cell.v : n;
+    }
+    return cell?.v;
+  }
+}
 
 function parseElement(eleString: string) {
   return new DOMParser().parseFromString(eleString, "text/html").body
@@ -191,50 +221,20 @@ export function iscelldata(txt: string) {
   return false;
 }
 
-function addToCellIndexList(txt: string, infoObj: any) {
+function addToCellIndexList(ctx: Context, txt: string, infoObj: any) {
   if (_.isNil(txt) || txt.length === 0 || _.isNil(infoObj)) {
     return;
   }
-  if (_.isNil(cellTextToIndexList)) {
-    cellTextToIndexList = {};
+  if (_.isNil(ctx.formulaCache.cellTextToIndexList)) {
+    ctx.formulaCache.cellTextToIndexList = {};
   }
 
   if (txt.indexOf("!") > -1) {
     txt = txt.replace(/\\'/g, "'").replace(/''/g, "'");
-    cellTextToIndexList[txt] = infoObj;
+    ctx.formulaCache.cellTextToIndexList[txt] = infoObj;
   } else {
-    cellTextToIndexList[`${txt}_${infoObj.sheetId}`] = infoObj;
+    ctx.formulaCache.cellTextToIndexList[`${txt}_${infoObj.sheetId}`] = infoObj;
   }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function addToSheetIndexList(
-  ctx: Context,
-  formulaTxt: string,
-  sheetId: string,
-  obIndex: string
-) {
-  if (_.isEmpty(formulaTxt)) {
-    return;
-  }
-
-  if (_.isEmpty(sheetId)) {
-    sheetId = ctx.currentSheetId;
-  }
-
-  if (_.isEmpty(obIndex)) {
-    obIndex = "";
-  }
-
-  if (_.isNil(formulaContainSheetList)) {
-    formulaContainSheetList = {};
-  }
-
-  if (_.isNil(formulaContainSheetList[formulaTxt])) {
-    formulaContainSheetList[formulaTxt] = {};
-  }
-
-  formulaContainSheetList[formulaTxt][sheetId] = obIndex;
 }
 
 function getcellrange(ctx: Context, txt: string, formulaId?: string) {
@@ -251,8 +251,8 @@ function getcellrange(ctx: Context, txt: string, formulaId?: string) {
   const { luckysheetfile } = ctx;
 
   if (txt.indexOf("!") > -1) {
-    if (txt in cellTextToIndexList) {
-      return cellTextToIndexList[txt];
+    if (txt in ctx.formulaCache.cellTextToIndexList) {
+      return ctx.formulaCache.cellTextToIndexList[txt];
     }
 
     const val = txt.split("!");
@@ -278,8 +278,8 @@ function getcellrange(ctx: Context, txt: string, formulaId?: string) {
     if (_.isNil(i)) {
       i = ctx.currentSheetId;
     }
-    if (`${txt}_${i}` in cellTextToIndexList) {
-      return cellTextToIndexList[`${txt}_${i}`];
+    if (`${txt}_${i}` in ctx.formulaCache.cellTextToIndexList) {
+      return ctx.formulaCache.cellTextToIndexList[`${txt}_${i}`];
     }
     const index = getSheetIndex(ctx, i);
     if (_.isNil(index)) {
@@ -305,7 +305,7 @@ function getcellrange(ctx: Context, txt: string, formulaId?: string) {
         column: [col, col],
         sheetId,
       };
-      addToCellIndexList(txt, item);
+      addToCellIndexList(ctx, txt, item);
       return item;
     }
     return null;
@@ -341,67 +341,8 @@ function getcellrange(ctx: Context, txt: string, formulaId?: string) {
     column: col,
     sheetId,
   };
-  addToCellIndexList(txt, item);
+  addToCellIndexList(ctx, txt, item);
   return item;
-}
-
-function isFunctionRangeSaveChange(
-  ctx: Context,
-  str: string,
-  r: number | null,
-  c: number | null,
-  id: string,
-  dynamicArray_compute?: any
-) {
-  if (r != null && c != null) {
-    const range = getcellrange(ctx, _.trim(str), id);
-    if (_.isNil(range)) {
-      return;
-    }
-    const { row } = range;
-    const col = range.column;
-    const { sheetId } = range;
-
-    if (
-      `${r}_${c}` in dynamicArray_compute &&
-      (id === sheetId || _.isNil(id))
-    ) {
-      let isd_range = false;
-
-      for (let d_r = row[0]; d_r <= row[1]; d_r += 1) {
-        for (let d_c = col[0]; d_c <= col[1]; d_c += 1) {
-          if (
-            `${d_r}_${d_c}` in dynamicArray_compute &&
-            dynamicArray_compute[`${d_r}_${d_c}`].r === r &&
-            dynamicArray_compute[`${d_r}_${d_c}`].c === c
-          ) {
-            isd_range = true;
-          }
-        }
-      }
-
-      if (isd_range) {
-        isFunctionRangeSave ||= true;
-      } else {
-        isFunctionRangeSave ||= false;
-      }
-    } else {
-      if (
-        r >= row[0] &&
-        r <= row[1] &&
-        c >= col[0] &&
-        c <= col[1] &&
-        (id === sheetId || _.isNil(id))
-      ) {
-        isFunctionRangeSave ||= true;
-      } else {
-        isFunctionRangeSave ||= false;
-      }
-    }
-  } else {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isFunctionRangeSave ||= false;
-  }
 }
 
 function calPostfixExpression(cal: any[]) {
@@ -483,17 +424,6 @@ function isFunctionRange(
   dynamicArray_compute: any,
   cellRangeFunction: any
 ) {
-  if (_.isNil(operatorjson)) {
-    const arr = operator.split("|");
-    const op: any = {};
-
-    for (let i = 0; i < arr.length; i += 1) {
-      op[arr[i].toString()] = 1;
-    }
-
-    operatorjson = op;
-  }
-
   if (txt.substring(0, 1) === "=") {
     txt = txt.substring(1);
   }
@@ -764,7 +694,6 @@ function isFunctionRange(
       if (iscelldata(str_nb) && str_nb.substring(0, 1) !== ":") {
         // endstr = "luckysheet_getcelldata('" + _.trim(str) + "')";
         endstr = `luckysheet_getcelldata('${str_nb}')`;
-        isFunctionRangeSaveChange(ctx, str, r, c, id, dynamicArray_compute);
       } else if (str_nb.substring(0, 1) === ":") {
         str_nb = str_nb.substring(1);
         if (iscelldata(str_nb)) {
@@ -982,343 +911,6 @@ function checkBracketNum(fp: string) {
   return true;
 }
 
-/*
-function functionParser(txt: string, cellRangeFunction?: any) {
-  if (_.isNil(operatorjson)) {
-    const arr = operator.split("|");
-    const op: any = {};
-
-    for (let i = 0; i < arr.length; i += 1) {
-      op[arr[i].toString()] = 1;
-    }
-
-    operatorjson = op;
-  }
-
-  if (_.isNil(txt)) {
-    return "";
-  }
-
-  if (txt.substring(0, 2) === "=+") {
-    txt = txt.substring(2);
-  } else if (txt.substring(0, 1) === "=") {
-    txt = txt.substring(1);
-  }
-
-  const funcstack = txt.split("");
-  let i = 0;
-  let str = "";
-  let function_str = "";
-
-  const matchConfig = {
-    bracket: 0,
-    comma: 0,
-    squote: 0,
-    dquote: 0,
-    compare: 0,
-    braces: 0,
-  };
-
-  //= (sum(b1:c10)+10)*5-100
-
-  //= MAX(B1:C10,10)*5-100
-
-  // =(sum(max(B1:C10,10)*5-100,((1+1)*2+5)/2,10)+count(B1:C10,10*5-100))*5-100
-
-  //= SUM(MAX(B1:C10,10)*5-100,((1+1)*2+5)/2,10)+COUNT(B1:C10,10*5-100)
-
-  //= SUM(MAX(B1:C10,10)*5-100,((1+1)*2+5)/2,10)
-
-  //= SUM(10,((1+1)*2+5)/2,10)
-
-  //= SUM(MAX(B1:C10,10)*5-100)
-
-  //= IFERROR(IF(ROW()-ROW($G$3)=1,$F4+$D4,SUM($D1:INDEX($D$4:$D$9,1,1),$F1:INDEX($F$4:$F$9,1,1))), "")
-
-  //= IFERROR(IF(ROW()-ROW($G$3)=1,$F4+$D4,SUM(INDEX($D$4:$D$9,1,1):$D4,INDEX($F$4:$F$9,1,1):$F4)), "")
-
-  //= SUM(I$4:OFFSET(I10,0,0))
-
-  // bracket 0为运算符括号、1为函数括号
-  const cal1: any[] = [];
-  const cal2: any[] = [];
-  const bracket: any[] = [];
-  let firstSQ = -1;
-  while (i < funcstack.length) {
-    const s = funcstack[i];
-
-    if (
-      s === "(" &&
-      matchConfig.squote === 0 &&
-      matchConfig.dquote === 0 &&
-      matchConfig.braces === 0
-    ) {
-      if (str.length > 0 && bracket.length === 0) {
-        str = str.toUpperCase();
-        if (str.indexOf(":") > -1) {
-          const funcArray = str.split(":");
-          function_str += `luckysheet_getSpecialReference(true,'${_.trim(
-            funcArray[0]
-          ).replace(/'/g, "\\'")}', luckysheet_function.${
-            funcArray[1]
-          }.f(#lucky#`;
-        } else {
-          function_str += `luckysheet_function.${str}.f(`;
-        }
-        bracket.push(1);
-        str = "";
-      } else if (bracket.length === 0) {
-        function_str += "(";
-        bracket.push(0);
-        str = "";
-      } else {
-        bracket.push(0);
-        str += s;
-      }
-    } else if (
-      s === ")" &&
-      matchConfig.squote === 0 &&
-      matchConfig.dquote === 0 &&
-      matchConfig.braces === 0
-    ) {
-      const bt = bracket.pop();
-
-      if (bracket.length === 0) {
-        let functionS = functionParser(str, cellRangeFunction);
-        if (functionS.indexOf("#lucky#") > -1) {
-          functionS = `${functionS.replace(/#lucky#/g, "")})`;
-        }
-        function_str += `${functionS})`;
-        str = "";
-      } else {
-        str += s;
-      }
-    } else if (
-      s === "{" &&
-      matchConfig.squote === 0 &&
-      matchConfig.dquote === 0
-    ) {
-      str += "{";
-      matchConfig.braces += 1;
-    } else if (
-      s === "}" &&
-      matchConfig.squote === 0 &&
-      matchConfig.dquote === 0
-    ) {
-      str += "}";
-      matchConfig.braces -= 1;
-    } else if (s === '"' && matchConfig.squote === 0) {
-      if (matchConfig.dquote > 0) {
-        // 如果是""代表着输出"
-        if (i < funcstack.length - 1 && funcstack[i + 1] === '"') {
-          i += 1;
-          str += "\x7F"; // 用非打印控制字符DEL替换一下""
-        } else {
-          matchConfig.dquote -= 1;
-          str += '"';
-        }
-      } else {
-        matchConfig.dquote += 1;
-        str += '"';
-      }
-    } else if (s === "'" && matchConfig.dquote === 0) {
-      str += "'";
-
-      if (matchConfig.squote > 0) {
-        if (firstSQ === i - 1) {
-          // 配对的单引号后第一个字符不能是单引号
-          return "";
-        }
-        // 如果是''代表着输出'
-        if (i < funcstack.length - 1 && funcstack[i + 1] === "'") {
-          i += 1;
-          str += "'";
-        } else {
-          // 如果下一个字符不是'代表单引号结束
-          if (funcstack[i - 1] === "'") {
-            // 配对的单引号后最后一个字符不能是单引号
-            return "";
-          }
-          matchConfig.squote -= 1;
-        }
-      } else {
-        matchConfig.squote += 1;
-        firstSQ = i;
-      }
-    } else if (
-      s === "," &&
-      matchConfig.squote === 0 &&
-      matchConfig.dquote === 0 &&
-      matchConfig.braces === 0
-    ) {
-      if (bracket.length <= 1) {
-        let functionS = functionParser(str, cellRangeFunction);
-        if (functionS.indexOf("#lucky#") > -1) {
-          functionS = `${functionS.replace(/#lucky#/g, "")})`;
-        }
-        function_str += `${functionS},`;
-        str = "";
-      } else {
-        str += ",";
-      }
-    } else if (
-      s in operatorjson &&
-      matchConfig.squote === 0 &&
-      matchConfig.dquote === 0 &&
-      matchConfig.braces === 0
-    ) {
-      let s_next = "";
-      const op = operatorPriority;
-
-      if (i + 1 < funcstack.length) {
-        s_next = funcstack[i + 1];
-      }
-
-      if (s + s_next in operatorjson) {
-        if (bracket.length === 0) {
-          if (_.trim(str).length > 0) {
-            cal2.unshift(functionParser(_.trim(str), cellRangeFunction));
-          } else if (_.trim(function_str).length > 0) {
-            cal2.unshift(_.trim(function_str));
-          }
-
-          if (cal1[0] in operatorjson) {
-            let stackCeilPri = op[cal1[0]];
-
-            while (cal1.length > 0 && !_.isNil(stackCeilPri)) {
-              cal2.unshift(cal1.shift());
-              stackCeilPri = op[cal1[0]];
-            }
-          }
-
-          cal1.unshift(s + s_next);
-
-          function_str = "";
-          str = "";
-        } else {
-          str += s + s_next;
-        }
-
-        i += 1;
-      } else {
-        if (bracket.length === 0) {
-          if (_.trim(str).length > 0) {
-            cal2.unshift(functionParser(_.trim(str), cellRangeFunction));
-          } else if (_.trim(function_str).length > 0) {
-            cal2.unshift(_.trim(function_str));
-          }
-
-          if (cal1[0] in operatorjson) {
-            let stackCeilPri = op[cal1[0]];
-            stackCeilPri = _.isNil(stackCeilPri) ? 1000 : stackCeilPri;
-
-            let sPri = op[s];
-            sPri = _.isNil(sPri) ? 1000 : sPri;
-
-            while (cal1.length > 0 && sPri >= stackCeilPri) {
-              cal2.unshift(cal1.shift());
-
-              stackCeilPri = op[cal1[0]];
-              stackCeilPri = _.isNil(stackCeilPri) ? 1000 : stackCeilPri;
-            }
-          }
-
-          cal1.unshift(s);
-
-          function_str = "";
-          str = "";
-        } else {
-          str += s;
-        }
-      }
-    } else {
-      if (matchConfig.dquote === 0 && matchConfig.squote === 0) {
-        // str += _.trim(s);
-        str += s; // Do not use _.trim(s). When obtaining the worksheet name that contains spaces, you should keep the spaces
-      } else {
-        str += s;
-      }
-    }
-
-    if (i === funcstack.length - 1) {
-      let endstr = "";
-      let str_nb = _.trim(str).replace(/'/g, "\\'");
-      if (iscelldata(str_nb) && str_nb.substring(0, 1) !== ":") {
-        endstr = `luckysheet_getcelldata('${str_nb}')`;
-        if (typeof cellRangeFunction === "function") {
-          cellRangeFunction(str_nb);
-        }
-      } else if (str_nb.substring(0, 1) === ":") {
-        str_nb = str_nb.substring(1);
-        if (iscelldata(str_nb)) {
-          endstr = `luckysheet_getSpecialReference(false,${function_str},'${str_nb}')`;
-        }
-      } else {
-        str = _.trim(str);
-
-        const regx = /{.*?}/;
-        if (
-          regx.test(str) &&
-          str.substring(0, 1) !== '"' &&
-          str.substring(str.length - 1, 1) !== '"'
-        ) {
-          const arraytxt = regx.exec(str)[0];
-          const arraystart = str.search(regx);
-          const alltxt = "";
-
-          if (arraystart > 0) {
-            endstr += str.substring(0, arraystart);
-          }
-
-          endstr += `luckysheet_getarraydata('${arraytxt}')`;
-
-          if (arraystart + arraytxt.length < str.length) {
-            endstr += str.substring(arraystart + arraytxt.length, str.length);
-          }
-        } else {
-          endstr = str;
-        }
-      }
-
-      if (endstr.length > 0) {
-        cal2.unshift(endstr);
-      }
-
-      if (cal1.length > 0) {
-        if (function_str.length > 0) {
-          cal2.unshift(function_str);
-          function_str = "";
-        }
-
-        while (cal1.length > 0) {
-          cal2.unshift(cal1.shift());
-        }
-      }
-
-      if (cal2.length > 0) {
-        function_str = calPostfixExpression(cal2);
-      } else {
-        function_str += endstr;
-      }
-    }
-
-    i += 1;
-  }
-  // console.log(function_str);
-  return function_str;
-}
-*/
-
-/*
-function functionParserExe(txt: string) {
-  return functionParser(txt);
-}
-
-function testFunction(txt: string) {
-  return txt.substring(0, 1) === "=";
-}
-*/
-
 function insertUpdateFunctionGroup(
   ctx: Context,
   r: number,
@@ -1382,10 +974,6 @@ export function execfunction(
   isrefresh?: boolean,
   notInsertFunc?: boolean
 ) {
-  currentContext = ctx;
-  // const _locale = locale();
-  // const locale_formulaMore = _locale.formulaMore;
-  // console.log(txt,r,c)
   if (txt.indexOf(error.r) > -1) {
     return [false, error.r, txt];
   }
@@ -1523,7 +1111,10 @@ export function execfunction(
   window.luckysheetCurrentFunction = null;
   */
 
-  const { result, error: formulaError } = parser.parse(txt.substring(1));
+  ctx.formulaCache.parser.context = ctx;
+  const { result, error: formulaError } = ctx.formulaCache.parser.parse(
+    txt.substring(1)
+  );
 
   if (!_.isNil(r) && !_.isNil(c)) {
     if (isrefresh) {
@@ -1592,11 +1183,11 @@ function insertUpdateDynamicArray(ctx: Context, dynamicArrayItem: any) {
   return dynamicArray;
 }
 
-export function groupValuesRefresh(ctx: Context, refreshData: any[]) {
+export function groupValuesRefresh(ctx: Context) {
   const { luckysheetfile } = ctx;
-  if (refreshData.length > 0) {
-    for (let i = 0; i < refreshData.length; i += 1) {
-      const item = refreshData[i];
+  if (ctx.groupValuesRefreshData.length > 0) {
+    for (let i = 0; i < ctx.groupValuesRefreshData.length; i += 1) {
+      const item = ctx.groupValuesRefreshData[i];
 
       // if(item.i !== ctx.currentSheetId){
       //     continue;
@@ -1629,7 +1220,7 @@ export function groupValuesRefresh(ctx: Context, refreshData: any[]) {
     }
 
     // editor.webWorkerFlowDataCache(Store.flowdata); // worker存数据
-    // refreshData = [];
+    ctx.groupValuesRefreshData = [];
   }
 }
 
@@ -1659,8 +1250,8 @@ export function execFunctionGroup(
   //   window.luckysheet_getSpecialReference = luckysheet_getSpecialReference;
   // }
 
-  if (_.isNil(formulaCache.execFunctionGlobalData)) {
-    formulaCache.execFunctionGlobalData = {};
+  if (_.isNil(ctx.formulaCache.execFunctionGlobalData)) {
+    ctx.formulaCache.execFunctionGlobalData = {};
   }
   // let luckysheetfile = getluckysheetfile();
   // let dynamicArray_compute = luckysheetfile[getSheetIndex(ctx.currentSheetId)_.isNil(]["dynamicArray_compute"]) ? {} : luckysheetfile[getSheetIndex(ctx.currentSheetId)]["dynamicArray_compute"];
@@ -1674,8 +1265,13 @@ export function execFunctionGroup(
     // setcellvalue(origin_r, origin_c, _this.execFunctionGroupData, value);
     const cellCache: Cell[][] = [[{ v: undefined }]];
     setCellValue(ctx, 0, 0, cellCache, value);
-    [[formulaCache.execFunctionGlobalData[`${origin_r}_${origin_c}_${id}`]]] =
-      cellCache;
+    [
+      [
+        ctx.formulaCache.execFunctionGlobalData[
+          `${origin_r}_${origin_c}_${id}`
+        ],
+      ],
+    ] = cellCache;
   }
 
   // { "r": r, "c": c, "id": id, "func": func}
@@ -1692,12 +1288,12 @@ export function execFunctionGroup(
   // 把修改涉及的单元格存储为对象
   const updateValueOjects: any = {};
   const updateValueArray: any = [];
-  if (_.isNil(formulaCache.execFunctionExist)) {
+  if (_.isNil(ctx.formulaCache.execFunctionExist)) {
     const key = `r${origin_r}c${origin_c}i${id}`;
     updateValueOjects[key] = 1;
   } else {
-    for (let x = 0; x < formulaCache.execFunctionExist.length; x += 1) {
-      const cell = formulaCache.execFunctionExist[x];
+    for (let x = 0; x < ctx.formulaCache.execFunctionExist.length; x += 1) {
+      const cell = ctx.formulaCache.execFunctionExist[x];
       const key = `r${cell.r}c${cell.c}i${cell.i}`;
       updateValueOjects[key] = 1;
     }
@@ -2032,7 +1628,7 @@ export function execFunctionGroup(
       formulaCell.id
     );
 
-    formulaCache.groupValuesRefreshData.push({
+    ctx.groupValuesRefreshData.push({
       r: formulaCell.r,
       c: formulaCell.c,
       v: v[1],
@@ -2042,7 +1638,7 @@ export function execFunctionGroup(
     });
 
     // _this.execFunctionGroupData[u.r][u.c] = value;
-    formulaCache.execFunctionGlobalData[
+    ctx.formulaCache.execFunctionGlobalData[
       `${formulaCell.r}_${formulaCell.c}_${formulaCell.id}`
     ] = {
       v: v[1],
@@ -2052,18 +1648,18 @@ export function execFunctionGroup(
   // console.log(formulaRunList);
   // console.timeEnd("4");
 
-  formulaCache.execFunctionExist = null;
+  ctx.formulaCache.execFunctionExist = undefined;
 }
 
-function findrangeindex(v: string, vp: string) {
+function findrangeindex(ctx: Context, v: string, vp: string) {
   const re = /<span.*?>/g;
   const v_a = v.replace(re, "").split("</span>");
   const vp_a = vp.replace(re, "").split("</span>");
   v_a.pop();
   vp_a.pop();
 
-  let pfri = formulaCache.functionRangeIndex;
-  if (!pfri) return [];
+  let pfri = ctx.formulaCache.functionRangeIndex;
+  if (pfri == null) return [];
 
   const vplen = vp_a.length;
   const vlen = v_a.length;
@@ -2283,12 +1879,15 @@ export function createRangeHightlight(ctx: Context, inputInnerHtmlStr: string) {
     .forEach((ele) => {
       const rangeIndex = parseInt(ele.getAttribute("rangeindex") || "0", 10);
       const cellrange = getcellrange(ctx, ele.textContent || "");
-      if (rangeIndex === formulaCache.selectingRangeIndex || cellrange == null)
+      if (
+        rangeIndex === ctx.formulaCache.selectingRangeIndex ||
+        cellrange == null
+      )
         return;
       if (
         cellrange.sheetId === ctx.currentSheetId ||
         (cellrange.sheetId === -1 &&
-          formulaCache.rangetosheet === ctx.currentSheetId)
+          ctx.formulaCache.rangetosheet === ctx.currentSheetId)
       ) {
         formulaRanges.push({
           rangeIndex,
@@ -2307,6 +1906,7 @@ export function createRangeHightlight(ctx: Context, inputInnerHtmlStr: string) {
 }
 
 export function setCaretPosition(
+  ctx: Context,
   textDom: HTMLElement,
   children: number,
   pos: number
@@ -2321,29 +1921,37 @@ export function setCaretPosition(
     sel?.addRange(range);
     el.focus();
   } catch (err) {
-    moveToEnd(formulaCache.rangeResizeTo[0]);
+    moveToEnd(ctx.formulaCache.rangeResizeTo[0]);
   }
 }
 
-function functionRange(obj: HTMLDivElement, v: string, vp: string) {
+function functionRange(
+  ctx: Context,
+  obj: HTMLDivElement,
+  v: string,
+  vp: string
+) {
   if (window.getSelection) {
     // ie11 10 9 ff safari
     const currSelection = window.getSelection();
     if (!currSelection) return;
-    const fri = findrangeindex(v, vp);
+    const fri = findrangeindex(ctx, v, vp);
 
     if (_.isNil(fri)) {
       currSelection.selectAllChildren(obj);
       currSelection.collapseToEnd();
     } else {
-      setCaretPosition(obj.querySelectorAll("span")[fri[0]], 0, fri[1]);
+      setCaretPosition(ctx, obj.querySelectorAll("span")[fri[0]], 0, fri[1]);
     }
     // @ts-ignore
   } else if (document.selection) {
     // ie10 9 8 7 6 5
-    formulaCache.functionRangeIndex.moveToElementText(obj); // range定位到obj
-    formulaCache.functionRangeIndex.collapse(false); // 光标移至最后
-    formulaCache.functionRangeIndex.select();
+    // @ts-ignore
+    ctx.formulaCache.functionRangeIndex.moveToElementText(obj); // range定位到obj
+    // @ts-ignore
+    ctx.formulaCache.functionRangeIndex.collapse(false); // 光标移至最后
+    // @ts-ignore
+    ctx.formulaCache.functionRangeIndex.select();
   }
 }
 
@@ -2510,9 +2118,9 @@ function helpFunctionExe(
   //     _this.functionlistPosition[functionlist[i].n] = i;
   //   }
   // }
-  if (_.isEmpty(formulaCache.functionlistMap)) {
+  if (_.isEmpty(ctx.formulaCache.functionlistMap)) {
     for (let i = 0; i < functionlist.length; i += 1) {
-      formulaCache.functionlistMap[functionlist[i].n] = functionlist[i];
+      ctx.formulaCache.functionlistMap[functionlist[i].n] = functionlist[i];
     }
   }
   if (!currSelection) {
@@ -2547,7 +2155,7 @@ function helpFunctionExe(
       if (
         $cur.classList.contains("luckysheet-formula-text-func") ||
         _.trim($cur.textContent || "").toUpperCase() in
-          formulaCache.functionlistMap
+          ctx.formulaCache.functionlistMap
       ) {
         funcName = $cur.textContent;
         paramindex = null;
@@ -2623,17 +2231,6 @@ export function rangeHightlightselected(ctx: Context, $editor: HTMLDivElement) {
 }
 
 function functionHTML(txt: string) {
-  if (_.isNil(operatorjson)) {
-    const arr = operator.split("|");
-    const op: any = {};
-
-    for (let i = 0; i < arr.length; i += 1) {
-      op[arr[i].toString()] = 1;
-    }
-
-    operatorjson = op;
-  }
-
   if (txt.substr(0, 1) === "=") {
     txt = txt.substr(1);
   }
@@ -2811,12 +2408,8 @@ function functionHTML(txt: string) {
     if (i === funcstack.length - 1) {
       // function_str += str;
       if (iscelldata(_.trim(str))) {
-        function_str += `<span class="fortune-formula-functionrange-cell" rangeindex="${
-          formulaCache.functionHTMLIndex
-        }" dir="auto" style="color:${
-          colors[formulaCache.functionHTMLIndex]
-        };">${str}</span>`;
-        formulaCache.functionHTMLIndex += 1;
+        function_str += `<span class="fortune-formula-functionrange-cell" rangeindex="${functionHTMLIndex}" dir="auto" style="color:${colors[functionHTMLIndex]};">${str}</span>`;
+        functionHTMLIndex += 1;
       } else if (matchConfig.dquote > 0) {
         function_str += `${str}</span>`;
       } else if (str.indexOf("</span>") === -1 && str.length > 0) {
@@ -2861,7 +2454,7 @@ export function functionHTMLGenerate(txt: string) {
     return txt;
   }
 
-  formulaCache.functionHTMLIndex = 0;
+  functionHTMLIndex = 0;
 
   return `<span dir="auto" class="luckysheet-formula-text-color">=</span>${functionHTML(
     txt
@@ -2896,13 +2489,13 @@ export function handleFormulaInput(
       if (!currSelection) return;
       if (currSelection.anchorNode?.nodeName.toLowerCase() === "div") {
         const editorlen = $editor.querySelectorAll("span").length;
-        formulaCache.functionRangeIndex = [
+        ctx.formulaCache.functionRangeIndex = [
           editorlen - 1,
           $editor.querySelectorAll("span").item(editorlen - 1).textContent
-            ?.length,
+            ?.length!,
         ];
       } else {
-        formulaCache.functionRangeIndex = [
+        ctx.formulaCache.functionRangeIndex = [
           _.indexOf(
             currSelection.anchorNode?.parentNode?.parentNode?.childNodes,
             // @ts-ignore
@@ -2915,13 +2508,13 @@ export function handleFormulaInput(
       // Internet Explorer before version 9
       // @ts-ignore
       const textRange = document.selection.createRange();
-      formulaCache.functionRangeIndex = textRange;
+      ctx.formulaCache.functionRangeIndex = textRange;
     }
 
     $editor.innerHTML = value;
     // the cursor will be set to the beginning of input box after set innerHTML,
     // restoring it to the correct position
-    functionRange($editor, value, value1);
+    functionRange(ctx, $editor, value, value1);
     cancelFunctionrangeSelected(ctx);
 
     if (kcode !== 46) {
@@ -3168,20 +2761,7 @@ function functionStrChange_range(
   return "";
 }
 
-export function israngeseleciton(istooltip?: boolean) {
-  // istooltip疑似无用
-
-  if (operatorjson == null) {
-    const arr = operator.split("|");
-    const op = {};
-
-    for (let i = 0; i < arr.length; i += 1) {
-      _.set(op, arr[i].toString(), 1);
-    }
-
-    operatorjson = op;
-  }
-
+export function israngeseleciton(ctx: Context, istooltip?: boolean) {
   if (istooltip == null) {
     istooltip = false;
   }
@@ -3204,10 +2784,10 @@ export function israngeseleciton(istooltip?: boolean) {
       const ahr = anchor.parentNode.previousSibling;
       txt = _.trim(ahr.textContent || "");
       lasttxt = txt.substring(txt.length - 1, 1);
-      formulaCache.rangeSetValueTo = ahr;
+      ctx.formulaCache.rangeSetValueTo = ahr;
     } else {
       lasttxt = txt.substring(anchorOffset - 1, 1);
-      formulaCache.rangeSetValueTo = anchor.parentNode.nextSibling;
+      ctx.formulaCache.rangeSetValueTo = anchor.parentNode.nextSibling;
     }
 
     if (
@@ -3227,7 +2807,7 @@ export function israngeseleciton(istooltip?: boolean) {
   ) {
     let txt = _.trim(_.last(anchorElement.querySelectorAll("span"))?.innerText);
 
-    formulaCache.rangeSetValueTo = _.last(
+    ctx.formulaCache.rangeSetValueTo = _.last(
       anchorElement.querySelectorAll("span")
     );
 
@@ -3236,7 +2816,7 @@ export function israngeseleciton(istooltip?: boolean) {
       txt = _.trim(ahr[ahr.length - 2].innerText);
 
       txt = _.trim(ahr[ahr.length - 2].innerText);
-      formulaCache.rangeSetValueTo = ahr;
+      ctx.formulaCache.rangeSetValueTo = ahr;
     }
 
     const lasttxt = txt.substring(txt.length - 1, 1);
@@ -3266,7 +2846,7 @@ export function israngeseleciton(istooltip?: boolean) {
       const txt = _.trim(anchor.previousSibling.textContent);
       const lasttxt = txt.substring(txt.length - 1, 1);
 
-      formulaCache.rangeSetValueTo = anchor.previousSibling;
+      ctx.formulaCache.rangeSetValueTo = anchor.previousSibling;
 
       if (
         (istooltip && (lasttxt === "(" || lasttxt === ",")) ||
@@ -3296,17 +2876,6 @@ export function functionStrChange(
   if (!txt) {
     return "";
   }
-  if (operatorjson == null) {
-    const arr = operator.split("|");
-    const op: any = {};
-
-    for (let i = 0; i < arr.length; i += 1) {
-      op[arr[i].toString()] = 1;
-    }
-
-    operatorjson = op;
-  }
-
   if (txt.substring(0, 1) === "=") {
     txt = txt.substring(1);
   }
@@ -3468,23 +3037,23 @@ export function rangeSetValue(
         column: [cf, cf],
         row: [rf, rf],
       },
-      formulaCache.rangetosheet
+      ctx.formulaCache.rangetosheet
     );
   } else {
     range = getRangetxt(
       ctx,
       ctx.currentSheetId,
       selected,
-      formulaCache.rangetosheet
+      ctx.formulaCache.rangetosheet
     );
   }
 
   // let $editor;
 
   if (
-    formulaCache.rangestart ||
-    formulaCache.rangedrag_column_start ||
-    formulaCache.rangedrag_row_start
+    ctx.formulaCache.rangestart ||
+    ctx.formulaCache.rangedrag_column_start ||
+    ctx.formulaCache.rangedrag_row_start
   ) {
     //   if (
     //     $("#luckysheet-search-formula-parm").is(":visible") ||
@@ -3593,29 +3162,25 @@ export function rangeSetValue(
     //   .find(`span[rangeindex='${formulaCache.rangechangeindex}']`)
     //   .html(range);
     const span = cellInput.querySelector(
-      `span[rangeindex='${formulaCache.rangechangeindex}']`
+      `span[rangeindex='${ctx.formulaCache.rangechangeindex}']`
     ) as HTMLSpanElement;
     if (span) {
       span.innerHTML = range;
-      setCaretPosition(span, 0, range.length);
+      setCaretPosition(ctx, span, 0, range.length);
     }
     //   }
   } else {
-    const function_str = `<span class="fortune-formula-functionrange-cell" rangeindex="${
-      formulaCache.functionHTMLIndex
-    }" dir="auto" style="color:${
-      colors[formulaCache.functionHTMLIndex]
-    };">${range}</span>`;
+    const function_str = `<span class="fortune-formula-functionrange-cell" rangeindex="${functionHTMLIndex}" dir="auto" style="color:${colors[functionHTMLIndex]};">${range}</span>`;
     cellInput.insertBefore(
       parseElement(function_str),
-      formulaCache.rangeSetValueTo
+      ctx.formulaCache.rangeSetValueTo
     );
-    formulaCache.rangechangeindex = formulaCache.functionHTMLIndex;
+    ctx.formulaCache.rangechangeindex = functionHTMLIndex;
     const span = cellInput.querySelector(
-      `span[rangeindex='${formulaCache.rangechangeindex}']`
+      `span[rangeindex='${ctx.formulaCache.rangechangeindex}']`
     ) as HTMLSpanElement;
-    setCaretPosition(span, 0, range.length);
-    formulaCache.functionHTMLIndex += 1;
+    setCaretPosition(ctx, span, 0, range.length);
+    functionHTMLIndex += 1;
   }
 
   // if ($editor.attr("id") === "luckysheet-rich-text-editor") {
@@ -3630,30 +3195,30 @@ export function rangeSetValue(
 }
 
 export function onFormulaRangeDragEnd(ctx: Context) {
-  if (formulaCache.func_selectedrange) {
+  if (ctx.formulaCache.func_selectedrange) {
     const {
       left_move: left,
       top_move: top,
       width_move: width,
       height_move: height,
-    } = formulaCache.func_selectedrange;
+    } = ctx.formulaCache.func_selectedrange;
     if (
       left == null ||
       top == null ||
       width == null ||
       height == null ||
-      !formulaCache.rangestart
+      !ctx.formulaCache.rangestart
     )
       return;
     ctx.formulaRangeSelect = {
-      rangeIndex: formulaCache.rangeindex,
+      rangeIndex: ctx.formulaCache.rangeIndex || 0,
       left,
       top,
       width,
       height,
     };
   }
-  formulaCache.selectingRangeIndex = -1;
+  ctx.formulaCache.selectingRangeIndex = -1;
 }
 
 export function rangeDrag(
@@ -3664,7 +3229,7 @@ export function rangeDrag(
   scrollTop: number,
   container: HTMLDivElement
 ) {
-  const { func_selectedrange } = formulaCache;
+  const { func_selectedrange } = ctx.formulaCache;
   if (
     !func_selectedrange ||
     func_selectedrange.left == null ||
@@ -3923,17 +3488,6 @@ export function functionCopy(
   mode: string,
   step: number
 ) {
-  if (operatorjson == null) {
-    const arr = operator.split("|");
-    const op: any = {};
-
-    for (let i = 0; i < arr.length; i += 1) {
-      op[arr[i].toString()] = 1;
-    }
-
-    operatorjson = op;
-  }
-
   if (mode == null) {
     mode = "down";
   }

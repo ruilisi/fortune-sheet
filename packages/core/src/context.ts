@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { SheetConfig } from ".";
+import { FormulaCache } from "./modules";
 import { normalizeSelection } from "./modules/selection";
 import { Sheet, Selection, Cell, CommentBox, Rect, Image } from "./types";
 import { getSheetIndex } from "./utils";
@@ -123,6 +124,9 @@ export type Context = {
 
   // 默认单元格
   defaultCell: Cell;
+
+  groupValuesRefreshData: any[];
+  formulaCache: FormulaCache;
 };
 
 export function defaultContext(): Context {
@@ -237,6 +241,9 @@ export function defaultContext(): Context {
       m: "",
       v: "",
     },
+
+    groupValuesRefreshData: [],
+    formulaCache: new FormulaCache(), // class will not be frozen by immer, can be mutated at any time.
   };
 }
 
