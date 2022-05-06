@@ -49,17 +49,6 @@ function postPasteCut(
     }
   }
 
-  if (ctx.clearjfundo) {
-    ctx.jfundo.length = 0;
-
-    ctx.jfredo.push({
-      type: "pasteCut",
-      source,
-      target,
-      RowlChange,
-    });
-  }
-
   // config
   let rowHeight;
   if (ctx.currentSheetId === source.sheetId) {

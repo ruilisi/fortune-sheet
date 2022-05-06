@@ -129,16 +129,6 @@ export function addSheet(
 
   //   server.saveParam("sha", null, $.extend(true, {}, sheetconfig));
 
-  //   if (ctx.clearjfundo) {
-  //     ctx.jfundo.length = 0;
-  //     const redo = {};
-  //     redo.type = "addSheet";
-  //     redo.sheetconfig = $.extend(true, {}, sheetconfig);
-  //     redo.index = index;
-  //     redo.currentSheetId = ctx.currentSheetId;
-  //     ctx.jfredo.push(redo);
-  //   }
-
   changeSheet(ctx, id, isPivotTable, true);
 }
 
@@ -167,10 +157,6 @@ export function deleteSheet(ctx: Context, id: string) {
 
   // server.saveParam("shd", null, { deleIndex: index });
 
-  // if (ctx.clearjfundo) {
-  //   removedsheet[0].type = "deleteSheet";
-  //   ctx.jfredo.push(removedsheet[0]);
-  // }
   // // 钩子 sheetDeleteAfter
   // method.createHookFunction("sheetDeleteAfter", { sheet: file });
 }
@@ -222,17 +208,6 @@ export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
   //   "luckysheet-mousedown-cancel"
   // );
 
-  // if (ctx.clearjfundo) {
-  //   const redo = {};
-  //   redo.type = "sheetName";
-  //   redo.sheetId = ctx.currentSheetId;
-
-  //   redo.oldtxt = oldtxt;
-  //   redo.txt = txt;
-
-  //   ctx.jfundo.length = 0;
-  //   ctx.jfredo.push(redo);
-  // }
   // // 钩子： sheetEditNameAfter
   // method.createHookFunction("sheetEditNameAfter", {
   //   i: ctx.luckysheetfile[index].id,

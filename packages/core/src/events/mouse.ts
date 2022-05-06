@@ -3336,7 +3336,6 @@ export function handleOverlayMouseUp(
   }
 
   ctx.luckysheet_select_status = false;
-  window.cancelAnimationFrame(ctx.jfautoscrollTimeout);
   ctx.luckysheet_scroll_status = false;
 
   // $("#luckysheet-cell-selected")
@@ -3660,20 +3659,6 @@ export function handleOverlayMouseUp(
     //   size
     // );
 
-    // if (ctx.clearjfundo) {
-    //   ctx.jfundo.length = 0;
-
-    //   ctx.jfredo.push({
-    //     type: "resize",
-    //     ctrlType: "resizeR",
-    //     sheetId: ctx.currentSheetId,
-    //     config: $.extend(true, {}, ctx.config),
-    //     curconfig: $.extend(true, {}, cfg),
-    //     images: $.extend(true, {}, imageCtrl.images),
-    //     curImages: $.extend(true, {}, images),
-    //   });
-    // }
-
     // config
     ctx.config = cfg;
     const idx = getSheetIndex(ctx, ctx.currentSheetId);
@@ -3769,20 +3754,6 @@ export function handleOverlayMouseUp(
     //   ctx.luckysheet_cols_change_size_start[1],
     //   size
     // );
-
-    // if (ctx.clearjfundo) {
-    //   ctx.jfundo.length = 0;
-
-    //   ctx.jfredo.push({
-    //     type: "resize",
-    //     ctrlType: "resizeC",
-    //     sheetId: ctx.currentSheetId,
-    //     config: $.extend(true, {}, ctx.config),
-    //     curconfig: $.extend(true, {}, cfg),
-    //     images: $.extend(true, {}, imageCtrl.images),
-    //     curImages: $.extend(true, {}, images),
-    //   });
-    // }
 
     // config
     ctx.config = cfg;
@@ -5019,7 +4990,7 @@ export function handleColSizeHandleMouseDown(
   // $("#luckysheet-rightclick-menu").hide();
   // $("#luckysheet-cols-h-hover").hide();
   // $("#luckysheet-cols-menu-btn").hide();
-  ctx.luckysheet_cols_dbclick_times = 0;
+  // ctx.luckysheet_cols_dbclick_times = 0;
   e.stopPropagation();
 }
 

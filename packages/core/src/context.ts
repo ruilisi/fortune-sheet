@@ -5,8 +5,6 @@ import { Sheet, Selection, Cell, CommentBox, Rect, Image } from "./types";
 import { getSheetIndex } from "./utils";
 
 export type Context = {
-  container: any;
-  loadingObj: any;
   luckysheetfile: Sheet[];
   defaultcolumnNum: number;
   defaultrowNum: number;
@@ -54,9 +52,6 @@ export type Context = {
   scrollLeft: number;
   scrollTop: number;
 
-  jfcountfuncTimeout: any;
-  jfautoscrollTimeout: any;
-
   luckysheet_select_status: boolean;
   luckysheet_select_save: Sheet["luckysheet_select_save"];
   luckysheet_selection_range: Sheet["luckysheet_selection_range"];
@@ -83,8 +78,6 @@ export type Context = {
   luckysheet_sheet_move_data: any[];
   luckysheet_scroll_status: boolean;
 
-  luckysheetisrefreshdetail: boolean;
-  luckysheetisrefreshtheme: boolean;
   luckysheetcurrentisPivotTable: boolean;
 
   luckysheet_rows_selected_status: boolean; // 行列标题相关参
@@ -93,8 +86,6 @@ export type Context = {
   luckysheet_rows_change_size_start: any[];
   luckysheet_cols_change_size: boolean;
   luckysheet_cols_change_size_start: any[];
-  luckysheet_cols_dbclick_timeout: any;
-  luckysheet_cols_dbclick_times: number;
 
   luckysheetCellUpdate: any[];
 
@@ -114,30 +105,15 @@ export type Context = {
 
   luckysheet_cell_selected_extend: boolean; // 选区下拉
   luckysheet_cell_selected_extend_index: any[];
-  luckysheet_cell_selected_extend_time: any;
 
-  clearjfundo: boolean;
-  jfundo: any[];
-  jfredo: any[];
   lang: string | null; // language
-  createChart: string;
-  highlightChart: string;
-  zIndex: number;
 
-  functionList: any; // function list explanation
-  luckysheet_function: any;
   chart_selection: any;
-  currentChart: string;
-  scrollRefreshSwitch: boolean;
 
   zoomRatio: number;
 
   showGridLines: boolean;
   allowEdit: boolean;
-
-  toobarObject: any; // toolbar constant
-  inlineStringEditCache: any;
-  inlineStringEditRange: any;
 
   fontList: any[];
   defaultFontSize: number;
@@ -145,27 +121,12 @@ export type Context = {
   luckysheetPaintModelOn: boolean;
   luckysheetPaintSingle: boolean;
 
-  currentSheetView: string;
-
-  // cooperative editing
-  cooperativeEdit: {
-    usernameTimeout: any;
-    changeCollaborationSize: any[]; // 改变行高或者列宽时，协同提示框需要跟随改变所需数据
-    allDataColumnlen: any[]; // 列宽发生过改变的列
-    merge_range: any; // 合并时单元格信息
-    checkoutData: any[]; // 切换表格页时所需数据
-  };
-
-  // Resources that currently need to be loaded asynchronously, especially plugins. 'Core' marks the core rendering process.
-  asyncLoad: string[];
   // 默认单元格
   defaultCell: Cell;
 };
 
 export function defaultContext(): Context {
   return {
-    container: null,
-    loadingObj: {},
     luckysheetfile: [],
     defaultcolumnNum: 60,
     defaultrowNum: 84,
@@ -202,9 +163,6 @@ export function defaultContext(): Context {
     scrollLeft: 0,
     scrollTop: 0,
 
-    jfcountfuncTimeout: null,
-    jfautoscrollTimeout: null,
-
     luckysheet_select_status: false,
     luckysheet_select_save: undefined,
     luckysheet_selection_range: [],
@@ -223,8 +181,6 @@ export function defaultContext(): Context {
     luckysheet_sheet_move_data: [],
     luckysheet_scroll_status: false,
 
-    luckysheetisrefreshdetail: true,
-    luckysheetisrefreshtheme: true,
     luckysheetcurrentisPivotTable: false,
 
     luckysheet_rows_selected_status: false, // 行列标题相关参
@@ -233,8 +189,6 @@ export function defaultContext(): Context {
     luckysheet_rows_change_size_start: [],
     luckysheet_cols_change_size: false,
     luckysheet_cols_change_size_start: [],
-    luckysheet_cols_dbclick_timeout: null,
-    luckysheet_cols_dbclick_times: 0,
 
     luckysheetCellUpdate: [],
 
@@ -255,29 +209,14 @@ export function defaultContext(): Context {
 
     luckysheet_cell_selected_extend: false, // 选区下拉
     luckysheet_cell_selected_extend_index: [],
-    luckysheet_cell_selected_extend_time: null,
 
-    clearjfundo: true,
-    jfundo: [],
-    jfredo: [],
     lang: null, // language
-    createChart: "",
-    highlightChart: "",
-    zIndex: 15,
-    functionList: null, // function list explanation
-    luckysheet_function: null,
     chart_selection: {},
-    currentChart: "",
-    scrollRefreshSwitch: true,
 
     zoomRatio: 1,
 
     showGridLines: true,
     allowEdit: true,
-
-    toobarObject: {}, // toolbar constant
-    inlineStringEditCache: null,
-    inlineStringEditRange: null,
 
     fontList: [],
     defaultFontSize: 10,
@@ -285,19 +224,6 @@ export function defaultContext(): Context {
     luckysheetPaintModelOn: false,
     luckysheetPaintSingle: false,
 
-    currentSheetView: "viewNormal",
-
-    // cooperative editing
-    cooperativeEdit: {
-      usernameTimeout: {},
-      changeCollaborationSize: [], // 改变行高或者列宽时，协同提示框需要跟随改变所需数据
-      allDataColumnlen: [], // 列宽发生过改变的列
-      merge_range: {}, // 合并时单元格信息
-      checkoutData: [], // 切换表格页时所需数据
-    },
-
-    // Resources that currently need to be loaded asynchronously, especially plugins. 'Core' marks the core rendering process.
-    asyncLoad: ["core"],
     // 默认单元格
     defaultCell: {
       bl: 0,
