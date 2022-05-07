@@ -1,23 +1,21 @@
-.fortune-message-box {
-  width: 300px;
+.fortune-dialog {
   border-radius: 6px;
   background: white;
   box-shadow: rgb(0 0 0 / 10%) 5px 5px 30px;
   box-sizing: border-box;
 }
 
-.fortune-message-box-content,
-.fortune-message-box-button-container {
+.fortune-dialog-box-button-container {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.fortune-message-box-content {
-  padding: 30px 25px;
+.fortune-dialog-box-content {
+  padding: 0px 25px;
 }
 
-.fortune-message-box-button-container {
+.fortune-dialog-box-button-container {
   padding-top: 10px;
   padding-bottom: 20px;
 }
@@ -44,4 +42,19 @@
 .fortune-message-box-button.button-primary {
   color: white;
   background-color: #0188FB;
+}
+
+.fortune-modal-dialog-header {
+  outline: 0;
+  display: flex;
+  justify-content: end;
+}
+
+.forturn-modal-dialog-icon-close {
+  color: #d4d4d4;
+  opacity: 0.3;
+}
+
+.forturn-modal-dialog-icon-close:hover {
+  opacity: 0.7;
 }

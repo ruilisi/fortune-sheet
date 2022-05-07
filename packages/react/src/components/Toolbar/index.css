@@ -160,3 +160,21 @@
   flex-wrap: wrap;
   z-index: 1002;
 }
+
+.fortune-toolbar-subtext {
+  -webkit-transition: all 0.218s;
+  -moz-transition: all 0.218s;
+  -o-transition: all 0.218s;
+  transition: all 0.218s;
+  font-size: 12px;
+  left: auto;
+  padding-top: 1px;
+  padding-left: 24px;
+  text-align: right;
+  opacity: .5;
+  filter: alpha(opacity=50);
+  color: #000;
+  user-select: none;
+  font-family: Arial;
+  line-height: 100%;
+}

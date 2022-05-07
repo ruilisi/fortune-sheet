@@ -37,6 +37,8 @@ import Combo from "./Combo";
 import ColorPicker from "./ColorPicker";
 import Select, { Option } from "./Select";
 import SVGIcon from "../SVGIcon";
+import { useDialog } from "../../hooks/useDialog";
+import { FormulaSearch } from "../FormulaSearch";
 
 const Toolbar: React.FC<{
   setMoreItems: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -47,6 +49,7 @@ const Toolbar: React.FC<{
   const containerRef = useRef<HTMLDivElement>(null);
   const [toolbarWrapIndex, setToolbarWrapIndex] = useState(-1); // -1 means pending for item location calculation
   const [itemLocations, setItemLocations] = useState<number[]>([]);
+  const { showDialog, hideDialog } = useDialog();
   const firstSelection = context.luckysheet_select_save?.[0];
   const flowdata = getFlowdata(context);
   const row = firstSelection?.row_focus;
@@ -161,34 +164,38 @@ const Toolbar: React.FC<{
           <Combo text={currentFmt} key={name} tooltip={tooltip}>
             {(setOpen) => (
               <Select>
-                {defaultFmt.map(({ text, value, example }, ii) =>
-                  value !== "split" ? (
-                    <Option
-                      key={value}
-                      onClick={() => {
-                        setOpen(false);
-                        setContext((ctx) => {
-                          const d = getFlowdata(ctx);
-                          if (d == null) return;
-                          updateFormat(
-                            ctx,
-                            refs.cellInput.current!,
-                            d,
-                            "ct",
-                            value
-                          );
-                        });
-                      }}
-                    >
-                      <div className="fortune-toolbar-menu-line">
-                        <div>{text}</div>
-                        <div>{example}</div>
-                      </div>
-                    </Option>
-                  ) : (
-                    <MenuDivider key={ii} />
-                  )
-                )}
+                {defaultFmt
+                  .slice(0, defaultFmt.length - 2)
+                  .map(({ text, value, example }, ii) =>
+                    value !== "split" ? (
+                      <Option
+                        key={value}
+                        onClick={() => {
+                          setOpen(false);
+                          setContext((ctx) => {
+                            const d = getFlowdata(ctx);
+                            if (d == null) return;
+                            updateFormat(
+                              ctx,
+                              refs.cellInput.current!,
+                              d,
+                              "ct",
+                              value
+                            );
+                          });
+                        }}
+                      >
+                        <div className="fortune-toolbar-menu-line">
+                          <div>{text}</div>
+                          <div className="fortune-toolbar-subtext">
+                            {example}
+                          </div>
+                        </div>
+                      </Option>
+                    ) : (
+                      <MenuDivider key={ii} />
+                    )
+                  )}
               </Select>
             )}
           </Combo>
@@ -394,17 +401,20 @@ const Toolbar: React.FC<{
                       setOpen(false);
                     }}
                   >
-                    <div
-                      className="fortune-toolbar-menu-line"
-                      style={{ width: 100 }}
-                    >
+                    <div className="fortune-toolbar-menu-line">
                       <div>{text}</div>
-                      <div>{value}</div>
+                      <div className="fortune-toolbar-subtext">{value}</div>
                     </div>
                   </Option>
                 ))}
                 <MenuDivider />
-                <Option key="formula">{`${formula.find}...`}</Option>
+                <Option
+                  key="formula"
+                  onClick={() => {
+                    showDialog(<FormulaSearch onCancel={hideDialog} />);
+                    setOpen(false);
+                  }}
+                >{`${formula.find}...`}</Option>
               </Select>
             )}
           </Combo>
@@ -624,6 +634,8 @@ const Toolbar: React.FC<{
       freezen,
       defaultFmt,
       formula,
+      showDialog,
+      hideDialog,
     ]
   );
 

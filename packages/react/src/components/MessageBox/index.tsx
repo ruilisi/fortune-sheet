@@ -1,7 +1,5 @@
-import { locale } from "@fortune-sheet/core";
-import React, { useContext } from "react";
-import WorkbookContext from "../../context";
-import "./index.css";
+import React from "react";
+import Dialog from "../Dialog";
 
 type Props = {
   type: "ok" | "yesno";
@@ -9,38 +7,28 @@ type Props = {
   onCancel?: () => void;
 };
 
-const MessageBox: React.FC<Props> = ({ type, onOk, onCancel, children }) => {
-  const { context } = useContext(WorkbookContext);
-  const { button } = locale(context);
+const MessageBox: React.FC<Props> = ({
+  type = "yesno",
+  onOk,
+  onCancel,
+  children,
+}) => {
   return (
-    <div className="fortune-message-box">
-      <div className="fortune-message-box-content">{children}</div>
-      <div className="fortune-message-box-button-container">
-        {type === "ok" ? (
-          <div
-            className="fortune-message-box-button button-default"
-            onClick={onOk}
-          >
-            {button.confirm}
-          </div>
-        ) : (
-          <>
-            <div
-              className="fortune-message-box-button button-primary"
-              onClick={onOk}
-            >
-              {button.confirm}
-            </div>
-            <div
-              className="fortune-message-box-button button-default"
-              onClick={onCancel}
-            >
-              {button.cancel}
-            </div>
-          </>
-        )}
-      </div>
-    </div>
+    <Dialog
+      type={type}
+      onOk={onOk}
+      onCancel={onCancel}
+      contentStyle={{
+        width: 300,
+        paddingTop: 20,
+        paddingBottom: 30,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {children}
+    </Dialog>
   );
 };
 
