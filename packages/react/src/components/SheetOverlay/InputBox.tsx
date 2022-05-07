@@ -30,7 +30,7 @@ import FormulaHint from "./FormulaHint";
 const InputBox: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const inputRef = useRef<HTMLDivElement>(null);
-  const lastKeyDownEventRef = useRef<React.KeyboardEvent<HTMLDivElement>>();
+  const lastKeyDownEventRef = useRef<KeyboardEvent>();
   const firstSelection = context.luckysheet_select_save?.[0];
 
   const inputBoxStyle = useMemo(() => {
@@ -105,7 +105,7 @@ const InputBox: React.FC = () => {
 
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      lastKeyDownEventRef.current = e;
+      lastKeyDownEventRef.current = new KeyboardEvent(e.type, e.nativeEvent);
       // if (
       //   $("#luckysheet-modal-dialog-mask").is(":visible") ||
       //   $(event.target).hasClass("luckysheet-mousedown-cancel") ||

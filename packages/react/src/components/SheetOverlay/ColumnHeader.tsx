@@ -54,11 +54,12 @@ const ColumnHeader: React.FC = () => {
 
   const onMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const { nativeEvent } = e;
       setContext((draftCtx) => {
         handleColumnHeaderMouseDown(
           draftCtx,
           refs.globalCache,
-          e.nativeEvent,
+          nativeEvent,
           containerRef.current!,
           refs.cellInput.current!,
           refs.fxInput.current!
@@ -77,11 +78,12 @@ const ColumnHeader: React.FC = () => {
 
   const onColSizeHandleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const { nativeEvent } = e;
       setContext((draftCtx) => {
         handleColSizeHandleMouseDown(
           draftCtx,
           refs.globalCache,
-          e.nativeEvent,
+          nativeEvent,
           containerRef.current!,
           refs.workbookContainer.current!,
           refs.cellArea.current!
@@ -94,11 +96,12 @@ const ColumnHeader: React.FC = () => {
 
   const onContextMenu = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const { nativeEvent } = e;
       setContext((draftCtx) => {
         handleContextMenu(
           draftCtx,
           settings,
-          e.nativeEvent,
+          nativeEvent,
           refs.workbookContainer.current!
         );
       });

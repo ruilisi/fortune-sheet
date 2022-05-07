@@ -79,8 +79,8 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
 
   const onDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
+      const draggingId = e.dataTransfer.getData("sheetId");
       setContext((draftCtx) => {
-        const draggingId = e.dataTransfer.getData("sheetId");
         const droppingId = sheet.id;
         let draggingSheet: Sheet | undefined;
         let droppingSheet: Sheet | undefined;
@@ -149,10 +149,11 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
       onContextMenu={(e) => {
         if (isDropPlaceholder) return;
         const rect = refs.workbookContainer.current!.getBoundingClientRect();
+        const { pageX, pageY } = e;
         setContext((ctx) => {
           ctx.sheetTabContextMenu = {
-            x: e.pageX - rect.left,
-            y: e.pageY - rect.top,
+            x: pageX - rect.left,
+            y: pageY - rect.top,
             sheet,
             onRename: () => setEditing(true),
           };

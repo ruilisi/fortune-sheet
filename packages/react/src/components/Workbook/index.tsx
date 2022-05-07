@@ -320,12 +320,13 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
 
     const onKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
+        const { nativeEvent } = e;
         setContextWithProduce((draftCtx) => {
           handleGlobalKeyDown(
             draftCtx,
             cellInput.current!,
             fxInput.current!,
-            e.nativeEvent,
+            nativeEvent,
             globalCache.current!,
             handleUndo,
             handleRedo

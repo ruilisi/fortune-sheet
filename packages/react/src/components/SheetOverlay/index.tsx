@@ -42,11 +42,12 @@ const SheetOverlay: React.FC = () => {
   // const isMobile = browser.mobilecheck();
   const cellAreaMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const { nativeEvent } = e;
       setContext((draftCtx) => {
         handleCellAreaMouseDown(
           draftCtx,
           refs.globalCache,
-          e.nativeEvent,
+          nativeEvent,
           refs.cellInput.current!,
           refs.cellArea.current!,
           refs.fxInput.current!
@@ -58,11 +59,12 @@ const SheetOverlay: React.FC = () => {
 
   const cellAreaContextMenu = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const { nativeEvent } = e;
       setContext((draftCtx) => {
         handleContextMenu(
           draftCtx,
           settings,
-          e.nativeEvent,
+          nativeEvent,
           refs.workbookContainer.current!
         );
       });
@@ -72,12 +74,13 @@ const SheetOverlay: React.FC = () => {
 
   const cellAreaDoubleClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const { nativeEvent } = e;
       setContext((draftCtx) => {
         handleCellAreaDoubleClick(
           draftCtx,
           refs.globalCache,
           settings,
-          e.nativeEvent,
+          nativeEvent,
           refs.cellArea.current!
         );
       });
@@ -93,11 +96,12 @@ const SheetOverlay: React.FC = () => {
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const { nativeEvent } = e;
       setContext((draftCtx) => {
         handleOverlayMouseMove(
           draftCtx,
           refs.globalCache,
-          e.nativeEvent,
+          nativeEvent,
           refs.cellInput.current!,
           refs.scrollbarX.current!,
           refs.scrollbarY.current!,
@@ -116,12 +120,13 @@ const SheetOverlay: React.FC = () => {
 
   const onMouseUp = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const { nativeEvent } = e;
       setContext((draftCtx) => {
         handleOverlayMouseUp(
           draftCtx,
           refs.globalCache,
           settings,
-          e.nativeEvent,
+          nativeEvent,
           containerRef.current!
         );
       });
@@ -131,8 +136,9 @@ const SheetOverlay: React.FC = () => {
 
   const onTouchStart = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
+      const { nativeEvent } = e;
       setContext((draftContext) => {
-        handleOverlayTouchStart(draftContext, e.nativeEvent, refs.globalCache);
+        handleOverlayTouchStart(draftContext, nativeEvent, refs.globalCache);
       });
       e.stopPropagation();
     },
@@ -141,10 +147,11 @@ const SheetOverlay: React.FC = () => {
 
   const onTouchMove = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
+      const { nativeEvent } = e;
       setContext((draftCtx) => {
         handleOverlayTouchMove(
           draftCtx,
-          e.nativeEvent,
+          nativeEvent,
           refs.globalCache,
           refs.scrollbarX.current!,
           refs.scrollbarY.current!
@@ -388,10 +395,11 @@ const SheetOverlay: React.FC = () => {
                   <div
                     className="luckysheet-cs-fillhandle"
                     onMouseDown={(e) => {
+                      const { nativeEvent } = e;
                       setContext((draftContext) => {
                         createDropCellRange(
                           draftContext,
-                          e.nativeEvent,
+                          nativeEvent,
                           containerRef.current!
                         );
                       });
@@ -468,6 +476,7 @@ const SheetOverlay: React.FC = () => {
                       zIndex: isEditing ? 200 : 100,
                     }}
                     onMouseDown={(e) => {
+                      const { nativeEvent } = e;
                       setContext((draftContext) => {
                         if (flowdata) {
                           setEditingComment(draftContext, flowdata, r, c);
@@ -476,7 +485,7 @@ const SheetOverlay: React.FC = () => {
                       onCommentBoxMoveStart(
                         context,
                         refs.globalCache,
-                        e.nativeEvent,
+                        nativeEvent,
                         containerRef.current!,
                         { r, c, rc },
                         commentId
@@ -502,10 +511,11 @@ const SheetOverlay: React.FC = () => {
                               className={`luckysheet-postil-dialog-resize-item luckysheet-postil-dialog-resize-item-${v}`}
                               data-type={v}
                               onMouseDown={(e) => {
+                                const { nativeEvent } = e;
                                 onCommentBoxResizeStart(
                                   context,
                                   refs.globalCache,
-                                  e.nativeEvent,
+                                  nativeEvent,
                                   containerRef.current!,
                                   { r, c, rc },
                                   commentId,
@@ -602,10 +612,11 @@ const SheetOverlay: React.FC = () => {
                     // context.activeImg.height * context.zoomRatio,
                   }}
                   onMouseDown={(e) => {
+                    const { nativeEvent } = e;
                     onImageMoveStart(
                       context,
                       refs.globalCache,
-                      e.nativeEvent,
+                      nativeEvent,
                       containerRef.current!
                     );
                     e.stopPropagation();
@@ -618,10 +629,11 @@ const SheetOverlay: React.FC = () => {
                       className={`luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-${v}`}
                       data-type={v}
                       onMouseDown={(e) => {
+                        const { nativeEvent } = e;
                         onImageResizeStart(
                           context,
                           refs.globalCache,
-                          e.nativeEvent,
+                          nativeEvent,
                           containerRef.current!,
                           v
                         );

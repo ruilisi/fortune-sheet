@@ -30,7 +30,7 @@ import NameBox from "./NameBox";
 const FxEditor: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const [focused, setFocused] = useState(false);
-  const lastKeyDownEventRef = useRef<React.KeyboardEvent<HTMLDivElement>>();
+  const lastKeyDownEventRef = useRef<KeyboardEvent>();
   const inputContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -95,10 +95,11 @@ const FxEditor: React.FC = () => {
       if (!context.allowEdit) {
         return;
       }
-      lastKeyDownEventRef.current = e;
+      lastKeyDownEventRef.current = new KeyboardEvent(e.type, e.nativeEvent);
+      const { key } = e;
       setContext((draftCtx) => {
         if (context.luckysheetCellUpdate.length > 0) {
-          switch (e.key) {
+          switch (key) {
             case "Enter": {
               // if (
               //   $("#luckysheet-formula-search-c").is(":visible") &&
