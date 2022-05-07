@@ -26,7 +26,9 @@ import {
   handleFreeze,
   insertImage,
   showImgChooser,
+  updateFormat,
 } from "@fortune-sheet/core";
+import _ from "lodash";
 import WorkbookContext from "../../context";
 import "./index.css";
 import Button from "./Button";
@@ -51,7 +53,8 @@ const Toolbar: React.FC<{
   const col = firstSelection?.column_focus;
   const cell =
     flowdata && row != null && col != null ? flowdata?.[row]?.[col] : undefined;
-  const { toolbar, merge, border, freezen } = locale(context);
+  const { toolbar, merge, border, freezen, defaultFmt, formula } =
+    locale(context);
   const sheetWidth = context.luckysheetTableContentHW[0];
 
   // rerenders the entire toolbar and trigger recalculation of item locations
@@ -142,17 +145,50 @@ const Toolbar: React.FC<{
         );
       }
       if (name === "format") {
+        let currentFmt = defaultFmt[0].text;
+        if (cell) {
+          const curr = normalizedCellAttr(cell, "ct");
+          const format = _.find(defaultFmt, (v) => v.value === curr?.fa);
+          if (curr?.fa != null) {
+            if (format != null) {
+              currentFmt = format.text;
+            } else {
+              currentFmt = defaultFmt[defaultFmt.length - 1].text;
+            }
+          }
+        }
         return (
-          <Combo text="自动" key={name} tooltip={tooltip}>
+          <Combo text={currentFmt} key={name} tooltip={tooltip}>
             {(setOpen) => (
               <Select>
-                <Option
-                  onClick={() => {
-                    setOpen(false);
-                  }}
-                >
-                  自动
-                </Option>
+                {defaultFmt.map(({ text, value, example }, ii) =>
+                  value !== "split" ? (
+                    <Option
+                      key={value}
+                      onClick={() => {
+                        setOpen(false);
+                        setContext((ctx) => {
+                          const d = getFlowdata(ctx);
+                          if (d == null) return;
+                          updateFormat(
+                            ctx,
+                            refs.cellInput.current!,
+                            d,
+                            "ct",
+                            value
+                          );
+                        });
+                      }}
+                    >
+                      <div className="fortune-toolbar-menu-line">
+                        <div>{text}</div>
+                        <div>{example}</div>
+                      </div>
+                    </Option>
+                  ) : (
+                    <MenuDivider key={ii} />
+                  )
+                )}
               </Select>
             )}
           </Combo>
@@ -323,11 +359,11 @@ const Toolbar: React.FC<{
 
       if (name === "quick-formula") {
         const itemData = [
-          { text: "求和", key: "SUM" },
-          { text: "平均", key: "AVERAGE" },
-          { text: "计数", key: "COUNT" },
-          { text: "最大值", key: "MAX" },
-          { text: "最小值", key: "MIN" },
+          { text: formula.sum, value: "SUM" },
+          { text: formula.average, value: "AVERAGE" },
+          { text: formula.count, value: "COUNT" },
+          { text: formula.max, value: "MAX" },
+          { text: formula.min, value: "MIN" },
         ];
         return (
           <Combo
@@ -343,15 +379,15 @@ const Toolbar: React.FC<{
           >
             {(setOpen) => (
               <Select>
-                {itemData.map(({ key, text }) => (
+                {itemData.map(({ value, text }) => (
                   <Option
-                    key={key}
+                    key={value}
                     onClick={() => {
                       setContext((ctx) => {
                         autoSelectionFormula(
                           ctx,
                           refs.cellInput.current!,
-                          key,
+                          value,
                           refs.globalCache
                         );
                       });
@@ -363,10 +399,12 @@ const Toolbar: React.FC<{
                       style={{ width: 100 }}
                     >
                       <div>{text}</div>
-                      <div>{key}</div>
+                      <div>{value}</div>
                     </div>
                   </Option>
                 ))}
+                <MenuDivider />
+                <Option key="formula">{`${formula.find}...`}</Option>
               </Select>
             )}
           </Combo>
@@ -584,6 +622,8 @@ const Toolbar: React.FC<{
       merge,
       border,
       freezen,
+      defaultFmt,
+      formula,
     ]
   );
 

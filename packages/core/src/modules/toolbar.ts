@@ -98,7 +98,7 @@ export function updateFormatCell(
         }
 
         if (cell && _.isPlainObject(cell)) {
-          cell.m = mask;
+          cell.m = `${mask}`;
           if (_.isNil(cell.ct)) {
             cell.ct = {};
           }
@@ -185,7 +185,7 @@ export function updateFormatCell(
   }
 }
 
-function updateFormat(
+export function updateFormat(
   ctx: Context,
   $input: HTMLDivElement,
   d: CellMatrix,
