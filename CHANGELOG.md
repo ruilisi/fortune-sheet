@@ -2,6 +2,13 @@
 
 _Changes marked with a :warning: contain potential breaking changes depending on your use of the package._
 
+## v0.5.2
+
+- Add formula search dialog.
+- Make format dropdown list work.
+- Fix crash on React 16.
+- Fix multi-instance usage.
+
 ## v0.5.0
 
 - :warning: The `index` field of sheet is renamed to `id` globally, including other related fields.
