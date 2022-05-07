@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { cancelPaintModel } from "..";
 import { Context } from "../context";
 import { copy, selectIsOverlap } from "../modules/selection";
 import { hasPartMC } from "../modules/validation";
@@ -10,9 +11,9 @@ export function handleCopy(ctx: Context) {
   // }
 
   // // 复制时存在格式刷状态，取消格式刷
-  // if (menuButton.luckysheetPaintModelOn) {
-  //   menuButton.cancelPaintModel();
-  // }
+  if (ctx.luckysheetPaintModelOn) {
+    cancelPaintModel(ctx);
+  }
 
   const selection = ctx.luckysheet_select_save;
   if (!selection || _.isEmpty(selection)) {

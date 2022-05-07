@@ -1521,6 +1521,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
       if (ctx.luckysheet_paste_iscut) {
         ctx.luckysheet_paste_iscut = false;
         pasteHandlerOfCutPaste(ctx, ctx.luckysheet_copy_save);
+        ctx.luckysheet_selection_range = [];
         // selection.clearcopy(e);
       } else {
         pasteHandlerOfCopyPaste(ctx, ctx.luckysheet_copy_save);

@@ -260,11 +260,6 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             }
           }
 
-          draftCtx.luckysheet_selection_range = _.isNil(
-            sheet.luckysheet_selection_range
-          )
-            ? []
-            : sheet.luckysheet_selection_range;
           draftCtx.config = _.isNil(sheet.config) ? {} : sheet.config;
           draftCtx.insertedImgs = sheet.images;
 

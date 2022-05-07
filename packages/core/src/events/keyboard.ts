@@ -10,7 +10,7 @@ import {
   selectAll,
   selectionCache,
 } from "../modules/selection";
-import { handleBold } from "../modules/toolbar";
+import { cancelPaintModel, handleBold } from "../modules/toolbar";
 import { hasPartMC } from "../modules/validation";
 import { GlobalCache } from "../types";
 import { getNowDateTime } from "../utils";
@@ -200,15 +200,14 @@ export function handleWithCtrlOrMetaKey(
 
     selectionCache.isPasteAction = true;
     // luckysheetactiveCell();
-
     e.stopPropagation();
     return;
   } else if (e.key === "x") {
     // Ctrl + X  剪切
     // 复制时存在格式刷状态，取消格式刷
-    // if (menuButton.luckysheetPaintModelOn) {
-    //   menuButton.cancelPaintModel();
-    // }
+    if (ctx.luckysheetPaintModelOn) {
+      cancelPaintModel(ctx);
+    }
 
     const selection = ctx.luckysheet_select_save;
     if (!selection || _.isEmpty(selection)) {
