@@ -1,9 +1,12 @@
 import React, { useContext, useState, useMemo, useCallback } from "react";
-import { cancelNormalSelected, locale } from "@fortune-sheet/core";
+import {
+  cancelNormalSelected,
+  locale,
+  setCaretPosition,
+} from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
 import "./index.css";
-import { setCaretPosition } from "../../../../core/src/modules/formula";
 
 export const FormulaSearch: React.FC<{ onCancel: () => void }> = ({
   onCancel: _onCancel,
