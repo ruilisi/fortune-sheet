@@ -42,6 +42,16 @@ export function contextFactory({
           [null, null, null, null],
         ],
       },
+      {
+        name: "sheet",
+        id: "id_2",
+        data: [
+          [null, null, null, null],
+          [null, null, null, null],
+          [null, null, null, null],
+          [null, null, null, null],
+        ],
+      },
     ],
     luckysheetCellUpdate: [0, 0],
     visibledatarow: [20, 40, 60, 80, 100],
