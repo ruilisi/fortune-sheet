@@ -41,6 +41,7 @@ export function contextFactory({
           [null, null, null, null],
           [null, null, null, null],
         ],
+        order: 0,
       },
       {
         name: "sheet",
@@ -51,6 +52,7 @@ export function contextFactory({
           [null, null, null, null],
           [null, null, null, null],
         ],
+        order: 1,
       },
     ],
     luckysheetCellUpdate: [0, 0],
@@ -62,6 +64,7 @@ export function contextFactory({
     zoomRatio: 1,
     groupValuesRefreshData: [],
     formulaCache: new FormulaCache(),
+    defaultCell: {},
     ...params,
   };
 }

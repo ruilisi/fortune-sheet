@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { contextFactory, selectionFactory } from "../factories/context";
 import { mergeCells, cancelMerge } from "../../src/api/merge";
 
@@ -39,16 +40,16 @@ describe("merge", () => {
         }
       };
       mergeCells(ctx, ranges, mergeMode);
-      [r0, r1].forEach((r) => {
-        [c0, c1].forEach((c) => {
+      _.range(r0, r1 + 1).forEach((r) => {
+        _.range(c0, c1 + 1).forEach((c) => {
           expect(ctx.luckysheetfile[0].data[r][c].mc).toEqual(
             expectedValue(r, c, mergeMode)
           );
         });
       });
       cancelMerge(ctx, ranges);
-      [r0, r1].forEach((r) => {
-        [c0, c1].forEach((c) => {
+      _.range(r0, r1 + 1).forEach((r) => {
+        _.range(c0, c1 + 1).forEach((c) => {
           expect(ctx.luckysheetfile[0].data[r][c].mc).toEqual(undefined);
         });
       });
@@ -59,7 +60,7 @@ describe("merge", () => {
       [0, 0, 1, 1, "merge-horizontal"],
       [0, 0, 3, 1, "merge-all"],
       [0, 0, 3, 1, "merge-vertical"],
-      [0, 0, 3, 1, "merge-horizontal"],
+      [0, 0, 3, 3, "merge-horizontal"],
       [2, 1, 3, 1, "merge-all"],
       [2, 1, 3, 1, "merge-vertical"],
       [2, 1, 3, 1, "merge-horizontal"],
