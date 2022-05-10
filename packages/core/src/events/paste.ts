@@ -1560,7 +1560,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
           _.forEach(tr.querySelectorAll("td"), (td) => {
             // build cell from td
             const cell: Cell = {};
-            const txt = td.innerText;
+            const txt = td.innerText || td.innerHTML;
             if (_.trim(txt).length === 0) {
               cell.v = undefined;
               cell.m = "";

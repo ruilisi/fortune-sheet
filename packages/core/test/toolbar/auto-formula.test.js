@@ -1,3 +1,4 @@
+/* eslint-disable jest/expect-expect */
 import { contextFactory, selectionFactory } from "../factories/context";
 import { getFlowdata } from "../../src/context";
 import { autoSelectionFormula } from "../../src/modules/toolbar";
