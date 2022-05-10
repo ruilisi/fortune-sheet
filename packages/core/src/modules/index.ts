@@ -20,3 +20,4 @@ export * from "./image";
 export * from "./mobile";
 export * from "./dropCell";
 export * from "./merge";
+export * from "./sort";

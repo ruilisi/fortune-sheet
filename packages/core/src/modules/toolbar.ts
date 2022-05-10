@@ -23,6 +23,7 @@ import {
 import { updateInlineStringFormatOutside } from "./inline-string";
 import { colLocationByIndex, rowLocationByIndex } from "./location";
 import { selectionCopyShow, selectIsOverlap } from "./selection";
+import { sortSelection } from "./sort";
 import {
   hasPartMC,
   isdatatypemulti,
@@ -842,7 +843,6 @@ export function autoSelectionFormula(
     ctx.formulaCache.execFunctionGlobalData = null;
   }
 }
-
 export function cancelPaintModel(ctx: Context) {
   // $("#luckysheet-sheettable_0").removeClass("luckysheetPaintCursor");
   if (ctx.luckysheet_copy_save === null) return;
@@ -1351,7 +1351,9 @@ export function handleMerge(ctx: Context, type: string) {
 
   mergeCells(ctx, ctx.currentSheetId, ctx.luckysheet_select_save, type);
 }
-
+export function handleSort(ctx: Context, isAsc: boolean) {
+  sortSelection(ctx, isAsc);
+}
 export function handleFreeze(ctx: Context, type: string) {
   if (!ctx.allowEdit) return;
 
@@ -1398,6 +1400,7 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
   "percentage-format": handlePercentageFormat,
   "number-decrease": handleNumberDecrease,
   "number-increase": handleNumberIncrease,
+  "sort-cell": (ctx: Context) => handleSort(ctx, true),
   "merge-all": (ctx: Context) => handleMerge(ctx, "mergeAll"),
   "border-all": (ctx: Context) => handleBorder(ctx, "border-all"),
   bold: handleBold,

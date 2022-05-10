@@ -27,6 +27,7 @@ import {
   insertImage,
   showImgChooser,
   updateFormat,
+  handleSort,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -56,7 +57,7 @@ const Toolbar: React.FC<{
   const col = firstSelection?.column_focus;
   const cell =
     flowdata && row != null && col != null ? flowdata?.[row]?.[col] : undefined;
-  const { toolbar, merge, border, freezen, defaultFmt, formula } =
+  const { toolbar, merge, border, freezen, defaultFmt, formula, sort } =
     locale(context);
   const sheetWidth = context.luckysheetTableContentHW[0];
 
@@ -600,7 +601,56 @@ const Toolbar: React.FC<{
           </Combo>
         );
       }
-
+      if (name === "sort") {
+        const items = [
+          {
+            title: "sort-asc",
+            text: sort.asc,
+          },
+          {
+            title: "sort-desc",
+            text: sort.desc,
+          },
+        ];
+        return (
+          <Combo
+            iconId="sort-asc"
+            key={name}
+            tooltip={tooltip}
+            onClick={() => {
+              setContext((ctx) => {
+                handleSort(ctx, true);
+              });
+            }}
+          >
+            {(setOpen) => (
+              <Select>
+                {items.map(({ text, title }) => (
+                  <Option
+                    key={title}
+                    onClick={() => {
+                      setContext((ctx) => {
+                        if (title === "sort-asc") {
+                          handleSort(ctx, true);
+                        }
+                        if (title === "sort-desc") {
+                          handleSort(ctx, false);
+                        }
+                      });
+                      setOpen(false);
+                    }}
+                  >
+                    <div className="fortune-toolbar-menu-line">
+                      {text}
+                      <SVGIcon name={title} />
+                    </div>
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
       return (
         <Button
           iconId={name}
@@ -621,13 +671,13 @@ const Toolbar: React.FC<{
     },
     [
       toolbar,
+      cell,
       setContext,
       refs.cellInput,
       refs.globalCache,
-      cell,
       handleUndo,
       handleRedo,
-      context,
+      context.luckysheet_select_save,
       flowdata,
       merge,
       border,
@@ -636,6 +686,8 @@ const Toolbar: React.FC<{
       formula,
       showDialog,
       hideDialog,
+      sort.asc,
+      sort.desc,
     ]
   );
 
