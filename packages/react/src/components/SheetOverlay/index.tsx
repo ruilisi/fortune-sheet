@@ -421,6 +421,49 @@ const SheetOverlay: React.FC = () => {
               ))}
             </div>
           )}
+          {(context.presences?.length ?? 0) > 0 &&
+            context.presences!.map((presence) => {
+              if (presence.sheetId !== context.currentSheetId) {
+                return null;
+              }
+              const {
+                selection: { r, c },
+                color,
+              } = presence;
+              const row_pre = r - 1 === -1 ? 0 : context.visibledatarow[r - 1];
+              const col_pre =
+                c - 1 === -1 ? 0 : context.visibledatacolumn[c - 1];
+              const row = context.visibledatarow[r];
+              const col = context.visibledatacolumn[c];
+              const width = col - col_pre - 1;
+              const height = row - row_pre - 1;
+              const usernameStyle = {
+                maxWidth: width + 1,
+                backgroundColor: color,
+              };
+              _.set(usernameStyle, r === 0 ? "top" : "bottom", height);
+
+              return (
+                <div
+                  key={presence.userId}
+                  className="fortune-presence-selection"
+                  style={{
+                    left: col_pre,
+                    top: row_pre - 2,
+                    width,
+                    height,
+                    borderColor: color,
+                  }}
+                >
+                  <div
+                    className="fortune-presence-username"
+                    style={usernameStyle}
+                  >
+                    {presence.username}
+                  </div>
+                </div>
+              );
+            })}
           <InputBox />
           <div id="luckysheet-postil-showBoxs">
             {_.concat(

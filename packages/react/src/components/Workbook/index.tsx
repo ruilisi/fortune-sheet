@@ -13,6 +13,7 @@ import {
   filterPatch,
   patchToOp,
   Op,
+  Selection,
   inverseRowColOptions,
   ensureSheetIndex,
 } from "@fortune-sheet/core";
@@ -51,10 +52,13 @@ export type WorkbookInstance = ReturnType<typeof generateAPIs>;
 type AdditionalProps = {
   onChange?: (data: SheetType[]) => void;
   onOp?: (op: Op[]) => void;
+  hooks?: {
+    onSelectionChange?: (sheetId: string, selection: Selection) => void;
+  };
 };
 
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
-  ({ onChange, onOp, data: originalData, ...props }, ref) => {
+  ({ onChange, onOp, hooks, data: originalData, ...props }, ref) => {
     const [context, setContext] = useState(defaultContext());
     const cellInput = useRef<HTMLDivElement>(null);
     const fxInput = useRef<HTMLDivElement>(null);
@@ -142,6 +146,15 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         });
       }
     }, [emitOp]);
+
+    useEffect(() => {
+      if (context.luckysheet_select_save != null) {
+        hooks?.onSelectionChange?.(
+          context.currentSheetId,
+          context.luckysheet_select_save[0]
+        );
+      }
+    }, [hooks, context.currentSheetId, context.luckysheet_select_save]);
 
     const providerValue = useMemo(
       () => ({

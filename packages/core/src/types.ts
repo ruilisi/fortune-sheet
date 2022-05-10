@@ -83,6 +83,17 @@ export type Selection = {
   column_select?: boolean;
 };
 
+export type Presence = {
+  sheetId: string;
+  username: string;
+  userId?: string;
+  color: string;
+  selection: {
+    r: number;
+    c: number;
+  };
+};
+
 export type SheetConfig = {
   merge?: Record<string, { r: number; c: number; rs: number; cs: number }>; // 合并单元格
   rowlen?: Record<string, number>; // 表格行高

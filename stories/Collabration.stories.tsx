@@ -1,7 +1,15 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  useMemo,
+} from "react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { Sheet, Op } from "@fortune-sheet/core";
+import { Sheet, Op, Selection, colors } from "@fortune-sheet/core";
 import { Workbook, WorkbookInstance } from "@fortune-sheet/react";
+import { v4 as uuidv4 } from "uuid";
+import { hashCode } from "./utils";
 
 export default {
   component: Workbook,
@@ -12,6 +20,10 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
   const [error, setError] = useState(false);
   const wsRef = useRef<WebSocket>();
   const workbookRef = useRef<WorkbookInstance>(null);
+  const { username, userId } = useMemo(() => {
+    const _userId = uuidv4();
+    return { username: `Guest-${_userId.slice(0, 3)}`, userId: _userId };
+  }, []);
 
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:8081/ws");
@@ -26,6 +38,10 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
         setData(msg.data);
       } else if (msg.req === "op") {
         workbookRef.current?.applyOp(msg.data);
+      } else if (msg.req === "addPresence") {
+        workbookRef.current?.addPresence(msg.data);
+      } else if (msg.req === "removePresence") {
+        workbookRef.current?.removePresence(msg.data);
       }
     };
     socket.onerror = () => {
@@ -42,6 +58,29 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
   const onChange = useCallback((d: Sheet[]) => {
     setData(d);
   }, []);
+
+  const onSelectionChange = useCallback(
+    (sheetId: string, selection: Selection) => {
+      const socket = wsRef.current;
+      if (!socket) return;
+      socket.send(
+        JSON.stringify({
+          req: "addPresence",
+          data: {
+            sheetId,
+            username,
+            userId,
+            color: colors[Math.abs(hashCode(userId)) % colors.length],
+            selection: {
+              r: selection.row[0],
+              c: selection.column[0],
+            },
+          },
+        })
+      );
+    },
+    []
+  );
 
   if (error)
     return (
@@ -73,6 +112,9 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
         data={data}
         onChange={onChange}
         onOp={onOp}
+        hooks={{
+          onSelectionChange,
+        }}
       />
     </div>
   );

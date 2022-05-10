@@ -2,7 +2,15 @@ import _ from "lodash";
 import { SheetConfig } from ".";
 import { FormulaCache } from "./modules";
 import { normalizeSelection } from "./modules/selection";
-import { Sheet, Selection, Cell, CommentBox, Rect, Image } from "./types";
+import {
+  Sheet,
+  Selection,
+  Cell,
+  CommentBox,
+  Rect,
+  Image,
+  Presence,
+} from "./types";
 import { getSheetIndex } from "./utils";
 
 export type Context = {
@@ -17,6 +25,7 @@ export type Context = {
   insertedImgs?: Image[];
   editingInsertedImgs?: Image;
   activeImg?: Image;
+  presences?: Presence[];
 
   contextMenu: any;
   sheetTabContextMenu: {

@@ -80,10 +80,23 @@ wss.on("connection", (ws) => {
     } else if (msg.req === "op") {
       await applyOp(client.db(dbName).collection(collectionName), msg.data);
       broadcastToOthers(ws.id, data.toString());
+    } else if (msg.req === "addPresence") {
+      ws.userId = msg.data.userId;
+      ws.username = msg.data.username;
+      broadcastToOthers(ws.id, data.toString());
+    } else if (msg.req === "removePresence") {
+      broadcastToOthers(ws.id, data.toString());
     }
   });
 
   ws.on("close", () => {
+    broadcastToOthers(
+      ws.id,
+      JSON.stringify({
+        req: "removePresence",
+        data: { userId: ws.userId, username: ws.username },
+      })
+    );
     delete connections[ws.id];
   });
 });

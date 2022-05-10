@@ -10,6 +10,7 @@ import {
   opToPatch,
   Range,
   Selection,
+  Presence,
   Settings,
   SingleRange,
 } from "@fortune-sheet/core";
@@ -207,5 +208,34 @@ export function generateAPIs(
       targetRow?: number;
       targetColumn?: number;
     }) => api.scroll(context, scrollbarX, scrollbarY, options),
+
+    addPresence: (presence: Presence) => {
+      setContext((draftCtx) => {
+        const presences = (draftCtx.presences || [])
+          .filter(
+            (v) =>
+              (presence.userId != null && presence.userId !== v.userId) ||
+              presence.username !== v.username
+          )
+          .concat(presence);
+        draftCtx.presences = presences;
+      });
+    },
+
+    removePresence: ({
+      username,
+      userId,
+    }: {
+      username: string;
+      userId?: string;
+    }) => {
+      setContext((draftCtx) => {
+        const presences = (draftCtx.presences || []).filter(
+          (v) =>
+            (userId != null && userId !== v.userId) || username !== v.username
+        );
+        draftCtx.presences = presences;
+      });
+    },
   };
 }
