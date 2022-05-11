@@ -3001,7 +3001,7 @@ export function onDropCellSelectEnd(
 
       for (let r = last.row[0]; r <= last.row[1]; r += 1) {
         for (let c = last.column[0]; c <= last.column[1]; c += 1) {
-          const cell = flowdata[r][c];
+          const cell = flowdata[r]?.[c];
 
           if (cell != null && cell.mc != null) {
             HasMC = true;
@@ -3022,7 +3022,7 @@ export function onDropCellSelectEnd(
 
       for (let r = row_s; r <= row_e; r += 1) {
         for (let c = col_s; c <= col_e; c += 1) {
-          const cell = flowdata[r][c];
+          const cell = flowdata[r]?.[c];
 
           if (cell != null && cell.mc != null) {
             HasMC = true;
