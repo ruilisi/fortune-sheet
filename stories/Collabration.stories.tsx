@@ -79,7 +79,7 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
         })
       );
     },
-    []
+    [userId, username]
   );
 
   if (error)
