@@ -1500,16 +1500,11 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
     const locale_fontjson = locale(ctx).fontjson;
 
-    // hook
-    // if (
-    //   !method.createHookFunction(
-    //     "rangePasteBefore",
-    //     ctx.luckysheet_select_save,
-    //     txtdata
-    //   )
-    // ) {
-    //   return;
-    // }
+    if (
+      ctx.hooks.beforePaste?.(ctx.luckysheet_select_save, txtdata) === false
+    ) {
+      return;
+    }
 
     if (
       txtdata.indexOf("fortune-copy-action-table") > -1 &&

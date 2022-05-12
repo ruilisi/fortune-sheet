@@ -44,22 +44,11 @@ export function changeSheet(
     return;
   }
 
-  //   if (server.allowUpdate) {
-  //     $("#luckysheet-cell-main #luckysheet-multipleRange-show").empty();
-  //     server.multipleIndex = 0;
-  //   }
   const file = ctx.luckysheetfile[getSheetIndex(ctx, id)!];
-  //   // 钩子 sheetCreateAfter
-  //   if (isNewSheet) {
-  //     method.createHookFunction("sheetCreateAfter", { sheet: file });
-  //   }
-  //   // 钩子 sheetCopyAfter
-  //   if (isCopySheet) {
-  //     method.createHookFunction("sheetCopyAfter", { sheet: file });
-  //   }
 
-  //   // 钩子函数
-  //   method.createHookFunction("sheetActivate", index, isPivotInitial, isNewSheet);
+  if (ctx.hooks.beforeActivateSheet?.(id) === false) {
+    return;
+  }
 
   storeSheetParamALL(ctx);
 
@@ -89,6 +78,11 @@ export function changeSheet(
 
   //   luckysheetFreezen.initialFreezen(index);
   //   _this.restoreselect();
+  if (ctx.hooks.afterActivateSheet) {
+    setTimeout(() => {
+      ctx.hooks.afterActivateSheet?.(id);
+    });
+  }
 }
 
 export function addSheet(
@@ -100,11 +94,6 @@ export function addSheet(
     // alert("非编辑模式下不允许该操作！");
     return;
   }
-  // 钩子 sheetCreateBefore
-  //   if (!method.createHookFunction("sheetCreateBefore")) {
-  //     return;
-  //   }
-
   const order = ctx.luckysheetfile.length;
   const id = settings.generateSheetId();
 
@@ -125,11 +114,22 @@ export function addSheet(
     pivotTable: null,
     isPivotTable: !!isPivotTable,
   };
+
+  if (ctx.hooks.beforeAddSheet?.(sheetconfig) === false) {
+    return;
+  }
+
   ctx.luckysheetfile.push(sheetconfig);
 
   //   server.saveParam("sha", null, $.extend(true, {}, sheetconfig));
 
   changeSheet(ctx, id, isPivotTable, true);
+
+  if (ctx.hooks.afterAddSheet) {
+    setTimeout(() => {
+      ctx.hooks.afterAddSheet?.(sheetconfig);
+    });
+  }
 }
 
 export function deleteSheet(ctx: Context, id: string) {
@@ -142,10 +142,9 @@ export function deleteSheet(ctx: Context, id: string) {
 
   // const file = ctx.luckysheetfile[arrIndex];
 
-  // // 钩子 sheetDeleteBefore
-  // if (!method.createHookFunction("sheetDeleteBefore", { sheet: file })) {
-  //   return;
-  // }
+  if (ctx.hooks.beforeDeleteSheet?.(id) === false) {
+    return;
+  }
 
   // _this.setSheetHide(index, true);
 
@@ -157,8 +156,11 @@ export function deleteSheet(ctx: Context, id: string) {
 
   // server.saveParam("shd", null, { deleIndex: index });
 
-  // // 钩子 sheetDeleteAfter
-  // method.createHookFunction("sheetDeleteAfter", { sheet: file });
+  if (ctx.hooks.afterDeleteSheet) {
+    setTimeout(() => {
+      ctx.hooks.beforeDeleteSheet?.(id);
+    });
+  }
 }
 
 export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
@@ -168,6 +170,12 @@ export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
   const { sheetconfig } = locale(ctx);
   const oldtxt = editable.dataset.oldText || "";
   const txt = editable.innerText;
+
+  if (
+    ctx.hooks.beforeUpdateSheetName?.(ctx.currentSheetId, oldtxt, txt) === false
+  ) {
+    return;
+  }
 
   if (txt.length === 0) {
     editable.innerText = oldtxt;
@@ -208,10 +216,9 @@ export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
   //   "luckysheet-mousedown-cancel"
   // );
 
-  // // 钩子： sheetEditNameAfter
-  // method.createHookFunction("sheetEditNameAfter", {
-  //   i: ctx.luckysheetfile[index].id,
-  //   oldName: oldtxt,
-  //   newName: txt,
-  // });
+  if (ctx.hooks.afterUpdateSheetName) {
+    setTimeout(() => {
+      ctx.hooks.afterUpdateSheetName?.(ctx.currentSheetId, oldtxt, txt);
+    });
+  }
 }

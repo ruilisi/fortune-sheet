@@ -197,22 +197,19 @@ export class Canvas {
 
       const firstOffset = dataset_row_st === r ? -2 : 0;
       const lastOffset = dataset_row_ed === r ? -2 : 0;
-      // 列标题单元格渲染前触发，return false 则不渲染该单元格
-      // if (
-      //   !method.createHookFunction(
-      //     "rowTitleCellRenderBefore",
-      //     r + 1,
-      //     {
-      //       r,
-      //       top: start_r + offsetTop + firstOffset,
-      //       width: this.sheetCtx.rowHeaderWidth - 1,
-      //       height: end_r - start_r + 1 + lastOffset - firstOffset,
-      //     },
-      //     renderCtx
-      //   )
-      // ) {
-      //   continue;
-      // }
+      // 行标题单元格渲染前触发，return false 则不渲染该单元格
+      if (
+        this.sheetCtx.hooks.beforeRenderRowHeaderCell?.(
+          `${r + 1}`,
+          r,
+          start_r + offsetTop + firstOffset,
+          this.sheetCtx.rowHeaderWidth - 1,
+          end_r - start_r + 1 + lastOffset - firstOffset,
+          renderCtx
+        ) === false
+      ) {
+        continue;
+      }
 
       if (this.sheetCtx.config?.rowhidden?.[r] == null) {
         renderCtx.fillStyle = "#ffffff";
@@ -302,18 +299,14 @@ export class Canvas {
 
       preEndR = end_r;
 
-      // 列标题单元格渲染前触发，return false 则不渲染该单元格
-      // method.createHookFunction(
-      //   "rowTitleCellRenderAfter",
-      //   r + 1,
-      //   {
-      //     r,
-      //     top: start_r + offsetTop + firstOffset,
-      //     width: this.sheetCtx.rowHeaderWidth - 1,
-      //     height: end_r - start_r + 1 + lastOffset - firstOffset,
-      //   },
-      //   renderCtx
-      // );
+      this.sheetCtx.hooks.afterRenderRowHeaderCell?.(
+        `${r + 1}`,
+        r,
+        start_r + offsetTop + firstOffset,
+        this.sheetCtx.rowHeaderWidth - 1,
+        end_r - start_r + 1 + lastOffset - firstOffset,
+        renderCtx
+      );
     }
 
     // Must be restored twice, otherwise it will be enlarged under window.devicePixelRatio = 1.5
@@ -396,21 +389,18 @@ export class Canvas {
 
       const abc = indexToColumnChar(c);
       // 列标题单元格渲染前触发，return false 则不渲染该单元格
-      // if (
-      //   !method.createHookFunction(
-      //     "columnTitleCellRenderBefore",
-      //     abc,
-      //     {
-      //       c,
-      //       left: start_c + offsetLeft - 1,
-      //       width: end_c - start_c,
-      //       height: this.sheetCtx.columnHeaderHeight - 1,
-      //     },
-      //     renderCtx
-      //   )
-      // ) {
-      //   continue;
-      // }
+      if (
+        this.sheetCtx.hooks.beforeRenderColumnHeaderCell?.(
+          abc,
+          c,
+          start_c + offsetLeft - 1,
+          end_c - start_c,
+          this.sheetCtx.columnHeaderHeight - 1,
+          renderCtx
+        ) === false
+      ) {
+        continue;
+      }
 
       if (this.sheetCtx.config?.colhidden?.[c] == null) {
         renderCtx.fillStyle = "#ffffff";
@@ -505,17 +495,14 @@ export class Canvas {
 
       preEndC = end_c;
 
-      // method.createHookFunction(
-      //   "columnTitleCellRenderAfter",
-      //   abc,
-      //   {
-      //     c,
-      //     left: start_c + offsetLeft - 1,
-      //     width: end_c - start_c,
-      //     height: this.sheetCtx.columnHeaderHeight - 1,
-      //   },
-      //   renderCtx
-      // );
+      this.sheetCtx.hooks.afterRenderColumnHeaderCell?.(
+        abc,
+        c,
+        start_c + offsetLeft - 1,
+        end_c - start_c,
+        this.sheetCtx.columnHeaderHeight - 1,
+        renderCtx
+      );
     }
 
     // Must be restored twice, otherwise it will be enlarged under window.devicePixelRatio = 1.5
@@ -689,13 +676,7 @@ export class Canvas {
 
     const bodrder05 = 0.5; // Default 0.5
 
-    // 钩子函数
-    // method.createHookFunction(
-    //   "cellAllRenderBefore",
-    //   flowdata,
-    //   sheetFile,
-    //   renderCtx
-    // );
+    this.sheetCtx.hooks.beforeRenderCellArea?.(flowdata, renderCtx);
 
     for (let r = rowStart; r <= rowEnd; r += 1) {
       let startY;
@@ -773,16 +754,6 @@ export class Canvas {
               continue;
             }
           }
-        } else {
-          // 空单元格渲染前
-          // if(!method.createHookFunction("cellRenderBefore", flowdata[r][c], {
-          //     r:r,
-          //     c:c,
-          //     "startY": cellsize[1],
-          //     "startX":cellsize[0],
-          //     "endY": cellsize[3],
-          //     "endX": cellsize[2]
-          // }, sheetFile,renderCtx)){ continue; }
         }
 
         cellupdate.push({
@@ -842,16 +813,6 @@ export class Canvas {
       if (_.isNil(flowdata[r])) {
         continue;
       }
-
-      // //有值单元格渲染前
-      // if(!method.createHookFunction("cellRenderBefore", flowdata[r][c], {
-      //     r:r,
-      //     c:c,
-      //     "startY": cellsize[1],
-      //     "startX":cellsize[0],
-      //     "endY": cellsize[3],
-      //     "endX": cellsize[2]
-      // }, sheetFile,renderCtx)){ continue; }
 
       if (_.isNil(flowdata[r][c])) {
         // 空单元格
@@ -953,15 +914,6 @@ export class Canvas {
           );
         }
       }
-
-      // method.createHookFunction("cellRenderAfter", flowdata[r][c], {
-      //     r:r,
-      //     c:c,
-      //     "startY": startY,
-      //     "startX": startX,
-      //     "endY": endY,
-      //     "endX": endX
-      // }, sheetFile,renderCtx)
     }
 
     // 合并单元格再处理
@@ -1675,24 +1627,22 @@ export class Canvas {
     ];
 
     // 单元格渲染前，考虑到合并单元格会再次渲染一遍，统一放到这里
-    // if (
-    //   !method.createHookFunction(
-    //     "cellRenderBefore",
-    //     flowdata[r][c],
-    //     {
-    //       r,
-    //       c,
-    //       startY: cellsize[1],
-    //       startX: cellsize[0],
-    //       endY: cellsize[3] + cellsize[1],
-    //       endX: cellsize[2] + cellsize[0],
-    //     },
-    //     sheetmanage.getSheetByIndex(),
-    //     renderCtx
-    //   )
-    // ) {
-    //   return;
-    // }
+    if (
+      this.sheetCtx.hooks.beforeRenderCell?.(
+        flowdata[r][c],
+        {
+          row: r,
+          column: c,
+          startX: cellsize[0],
+          startY: cellsize[1],
+          endX: cellsize[2] + cellsize[0],
+          endY: cellsize[3] + cellsize[1],
+        },
+        renderCtx
+      ) === false
+    ) {
+      return;
+    }
 
     renderCtx.fillRect(cellsize[0], cellsize[1], cellsize[2], cellsize[3]);
 
@@ -1801,20 +1751,18 @@ export class Canvas {
     }
 
     // 单元格渲染后
-    // method.createHookFunction(
-    //   "cellRenderAfter",
-    //   flowdata[r][c],
-    //   {
-    //     r,
-    //     c,
-    //     startY: cellsize[1],
-    //     startX: cellsize[0],
-    //     endY: cellsize[3] + cellsize[1],
-    //     endX: cellsize[2] + cellsize[0],
-    //   },
-    //   sheetmanage.getSheetByIndex(),
-    //   renderCtx
-    // );
+    this.sheetCtx.hooks.afterRenderCell?.(
+      flowdata[r][c],
+      {
+        row: r,
+        column: c,
+        startY: cellsize[1],
+        startX: cellsize[0],
+        endY: cellsize[3] + cellsize[1],
+        endX: cellsize[2] + cellsize[0],
+      },
+      renderCtx
+    );
   }
 
   cellRender(
@@ -1887,24 +1835,22 @@ export class Canvas {
     ];
 
     // 单元格渲染前，考虑到合并单元格会再次渲染一遍，统一放到这里
-    // if (
-    //   !method.createHookFunction(
-    //     "cellRenderBefore",
-    //     flowdata[r][c],
-    //     {
-    //       r,
-    //       c,
-    //       startY: cellsize[1],
-    //       startX: cellsize[0],
-    //       endY: cellsize[3] + cellsize[1],
-    //       endX: cellsize[2] + cellsize[0],
-    //     },
-    //     sheetmanage.getSheetByIndex(),
-    //     renderCtx
-    //   )
-    // ) {
-    //   return;
-    // }
+    if (
+      this.sheetCtx.hooks.beforeRenderCell?.(
+        flowdata[r][c],
+        {
+          row: r,
+          column: c,
+          startY: cellsize[1],
+          startX: cellsize[0],
+          endY: cellsize[3] + cellsize[1],
+          endX: cellsize[2] + cellsize[0],
+        },
+        renderCtx
+      ) === false
+    ) {
+      return;
+    }
 
     renderCtx.fillRect(cellsize[0], cellsize[1], cellsize[2], cellsize[3]);
 
@@ -2315,20 +2261,18 @@ export class Canvas {
     }
 
     // 单元格渲染后
-    // method.createHookFunction(
-    //   "cellRenderAfter",
-    //   flowdata[r][c],
-    //   {
-    //     r,
-    //     c,
-    //     startY: cellsize[1],
-    //     startX: cellsize[0],
-    //     endY: cellsize[3] + cellsize[1],
-    //     endX: cellsize[2] + cellsize[0],
-    //   },
-    //   sheetmanage.getSheetByIndex(),
-    //   renderCtx
-    // );
+    this.sheetCtx.hooks.afterRenderCell?.(
+      flowdata[r]?.[c],
+      {
+        row: r,
+        column: c,
+        startX: cellsize[0],
+        startY: cellsize[1],
+        endX: cellsize[2] + cellsize[0],
+        endY: cellsize[3] + cellsize[1],
+      },
+      renderCtx
+    );
   }
 
   // 溢出单元格渲染

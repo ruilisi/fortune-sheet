@@ -692,7 +692,7 @@ export function updateCell(
   let curv = flowdata[r][c];
 
   // ctx.old value for hook function
-  // const oldValue = JSON.stringify(curv);
+  const oldValue = _.cloneDeep(curv);
 
   const isPrevInline = isInlineStringCell(curv);
   let isCurInline =
@@ -747,10 +747,10 @@ export function updateCell(
   value = value || $input?.innerText;
 
   // Hook function
-  // if (!method.createHookFunction("cellUpdateBefore", r, c, value, isRefresh)) {
-  //   cancelNormalSelected(ctx);
-  //   return;
-  // }
+  if (ctx.hooks.beforeUpdateCell?.(r, c, value) === false) {
+    cancelNormalSelected(ctx);
+    return;
+  }
 
   if (!isCurInline) {
     if (isRealNull(value) && !isPrevInline) {
@@ -1030,36 +1030,13 @@ export function updateCell(
   }
   */
 
-  // setTimeout(() => {
-  //   // Hook function
-  //   method.createHookFunction(
-  //     "cellUpdated",
-  //     r,
-  //     c,
-  //     JSON.parse(oldValue),
-  //     flowdata[r][c],
-  //     isRefresh
-  //   );
-  // }, 0);
+  if (ctx.hooks.afterUpdateCell) {
+    setTimeout(() => {
+      ctx.hooks.afterUpdateCell?.(r, c, oldValue, _.cloneDeep(flowdata[r][c]));
+    });
+  }
 
   ctx.formulaCache.execFunctionGlobalData = null;
-  /*
-  if (isRefresh) {
-    jfrefreshgrid(
-      d,
-      [{ row: [r, r], column: [c, c] }],
-      allParam,
-      isRunExecFunction
-    );
-    // ctx.luckysheetCellUpdate.length = 0; //clear array
-    _this.execFunctionGlobalData = null; // 销毁
-  } else {
-    return {
-      data: d,
-      allParam,
-    };
-  }
-  */
 }
 
 export function getOrigincell(ctx: Context, r: number, c: number, i: string) {

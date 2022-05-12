@@ -13,7 +13,6 @@ import {
   filterPatch,
   patchToOp,
   Op,
-  Selection,
   inverseRowColOptions,
   ensureSheetIndex,
 } from "@fortune-sheet/core";
@@ -52,13 +51,10 @@ export type WorkbookInstance = ReturnType<typeof generateAPIs>;
 type AdditionalProps = {
   onChange?: (data: SheetType[]) => void;
   onOp?: (op: Op[]) => void;
-  hooks?: {
-    onSelectionChange?: (sheetId: string, selection: Selection) => void;
-  };
 };
 
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
-  ({ onChange, onOp, hooks, data: originalData, ...props }, ref) => {
+  ({ onChange, onOp, data: originalData, ...props }, ref) => {
     const [context, setContext] = useState(defaultContext());
     const cellInput = useRef<HTMLDivElement>(null);
     const fxInput = useRef<HTMLDivElement>(null);
@@ -149,12 +145,16 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
 
     useEffect(() => {
       if (context.luckysheet_select_save != null) {
-        hooks?.onSelectionChange?.(
+        mergedSettings.hooks?.afterSelectionChange?.(
           context.currentSheetId,
           context.luckysheet_select_save[0]
         );
       }
-    }, [hooks, context.currentSheetId, context.luckysheet_select_save]);
+    }, [
+      context.currentSheetId,
+      context.luckysheet_select_save,
+      mergedSettings.hooks,
+    ]);
 
     const providerValue = useMemo(
       () => ({
@@ -196,6 +196,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
           draftCtx.lang = mergedSettings.lang;
           draftCtx.allowEdit = mergedSettings.allowEdit;
+          draftCtx.hooks = mergedSettings.hooks;
           // draftCtx.fontList = mergedSettings.fontList;
           if (_.isEmpty(draftCtx.currentSheetId)) {
             initSheetIndex(draftCtx);
@@ -322,6 +323,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       mergedSettings.defaultFontSize,
       mergedSettings.lang,
       mergedSettings.allowEdit,
+      mergedSettings.hooks,
       mergedSettings.generateSheetId,
       setContextWithProduce,
     ]);

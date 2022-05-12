@@ -1,5 +1,125 @@
 import { v4 as uuidv4 } from "uuid";
-import { Sheet } from "./types";
+import { Sheet, Selection, CellMatrix, Cell } from "./types";
+
+export type Hooks = {
+  beforeUpdateCell?: (r: number, c: number, value: any) => boolean;
+  afterUpdateCell?: (
+    row: number,
+    column: number,
+    oldValue: any,
+    newValue: any
+  ) => void;
+  afterSelectionChange?: (sheetId: string, selection: Selection) => void;
+  beforeRenderRowHeaderCell?: (
+    rowNumber: string,
+    rowIndex: number,
+    top: number,
+    width: number,
+    height: number,
+    ctx: CanvasRenderingContext2D
+  ) => boolean;
+  afterRenderRowHeaderCell?: (
+    rowNumber: string,
+    rowIndex: number,
+    top: number,
+    width: number,
+    height: number,
+    ctx: CanvasRenderingContext2D
+  ) => void;
+  beforeRenderColumnHeaderCell?: (
+    columnChar: string,
+    columnIndex: number,
+    left: number,
+    width: number,
+    height: number,
+    ctx: CanvasRenderingContext2D
+  ) => boolean;
+  afterRenderColumnHeaderCell?: (
+    columnChar: string,
+    columnIndex: number,
+    left: number,
+    width: number,
+    height: number,
+    ctx: CanvasRenderingContext2D
+  ) => void;
+  beforeRenderCellArea?: (
+    cells: CellMatrix,
+    ctx: CanvasRenderingContext2D
+  ) => boolean;
+  beforeRenderCell?: (
+    cell: Cell | null,
+    cellInfo: {
+      row: number;
+      column: number;
+      startX: number;
+      startY: number;
+      endX: number;
+      endY: number;
+    },
+    ctx: CanvasRenderingContext2D
+  ) => boolean;
+  afterRenderCell?: (
+    cell: Cell | null,
+    cellInfo: {
+      row: number;
+      column: number;
+      startX: number;
+      startY: number;
+      endX: number;
+      endY: number;
+    },
+    ctx: CanvasRenderingContext2D
+  ) => void;
+  beforeCellMouseDown?: (
+    cell: Cell | null,
+    cellInfo: {
+      row: number;
+      column: number;
+      startRow: number;
+      startColumn: number;
+      endRow: number;
+      endColumn: number;
+    }
+  ) => boolean;
+  afterCellMouseDown?: (
+    cell: Cell | null,
+    cellInfo: {
+      row: number;
+      column: number;
+      startRow: number;
+      startColumn: number;
+      endRow: number;
+      endColumn: number;
+    }
+  ) => void;
+  beforePaste?: (
+    selection: Selection[] | undefined,
+    content: string
+  ) => boolean;
+  beforeUpdateComment?: (row: number, column: number, value: any) => boolean;
+  afterUpdateComment?: (
+    row: number,
+    column: number,
+    oldValue: any,
+    value: any
+  ) => void;
+  beforeInsertComment?: (row: number, column: number) => boolean;
+  afterInsertComment?: (row: number, column: number) => void;
+  beforeDeleteComment?: (row: number, column: number) => boolean;
+  afterDeleteComment?: (row: number, column: number) => void;
+  beforeAddSheet?: (sheet: Sheet) => boolean;
+  afterAddSheet?: (sheet: Sheet) => void;
+  beforeActivateSheet?: (id: string) => boolean;
+  afterActivateSheet?: (id: string) => void;
+  beforeDeleteSheet?: (id: string) => boolean;
+  afterDeleteSheet?: (id: string) => void;
+  beforeUpdateSheetName?: (
+    id: string,
+    oldName: string,
+    newName: string
+  ) => boolean;
+  afterUpdateSheetName?: (id: string, oldName: string, newName: string) => void;
+};
 
 export type Settings = {
   column?: number;
@@ -22,6 +142,7 @@ export type Settings = {
   cellContextMenu?: string[];
   sheetTabContextMenu?: string[];
   generateSheetId?: () => string;
+  hooks?: Hooks;
 };
 
 export const defaultSettings: Required<Settings> = {
@@ -98,4 +219,5 @@ export const defaultSettings: Required<Settings> = {
   ], // 自定义单元格右键菜单
   sheetTabContextMenu: ["delete", "copy", "rename", "color", "hide", "move"], // 自定义底部sheet页右击菜单
   generateSheetId: () => uuidv4(),
+  hooks: {},
 };

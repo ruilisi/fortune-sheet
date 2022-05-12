@@ -2,6 +2,7 @@ import _ from "lodash";
 import { SheetConfig } from ".";
 import { FormulaCache } from "./modules";
 import { normalizeSelection } from "./modules/selection";
+import { Hooks } from "./settings";
 import {
   Sheet,
   Selection,
@@ -136,6 +137,7 @@ export type Context = {
 
   groupValuesRefreshData: any[];
   formulaCache: FormulaCache;
+  hooks: Hooks;
 };
 
 export function defaultContext(): Context {
@@ -253,6 +255,7 @@ export function defaultContext(): Context {
 
     groupValuesRefreshData: [],
     formulaCache: new FormulaCache(), // class will not be frozen by immer, can be mutated at any time.
+    hooks: {},
   };
 }
 

@@ -240,25 +240,26 @@ export function removeEditingComment(ctx: Context, globalCache: GlobalCache) {
   const flowdata = getFlowdata(ctx);
   globalCache.editingCommentBoxEle = undefined;
   if (!flowdata) return;
-  // Hook function
-  //   if (!method.createHookFunction("commentUpdateBefore", r, c, value)) {
-  //     if (!Store.flowdata[r][c].ps.isShow) {
-  //       $(`#${id}`).remove();
-  //     }
-  //   }
+
+  if (ctx.hooks.beforeUpdateComment?.(r, c, value) === false) {
+    return;
+  }
 
   //  const prevCell = _.cloneDeep(flowdata?.[r][c]) || {};
   const cell = flowdata?.[r][c];
   if (!cell?.ps) return;
+
+  const oldValue = cell.ps.value;
   cell.ps.value = value;
   if (!cell.ps.isShow) {
     ctx.commentBoxes = _.filter(ctx.commentBoxes, (v) => v.rc !== `${r}_${c}`);
   }
 
-  // Hook function
-  //   setTimeout(() => {
-  //     method.createHookFunction('commentUpdateAfter',r,c, previousCell, d[r][c])
-  // }, 0);
+  if (ctx.hooks.afterUpdateComment) {
+    setTimeout(() => {
+      ctx.hooks.afterUpdateComment?.(r, c, oldValue, value);
+    });
+  }
 }
 
 export function newComment(
@@ -271,10 +272,9 @@ export function newComment(
   //     return;
   // }
 
-  // Hook function
-  //   if (!method.createHookFunction("commentInsertBefore", r, c)) {
-  //     return;
-  //   }
+  if (ctx.hooks.beforeInsertComment?.(r, c) === false) {
+    return;
+  }
   removeEditingComment(ctx, globalCache);
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
@@ -296,6 +296,12 @@ export function newComment(
     ...getCommentBoxByRC(ctx, flowdata, r, c),
     autoFocus: true,
   };
+
+  if (ctx.hooks.afterInsertComment) {
+    setTimeout(() => {
+      ctx.hooks.afterInsertComment?.(r, c);
+    });
+  }
 }
 
 export function editComment(
@@ -335,20 +341,22 @@ export function deleteComment(
   //     return;
   // }
 
-  // // Hook function
-  // if(!method.createHookFunction('commentDeleteBefore',r,c,Store.flowdata[r][c])){
-  //     return;
-  // }
+  if (ctx.hooks.beforeDeleteComment?.(r, c) === false) {
+    return;
+  }
+
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
+
   const cell = flowdata[r][c];
   if (!cell) return;
   cell.ps = undefined;
 
-  // Hook function
-  //   setTimeout(() => {
-  //     method.createHookFunction("commentDeleteAfter", r, c, Store.flowdata[r][c]);
-  //   }, 0);
+  if (ctx.hooks.afterDeleteComment) {
+    setTimeout(() => {
+      ctx.hooks.afterDeleteComment?.(r, c);
+    });
+  }
 }
 
 export function showComments(

@@ -234,24 +234,18 @@ export function handleCellAreaMouseDown(
   }
 
   // //单元格单击之前
-  // if (
-  //   !method.createHookFunction(
-  //     "cellMousedownBefore",
-  //     ctx.flowdata[row_index][col_index],
-  //     {
-  //       r: row_index,
-  //       c: col_index,
-  //       start_r: row_pre,
-  //       start_c: col_pre,
-  //       end_r: row,
-  //       end_c: col,
-  //     },
-  //     sheetFile,
-  //     luckysheetTableContent
-  //   )
-  // ) {
-  //   return;
-  // }
+  if (
+    ctx.hooks.beforeCellMouseDown?.(flowdata[row_index]?.[col_index], {
+      row: row_index,
+      column: col_index,
+      startRow: row_pre,
+      startColumn: col_pre,
+      endRow: row,
+      endColumn: col,
+    }) === false
+  ) {
+    return;
+  }
 
   // //数据验证 单元格聚焦
   // dataVerificationCtrl.cellFocus(row_index, col_index, true);
@@ -1153,24 +1147,23 @@ export function handleCellAreaMouseDown(
 
   // luckysheetContainerFocus();
 
-  // method.createHookFunction(
-  //   "cellMousedown",
-  //   ctx.flowdata[row_index][col_index],
-  //   {
-  //     r: row_index,
-  //     c: col_index,
-  //     start_r: row_pre,
-  //     start_c: col_pre,
-  //     end_r: row,
-  //     end_c: col,
-  //   },
-  //   sheetFile,
-  //   luckysheetTableContent
-  // );
   ctx.luckysheet_select_save = normalizeSelection(
     ctx,
     ctx.luckysheet_select_save
   );
+
+  if (ctx.hooks.afterCellMouseDown) {
+    setTimeout(() => {
+      ctx.hooks.afterCellMouseDown?.(flowdata[row_index]?.[col_index], {
+        row: row_index,
+        column: col_index,
+        startRow: row_pre,
+        startColumn: col_pre,
+        endRow: row,
+        endColumn: col,
+      });
+    });
+  }
 }
 
 export function handleCellAreaDoubleClick(

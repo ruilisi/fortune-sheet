@@ -62,20 +62,6 @@ export function setCellValue(
 
   const sheet = getSheet(ctx, options);
 
-  // /* cell更新前触发  */
-  // if (
-  //   !method.createHookFunction(
-  //     "cellUpdateBefore",
-  //     row,
-  //     column,
-  //     value,
-  //     isRefresh
-  //   )
-  // ) {
-  //   /* 如果cellUpdateBefore函数返回false 则不执行后续的更新 */
-  //   return;
-  // }
-
   const { data } = sheet;
   // if (data.length === 0) {
   //   data = sheetmanage.buildGridData(file);
@@ -166,19 +152,6 @@ export function setCellValue(
       setCellValueInternal(ctx, row, column, data, value);
     }
   }
-
-  // /* cell更新后触发  */
-  // setTimeout(() => {
-  //   // Hook function
-  //   method.createHookFunction(
-  //     "cellUpdated",
-  //     row,
-  //     column,
-  //     JSON.parse(oldValue),
-  //     ctx.flowdata[row][column],
-  //     isRefresh
-  //   );
-  // }, 0);
 }
 
 export function clearCell(

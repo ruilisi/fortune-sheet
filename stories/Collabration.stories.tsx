@@ -59,7 +59,7 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
     setData(d);
   }, []);
 
-  const onSelectionChange = useCallback(
+  const afterSelectionChange = useCallback(
     (sheetId: string, selection: Selection) => {
       const socket = wsRef.current;
       if (!socket) return;
@@ -113,7 +113,7 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
         onChange={onChange}
         onOp={onOp}
         hooks={{
-          onSelectionChange,
+          afterSelectionChange,
         }}
       />
     </div>
