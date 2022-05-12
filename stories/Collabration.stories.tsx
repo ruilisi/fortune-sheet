@@ -20,6 +20,7 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
   const [error, setError] = useState(false);
   const wsRef = useRef<WebSocket>();
   const workbookRef = useRef<WorkbookInstance>(null);
+  const lastSelection = useRef<any>();
   const { username, userId } = useMemo(() => {
     const _userId = uuidv4();
     return { username: `Guest-${_userId.slice(0, 3)}`, userId: _userId };
@@ -63,6 +64,17 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
     (sheetId: string, selection: Selection) => {
       const socket = wsRef.current;
       if (!socket) return;
+      const s = {
+        r: selection.row[0],
+        c: selection.column[0],
+      };
+      if (
+        lastSelection.current?.r === s.r &&
+        lastSelection.current?.c === s.c
+      ) {
+        return;
+      }
+      lastSelection.current = s;
       socket.send(
         JSON.stringify({
           req: "addPresence",
@@ -71,10 +83,7 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
             username,
             userId,
             color: colors[Math.abs(hashCode(userId)) % colors.length],
-            selection: {
-              r: selection.row[0],
-              c: selection.column[0],
-            },
+            selection: s,
           },
         })
       );
