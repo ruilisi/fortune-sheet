@@ -3,6 +3,7 @@ const express = require("express");
 const { MongoClient } = require("mongodb");
 const SocketServer = require("ws").Server;
 const uuid = require("uuid");
+const _ = require("lodash");
 const { applyOp } = require("./op");
 
 const defaultData = {
@@ -15,6 +16,7 @@ const dbName = "fortune-sheet";
 const collectionName = "workbook";
 const uri = "mongodb://localhost:27017";
 const client = new MongoClient(uri);
+let presences = [];
 
 async function initMongoDB() {
   await client.connect();
@@ -77,14 +79,17 @@ wss.on("connection", (ws) => {
           data: await getData(),
         })
       );
+      ws.send(JSON.stringify({ req: "addPresences", data: presences }));
     } else if (msg.req === "op") {
       await applyOp(client.db(dbName).collection(collectionName), msg.data);
       broadcastToOthers(ws.id, data.toString());
-    } else if (msg.req === "addPresence") {
-      ws.userId = msg.data.userId;
-      ws.username = msg.data.username;
+    } else if (msg.req === "addPresences") {
+      ws.presences = msg.data;
       broadcastToOthers(ws.id, data.toString());
-    } else if (msg.req === "removePresence") {
+      presences = _.differenceBy(presences, msg.data, (v) =>
+        v.userId == null ? v.username : v.userId
+      ).concat(msg.data);
+    } else if (msg.req === "removePresences") {
       broadcastToOthers(ws.id, data.toString());
     }
   });
@@ -93,9 +98,12 @@ wss.on("connection", (ws) => {
     broadcastToOthers(
       ws.id,
       JSON.stringify({
-        req: "removePresence",
-        data: { userId: ws.userId, username: ws.username },
+        req: "removePresences",
+        data: ws.presences,
       })
+    );
+    presences = _.differenceBy(presences, ws.presences, (v) =>
+      v.userId == null ? v.username : v.userId
     );
     delete connections[ws.id];
   });

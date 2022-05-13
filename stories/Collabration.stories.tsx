@@ -39,10 +39,10 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
         setData(msg.data);
       } else if (msg.req === "op") {
         workbookRef.current?.applyOp(msg.data);
-      } else if (msg.req === "addPresence") {
-        workbookRef.current?.addPresence(msg.data);
-      } else if (msg.req === "removePresence") {
-        workbookRef.current?.removePresence(msg.data);
+      } else if (msg.req === "addPresences") {
+        workbookRef.current?.addPresences(msg.data);
+      } else if (msg.req === "removePresences") {
+        workbookRef.current?.removePresences(msg.data);
       }
     };
     socket.onerror = () => {
@@ -77,14 +77,16 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
       lastSelection.current = s;
       socket.send(
         JSON.stringify({
-          req: "addPresence",
-          data: {
-            sheetId,
-            username,
-            userId,
-            color: colors[Math.abs(hashCode(userId)) % colors.length],
-            selection: s,
-          },
+          req: "addPresences",
+          data: [
+            {
+              sheetId,
+              username,
+              userId,
+              color: colors[Math.abs(hashCode(userId)) % colors.length],
+              selection: s,
+            },
+          ],
         })
       );
     },

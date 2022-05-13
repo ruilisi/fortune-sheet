@@ -15,6 +15,7 @@ import {
   SingleRange,
 } from "@fortune-sheet/core";
 import produce, { applyPatches } from "immer";
+import _ from "lodash";
 import { SetContextOptions } from "../../context";
 
 export function generateAPIs(
@@ -209,32 +210,28 @@ export function generateAPIs(
       targetColumn?: number;
     }) => api.scroll(context, scrollbarX, scrollbarY, options),
 
-    addPresence: (presence: Presence) => {
+    addPresences: (newPresences: Presence[]) => {
       setContext((draftCtx) => {
-        const presences = (draftCtx.presences || [])
-          .filter(
-            (v) =>
-              (presence.userId != null && presence.userId !== v.userId) ||
-              presence.username !== v.username
-          )
-          .concat(presence);
-        draftCtx.presences = presences;
+        draftCtx.presences = _.differenceBy(
+          draftCtx.presences || [],
+          newPresences,
+          (v) => (v.userId == null ? v.username : v.userId)
+        ).concat(newPresences);
       });
     },
 
-    removePresence: ({
-      username,
-      userId,
-    }: {
-      username: string;
-      userId?: string;
-    }) => {
+    removePresences: (
+      arr: {
+        username: string;
+        userId?: string;
+      }[]
+    ) => {
       setContext((draftCtx) => {
-        const presences = (draftCtx.presences || []).filter(
-          (v) =>
-            (userId != null && userId !== v.userId) || username !== v.username
-        );
-        draftCtx.presences = presences;
+        if (draftCtx.presences != null) {
+          draftCtx.presences = _.differenceBy(draftCtx.presences, arr, (v) =>
+            v.userId == null ? v.username : v.userId
+          );
+        }
       });
     },
   };

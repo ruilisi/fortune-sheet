@@ -422,7 +422,7 @@ const SheetOverlay: React.FC = () => {
             </div>
           )}
           {(context.presences?.length ?? 0) > 0 &&
-            context.presences!.map((presence) => {
+            context.presences!.map((presence, index) => {
               if (presence.sheetId !== context.currentSheetId) {
                 return null;
               }
@@ -445,7 +445,7 @@ const SheetOverlay: React.FC = () => {
 
               return (
                 <div
-                  key={presence.userId}
+                  key={presence?.userId || index}
                   className="fortune-presence-selection"
                   style={{
                     left: col_pre,
