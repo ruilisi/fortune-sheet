@@ -191,6 +191,8 @@ export const defaultSettings: Required<Settings> = {
     "align-top",
     "align-mid",
     "align-bottom",
+    "text-wrap",
+    "text-rotation",
     "|",
     "freeze",
     "image",

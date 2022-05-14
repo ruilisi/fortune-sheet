@@ -57,8 +57,17 @@ const Toolbar: React.FC<{
   const col = firstSelection?.column_focus;
   const cell =
     flowdata && row != null && col != null ? flowdata?.[row]?.[col] : undefined;
-  const { toolbar, merge, border, freezen, defaultFmt, formula, sort } =
-    locale(context);
+  const {
+    toolbar,
+    merge,
+    border,
+    freezen,
+    defaultFmt,
+    formula,
+    sort,
+    textWrap,
+    rotation,
+  } = locale(context);
   const sheetWidth = context.luckysheetTableContentHW[0];
 
   // rerenders the entire toolbar and trigger recalculation of item locations
@@ -651,6 +660,127 @@ const Toolbar: React.FC<{
           </Combo>
         );
       }
+      if (name === "text-wrap") {
+        const items = [
+          {
+            text: textWrap.clip,
+            iconId: "text-clip",
+            value: "clip",
+          },
+          {
+            text: textWrap.overflow,
+            iconId: "text-overflow",
+            value: "overflow",
+          },
+          {
+            text: textWrap.wrap,
+            iconId: "text-wrap",
+            value: "wrap",
+          },
+        ];
+        let curr = items[0];
+        if (cell?.tb != null) {
+          curr = _.get(items, cell.tb);
+        }
+        return (
+          <Combo iconId={curr.iconId} tooltip={curr.text}>
+            {(setOpen) => (
+              <Select>
+                {items.map(({ text, iconId, value }) => (
+                  <Option
+                    key={value}
+                    onClick={() => {
+                      setContext((ctx) => {
+                        const d = getFlowdata(ctx);
+                        if (d == null) return;
+                        updateFormat(
+                          ctx,
+                          refs.cellInput.current!,
+                          d,
+                          "tb",
+                          value
+                        );
+                      });
+                      setOpen(false);
+                    }}
+                  >
+                    <div className="fortune-toolbar-menu-line">
+                      {text}
+                      <SVGIcon name={iconId} />
+                    </div>
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
+      if (name === "text-rotation") {
+        const items = [
+          { text: rotation.none, iconId: "text-rotation-none", value: "none" },
+          {
+            text: rotation.angleup,
+            iconId: "text-rotation-angleup",
+            value: "angleup",
+          },
+          {
+            text: rotation.angledown,
+            iconId: "text-rotation-angledown",
+            value: "angledown",
+          },
+          {
+            text: rotation.vertical,
+            iconId: "text-rotation-vertical",
+            value: "vertical",
+          },
+          {
+            text: rotation.rotationUp,
+            iconId: "text-rotation-up",
+            value: "rotation-up",
+          },
+          {
+            text: rotation.rotationDown,
+            iconId: "text-rotation-down",
+            value: "rotation-down",
+          },
+        ];
+        let curr = items[0];
+        if (cell?.tr != null) {
+          curr = _.get(items, cell.tr);
+        }
+        return (
+          <Combo iconId={curr.iconId} tooltip={curr.text}>
+            {(setOpen) => (
+              <Select>
+                {items.map(({ text, iconId, value }) => (
+                  <Option
+                    key={value}
+                    onClick={() => {
+                      setContext((ctx) => {
+                        const d = getFlowdata(ctx);
+                        if (d == null) return;
+                        updateFormat(
+                          ctx,
+                          refs.cellInput.current!,
+                          d,
+                          "tr",
+                          value
+                        );
+                      });
+                      setOpen(false);
+                    }}
+                  >
+                    <div className="fortune-toolbar-menu-line">
+                      {text}
+                      <SVGIcon name={iconId} />
+                    </div>
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
       return (
         <Button
           iconId={name}
@@ -688,6 +818,8 @@ const Toolbar: React.FC<{
       hideDialog,
       sort.asc,
       sort.desc,
+      textWrap,
+      rotation,
     ]
   );
 
