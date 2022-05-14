@@ -158,7 +158,7 @@ export function deleteSheet(ctx: Context, id: string) {
 
   if (ctx.hooks.afterDeleteSheet) {
     setTimeout(() => {
-      ctx.hooks.beforeDeleteSheet?.(id);
+      ctx.hooks.afterDeleteSheet?.(id);
     });
   }
 }

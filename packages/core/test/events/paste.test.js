@@ -18,7 +18,7 @@ describe("paste", () => {
       [null, null, null, null],
       [null, null, null, null],
     ];
-    //
+
     document.execCommand = jest.fn();
     const newEvent = new Event("paste");
     const clipboardData = {};
@@ -28,7 +28,7 @@ describe("paste", () => {
     handlePaste(ctx, newEvent);
     expect(document.execCommand).toBeCalledWith("insertText", false, "abcd");
     expect(newEvent.clipboardData.getData).toBeCalledWith("text/plain");
-    //
+
     ctx.luckysheet_copy_save = { copyRange: [] };
     selectionCache.isPasteAction = true;
     clipboardData.getData = jest.fn().mockImplementation((p) => {
