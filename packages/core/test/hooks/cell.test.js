@@ -278,6 +278,8 @@ describe("cell related hooks", () => {
       container,
       fxInput
     );
+    expect(ctx.luckysheet_select_save[0].row_focus).toBe(1);
+    expect(ctx.luckysheet_select_save[0].column_focus).toBe(1);
     expect(parameters[0]).toEqual({ ct: { t: "n" }, v: "50" });
     expect(parameters[1]).toEqual({
       column: 1,
@@ -287,6 +289,30 @@ describe("cell related hooks", () => {
       startColumn: 74,
       startRow: 20,
     });
+
+    const ctxFirst = getContext();
+    ctxFirst.hooks = { beforeCellMouseDown: () => false };
+    handleCellAreaMouseDown(
+      ctxFirst,
+      cache,
+      mouseEvent,
+      cellInput,
+      container,
+      fxInput
+    );
+    expect(ctxFirst.luckysheet_select_save[0].row_focus).toBe(0);
+    expect(ctxFirst.luckysheet_select_save[0].column_focus).toBe(0);
+    ctxFirst.hooks = { beforeCellMouseDown: () => true };
+    handleCellAreaMouseDown(
+      ctxFirst,
+      cache,
+      mouseEvent,
+      cellInput,
+      container,
+      fxInput
+    );
+    expect(ctxFirst.luckysheet_select_save[0].row_focus).toBe(1);
+    expect(ctxFirst.luckysheet_select_save[0].column_focus).toBe(1);
   });
 
   test("afterCellMouseDown", async () => {
