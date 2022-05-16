@@ -2,6 +2,17 @@
 
 _Changes marked with a :warning: contain potential breaking changes depending on your use of the package._
 
+## v0.5.5
+
+- Add support for cells sorting.
+- Add support for text wrapping and text rotation.
+- Add support for showing collabrators' presence.
+- Add support for hooks.
+- Add move sheet in context menu.
+- Add API docs.
+- Merge alignment toolbar buttons.
+- Fix crash on cells filling.
+
 ## v0.5.2
 
 - Add formula search dialog.
@@ -29,8 +40,8 @@ _Changes marked with a :warning: contain potential breaking changes depending on
 ## v0.4.0
 
 - Add support for inserting image.
-- Made more settings work.
 - Add support for sheet tab ordering.
+- Made more settings work.
 - Fix formula calculation.
 - Fix scrollbar style.
 
@@ -41,8 +52,8 @@ _Changes marked with a :warning: contain potential breaking changes depending on
 
 ## v0.3.0
 
-- Implement sheet tab scrolling.
 - Add support for row / column freezing.
+- Implement sheet tab scrolling.
 
 ## v0.2.3
 
@@ -56,9 +67,9 @@ _Changes marked with a :warning: contain potential breaking changes depending on
 
 - Add support for collabration with backend demo.
 - Add support for redo / undo.
-- Add more toolbar buttons.
 - Add support for comment.
 - Add support for server-side rendering.
+- Add more toolbar buttons.
 - Add locale.
 - Implment toolbar tooltip.
 - Implment cell multi selection.
