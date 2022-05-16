@@ -1407,18 +1407,6 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
   italic: handleItalic,
   "strike-through": handleStrikeThrough,
   underline: handleUnderline,
-  "align-left": (ctx: Context, cellInput: HTMLDivElement) =>
-    handleHorizontalAlign(ctx, cellInput, "left"),
-  "align-center": (ctx: Context, cellInput: HTMLDivElement) =>
-    handleHorizontalAlign(ctx, cellInput, "center"),
-  "align-right": (ctx: Context, cellInput: HTMLDivElement) =>
-    handleHorizontalAlign(ctx, cellInput, "right"),
-  "align-top": (ctx: Context, cellInput: HTMLDivElement) =>
-    handleVerticalAlign(ctx, cellInput, "top"),
-  "align-mid": (ctx: Context, cellInput: HTMLDivElement) =>
-    handleVerticalAlign(ctx, cellInput, "middle"),
-  "align-bottom": (ctx: Context, cellInput: HTMLDivElement) =>
-    handleVerticalAlign(ctx, cellInput, "bottom"),
   "clear-format": handleClearFormat,
   "format-painter": handleFormatPainter,
 };
@@ -1428,12 +1416,6 @@ const selectedMap: Record<string, ToolbarItemSelectedFunc> = {
   italic: (cell) => cell?.it === 1,
   "strike-through": (cell) => cell?.cl === 1,
   underline: (cell) => cell?.un === 1,
-  "align-left": (cell) => Number(cell?.ht) === 1,
-  "align-center": (cell) => Number(cell?.ht) === 0,
-  "align-right": (cell) => Number(cell?.ht) === 2,
-  "align-top": (cell) => Number(cell?.vt) === 1,
-  "align-mid": (cell) => Number(cell?.vt) === 0,
-  "align-bottom": (cell) => Number(cell?.vt) === 2,
 };
 
 export function toolbarItemClickHandler(name: string) {

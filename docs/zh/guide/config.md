@@ -113,17 +113,16 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 		"border",
 		"merge-cell",
 		"|",
-		"align-left",
-		"align-center",
-		"align-right",
-		"align-top",
-		"align-mid",
-		"align-bottom",
+		"horizontal-align",
+		"vertical-align",
+		"text-wrap",
+		"text-rotation",
 		"|",
 		"freeze",
+		"sort",
 		"image",
 		"comment",
-		"quick-formula"
+		"quick-formula",
 	]
 	```
 

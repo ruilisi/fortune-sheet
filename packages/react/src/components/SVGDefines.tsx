@@ -63,7 +63,7 @@ const SVGDefines: React.FC = () => (
         <path d="M5 12H13" stroke="#525C6F" strokeWidth="1.5" />
         <path d="M5 17.25L19 17.25" stroke="#525C6F" strokeWidth="1.5" />
       </symbol>
-      <symbol viewBox="0 0 24 24" fill="none" id="align-mid">
+      <symbol viewBox="0 0 24 24" fill="none" id="align-middle">
         <path d="M9.25 16.5L12.0002 13.5L14.75 16.5H9.25Z" fill="#525C6F" />
         <path d="M9.25 7L12.0002 10L14.75 7L9.25 7Z" fill="#525C6F" />
         <rect x="5.5" y="11" width="13" height="1.5" fill="#525C6F" />

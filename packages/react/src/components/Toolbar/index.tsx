@@ -28,6 +28,8 @@ import {
   showImgChooser,
   updateFormat,
   handleSort,
+  handleHorizontalAlign,
+  handleVerticalAlign,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -65,6 +67,7 @@ const Toolbar: React.FC<{
     defaultFmt,
     formula,
     sort,
+    align,
     textWrap,
     rotation,
   } = locale(context);
@@ -244,6 +247,114 @@ const Toolbar: React.FC<{
           </Combo>
         );
       }
+      if (name === "horizontal-align") {
+        const items = [
+          {
+            title: "align-left",
+            text: align.left,
+            value: 1,
+          },
+          {
+            title: "align-center",
+            text: align.center,
+            value: 0,
+          },
+          {
+            title: "align-right",
+            text: align.right,
+            value: 2,
+          },
+        ];
+        return (
+          <Combo
+            iconId={
+              _.find(items, (item) => `${item.value}` === `${cell?.ht}`)
+                ?.title || "align-left"
+            }
+            key={name}
+            tooltip={toolbar.horizontalAlign}
+          >
+            {(setOpen) => (
+              <Select>
+                {items.map(({ text, title }) => (
+                  <Option
+                    key={title}
+                    onClick={() => {
+                      setContext((ctx) => {
+                        handleHorizontalAlign(
+                          ctx,
+                          refs.cellInput.current!,
+                          title.replace("align-", "")
+                        );
+                      });
+                      setOpen(false);
+                    }}
+                  >
+                    <div className="fortune-toolbar-menu-line">
+                      {text}
+                      <SVGIcon name={title} />
+                    </div>
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
+      if (name === "vertical-align") {
+        const items = [
+          {
+            title: "align-top",
+            text: align.top,
+            value: 1,
+          },
+          {
+            title: "align-middle",
+            text: align.middle,
+            value: 0,
+          },
+          {
+            title: "align-bottom",
+            text: align.bottom,
+            value: 2,
+          },
+        ];
+        return (
+          <Combo
+            iconId={
+              _.find(items, (item) => `${item.value}` === `${cell?.vt}`)
+                ?.title || "align-top"
+            }
+            key={name}
+            tooltip={toolbar.verticalAlign}
+          >
+            {(setOpen) => (
+              <Select>
+                {items.map(({ text, title }) => (
+                  <Option
+                    key={title}
+                    onClick={() => {
+                      setContext((ctx) => {
+                        handleVerticalAlign(
+                          ctx,
+                          refs.cellInput.current!,
+                          title.replace("align-", "")
+                        );
+                      });
+                      setOpen(false);
+                    }}
+                  >
+                    <div className="fortune-toolbar-menu-line">
+                      {text}
+                      <SVGIcon name={title} />
+                    </div>
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
       if (name === "undo") {
         return (
           <Button
@@ -270,7 +381,7 @@ const Toolbar: React.FC<{
         return (
           <Button
             iconId={name}
-            tooltip={name}
+            tooltip={toolbar.insertImage}
             key={name}
             onClick={() => showImgChooser()}
           >
@@ -386,8 +497,7 @@ const Toolbar: React.FC<{
           <Combo
             iconId="formula-sum"
             key={name}
-            tooltip={tooltip}
-            text="求和"
+            tooltip={toolbar.autoSum}
             onClick={() =>
               setContext((ctx) => {
                 handleSum(ctx, refs.cellInput.current!, refs.globalCache!);
@@ -625,7 +735,7 @@ const Toolbar: React.FC<{
           <Combo
             iconId="sort-asc"
             key={name}
-            tooltip={tooltip}
+            tooltip={toolbar.sort}
             onClick={() => {
               setContext((ctx) => {
                 handleSort(ctx, true);
@@ -683,7 +793,7 @@ const Toolbar: React.FC<{
           curr = _.get(items, cell.tb);
         }
         return (
-          <Combo iconId={curr.iconId} tooltip={curr.text}>
+          <Combo iconId={curr.iconId} key={name} tooltip={toolbar.textWrap}>
             {(setOpen) => (
               <Select>
                 {items.map(({ text, iconId, value }) => (
@@ -749,7 +859,7 @@ const Toolbar: React.FC<{
           curr = _.get(items, cell.tr);
         }
         return (
-          <Combo iconId={curr.iconId} tooltip={curr.text}>
+          <Combo iconId={curr.iconId} key={name} tooltip={toolbar.textRotate}>
             {(setOpen) => (
               <Select>
                 {items.map(({ text, iconId, value }) => (
@@ -805,19 +915,19 @@ const Toolbar: React.FC<{
       setContext,
       refs.cellInput,
       refs.globalCache,
+      defaultFmt,
+      align,
       handleUndo,
       handleRedo,
       context.luckysheet_select_save,
       flowdata,
-      merge,
-      border,
-      freezen,
-      defaultFmt,
       formula,
       showDialog,
       hideDialog,
-      sort.asc,
-      sort.desc,
+      merge,
+      border,
+      freezen,
+      sort,
       textWrap,
       rotation,
     ]

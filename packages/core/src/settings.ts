@@ -185,20 +185,16 @@ export const defaultSettings: Required<Settings> = {
     "border",
     "merge-cell",
     "|",
-    "align-left",
-    "align-center",
-    "align-right",
-    "align-top",
-    "align-mid",
-    "align-bottom",
+    "horizontal-align",
+    "vertical-align",
     "text-wrap",
     "text-rotation",
     "|",
     "freeze",
+    "sort",
     "image",
     "comment",
     "quick-formula",
-    "sort",
   ], // 自定义工具栏
   cellContextMenu: [
     "copy", // 复制
