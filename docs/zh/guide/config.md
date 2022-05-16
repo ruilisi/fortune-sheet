@@ -149,6 +149,7 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 	[
 		"copy", // 复制
 		"paste", // 粘贴
+		"|",
 		"insert-row", // 插入行
 		"insert-column", // 插入列
 		"delete-row", // 删除选中行
@@ -180,6 +181,7 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 		"rename",
 		"color",
 		"hide",
+		"|",
 		"move"
 	]
 

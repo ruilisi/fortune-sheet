@@ -24,6 +24,13 @@
   margin-right: 5px;
 }
 
+.fortune-context-menu-divider {
+  width: "100%";
+  height: 1px;
+  margin: 4px 0;
+  background-color: #e0e0e0;
+}
+
 .luckysheet-cols-menu .luckysheet-cols-menuitem {
   position: relative;
   color: #333;

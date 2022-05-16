@@ -6,8 +6,9 @@ import {
   insertRowCol,
 } from "@fortune-sheet/core";
 import _ from "lodash";
-import React, { useContext, useMemo, useRef, useLayoutEffect } from "react";
+import React, { useContext, useRef, useLayoutEffect, useCallback } from "react";
 import WorkbookContext, { SetContextOptions } from "../../context";
+import Divider from "./Divider";
 import "./index.css";
 import Menu from "./Menu";
 
@@ -16,214 +17,232 @@ const ContextMenu: React.FC = () => {
   const { context, setContext, settings } = useContext(WorkbookContext);
   const { contextMenu } = context;
   const { rightclick } = locale(context);
-  const menuElements: Record<string, React.ReactNode> = useMemo(() => {
-    const selection = context.luckysheet_select_save?.[0];
-    return {
-      copy: (
-        <Menu
-          key="copy"
-          onClick={() => {
-            setContext((draftCtx) => {
-              handleCopy(draftCtx);
-              draftCtx.contextMenu = undefined;
-            });
-          }}
-        >
-          {rightclick.copy}
-        </Menu>
-      ),
-      paste: (
-        <Menu
-          key="paste"
-          onClick={() => {
-            setContext((draftCtx) => {
-              handlePasteByClick(draftCtx);
-              draftCtx.contextMenu = undefined;
-            });
-          }}
-        >
-          {rightclick.paste}
-        </Menu>
-      ),
-      "insert-column": selection?.row_select
-        ? null
-        : ["left", "right"].map((dir) => (
-            <Menu
-              key={`add-col-${dir}`}
-              onClick={(e) => {
-                const position =
-                  context.luckysheet_select_save?.[0]?.column?.[0];
-                if (position == null) return;
-                const countStr = (e.target as HTMLDivElement).querySelector(
-                  "input"
-                )?.value;
-                if (countStr == null) return;
-                const count = parseInt(countStr, 10);
-                if (count < 1) return;
-                const direction = dir === "left" ? "lefttop" : "rightbottom";
-                const insertRowColOp: SetContextOptions["insertRowColOp"] = {
-                  type: "column",
-                  index: position,
-                  count,
-                  direction,
-                  id: context.currentSheetId,
-                };
-                setContext(
-                  (draftCtx) => {
-                    insertRowCol(draftCtx, insertRowColOp);
-                    draftCtx.contextMenu = undefined;
-                  },
-                  {
-                    insertRowColOp,
-                  }
-                );
-              }}
-            >
-              <>
-                {context.lang?.startsWith("zh") && (
-                  <>
-                    {rightclick.to}
+  const getMenuElement = useCallback(
+    (name: string, i: number) => {
+      const selection = context.luckysheet_select_save?.[0];
+      if (name === "|") {
+        return <Divider key={`divider-${i}`} />;
+      }
+      if (name === "copy") {
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                handleCopy(draftCtx);
+                draftCtx.contextMenu = undefined;
+              });
+            }}
+          >
+            {rightclick.copy}
+          </Menu>
+        );
+      }
+      if (name === "paste") {
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                handlePasteByClick(draftCtx);
+                draftCtx.contextMenu = undefined;
+              });
+            }}
+          >
+            {rightclick.paste}
+          </Menu>
+        );
+      }
+      if (name === "insert-column") {
+        return selection?.row_select
+          ? null
+          : ["left", "right"].map((dir) => (
+              <Menu
+                key={`add-col-${dir}`}
+                onClick={(e) => {
+                  const position =
+                    context.luckysheet_select_save?.[0]?.column?.[0];
+                  if (position == null) return;
+                  const countStr = (e.target as HTMLDivElement).querySelector(
+                    "input"
+                  )?.value;
+                  if (countStr == null) return;
+                  const count = parseInt(countStr, 10);
+                  if (count < 1) return;
+                  const direction = dir === "left" ? "lefttop" : "rightbottom";
+                  const insertRowColOp: SetContextOptions["insertRowColOp"] = {
+                    type: "column",
+                    index: position,
+                    count,
+                    direction,
+                    id: context.currentSheetId,
+                  };
+                  setContext(
+                    (draftCtx) => {
+                      insertRowCol(draftCtx, insertRowColOp);
+                      draftCtx.contextMenu = undefined;
+                    },
+                    {
+                      insertRowColOp,
+                    }
+                  );
+                }}
+              >
+                <>
+                  {context.lang?.startsWith("zh") && (
+                    <>
+                      {rightclick.to}
+                      <span className={`luckysheet-cols-rows-shift-${dir}`}>
+                        {(rightclick as any)[dir]}
+                      </span>
+                    </>
+                  )}
+                  {`${rightclick.insert}  `}
+                  <input
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    type="text"
+                    className="luckysheet-mousedown-cancel"
+                    placeholder={rightclick.number}
+                    defaultValue="1"
+                  />
+                  <span className="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">
+                    {`${rightclick.column}  `}
+                  </span>
+                  {!context.lang?.startsWith("zh") && (
                     <span className={`luckysheet-cols-rows-shift-${dir}`}>
                       {(rightclick as any)[dir]}
                     </span>
-                  </>
-                )}
-                {`${rightclick.insert}  `}
-                <input
-                  onClick={(e) => e.stopPropagation()}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  type="text"
-                  className="luckysheet-mousedown-cancel"
-                  placeholder={rightclick.number}
-                  defaultValue="1"
-                />
-                <span className="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">
-                  {`${rightclick.column}  `}
-                </span>
-                {!context.lang?.startsWith("zh") && (
-                  <span className={`luckysheet-cols-rows-shift-${dir}`}>
-                    {(rightclick as any)[dir]}
+                  )}
+                </>
+              </Menu>
+            ));
+      }
+      if (name === "insert-row") {
+        return selection?.column_select
+          ? null
+          : ["top", "bottom"].map((dir) => (
+              <Menu
+                key={`add-row-${dir}`}
+                onClick={(e, container) => {
+                  const position =
+                    context.luckysheet_select_save?.[0]?.row?.[0];
+                  if (position == null) return;
+                  const countStr = container.querySelector("input")?.value;
+                  if (countStr == null) return;
+                  const count = parseInt(countStr, 10);
+                  if (count < 1) return;
+                  const direction = dir === "top" ? "lefttop" : "rightbottom";
+                  const insertRowColOp: SetContextOptions["insertRowColOp"] = {
+                    type: "row",
+                    index: position,
+                    count,
+                    direction,
+                    id: context.currentSheetId,
+                  };
+                  setContext(
+                    (draftCtx) => {
+                      insertRowCol(draftCtx, insertRowColOp);
+                      draftCtx.contextMenu = undefined;
+                    },
+                    { insertRowColOp }
+                  );
+                }}
+              >
+                <>
+                  {context.lang?.startsWith("zh") && (
+                    <>
+                      {rightclick.to}
+                      <span className={`luckysheet-cols-rows-shift-${dir}`}>
+                        {(rightclick as any)[dir]}
+                      </span>
+                    </>
+                  )}
+                  {`${rightclick.insert}  `}
+                  <input
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    type="text"
+                    className="luckysheet-mousedown-cancel"
+                    placeholder={rightclick.number}
+                    defaultValue="1"
+                  />
+                  <span className="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">
+                    {`${rightclick.row}  `}
                   </span>
-                )}
-              </>
-            </Menu>
-          )),
-      "insert-row": selection?.column_select
-        ? null
-        : ["top", "bottom"].map((dir) => (
-            <Menu
-              key={`add-row-${dir}`}
-              onClick={(e, container) => {
-                const position = context.luckysheet_select_save?.[0]?.row?.[0];
-                if (position == null) return;
-                const countStr = container.querySelector("input")?.value;
-                if (countStr == null) return;
-                const count = parseInt(countStr, 10);
-                if (count < 1) return;
-                const direction = dir === "top" ? "lefttop" : "rightbottom";
-                const insertRowColOp: SetContextOptions["insertRowColOp"] = {
-                  type: "row",
-                  index: position,
-                  count,
-                  direction,
-                  id: context.currentSheetId,
-                };
-                setContext(
-                  (draftCtx) => {
-                    insertRowCol(draftCtx, insertRowColOp);
-                    draftCtx.contextMenu = undefined;
-                  },
-                  { insertRowColOp }
-                );
-              }}
-            >
-              <>
-                {context.lang?.startsWith("zh") && (
-                  <>
-                    {rightclick.to}
+                  {!context.lang?.startsWith("zh") && (
                     <span className={`luckysheet-cols-rows-shift-${dir}`}>
                       {(rightclick as any)[dir]}
                     </span>
-                  </>
-                )}
-                {`${rightclick.insert}  `}
-                <input
-                  onClick={(e) => e.stopPropagation()}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  type="text"
-                  className="luckysheet-mousedown-cancel"
-                  placeholder={rightclick.number}
-                  defaultValue="1"
-                />
-                <span className="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">
-                  {`${rightclick.row}  `}
-                </span>
-                {!context.lang?.startsWith("zh") && (
-                  <span className={`luckysheet-cols-rows-shift-${dir}`}>
-                    {(rightclick as any)[dir]}
-                  </span>
-                )}
-              </>
-            </Menu>
-          )),
-      "delete-column": selection?.row_select ? null : (
-        <Menu
-          key="delete-col"
-          onClick={() => {
-            if (!selection) return;
-            const [st_index, ed_index] = selection.column;
-            const deleteRowColOp: SetContextOptions["deleteRowColOp"] = {
-              type: "column",
-              start: st_index,
-              end: ed_index,
-              id: context.currentSheetId,
-            };
-            setContext(
-              (draftCtx) => {
-                deleteRowCol(draftCtx, deleteRowColOp);
-                draftCtx.contextMenu = undefined;
-              },
-              { deleteRowColOp }
-            );
-          }}
-        >
-          {rightclick.deleteSelected}
-          {rightclick.column}
-        </Menu>
-      ),
-      "delete-row": selection?.column_select ? null : (
-        <Menu
-          key="delete-row"
-          onClick={() => {
-            if (!selection) return;
-            const [st_index, ed_index] = selection.row;
-            const deleteRowColOp: SetContextOptions["deleteRowColOp"] = {
-              type: "row",
-              start: st_index,
-              end: ed_index,
-              id: context.currentSheetId,
-            };
-            setContext(
-              (draftCtx) => {
-                deleteRowCol(draftCtx, deleteRowColOp);
-                draftCtx.contextMenu = undefined;
-              },
-              { deleteRowColOp }
-            );
-          }}
-        >
-          {rightclick.deleteSelected}
-          {rightclick.row}
-        </Menu>
-      ),
-    };
-  }, [
-    context.currentSheetId,
-    context.lang,
-    context.luckysheet_select_save,
-    rightclick,
-    setContext,
-  ]);
+                  )}
+                </>
+              </Menu>
+            ));
+      }
+      if (name === "delete-column") {
+        return selection?.row_select ? null : (
+          <Menu
+            key="delete-col"
+            onClick={() => {
+              if (!selection) return;
+              const [st_index, ed_index] = selection.column;
+              const deleteRowColOp: SetContextOptions["deleteRowColOp"] = {
+                type: "column",
+                start: st_index,
+                end: ed_index,
+                id: context.currentSheetId,
+              };
+              setContext(
+                (draftCtx) => {
+                  deleteRowCol(draftCtx, deleteRowColOp);
+                  draftCtx.contextMenu = undefined;
+                },
+                { deleteRowColOp }
+              );
+            }}
+          >
+            {rightclick.deleteSelected}
+            {rightclick.column}
+          </Menu>
+        );
+      }
+      if (name === "delete-row") {
+        return selection?.column_select ? null : (
+          <Menu
+            key="delete-row"
+            onClick={() => {
+              if (!selection) return;
+              const [st_index, ed_index] = selection.row;
+              const deleteRowColOp: SetContextOptions["deleteRowColOp"] = {
+                type: "row",
+                start: st_index,
+                end: ed_index,
+                id: context.currentSheetId,
+              };
+              setContext(
+                (draftCtx) => {
+                  deleteRowCol(draftCtx, deleteRowColOp);
+                  draftCtx.contextMenu = undefined;
+                },
+                { deleteRowColOp }
+              );
+            }}
+          >
+            {rightclick.deleteSelected}
+            {rightclick.row}
+          </Menu>
+        );
+      }
+      return null;
+    },
+    [
+      context.currentSheetId,
+      context.lang,
+      context.luckysheet_select_save,
+      rightclick,
+      setContext,
+    ]
+  );
 
   useLayoutEffect(() => {
     // re-position the context menu if it overflows the window
@@ -268,7 +287,7 @@ const ContextMenu: React.FC = () => {
       onContextMenu={(e) => e.stopPropagation()}
       style={{ left: contextMenu.x, top: contextMenu.y }}
     >
-      {settings.cellContextMenu.map((menu) => menuElements[menu])}
+      {settings.cellContextMenu.map((menu, i) => getMenuElement(menu, i))}
     </div>
   );
 };

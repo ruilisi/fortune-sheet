@@ -148,6 +148,7 @@ The following are all supported setting parameters
 	[
 		"copy", // 复制
 		"paste", // 粘贴
+		"|",
 		"insert-row", // 插入行
 		"insert-column", // 插入列
 		"delete-row", // 删除选中行
@@ -179,6 +180,7 @@ The following are all supported setting parameters
 		"rename",
 		"color",
 		"hide",
+		"|",
 		"move"
 	]
 

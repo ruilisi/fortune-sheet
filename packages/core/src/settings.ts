@@ -199,6 +199,7 @@ export const defaultSettings: Required<Settings> = {
   cellContextMenu: [
     "copy", // 复制
     "paste", // 粘贴
+    "|",
     "insert-row", // 插入行
     "insert-column", // 插入列
     "delete-row", // 删除选中行
@@ -215,7 +216,15 @@ export const defaultSettings: Required<Settings> = {
     "data", // 数据验证
     "cell-format", // 设置单元格格式
   ], // 自定义单元格右键菜单
-  sheetTabContextMenu: ["delete", "copy", "rename", "color", "hide", "move"], // 自定义底部sheet页右击菜单
+  sheetTabContextMenu: [
+    "delete",
+    "copy",
+    "rename",
+    "color",
+    "hide",
+    "|",
+    "move",
+  ], // 自定义底部sheet页右击菜单
   generateSheetId: () => uuidv4(),
   hooks: {},
 };
