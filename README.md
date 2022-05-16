@@ -34,7 +34,7 @@ Take a look at the live demo at [fortune-sheet-demo](https://ruilisi.github.io/f
 </p>
 
 ## Attention
-This project is in the state of early development, APIs may have significant change in the future, use with caution in production.
+Before stable release of 1.0, input data structure and APIs may change during development. If you encounter errors after upgrading a version, check [Changelog](./CHANGELOG.md) and [Migration Guide](#migrating-data-from-luckysheet).
 
 ## Improvements to Luckysheet
 
@@ -53,7 +53,7 @@ This project is in the state of early development, APIs may have significant cha
 
 ## Features
 
-- Data structure is mostly compatible with Luckysheet (see [migration guide](#migrating-data-from-luckysheet)).
+- Data structure is mostly compatible with Luckysheet (see [Migration Guide](#migrating-data-from-luckysheet)).
 - **Formatting**: style, text alignment and rotation, text truncation, overflow, automatic line wrapping, multiple data types, cell segmentation style
 - **Cells**: multiple selection, merge cells
 - **Row & column**: insert, delete rows or columns
@@ -76,7 +76,9 @@ This project is in the state of early development, APIs may have significant cha
 - Excel import and export.
 - Support Vue.
 - More features:
-  - filter, sort
+  - ✅ sort
+  - filter
+  - ✅ hooks
   - conditional formatting
   - drag and drop
   - find and replace

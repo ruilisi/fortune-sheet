@@ -30,7 +30,7 @@
 项目的在线Demo：[fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/)
 
 ## 注意
-本项目处于早期开发阶段，API可能在将来发生巨大变化，请谨慎在生产环境使用。
+在稳定版1.0发布之前，输入的数据结构和API可能会发生变动。如果你在升级版本后遇到了错误，可以查看[Changelog](./CHANGELOG.md) 和 [迁移指南](#迁移luckysheet数据).
 
 ## 对Luckysheet的改进
 
@@ -72,7 +72,9 @@
 - Excel 导入和导出.
 - 支持Vue.
 - 更多功能:
-  - 筛选，排序
+  - ✅ 排序
+  - 筛选
+  - ✅ 事件钩子
   - 条件格式
   - 拖拽
   - 查找和替换
