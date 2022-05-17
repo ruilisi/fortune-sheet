@@ -803,7 +803,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  box-sizing: border-box;
+  box-sizing: content-box;
   color: #fff;
 }
 
@@ -811,4 +811,5 @@
   position: absolute;
   border-style: solid;
   border-width: 1;
+  opacity: 0.7;
 }

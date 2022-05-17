@@ -23,7 +23,7 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
   const lastSelection = useRef<any>();
   const { username, userId } = useMemo(() => {
     const _userId = uuidv4();
-    return { username: `Guest-${_userId.slice(0, 3)}`, userId: _userId };
+    return { username: `User-${_userId.slice(0, 3)}`, userId: _userId };
   }, []);
 
   useEffect(() => {

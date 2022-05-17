@@ -453,6 +453,7 @@ const SheetOverlay: React.FC = () => {
                     width,
                     height,
                     borderColor: color,
+                    borderWidth: 1,
                   }}
                 >
                   <div
