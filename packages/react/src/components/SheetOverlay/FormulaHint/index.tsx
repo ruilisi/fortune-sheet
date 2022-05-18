@@ -1,9 +1,11 @@
+import { locale } from "@fortune-sheet/core";
 import React, { useContext } from "react";
 import WorkbookContext from "../../../context";
 import "./index.css";
 
 const FormulaHint: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
   const { context } = useContext(WorkbookContext);
+  const { formulaMore } = locale(context);
   if (!context.functionHint) return null;
 
   const fn = context.formulaCache.functionlistMap[context.functionHint];
@@ -53,7 +55,9 @@ const FormulaHint: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
       </div>
       <div className="luckysheet-formula-help-content">
         <div className="luckysheet-formula-help-content-example">
-          <div className="luckysheet-arguments-help-section-title">示例</div>
+          <div className="luckysheet-arguments-help-section-title">
+            {formulaMore.helpExample}
+          </div>
           <div className="luckysheet-arguments-help-formula">
             <span className="luckysheet-arguments-help-function-name">
               {fn.n}
@@ -77,7 +81,7 @@ const FormulaHint: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
         <div className="luckysheet-formula-help-content-detail">
           <div className="luckysheet-arguments-help-section">
             <div className="luckysheet-arguments-help-section-title luckysheet-arguments-help-parameter-name">
-              摘要
+              {formulaMore.helpAbstract}
             </div>
             <span className="luckysheet-arguments-help-parameter-content">
               {fn.d}
@@ -91,12 +95,12 @@ const FormulaHint: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
                 {param.name}
                 {param.repeat === "y" && (
                   <span className="luckysheet-arguments-help-argument-info">
-                    ...-可重复
+                    ...-{formulaMore.allowRepeatText}
                   </span>
                 )}
                 {param.require === "o" && (
                   <span className="luckysheet-arguments-help-argument-info">
-                    -[可选]
+                    -[{formulaMore.allowOptionText}]
                   </span>
                 )}
               </div>

@@ -11961,8 +11961,8 @@ export default {
     execfunctionSelfErrorResult:
       "The formula cannot refer to its own cell, which will lead to inaccurate calculation results",
 
-    allowRepeatText: "Repeat",
-    allowOptionText: "Option",
+    allowRepeatText: "Repeatable",
+    allowOptionText: "Optional",
 
     selectCategory: "Or select a category",
   },
