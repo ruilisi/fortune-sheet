@@ -2374,7 +2374,7 @@ function updateDropCell(ctx: Context) {
             )}`;
             const v = formula.execfunction(ctx, f, j, i);
 
-            formula.execFunctionGroup(ctx, i, j, v[1], undefined, d);
+            formula.execFunctionGroup(ctx, j, i, v[1], undefined, d);
 
             [, cell.v, cell.f] = v;
 
@@ -2485,7 +2485,7 @@ function updateDropCell(ctx: Context) {
             )}`;
             const v = formula.execfunction(ctx, f, j, i);
 
-            formula.execFunctionGroup(ctx, i, j, v[1], undefined, d);
+            formula.execFunctionGroup(ctx, j, i, v[1], undefined, d);
 
             [, cell.v, cell.f] = v;
 
@@ -2592,7 +2592,7 @@ function updateDropCell(ctx: Context) {
             )}`;
             const v = formula.execfunction(ctx, f, i, j);
 
-            formula.execFunctionGroup(ctx, i, j, v[1], undefined, d);
+            formula.execFunctionGroup(ctx, j, i, v[1], undefined, d);
 
             [, cell.v, cell.f] = v;
 
@@ -2690,7 +2690,7 @@ function updateDropCell(ctx: Context) {
             )}`;
             const v = formula.execfunction(ctx, f, i, j);
 
-            formula.execFunctionGroup(ctx, i, j, v[1], undefined, d);
+            formula.execFunctionGroup(ctx, j, i, v[1], undefined, d);
 
             [, cell.v, cell.f] = v;
 

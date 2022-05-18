@@ -734,13 +734,11 @@ export function autoSelectionFormula(
   }
   if (!ctx.luckysheet_select_save) return;
 
-  for (let s = 0; s < ctx.luckysheet_select_save.length; s += 1) {
-    const st_r = ctx.luckysheet_select_save[s].row[0];
-    const ed_r = ctx.luckysheet_select_save[s].row[1];
-    const st_c = ctx.luckysheet_select_save[s].column[0];
-    const ed_c = ctx.luckysheet_select_save[s].column[1];
-    const row_index = ctx.luckysheet_select_save[s].row_focus;
-    const col_index = ctx.luckysheet_select_save[s].column_focus;
+  _.forEach(ctx.luckysheet_select_save, (selection) => {
+    const [st_r, ed_r] = selection.row;
+    const [st_c, ed_c] = selection.column;
+    const row_index = selection.row_focus;
+    const col_index = selection.column_focus;
 
     if (st_r === ed_r && st_c === ed_c) {
       if (ed_r - 1 < 0 && ed_c - 1 < 0) {
@@ -834,7 +832,7 @@ export function autoSelectionFormula(
     }
 
     isfalse = isfalse && isfalse;
-  }
+  });
 
   if (!isfalse) {
     ctx.formulaCache.execFunctionExist.reverse();
