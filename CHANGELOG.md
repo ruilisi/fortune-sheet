@@ -2,6 +2,12 @@
 
 _Changes marked with a :warning: contain potential breaking changes depending on your use of the package._
 
+## v0.5.6
+
+- Refine collabrator box style.
+- Fix an editing bug in collabration.
+- Fix wrong formula calculation when filling cell.
+
 ## v0.5.5
 
 - Add support for cells sorting.
