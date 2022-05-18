@@ -26,11 +26,14 @@ import WorkbookContext from "../../context";
 import ContentEditable from "./ContentEditable";
 import FormulaSearch from "./FormulaSearch";
 import FormulaHint from "./FormulaHint";
+import usePrevious from "../../hooks/usePrevious";
 
 const InputBox: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const inputRef = useRef<HTMLDivElement>(null);
   const lastKeyDownEventRef = useRef<KeyboardEvent>();
+  const prevCellUpdate = usePrevious<any[]>(context.luckysheetCellUpdate);
+  const prevSheetId = usePrevious<string>(context.currentSheetId);
   const firstSelection = context.luckysheet_select_save?.[0];
 
   const inputBoxStyle = useMemo(() => {
@@ -56,6 +59,13 @@ const InputBox: React.FC = () => {
     if (firstSelection && context.luckysheetCellUpdate.length > 0) {
       if (refs.globalCache.doNotUpdateCell) {
         delete refs.globalCache.doNotUpdateCell;
+        return;
+      }
+      if (
+        _.isEqual(prevCellUpdate, context.luckysheetCellUpdate) &&
+        prevSheetId === context.currentSheetId
+      ) {
+        // data change by a collabrative update should not trigger this effect
         return;
       }
       const flowdata = getFlowdata(context);

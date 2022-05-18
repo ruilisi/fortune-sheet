@@ -26,18 +26,28 @@ import ContentEditable from "../SheetOverlay/ContentEditable";
 import FormulaSearch from "../SheetOverlay/FormulaSearch";
 import FormulaHint from "../SheetOverlay/FormulaHint";
 import NameBox from "./NameBox";
+import usePrevious from "../../hooks/usePrevious";
 
 const FxEditor: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const [focused, setFocused] = useState(false);
   const lastKeyDownEventRef = useRef<KeyboardEvent>();
   const inputContainerRef = useRef<HTMLDivElement>(null);
+  const firstSelection = context.luckysheet_select_save?.[0];
+  const prevFirstSelection = usePrevious(firstSelection);
+  const prevSheetId = usePrevious(context.currentSheetId);
 
   useEffect(() => {
+    if (
+      _.isEqual(prevFirstSelection, firstSelection) &&
+      context.currentSheetId === prevSheetId
+    ) {
+      // data change by a collabrative update should not trigger this effect
+      return;
+    }
     const d = getFlowdata(context);
     let value = "";
-    if ((context.luckysheet_select_save?.length ?? 0) > 0) {
-      const [firstSelection] = context.luckysheet_select_save!;
+    if (firstSelection) {
       const r = firstSelection.row_focus;
       const c = firstSelection.column_focus;
       if (_.isNil(r) || _.isNil(c)) return;
