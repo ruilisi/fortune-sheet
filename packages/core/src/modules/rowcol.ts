@@ -416,60 +416,26 @@ export function insertRowCol(
   }
 
   // 冻结配置变动
-  // const newFreezen = { freezenhorizontaldata: null, freezenverticaldata: null };
-  // if (luckysheetFreezen.freezenhorizontaldata != null && type === "row") {
-  //   const freezen_scrollTop = luckysheetFreezen.freezenhorizontaldata[2];
-  //   let freezen_row_st = luckysheetFreezen.freezenhorizontaldata[1] - 1;
-
-  //   if (freezen_row_st === index && direction === "lefttop") {
-  //     freezen_row_st += value;
-  //   } else if (freezen_row_st > index) {
-  //     freezen_row_st += value;
-  //   }
-
-  //   const freezen_top =
-  //     ctx.visibledatarow[freezen_row_st] -
-  //     2 -
-  //     freezen_scrollTop +
-  //     ctx.columnHeaderHeight;
-
-  //   newFreezen.freezenhorizontaldata = [
-  //     ctx.visibledatarow[freezen_row_st],
-  //     freezen_row_st + 1,
-  //     freezen_scrollTop,
-  //     luckysheetFreezen.cutVolumn(ctx.visibledatarow, freezen_row_st + 1),
-  //     freezen_top,
-  //   ];
-  // } else {
-  //   newFreezen.freezenhorizontaldata = luckysheetFreezen.freezenhorizontaldata;
-  // }
-
-  // if (luckysheetFreezen.freezenverticaldata != null && type === "column") {
-  //   const freezen_scrollLeft = luckysheetFreezen.freezenverticaldata[2];
-  //   let freezen_col_st = luckysheetFreezen.freezenverticaldata[1] - 1;
-
-  //   if (freezen_col_st === index && direction === "lefttop") {
-  //     freezen_col_st += value;
-  //   } else if (freezen_col_st > index) {
-  //     freezen_col_st += value;
-  //   }
-
-  //   const freezen_left =
-  //     ctx.visibledatacolumn[freezen_col_st] -
-  //     2 -
-  //     freezen_scrollLeft +
-  //     ctx.rowHeaderWidth;
-
-  //   newFreezen.freezenverticaldata = [
-  //     ctx.visibledatacolumn[freezen_col_st],
-  //     freezen_col_st + 1,
-  //     freezen_scrollLeft,
-  //     luckysheetFreezen.cutVolumn(ctx.visibledatacolumn, freezen_col_st + 1),
-  //     freezen_left,
-  //   ];
-  // } else {
-  //   newFreezen.freezenverticaldata = luckysheetFreezen.freezenverticaldata;
-  // }
+  const { frozen } = file;
+  if (frozen) {
+    const normalizedIndex = direction === "lefttop" ? index - 1 : index;
+    if (
+      type === "row" &&
+      (frozen.type === "rangeRow" || frozen.type === "rangeBoth")
+    ) {
+      if ((frozen.range?.row_focus ?? -1) > normalizedIndex) {
+        frozen.range!.row_focus += count;
+      }
+    }
+    if (
+      type === "column" &&
+      (frozen.type === "rangeColumn" || frozen.type === "rangeBoth")
+    ) {
+      if ((frozen.range?.column_focus ?? -1) > normalizedIndex) {
+        frozen.range!.column_focus += count;
+      }
+    }
+  }
 
   // 数据验证配置变动
   const { dataVerification } = file;
@@ -1434,88 +1400,27 @@ export function deleteRowCol(
   }
 
   // 冻结配置变动
-  // const newFreezen = { freezenhorizontaldata: null, freezenverticaldata: null };
-  // if (luckysheetFreezen.freezenhorizontaldata != null && type == "row") {
-  //   const freezen_scrollTop = luckysheetFreezen.freezenhorizontaldata[2];
-  //   let freezen_st = luckysheet_searcharray(
-  //     ctx.visibledatarow,
-  //     freezen_scrollTop
-  //   );
-  //   if (freezen_st == -1) {
-  //     freezen_st = 0;
-  //   }
-
-  //   let freezen_row_st = luckysheetFreezen.freezenhorizontaldata[1] - 1;
-
-  //   if (freezen_row_st >= st) {
-  //     if (freezen_row_st < ed) {
-  //       freezen_row_st = st - 1;
-  //     } else {
-  //       freezen_row_st -= slen;
-  //     }
-  //   }
-
-  //   if (freezen_row_st < freezen_st) {
-  //     freezen_row_st = freezen_st;
-  //   }
-
-  //   const freezen_top =
-  //     ctx.visibledatarow[freezen_row_st] -
-  //     2 -
-  //     freezen_scrollTop +
-  //     ctx.columnHeaderHeight;
-
-  //   newFreezen.freezenhorizontaldata = [
-  //     ctx.visibledatarow[freezen_row_st],
-  //     freezen_row_st + 1,
-  //     freezen_scrollTop,
-  //     luckysheetFreezen.cutVolumn(ctx.visibledatarow, freezen_row_st + 1),
-  //     freezen_top,
-  //   ];
-  // } else {
-  //   newFreezen.freezenhorizontaldata = luckysheetFreezen.freezenhorizontaldata;
-  // }
-
-  // if (luckysheetFreezen.freezenverticaldata != null && type == "column") {
-  //   const freezen_scrollLeft = luckysheetFreezen.freezenverticaldata[2];
-  //   let freezen_st2 = luckysheet_searcharray(
-  //     ctx.visibledatacolumn,
-  //     freezen_scrollLeft
-  //   );
-  //   if (freezen_st2 == -1) {
-  //     freezen_st2 = 0;
-  //   }
-
-  //   let freezen_col_st = luckysheetFreezen.freezenverticaldata[1] - 1;
-
-  //   if (freezen_col_st >= st) {
-  //     if (freezen_col_st < ed) {
-  //       freezen_col_st = st - 1;
-  //     } else {
-  //       freezen_col_st -= slen;
-  //     }
-  //   }
-
-  //   if (freezen_col_st < freezen_st2) {
-  //     freezen_col_st = freezen_st2;
-  //   }
-
-  //   const freezen_left =
-  //     ctx.visibledatacolumn[freezen_col_st] -
-  //     2 -
-  //     freezen_scrollLeft +
-  //     ctx.rowHeaderWidth;
-
-  //   newFreezen.freezenverticaldata = [
-  //     ctx.visibledatacolumn[freezen_col_st],
-  //     freezen_col_st + 1,
-  //     freezen_scrollLeft,
-  //     luckysheetFreezen.cutVolumn(ctx.visibledatacolumn, freezen_col_st + 1),
-  //     freezen_left,
-  //   ];
-  // } else {
-  //   newFreezen.freezenverticaldata = luckysheetFreezen.freezenverticaldata;
-  // }
+  const { frozen } = file;
+  if (frozen) {
+    if (
+      type === "row" &&
+      (frozen.type === "rangeRow" || frozen.type === "rangeBoth")
+    ) {
+      if ((frozen.range?.row_focus ?? -1) >= start) {
+        frozen.range!.row_focus -=
+          Math.min(end, frozen.range!.row_focus) - start + 1;
+      }
+    }
+    if (
+      type === "column" &&
+      (frozen.type === "rangeColumn" || frozen.type === "rangeBoth")
+    ) {
+      if ((frozen.range?.column_focus ?? -1) >= start) {
+        frozen.range!.column_focus -=
+          Math.min(end, frozen.range!.column_focus) - start + 1;
+      }
+    }
+  }
 
   // 数据验证配置变动
   const { dataVerification } = file;
