@@ -27,3 +27,44 @@ export function moveToEnd(obj: HTMLDivElement) {
     range.select();
   }
 }
+
+function isInPage(node: Node) {
+  return node === document.body ? false : document.body.contains(node);
+}
+
+export function selectTextContent(ele: HTMLElement) {
+  if (window.getSelection) {
+    const range = document.createRange();
+    const content = ele.firstChild as Text;
+    if (content) {
+      range.setStart(content, 0);
+      range.setEnd(content, content.length);
+      if (range.startContainer && isInPage(range.startContainer)) {
+        window.getSelection()?.removeAllRanges();
+        window.getSelection()?.addRange(range);
+      }
+    }
+    // @ts-ignore
+  } else if (document.selection) {
+    // @ts-ignore
+    const range = document.body.createTextRange();
+    range.moveToElementText(ele);
+    range.select();
+  }
+}
+
+export function selectTextContentCross(sEle: HTMLElement, eEle: HTMLElement) {
+  if (window.getSelection) {
+    const range = document.createRange();
+    const sContent = sEle.firstChild;
+    const eContent = eEle.firstChild as Text;
+    if (sContent && eContent) {
+      range.setStart(sContent, 0);
+      range.setEnd(eContent, eContent.length);
+      if (range.startContainer && isInPage(range.startContainer)) {
+        window.getSelection()?.removeAllRanges();
+        window.getSelection()?.addRange(range);
+      }
+    }
+  }
+}

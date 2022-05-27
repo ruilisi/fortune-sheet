@@ -11,6 +11,7 @@ describe("font style", () => {
   const getContext = () =>
     contextFactory({
       luckysheet_select_save: selectionFactory([0, 0], [0, 0], 0, 0),
+      luckysheetCellUpdate: [],
       luckysheetfile: [
         {
           id: "id_1",

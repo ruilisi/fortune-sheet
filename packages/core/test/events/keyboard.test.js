@@ -45,6 +45,8 @@ describe("keyboard", () => {
     const cellInput = document.createElement("div");
     const fxInput = document.createElement("div");
     const ctx = getContext();
+    ctx.luckysheetCellUpdate = [];
+
     handleWithCtrlOrMetaKey(
       ctx,
       keypressWithCtrlPressed("b"),

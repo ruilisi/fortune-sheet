@@ -105,6 +105,7 @@
   min-width: 60px;
   padding: 8px 12px;
   cursor: pointer;
+  user-select: none;
 }
 
 .fortune-toolbar-select-option:hover {

@@ -15,6 +15,7 @@ import {
   functionHTMLGenerate,
 } from "./formula";
 import {
+  attrToCssName,
   convertSpanToShareString,
   isInlineStringCell,
   isInlineStringCT,
@@ -1169,9 +1170,46 @@ export function getRangetxt(
 
 export function isAllSelectedCellsInStatus(
   ctx: Context,
-  type: keyof Cell,
+  attr: keyof Cell,
   status: any
 ) {
+  // editing mode
+  if (!_.isEmpty(ctx.luckysheetCellUpdate)) {
+    const w = window.getSelection();
+    if (!w) return false;
+    const range = w.getRangeAt(0);
+    if (range.collapsed === true) {
+      return false;
+    }
+    const { endContainer } = range;
+    const { startContainer } = range;
+    // @ts-ignore
+    const cssField = _.camelCase(attrToCssName[attr]);
+    if (startContainer === endContainer) {
+      return !_.isEmpty(
+        // @ts-ignore
+        startContainer.parentElement?.style[cssField]
+      );
+    }
+    if (
+      startContainer.parentElement?.tagName === "SPAN" &&
+      endContainer.parentElement?.tagName === "SPAN"
+    ) {
+      const startSpan = startContainer.parentNode as HTMLElement | null;
+      const endSpan = endContainer.parentNode as HTMLElement | null;
+      const allSpans = startSpan?.parentNode?.querySelectorAll("span");
+      if (allSpans) {
+        const startSpanIndex = _.indexOf(allSpans, startSpan);
+        const endSpanIndex = _.indexOf(allSpans, endSpan);
+        const rangeSpans = [];
+        for (let i = startSpanIndex; i <= endSpanIndex; i += 1) {
+          rangeSpans.push(allSpans[i]);
+        }
+        // @ts-ignore
+        return _.every(rangeSpans, (s) => !_.isEmpty(s.style[cssField]));
+      }
+    }
+  }
   /* 获取选区内所有的单元格-扁平后的处理 */
   const cells = getFlattenedRange(ctx);
   const flowdata = getFlowdata(ctx);
@@ -1181,7 +1219,7 @@ export function isAllSelectedCellsInStatus(
     if (_.isNil(cell)) {
       return false;
     }
-    return cell[type] === status;
+    return cell[attr] === status;
   });
 }
 

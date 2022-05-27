@@ -20,7 +20,11 @@ import {
   setCaretPosition,
   createFormulaRangeSelect,
 } from "./formula";
-import { updateInlineStringFormatOutside } from "./inline-string";
+import {
+  inlineStyleAffectAttribute,
+  updateInlineStringFormat,
+  updateInlineStringFormatOutside,
+} from "./inline-string";
 import { colLocationByIndex, rowLocationByIndex } from "./location";
 import { selectionCopyShow, selectIsOverlap } from "./selection";
 import { sortSelection } from "./sort";
@@ -201,22 +205,19 @@ export function updateFormat(
     return;
   }
 
-  // if (attr in inlineStyleAffectAttribute) {
-  //   if (ctx.luckysheetCellUpdate.length > 0) {
-  //     const value = $input.innerText;
-  //     if (value.substring(0, 1) !== "=") {
-  //       const cell =
-  //         d[ctx.luckysheetCellUpdate[0]][ctx.luckysheetCellUpdate[1]];
-  //       updateInlineStringFormat(
-  //         cell,
-  //         attr,
-  //         foucsStatus,
-  //         luckysheetformula.rangeResizeTo
-  //       );
-  //       // return;
-  //     }
-  //   }
-  // }
+  if (attr in inlineStyleAffectAttribute) {
+    if (ctx.luckysheetCellUpdate.length > 0) {
+      const value = $input.innerText;
+      if (value.substring(0, 1) !== "=") {
+        const cell =
+          d[ctx.luckysheetCellUpdate[0]][ctx.luckysheetCellUpdate[1]];
+        if (cell) {
+          updateInlineStringFormat(ctx, cell, attr, foucsStatus, $input);
+        }
+        return;
+      }
+    }
+  }
 
   const cfg = _.cloneDeep(ctx.config);
   if (_.isNil(cfg.rowlen)) {
