@@ -1,7 +1,8 @@
+import _ from "lodash";
 import { Context } from "../context";
 import { locale } from "../locale";
 import { Settings } from "../settings";
-import { Sheet } from "../types";
+import { CellMatrix, Sheet } from "../types";
 import { generateRandomSheetName, getSheetIndex } from "../utils";
 
 function storeSheetParam(ctx: Context) {
@@ -221,4 +222,39 @@ export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
       ctx.hooks.afterUpdateSheetName?.(ctx.currentSheetId, oldtxt, txt);
     });
   }
+}
+
+export function expandRowsAndColumns(
+  data: CellMatrix,
+  rowsToAdd: number,
+  columnsToAdd: number
+) {
+  if (rowsToAdd <= 0 && columnsToAdd <= 0) {
+    return data;
+  }
+
+  if (rowsToAdd <= 0) {
+    rowsToAdd = 0;
+  }
+
+  if (columnsToAdd <= 0) {
+    columnsToAdd = 0;
+  }
+
+  let currentColLen = 0;
+  if (data.length > 0) {
+    currentColLen = data[0].length;
+  }
+
+  for (let r = 0; r < data.length; r += 1) {
+    for (let i = 0; i < columnsToAdd; i += 1) {
+      data[r].push(null);
+    }
+  }
+
+  for (let r = 0; r < rowsToAdd; r += 1) {
+    data.push(_.times(currentColLen + columnsToAdd, () => null));
+  }
+
+  return data;
 }

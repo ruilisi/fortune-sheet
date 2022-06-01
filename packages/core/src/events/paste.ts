@@ -14,7 +14,7 @@ import { Cell, CellMatrix } from "../types";
 import { getSheetIndex } from "../utils";
 import { hasPartMC, isRealNum } from "../modules/validation";
 import { getBorderInfoCompute } from "../modules/border";
-import { storeSheetParamALL } from "../modules/sheet";
+import { expandRowsAndColumns, storeSheetParamALL } from "../modules/sheet";
 
 function postPasteCut(
   ctx: Context,
@@ -286,7 +286,7 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
     const addr = maxh - rowMaxLength + 1;
     const addc = maxc - cellMaxLength + 1;
     if (addr > 0 || addc > 0) {
-      // d = datagridgrowth([].concat(d), addr, addc, true);
+      expandRowsAndColumns(d, addr, addc);
     }
     if (!d) return;
 
@@ -443,7 +443,7 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
     const addr = curR + rlen - d.length;
     const addc = curC + clen - d[0].length;
     if (addr > 0 || addc > 0) {
-      // d = datagridgrowth([].concat(d), addr, addc, true);
+      expandRowsAndColumns(d, addr, addc);
     }
     if (!d) return;
 
@@ -577,7 +577,7 @@ function pasteHandlerOfCutPaste(
   const addr = copyh + minh - rowMaxLength;
   const addc = copyc + minc - cellMaxLength;
   if (addr > 0 || addc > 0) {
-    // TODO d = datagridgrowth([].concat(d), addr, addc, true);
+    expandRowsAndColumns(d, addr, addc);
   }
 
   const borderInfoCompute = getBorderInfoCompute(ctx, copySheetId);
@@ -1139,7 +1139,7 @@ function pasteHandlerOfCopyPaste(
   const addr = copyh + minh - rowMaxLength;
   const addc = copyc + minc - cellMaxLength;
   if (addr > 0 || addc > 0) {
-    // TODO d = datagridgrowth([].concat(d), addr, addc, true);
+    expandRowsAndColumns(d, addr, addc);
   }
 
   const borderInfoCompute = getBorderInfoCompute(ctx, copySheetIndex);
