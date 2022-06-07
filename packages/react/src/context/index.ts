@@ -12,6 +12,7 @@ type RefValues = {
   globalCache: GlobalCache;
   cellInput: React.MutableRefObject<HTMLDivElement | null>;
   fxInput: React.MutableRefObject<HTMLDivElement | null>;
+  canvas: React.MutableRefObject<HTMLCanvasElement | null>;
   scrollbarX: React.MutableRefObject<HTMLDivElement | null>;
   scrollbarY: React.MutableRefObject<HTMLDivElement | null>;
   cellArea: React.MutableRefObject<HTMLDivElement | null>;
@@ -44,6 +45,7 @@ const WorkbookContext = React.createContext<{
     globalCache: { undoList: [], redoList: [] },
     cellInput: React.createRef<HTMLDivElement | null>(),
     fxInput: React.createRef<HTMLDivElement | null>(),
+    canvas: React.createRef<HTMLCanvasElement | null>(),
     scrollbarX: React.createRef<HTMLDivElement | null>(),
     scrollbarY: React.createRef<HTMLDivElement | null>(),
     cellArea: React.createRef<HTMLDivElement | null>(),

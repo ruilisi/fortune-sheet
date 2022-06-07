@@ -30,6 +30,7 @@ import {
   handleSort,
   handleHorizontalAlign,
   handleVerticalAlign,
+  handleScreenShot,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -49,13 +50,16 @@ const Toolbar: React.FC<{
 }> = ({ setMoreItems, moreItemsOpen }) => {
   const { context, setContext, refs, settings, handleUndo, handleRedo } =
     useContext(WorkbookContext);
+  const contextRef = useRef(context);
   const containerRef = useRef<HTMLDivElement>(null);
   const [toolbarWrapIndex, setToolbarWrapIndex] = useState(-1); // -1 means pending for item location calculation
   const [itemLocations, setItemLocations] = useState<number[]>([]);
   const { showDialog, hideDialog } = useDialog();
   const firstSelection = context.luckysheet_select_save?.[0];
   const flowdata = getFlowdata(context);
+  contextRef.current = context;
   const row = firstSelection?.row_focus;
+
   const col = firstSelection?.column_focus;
   const cell =
     flowdata && row != null && col != null ? flowdata?.[row]?.[col] : undefined;
@@ -70,6 +74,7 @@ const Toolbar: React.FC<{
     align,
     textWrap,
     rotation,
+    screenshot,
   } = locale(context);
   const sheetWidth = context.luckysheetTableContentHW[0];
 
@@ -137,27 +142,55 @@ const Toolbar: React.FC<{
           }
         };
         return (
-          <Combo
-            iconId={name}
-            key={name}
-            tooltip={tooltip}
-            onClick={() => {
-              const color =
-                name === "font-color"
-                  ? refs.globalCache.recentTextColor
-                  : refs.globalCache.recentBackgroundColor;
-              if (color) pick(color);
-            }}
-          >
-            {(setOpen) => (
-              <ColorPicker
-                onPick={(color) => {
-                  pick(color);
-                  setOpen(false);
+          <div>
+            {name === "font-color" && (
+              <div
+                style={{
+                  width: 17,
+                  height: 2,
+                  backgroundColor: refs.globalCache.recentTextColor,
+                  position: "absolute",
+                  top: 27,
+                  left: 624,
+                  zIndex: 1000,
                 }}
               />
             )}
-          </Combo>
+            {name === "background" && (
+              <div
+                style={{
+                  width: 17,
+                  height: 2,
+                  backgroundColor: refs.globalCache.recentBackgroundColor,
+                  position: "absolute",
+                  top: 27,
+                  left: 670,
+                  zIndex: 1000,
+                }}
+              />
+            )}
+            <Combo
+              iconId={name}
+              key={name}
+              tooltip={tooltip}
+              onClick={() => {
+                const color =
+                  name === "font-color"
+                    ? refs.globalCache.recentTextColor
+                    : refs.globalCache.recentBackgroundColor;
+                if (color) pick(color);
+              }}
+            >
+              {(setOpen) => (
+                <ColorPicker
+                  onPick={(color) => {
+                    pick(color);
+                    setOpen(false);
+                  }}
+                />
+              )}
+            </Combo>
+          </div>
         );
       }
       if (name === "format") {
@@ -374,6 +407,30 @@ const Toolbar: React.FC<{
             key={name}
             disabled={refs.globalCache.redoList.length === 0}
             onClick={() => handleRedo()}
+          />
+        );
+      }
+      if (name === "screenshot") {
+        return (
+          <Button
+            iconId={name}
+            tooltip={tooltip}
+            key={name}
+            onClick={() => {
+              const imgsrc = handleScreenShot(contextRef.current);
+              if (imgsrc) {
+                showDialog(
+                  <div>
+                    <div>{screenshot.screenshotTipSuccess}</div>
+                    <img
+                      src={imgsrc}
+                      alt=""
+                      style={{ maxWidth: "100%", maxHeight: "100%" }}
+                    />
+                  </div>
+                );
+              }
+            }}
           />
         );
       }
@@ -919,7 +976,6 @@ const Toolbar: React.FC<{
       align,
       handleUndo,
       handleRedo,
-      context.luckysheet_select_save,
       flowdata,
       formula,
       showDialog,
@@ -927,9 +983,11 @@ const Toolbar: React.FC<{
       merge,
       border,
       freezen,
+      screenshot,
       sort,
       textWrap,
       rotation,
+      context.luckysheet_select_save,
     ]
   );
 

@@ -1,4 +1,7 @@
 .fortune-dialog {
+  max-width: 90%;
+  max-height: 90%;
+  overflow: scroll;
   border-radius: 6px;
   background: white;
   box-shadow: rgb(0 0 0 / 10%) 5px 5px 30px;

@@ -1350,9 +1350,11 @@ export function handleMerge(ctx: Context, type: string) {
 
   mergeCells(ctx, ctx.currentSheetId, ctx.luckysheet_select_save, type);
 }
+
 export function handleSort(ctx: Context, isAsc: boolean) {
   sortSelection(ctx, isAsc);
 }
+
 export function handleFreeze(ctx: Context, type: string) {
   if (!ctx.allowEdit) return;
 

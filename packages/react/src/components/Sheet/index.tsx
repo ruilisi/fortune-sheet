@@ -18,7 +18,7 @@ type Props = {
 
 const Sheet: React.FC<Props> = ({ sheet }) => {
   const { data } = sheet;
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  // const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
   const { context, setContext, refs } = useContext(WorkbookContext);
@@ -33,7 +33,7 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
         updateContextWithSheetData(draftCtx, data);
         updateContextWithCanvas(
           draftCtx,
-          canvasRef.current!,
+          refs.canvas.current!,
           placeholderRef.current!
         );
       });
@@ -42,7 +42,7 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
     return () => {
       window.removeEventListener("resize", resize);
     };
-  }, [data, setContext]);
+  }, [data, refs.canvas, setContext]);
 
   /**
    * Recalculate row/col info when data changes
@@ -59,11 +59,11 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
     setContext((draftCtx) =>
       updateContextWithCanvas(
         draftCtx,
-        canvasRef.current!,
+        refs.canvas.current!,
         placeholderRef.current!
       )
     );
-  }, [setContext]);
+  }, [refs.canvas, setContext]);
 
   /**
    * Recalculate freeze data when sheet changes or sheet.frozen changes
@@ -90,7 +90,8 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
       // wait for it to be refreshed
       return;
     }
-    const tableCanvas = new Canvas(canvasRef.current!, context);
+    const tableCanvas = new Canvas(refs.canvas.current!, context);
+    if (tableCanvas == null) return;
     const freeze = refs.globalCache.freezen?.[sheet.id!];
     if (
       freeze?.horizontal?.freezenhorizontaldata ||
@@ -217,7 +218,7 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
       tableCanvas.drawColumnHeader(context.scrollLeft);
       tableCanvas.drawRowHeader(context.scrollTop);
     }
-  }, [context, refs.globalCache.freezen, setContext, sheet.id]);
+  }, [context, refs.canvas, refs.globalCache.freezen, setContext, sheet.id]);
 
   /**
    * Apply the calculation results
@@ -261,7 +262,7 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
     <div ref={containerRef} className="fortune-sheet-container">
       {/* this is a placeholder div to help measure the empty space between toolbar and footer, directly measuring the canvas element is inaccurate, don't know why */}
       <div ref={placeholderRef} className="fortune-sheet-canvas-placeholder" />
-      <canvas className="fortune-sheet-canvas" ref={canvasRef} />
+      <canvas className="fortune-sheet-canvas" ref={refs.canvas} />
       <SheetOverlay />
     </div>
   );

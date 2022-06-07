@@ -12,7 +12,7 @@ import { isInlineStringCell } from "./modules/inline-string";
 import { indexToColumnChar } from "./utils";
 import { getBorderInfoComputeRange } from "./modules/border";
 
-const defaultStyle = {
+export const defaultStyle = {
   fillStyle: "#000000",
   textBaseline: "middle",
   strokeStyle: "#dfdfdf",

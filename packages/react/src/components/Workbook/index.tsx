@@ -58,6 +58,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     const [context, setContext] = useState(defaultContext());
     const cellInput = useRef<HTMLDivElement>(null);
     const fxInput = useRef<HTMLDivElement>(null);
+    const canvas = useRef<HTMLCanvasElement>(null);
     const scrollbarX = useRef<HTMLDivElement>(null);
     const scrollbarY = useRef<HTMLDivElement>(null);
     const cellArea = useRef<HTMLDivElement>(null);
@@ -167,6 +168,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           globalCache: globalCache.current,
           cellInput,
           fxInput,
+          canvas,
           scrollbarX,
           scrollbarY,
           cellArea,

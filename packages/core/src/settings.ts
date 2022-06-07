@@ -195,6 +195,7 @@ export const defaultSettings: Required<Settings> = {
     "image",
     "comment",
     "quick-formula",
+    "screenshot",
   ], // 自定义工具栏
   cellContextMenu: [
     "copy", // 复制
