@@ -2,12 +2,15 @@ import _ from "lodash";
 import { Context } from "../context";
 import {
   delFunctionGroup,
+  dropCellCache,
   functionHTMLGenerate,
+  getTypeItemHide,
   setCellValue as setCellValueInternal,
   updateCell,
+  updateDropCell,
   updateFormatCell,
 } from "../modules";
-import { Cell, CellStyle } from "../types";
+import { Cell, CellStyle, SingleRange } from "../types";
 import { CommonOptions, getSheet } from "./common";
 import { SHEET_NOT_FOUND } from "./errors";
 
@@ -243,4 +246,30 @@ export function setCellFormat(
 
   sheet.config = cfg;
   ctx.config = cfg;
+}
+
+export function autoFillCell(
+  ctx: Context,
+  copyRange: SingleRange,
+  applyRange: SingleRange,
+  direction: "up" | "down" | "left" | "right"
+) {
+  dropCellCache.copyRange = copyRange;
+  dropCellCache.applyRange = applyRange;
+  dropCellCache.direction = direction;
+  const typeItemHide = getTypeItemHide(ctx);
+  if (
+    !typeItemHide[0] &&
+    !typeItemHide[1] &&
+    !typeItemHide[2] &&
+    !typeItemHide[3] &&
+    !typeItemHide[4] &&
+    !typeItemHide[5] &&
+    !typeItemHide[6]
+  ) {
+    dropCellCache.applyType = "0";
+  } else {
+    dropCellCache.applyType = "1";
+  }
+  updateDropCell(ctx);
 }

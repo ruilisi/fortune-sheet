@@ -91,6 +91,15 @@ export function generateAPIs(
         api.setCellFormat(draftCtx, row, column, attr, value, options)
       ),
 
+    autoFillCell: (
+      copyRange: SingleRange,
+      applyRange: SingleRange,
+      direction: "up" | "down" | "left" | "right"
+    ) =>
+      setContext((draftCtx) =>
+        api.autoFillCell(draftCtx, copyRange, applyRange, direction)
+      ),
+
     freeze: (
       type: "row" | "column" | "both",
       range: { row: number; column: number },

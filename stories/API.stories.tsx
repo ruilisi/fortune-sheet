@@ -123,6 +123,50 @@ export const SetCellFormat: ComponentStory<typeof Workbook> = () => {
   );
 };
 
+export const AutoFillCell: ComponentStory<typeof Workbook> = () => {
+  const ref = useRef<WorkbookInstance>(null);
+  return (
+    <ApiExecContainer
+      onRun={() => {
+        ref.current?.autoFillCell(
+          { row: [0, 1], column: [0, 1] },
+          { row: [2, 9], column: [0, 1] },
+          "down"
+        );
+      }}
+    >
+      <Workbook
+        ref={ref}
+        data={[
+          {
+            name: "Sheet1",
+            config: { columnlen: { "0": 120 } },
+            data: [
+              [
+                { m: "1", v: 1, ct: { t: "n", fa: "General" } },
+                { m: "2", v: 2, ct: { t: "n", fa: "General" } },
+              ],
+              [
+                { m: "2", v: 2, ct: { t: "n", fa: "General" } },
+                { m: "4", v: 4, ct: { t: "n", fa: "General" } },
+              ],
+              [null, null],
+              [null, null],
+              [null, null],
+              [null, null],
+              [null, null],
+              [null, null],
+              [null, null],
+              [null, null],
+              [null, null],
+            ],
+          },
+        ]}
+      />
+    </ApiExecContainer>
+  );
+};
+
 export const Freeze: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
   return (

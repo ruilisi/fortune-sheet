@@ -943,7 +943,7 @@ function fillChnNumber(
   return applyData;
 }
 
-function getTypeItemHide(ctx: Context) {
+export function getTypeItemHide(ctx: Context) {
   const { copyRange } = dropCellCache;
   const str_r = copyRange.row[0];
   const end_r = copyRange.row[1];
@@ -2297,7 +2297,7 @@ function getApplyData(
   return applyData;
 }
 
-function updateDropCell(ctx: Context) {
+export function updateDropCell(ctx: Context) {
   // if (
   //   !checkProtectionLockedRangeList([_this.applyRange], ctx.currentSheetId)
   // ) {
