@@ -300,8 +300,8 @@ function calcRowColSize(ctx: Context, rowCount: number, colCount: number) {
   // ) {
   //   ctx.rh_height += 29;
   // } else {
-  //   ctx.rh_height += 80; // 最底部增加空白
   // }
+  ctx.rh_height += 80; // 最底部增加空白
 
   ctx.visibledatacolumn = [];
   ctx.ch_width = 0;

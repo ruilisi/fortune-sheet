@@ -108,6 +108,23 @@
   cursor: pointer;
 }
 
+.fortune-add-row-button {
+  padding: 1px 20px;
+  margin-right: 5px;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 8px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 20px;
+  outline: none;
+  cursor: pointer;
+  color: rgb(38, 42, 51);
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(200, 200, 200);
+}
+
 .luckysheet-cell-selected-focus {
   position: absolute;
   pointer-events: none;
@@ -256,7 +273,7 @@
 }
 
 .luckysheet-cs-touchhandle:before {
-  content: '';
+  content: "";
   display: block;
   width: 16px;
   height: 16px;
@@ -347,7 +364,6 @@
 }
 
 .luckysheet-cell-flow {
-  z-index: -100;
   margin: 0;
   padding: 0;
   border: none 0;

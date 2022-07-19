@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import "./index.css";
 import {
+  locale,
   drawArrow,
   getFlowdata,
   handleCellAreaDoubleClick,
@@ -26,6 +27,7 @@ import {
   handleOverlayTouchMove,
   handleOverlayTouchStart,
   createDropCellRange,
+  expandRowsAndColumns,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -37,7 +39,9 @@ import ContentEditable from "./ContentEditable";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
+  const { info } = locale(context);
   const containerRef = useRef<HTMLDivElement>(null);
+  const bottomAddRowInputRef = useRef<HTMLInputElement>(null);
   const flowdata = getFlowdata(context);
   // const isMobile = browser.mobilecheck();
   const cellAreaMouseDown = useCallback(
@@ -161,9 +165,31 @@ const SheetOverlay: React.FC = () => {
     },
     [refs.globalCache, refs.scrollbarX, refs.scrollbarY, setContext]
   );
+
   const onTouchEnd = useCallback(() => {
     handleOverlayTouchEnd(refs.globalCache);
   }, [refs.globalCache]);
+
+  const handleBottomAddRow = useCallback(() => {
+    let valueStr = bottomAddRowInputRef.current?.value || "";
+    if (valueStr === "") {
+      valueStr = "100";
+    }
+    const value = parseInt(valueStr, 10);
+
+    if (Number.isNaN(value)) {
+      return;
+    }
+
+    if (value < 1) {
+      return;
+    }
+
+    setContext((draftCtx) => {
+      const data = getFlowdata(draftCtx);
+      expandRowsAndColumns(data!, value, 0);
+    });
+  }, [setContext]);
 
   useEffect(() => {
     refs.cellArea.current!.scrollLeft = context.scrollLeft;
@@ -889,6 +915,38 @@ const SheetOverlay: React.FC = () => {
                   className="luckysheet-cell-sheettable"
                   style={{ height: context.rh_height, width: context.ch_width }}
                 />
+                <div
+                  id="luckysheet-bottom-controll-row"
+                  className="luckysheet-bottom-controll-row"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onMouseUp={(e) => e.stopPropagation()}
+                  onMouseMove={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  onKeyUp={(e) => e.stopPropagation()}
+                  onKeyPress={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
+                  onDoubleClick={(e) => e.stopPropagation()}
+                  style={{ left: context.scrollLeft }}
+                >
+                  <div
+                    className="fortune-add-row-button"
+                    onClick={() => {
+                      handleBottomAddRow();
+                    }}
+                  >
+                    {info.add}
+                  </div>
+                  <input
+                    ref={bottomAddRowInputRef}
+                    type="text"
+                    style={{ width: 50 }}
+                    placeholder="100"
+                  />{" "}
+                  <span style={{ fontSize: 14 }}>{info.row}</span>{" "}
+                  <span style={{ fontSize: 14, color: "#9c9c9c" }}>
+                    ({info.addLast})
+                  </span>
+                </div>
               </div>
             </div>
           </div>
