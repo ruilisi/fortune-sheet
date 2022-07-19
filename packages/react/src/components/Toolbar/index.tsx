@@ -142,33 +142,21 @@ const Toolbar: React.FC<{
           }
         };
         return (
-          <div>
-            {name === "font-color" && (
-              <div
-                style={{
-                  width: 17,
-                  height: 2,
-                  backgroundColor: refs.globalCache.recentTextColor,
-                  position: "absolute",
-                  top: 27,
-                  left: 624,
-                  zIndex: 1000,
-                }}
-              />
-            )}
-            {name === "background" && (
-              <div
-                style={{
-                  width: 17,
-                  height: 2,
-                  backgroundColor: refs.globalCache.recentBackgroundColor,
-                  position: "absolute",
-                  top: 27,
-                  left: 670,
-                  zIndex: 1000,
-                }}
-              />
-            )}
+          <div style={{ position: "relative" }}>
+            <div
+              style={{
+                width: 17,
+                height: 2,
+                backgroundColor:
+                  name === "font-color"
+                    ? refs.globalCache.recentTextColor
+                    : refs.globalCache.recentBackgroundColor,
+                position: "absolute",
+                bottom: 8,
+                left: 9,
+                zIndex: 100,
+              }}
+            />
             <Combo
               iconId={name}
               key={name}
