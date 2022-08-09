@@ -1410,6 +1410,9 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
   underline: handleUnderline,
   "clear-format": handleClearFormat,
   "format-painter": handleFormatPainter,
+  search: (ctx: Context) => {
+    ctx.showSearchReplace = true;
+  },
 };
 
 const selectedMap: Record<string, ToolbarItemSelectedFunc> = {

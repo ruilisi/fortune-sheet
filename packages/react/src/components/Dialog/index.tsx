@@ -25,7 +25,7 @@ const Dialog: React.FC<Props> = ({
   return (
     <div className="fortune-dialog" style={containerStyle}>
       <div className="fortune-modal-dialog-header">
-        <div className="forturn-modal-dialog-icon-close" onClick={onCancel}>
+        <div className="fortune-modal-dialog-icon-close" onClick={onCancel}>
           <SVGIcon name="close" style={{ padding: 7, cursor: "pointer" }} />
         </div>
       </div>

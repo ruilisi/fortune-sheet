@@ -166,6 +166,15 @@ export type CommentBox = {
   } & Rect;
 } & Rect;
 
+export type SearchResult = {
+  r: number;
+  c: number;
+  sheetName: string;
+  sheetId: string;
+  cellPosition: string;
+  value: string;
+};
+
 export type History = {
   patches: ImmerPatch[];
   inversePatches: ImmerPatch[];
@@ -201,6 +210,13 @@ export type GlobalCache = {
     commentRC: { r: number; c: number; rc: string };
     boxInitialPosition: Rect | undefined;
     cursorMoveStartPosition: { x: number; y: number } | undefined;
+  };
+  searchDialog?: {
+    mouseEnter?: boolean;
+    moveProps?: {
+      initialPosition: Rect | undefined;
+      cursorMoveStartPosition: { x: number; y: number } | undefined;
+    };
   };
   touchMoveStatus?: boolean;
   touchHandleStatus?: boolean;

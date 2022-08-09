@@ -1,0 +1,161 @@
+/*查找替换弹出框样式*/
+#fortunesheet-search-replace {
+  position: absolute;
+  padding: 30px 42px;
+  z-index: 1002;
+}
+
+#fortunesheet-search-replace .icon-close {
+  position: absolute;
+  right: 3px;
+  top: 3px;
+}
+
+#fortunesheet-search-replace .tabBox {
+  margin-top: 10px;
+  font-size: 0;
+}
+
+#fortunesheet-search-replace .tabBox span {
+  display: inline-block;
+  text-align: center;
+  width: 100px;
+  border: 1px solid rgb(235, 235, 235);
+  font-size: 14px;
+  line-height: 2;
+}
+
+#fortunesheet-search-replace .tabBox span.on {
+  background-color: #8C89FE;
+  border-color: #726EFE;
+  color: #fff;
+}
+
+#fortunesheet-search-replace .ctBox {
+  padding: 5px 10px;
+  border: 1px solid rgb(235, 235, 235);
+  font-size: 14px;
+  min-width: 500px;
+}
+
+#fortunesheet-search-replace .ctBox .row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#fortunesheet-search-replace .inputBox {
+  height: 90px;
+  position: relative;
+}
+
+#fortunesheet-search-replace .inputBox .textboxs {
+  height: 30px;
+  line-height: 30px;
+}
+
+#fortunesheet-search-replace .checkboxs {
+  height: 90px;
+}
+
+#fortunesheet-search-replace .checkboxs div {
+  height: 30px;
+  line-height: 30px;
+}
+
+#fortunesheet-search-replace .checkboxs input[type="checkbox"] {
+  float: left;
+  margin-top: 9px;
+}
+
+#fortunesheet-search-replace .btnBox {
+  margin-top: 10px;
+}
+
+#fortunesheet-search-replace .btnBox .button-default {
+  margin-right: 8px;
+  margin-left: 0px;
+}
+
+#fortunesheet-search-replace .close-button {
+  margin-left: 0px;
+  margin-top: 10px;
+}
+
+#fortunesheet-search-replace #searchAllbox {
+  height: 210px;
+  border: 1px solid #d4d4d4;
+  margin-top: 10px;
+  overflow-y: auto;
+  position: relative;
+}
+
+#fortunesheet-search-replace #searchAllbox .boxTitle {
+  width: 100%;
+  height: 30px;
+  line-height: 29px;
+  padding: 0 5px;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+  box-sizing: border-box;
+  position: sticky;
+  left: 0;
+  top: 0;
+}
+
+#fortunesheet-search-replace #searchAllbox .boxTitle span {
+  display: inline-block;
+  text-align: center;
+}
+
+#fortunesheet-search-replace #searchAllbox .boxTitle span:nth-of-type(1) {
+  width: 25%;
+}
+
+#fortunesheet-search-replace #searchAllbox .boxTitle span:nth-of-type(2) {
+  width: 25%;
+}
+
+#fortunesheet-search-replace #searchAllbox .boxTitle span:nth-of-type(3) {
+  width: 50%;
+}
+
+#fortunesheet-search-replace #searchAllbox .boxMain .boxItem {
+  height: 30px;
+  line-height: 29px;
+  border-bottom: 1px solid #d4d4d4;
+  padding: 0 5px;
+  box-sizing: border-box;
+}
+
+#fortunesheet-search-replace #searchAllbox .boxMain .boxItem.on {
+  background-color: #8C89FE;
+  color: #fff;
+}
+
+#fortunesheet-search-replace #searchAllbox .boxMain .boxItem span {
+  display: block;
+  text-align: center;
+  float: left;
+}
+
+#fortunesheet-search-replace #searchAllbox .boxMain .boxItem span:nth-of-type(1) {
+  width: 25%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#fortunesheet-search-replace #searchAllbox .boxMain .boxItem span:nth-of-type(2) {
+  width: 25%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#fortunesheet-search-replace #searchAllbox .boxMain .boxItem span:nth-of-type(3) {
+  width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

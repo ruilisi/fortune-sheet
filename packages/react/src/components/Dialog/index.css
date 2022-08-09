@@ -53,11 +53,11 @@
   justify-content: end;
 }
 
-.forturn-modal-dialog-icon-close {
+.fortune-modal-dialog-icon-close {
   color: #d4d4d4;
   opacity: 0.3;
 }
 
-.forturn-modal-dialog-icon-close:hover {
+.fortune-modal-dialog-icon-close:hover {
   opacity: 0.7;
 }

@@ -36,6 +36,7 @@ import RowHeader from "./RowHeader";
 import InputBox from "./InputBox";
 import ScrollBar from "./ScrollBar";
 import ContentEditable from "./ContentEditable";
+import SearchReplace from "../SearchReplace";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
@@ -273,6 +274,9 @@ const SheetOverlay: React.FC = () => {
         />
         <ColumnHeader />
       </div>
+      {context.showSearchReplace && (
+        <SearchReplace getContainer={() => containerRef.current!} />
+      )}
       <div className="fortune-row-body">
         <RowHeader />
         <ScrollBar axis="x" />
@@ -644,7 +648,6 @@ const SheetOverlay: React.FC = () => {
               );
             })}
           </div>
-
           <div id="luckysheet-multipleRange-show" />
           <div id="luckysheet-dynamicArray-hightShow" />
           <div id="luckysheet-image-showBoxs">
@@ -913,7 +916,10 @@ const SheetOverlay: React.FC = () => {
                 <div
                   id="luckysheet-sheettable_0"
                   className="luckysheet-cell-sheettable"
-                  style={{ height: context.rh_height, width: context.ch_width }}
+                  style={{
+                    height: context.rh_height,
+                    width: context.ch_width,
+                  }}
                 />
                 <div
                   id="luckysheet-bottom-controll-row"

@@ -22,3 +22,4 @@ export * from "./dropCell";
 export * from "./merge";
 export * from "./sort";
 export * from "./screenshot";
+export * from "./searchReplace";

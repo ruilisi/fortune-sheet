@@ -27,6 +27,7 @@ export type Context = {
   editingInsertedImgs?: Image;
   activeImg?: Image;
   presences?: Presence[];
+  showSearchReplace?: boolean;
 
   contextMenu: any;
   sheetTabContextMenu: {

@@ -49,6 +49,10 @@ import { Settings } from "../settings";
 import { GlobalCache } from "../types";
 import { getSheetIndex } from "../utils";
 import { onDropCellSelectEnd, onDropCellSelect } from "../modules/dropCell";
+import {
+  onSearchDialogMove,
+  onSearchDialogMoveEnd,
+} from "../modules/searchReplace";
 
 let mouseWheelUniqueTimeout: ReturnType<typeof setTimeout>;
 
@@ -59,6 +63,7 @@ export function handleGlobalWheel(
   scrollbarX: HTMLDivElement,
   scrollbarY: HTMLDivElement
 ) {
+  if (cache.searchDialog?.mouseEnter) return;
   let { scrollLeft } = scrollbarX;
   const { scrollTop } = scrollbarY;
   let visibledatacolumn_c = ctx.visibledatacolumn;
@@ -2974,6 +2979,7 @@ export function handleOverlayMouseMove(
   if (onImageMove(ctx, globalCache, e)) return;
   if (onImageResize(ctx, globalCache, e)) return;
   overShowComment(ctx, e, scrollX, scrollY, container); // 有批注显示
+  onSearchDialogMove(ctx, globalCache, e);
   // hyperlinkCtrl.overshow(event); // 链接提示显示
 
   // window.cancelAnimationFrame(ctx.jfautoscrollTimeout);
@@ -3233,6 +3239,7 @@ export function handleOverlayMouseUp(
   onCommentBoxMoveEnd(ctx, globalCache, container);
   onCommentBoxResizeEnd(ctx, globalCache, container);
   onFormulaRangeDragEnd(ctx);
+  onSearchDialogMoveEnd(globalCache);
   // if (
   //   luckysheetConfigsetting &&
   //   luckysheetConfigsetting.hook &&
