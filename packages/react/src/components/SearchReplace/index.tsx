@@ -39,16 +39,13 @@ const SearchReplace: React.FC<{
     []
   );
 
-  const getInitialPosition = useCallback(
-    (container: HTMLDivElement) => {
-      const rect = container.getBoundingClientRect();
-      return {
-        left: (rect.width + refs.scrollbarX.current!.scrollLeft - 500) / 2,
-        top: (rect.height + refs.scrollbarY.current!.scrollTop - 200) / 3,
-      };
-    },
-    [refs]
-  );
+  const getInitialPosition = useCallback((container: HTMLDivElement) => {
+    const rect = container.getBoundingClientRect();
+    return {
+      left: (rect.width - 500) / 2,
+      top: (rect.height - 200) / 3,
+    };
+  }, []);
 
   return (
     <div
@@ -94,6 +91,8 @@ const SearchReplace: React.FC<{
                 {findAndReplace.findTextbox}：
                 <input
                   className="formulaInputFocus"
+                  // eslint-disable-next-line jsx-a11y/no-autofocus
+                  autoFocus
                   spellCheck="false"
                   onKeyDown={(e) => e.stopPropagation()}
                   value={searchText}

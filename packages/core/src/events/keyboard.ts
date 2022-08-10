@@ -163,12 +163,10 @@ export function handleWithCtrlOrMetaKey(
     // luckysheetactiveCell();
     e.stopPropagation();
     return;
-    // } else if (e.key === "f") {
-    //   // Ctrl + F  查找
-    //   searchReplace.createDialog(0);
-    //   searchReplace.init();
+  } else if (e.key === "f") {
+    // Ctrl + F  查找
+    ctx.showSearchReplace = true;
 
-    //   $("#luckysheet-search-replace #searchInput input").focus();
     // } else if (e.key === "h") {
     //   // Ctrl + H  替换
     //   searchReplace.createDialog(1);
