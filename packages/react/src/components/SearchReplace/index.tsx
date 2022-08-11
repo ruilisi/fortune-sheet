@@ -5,6 +5,8 @@ import {
   SearchResult,
   normalizeSelection,
   onSearchDialogMoveStart,
+  replace,
+  replaceAll,
 } from "@fortune-sheet/core";
 import produce from "immer";
 import React, { useContext, useState, useCallback } from "react";
@@ -20,6 +22,8 @@ const SearchReplace: React.FC<{
   const { context, setContext, refs } = useContext(WorkbookContext);
   const { findAndReplace, button } = locale(context);
   const [searchText, setSearchText] = useState("");
+  const [replaceText, setReplaceText] = useState("");
+  const [showReplace, setShowReplace] = useState(false);
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
   const [selectedCell, setSelectedCell] = useState<{ r: number; c: number }>();
   const { showAlert } = useAlert();
@@ -81,8 +85,20 @@ const SearchReplace: React.FC<{
           <SVGIcon name="close" style={{ padding: 7, cursor: "pointer" }} />
         </div>
         <div className="tabBox">
-          <span id="searchTab">{findAndReplace.find}</span>
-          {/* <span id="replaceTab">{findAndReplace.replace}</span> */}
+          <span
+            id="searchTab"
+            className={showReplace ? "" : "on"}
+            onClick={() => setShowReplace(false)}
+          >
+            {findAndReplace.find}
+          </span>
+          <span
+            id="replaceTab"
+            className={showReplace ? "on" : ""}
+            onClick={() => setShowReplace(true)}
+          >
+            {findAndReplace.replace}
+          </span>
         </div>
         <div className="ctBox">
           <div className="row">
@@ -99,10 +115,18 @@ const SearchReplace: React.FC<{
                   onChange={(e) => setSearchText(e.target.value)}
                 />
               </div>
-              {/* <div className="textboxs" id="replaceInput">
-                {findAndReplace.replaceTextbox}：
-                <input className="formulaInputFocus" spellCheck="false" />
-              </div> */}
+              {showReplace && (
+                <div className="textboxs" id="replaceInput">
+                  {findAndReplace.replaceTextbox}：
+                  <input
+                    className="formulaInputFocus"
+                    spellCheck="false"
+                    onKeyDown={(e) => e.stopPropagation()}
+                    value={replaceText}
+                    onChange={(e) => setReplaceText(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
             <div className="checkboxs">
               <div id="regCheck">
@@ -129,18 +153,52 @@ const SearchReplace: React.FC<{
             </div>
           </div>
           <div className="btnBox">
-            {/* <div
-              id="replaceAllBtn"
-              className="fortune-message-box-button button-default"
-            >
-              {findAndReplace.allReplaceBtn}
-            </div>
-            <div
-              id="replaceBtn"
-              className="fortune-message-box-button button-default"
-            >
-              {findAndReplace.replaceBtn}
-            </div> */}
+            {showReplace && (
+              <>
+                <div
+                  id="replaceAllBtn"
+                  className="fortune-message-box-button button-default"
+                  onClick={() => {
+                    setContext((draftCtx) => {
+                      setSelectedCell(undefined);
+                      const alertMsg = replaceAll(
+                        draftCtx,
+                        searchText,
+                        replaceText,
+                        checkMode
+                      );
+                      showAlert(alertMsg);
+                    });
+                  }}
+                >
+                  {findAndReplace.allReplaceBtn}
+                </div>
+                <div
+                  id="replaceBtn"
+                  className="fortune-message-box-button button-default"
+                  onClick={() =>
+                    setContext((draftCtx) => {
+                      const container = getContainer();
+                      setSelectedCell(undefined);
+                      const alertMsg = replace(
+                        draftCtx,
+                        searchText,
+                        replaceText,
+                        checkMode,
+                        container,
+                        refs.scrollbarX.current!,
+                        refs.scrollbarY.current!
+                      );
+                      if (alertMsg != null) {
+                        showAlert(alertMsg);
+                      }
+                    })
+                  }
+                >
+                  {findAndReplace.replaceBtn}
+                </div>
+              </>
+            )}
             <div
               id="searchAllBtn"
               className="fortune-message-box-button button-default"
@@ -163,8 +221,7 @@ const SearchReplace: React.FC<{
                 setContext((draftCtx) => {
                   const container = getContainer();
                   setSearchResult([]);
-                  if (!searchText) return;
-                  const hasResult = searchNext(
+                  const alertMsg = searchNext(
                     draftCtx,
                     searchText,
                     checkMode,
@@ -172,7 +229,7 @@ const SearchReplace: React.FC<{
                     refs.scrollbarX.current!,
                     refs.scrollbarY.current!
                   );
-                  if (!hasResult) showAlert(findAndReplace.noFindTip);
+                  if (alertMsg != null) showAlert(alertMsg);
                 })
               }
             >

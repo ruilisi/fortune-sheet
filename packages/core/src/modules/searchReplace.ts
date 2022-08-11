@@ -1,8 +1,10 @@
 import _ from "lodash";
 
 import { Context, getFlowdata } from "../context";
+import { locale } from "../locale";
 import { CellMatrix, Selection, SearchResult, GlobalCache } from "../types";
-import { chatatABC, getRegExpStr, getSheetIndex } from "../utils";
+import { chatatABC, getRegExpStr, getSheetIndex, replaceHtml } from "../utils";
+import { setCellValue } from "./cell";
 import { valueShowEs } from "./format";
 import { normalizeSelection } from "./selection";
 
@@ -117,10 +119,11 @@ export function searchNext(
   container: HTMLDivElement,
   scrollbarX: HTMLDivElement,
   scrollbarY: HTMLDivElement
-): boolean {
+) {
+  const { findAndReplace } = locale(ctx);
   const flowdata = getFlowdata(ctx);
   if (searchText === "" || searchText == null || flowdata == null) {
-    return false;
+    return findAndReplace.searchInputTip;
   }
   let range: Selection[];
   if (
@@ -151,13 +154,7 @@ export function searchNext(
   );
 
   if (searchIndexArr.length === 0) {
-    // if (isEditMode()) {
-    //   alert(locale_findAndReplace.noFindTip);
-    // } else {
-    //   tooltip.info(locale_findAndReplace.noFindTip, "");
-    // }
-
-    return false;
+    return findAndReplace.noFindTip;
   }
 
   let count = 0;
@@ -267,7 +264,7 @@ export function searchNext(
     scrollbarY.scrollLeft = row_pre - 20;
   }
 
-  return true;
+  return null;
 }
 
 export function searchAll(
@@ -409,4 +406,254 @@ export function onSearchDialogMove(
 
 export function onSearchDialogMoveEnd(globalCache: GlobalCache) {
   _.set(globalCache, "searchDialog.moveProps", undefined);
+}
+
+export function replace(
+  ctx: Context,
+  searchText: string,
+  replaceText: string,
+  checkModes: {
+    regCheck: boolean;
+    wordCheck: boolean;
+    caseCheck: boolean;
+  },
+  container: HTMLDivElement,
+  scrollbarX: HTMLDivElement,
+  scrollbarY: HTMLDivElement
+) {
+  const { findAndReplace } = locale(ctx);
+  if (!ctx.allowEdit) {
+    return findAndReplace.modeTip;
+  }
+
+  const flowdata = getFlowdata(ctx);
+  if (searchText === "" || searchText == null || flowdata == null) {
+    return findAndReplace.searchInputTip;
+  }
+
+  let range;
+  if (
+    _.size(ctx.luckysheet_select_save) === 0 ||
+    (ctx.luckysheet_select_save?.length === 1 &&
+      ctx.luckysheet_select_save[0].row[0] ===
+        ctx.luckysheet_select_save[0].row[1] &&
+      ctx.luckysheet_select_save[0].column[0] ===
+        ctx.luckysheet_select_save[0].column[1])
+  ) {
+    range = [
+      {
+        row: [0, flowdata.length - 1],
+        column: [0, flowdata[0].length - 1],
+      },
+    ];
+  } else {
+    range = _.assign([], ctx.luckysheet_select_save);
+  }
+
+  const searchIndexArr = getSearchIndexArr(
+    searchText,
+    range,
+    flowdata,
+    checkModes
+  );
+
+  if (searchIndexArr.length === 0) {
+    return findAndReplace.noReplceTip;
+  }
+
+  let count = null;
+
+  const last =
+    ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1];
+  const rf = last?.row_focus;
+  const cf = last?.column_focus;
+
+  for (let i = 0; i < searchIndexArr.length; i += 1) {
+    if (searchIndexArr[i].r === rf && searchIndexArr[i].c === cf) {
+      count = i;
+      break;
+    }
+  }
+
+  if (count == null) {
+    if (searchIndexArr.length === 0) {
+      return findAndReplace.noMatchTip;
+    }
+
+    count = 0;
+  }
+
+  const d = flowdata;
+
+  let r;
+  let c;
+  if (checkModes.wordCheck) {
+    r = searchIndexArr[count].r;
+    c = searchIndexArr[count].c;
+
+    const v = replaceText;
+
+    // if (!checkProtectionLocked(r, c, ctx.currentSheetId)) {
+    //   return;
+    // }
+
+    setCellValue(ctx, r, c, d, v);
+  } else {
+    let reg;
+    if (checkModes.caseCheck) {
+      reg = new RegExp(getRegExpStr(searchText), "g");
+    } else {
+      reg = new RegExp(getRegExpStr(searchText), "ig");
+    }
+
+    r = searchIndexArr[count].r;
+    c = searchIndexArr[count].c;
+
+    // if (!checkProtectionLocked(r, c, ctx.currentSheetId)) {
+    //   return;
+    // }
+
+    const v = valueShowEs(r, c, d).toString().replace(reg, replaceText);
+
+    setCellValue(ctx, r, c, d, v);
+  }
+
+  ctx.luckysheet_select_save = normalizeSelection(ctx, [
+    { row: [r, r], column: [c, c] },
+  ]);
+
+  // jfrefreshgrid(d, ctx.luckysheet_select_save);
+  // selectHightlightShow();
+
+  const { scrollLeft } = scrollbarX;
+  const { scrollTop } = scrollbarY;
+  const rect = container.getBoundingClientRect();
+  const winH = rect.height - 20 * ctx.zoomRatio;
+  const winW = rect.width - 60 * ctx.zoomRatio;
+
+  const row = ctx.visibledatarow[r];
+  const row_pre = r - 1 === -1 ? 0 : ctx.visibledatarow[r - 1];
+  const col = ctx.visibledatacolumn[c];
+  const col_pre = c - 1 === -1 ? 0 : ctx.visibledatacolumn[c - 1];
+
+  if (col - scrollLeft - winW + 20 > 0) {
+    scrollbarX.scrollLeft = col - winW + 20;
+  } else if (col_pre - scrollLeft - 20 < 0) {
+    scrollbarX.scrollLeft = col_pre - 20;
+  }
+
+  if (row - scrollTop - winH + 20 > 0) {
+    scrollbarY.scrollLeft = row - winH + 20;
+  } else if (row_pre - scrollTop - 20 < 0) {
+    scrollbarY.scrollLeft = row_pre - 20;
+  }
+  return null;
+}
+
+export function replaceAll(
+  ctx: Context,
+  searchText: string,
+  replaceText: string,
+  checkModes: {
+    regCheck: boolean;
+    wordCheck: boolean;
+    caseCheck: boolean;
+  }
+) {
+  const { findAndReplace } = locale(ctx);
+  if (!ctx.allowEdit) {
+    return findAndReplace.modeTip;
+  }
+
+  const flowdata = getFlowdata(ctx);
+  if (searchText === "" || searchText == null || flowdata == null) {
+    return findAndReplace.searchInputTip;
+  }
+
+  let range;
+  if (
+    _.size(ctx.luckysheet_select_save) === 0 ||
+    (ctx.luckysheet_select_save?.length === 1 &&
+      ctx.luckysheet_select_save[0].row[0] ===
+        ctx.luckysheet_select_save[0].row[1] &&
+      ctx.luckysheet_select_save[0].column[0] ===
+        ctx.luckysheet_select_save[0].column[1])
+  ) {
+    range = [
+      {
+        row: [0, flowdata.length - 1],
+        column: [0, flowdata[0].length - 1],
+      },
+    ];
+  } else {
+    range = _.assign([], ctx.luckysheet_select_save);
+  }
+
+  const searchIndexArr = getSearchIndexArr(
+    searchText,
+    range,
+    flowdata,
+    checkModes
+  );
+
+  if (searchIndexArr.length === 0) {
+    return findAndReplace.noReplceTip;
+  }
+
+  const d = flowdata;
+  let replaceCount = 0;
+  if (checkModes.wordCheck) {
+    for (let i = 0; i < searchIndexArr.length; i += 1) {
+      const { r } = searchIndexArr[i];
+      const { c } = searchIndexArr[i];
+
+      // if (!checkProtectionLocked(r, c, ctx.currentSheetIndex, false)) {
+      //   continue;
+      // }
+
+      const v = replaceText;
+
+      setCellValue(ctx, r, c, d, v);
+
+      range.push({ row: [r, r], column: [c, c] });
+      replaceCount += 1;
+    }
+  } else {
+    let reg;
+    if (checkModes.caseCheck) {
+      reg = new RegExp(getRegExpStr(searchText), "g");
+    } else {
+      reg = new RegExp(getRegExpStr(searchText), "ig");
+    }
+
+    for (let i = 0; i < searchIndexArr.length; i += 1) {
+      const { r } = searchIndexArr[i];
+      const { c } = searchIndexArr[i];
+
+      // if (!checkProtectionLocked(r, c, ctx.currentSheetIndex, false)) {
+      //   continue;
+      // }
+
+      const v = valueShowEs(r, c, d).toString().replace(reg, replaceText);
+
+      setCellValue(ctx, r, c, d, v);
+
+      range.push({ row: [r, r], column: [c, c] });
+      replaceCount += 1;
+    }
+  }
+
+  // jfrefreshgrid(d, range);
+
+  ctx.luckysheet_select_save = normalizeSelection(ctx, range);
+
+  const succeedInfo = replaceHtml(findAndReplace.successTip, {
+    xlength: replaceCount,
+  });
+  // if (isEditMode()) {
+  //   alert(succeedInfo);
+  // } else {
+  //   tooltip.info(succeedInfo, "");
+  // }
+  return succeedInfo;
 }
