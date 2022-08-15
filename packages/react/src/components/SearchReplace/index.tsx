@@ -33,6 +33,13 @@ const SearchReplace: React.FC<{
     caseCheck: false,
   });
 
+  const closeDialog = useCallback(() => {
+    _.set(refs.globalCache, "searchDialog.mouseEnter", false);
+    setContext((draftCtx) => {
+      draftCtx.showSearchReplace = false;
+    });
+  }, [refs.globalCache, setContext]);
+
   const setCheckMode = useCallback(
     (mode: string, value: boolean) =>
       checkModeReplace(
@@ -76,11 +83,7 @@ const SearchReplace: React.FC<{
       <div className="container" onMouseDown={(e) => e.stopPropagation()}>
         <div
           className="icon-close fortune-modal-dialog-icon-close"
-          onClick={() =>
-            setContext((draftCtx) => {
-              draftCtx.showSearchReplace = false;
-            })
-          }
+          onClick={closeDialog}
         >
           <SVGIcon name="close" style={{ padding: 7, cursor: "pointer" }} />
         </div>
@@ -239,11 +242,7 @@ const SearchReplace: React.FC<{
         </div>
         <div
           className="close-button fortune-message-box-button button-default"
-          onClick={() =>
-            setContext((draftCtx) => {
-              draftCtx.showSearchReplace = false;
-            })
-          }
+          onClick={closeDialog}
         >
           {button.close}
         </div>

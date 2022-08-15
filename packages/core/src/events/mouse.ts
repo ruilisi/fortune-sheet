@@ -63,7 +63,7 @@ export function handleGlobalWheel(
   scrollbarX: HTMLDivElement,
   scrollbarY: HTMLDivElement
 ) {
-  if (cache.searchDialog?.mouseEnter) return;
+  if (cache.searchDialog?.mouseEnter && ctx.showSearchReplace) return;
   let { scrollLeft } = scrollbarX;
   const { scrollTop } = scrollbarY;
   let visibledatacolumn_c = ctx.visibledatacolumn;
