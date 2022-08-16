@@ -71,12 +71,7 @@ const SearchReplace: React.FC<{
       }}
       onMouseDown={(e) => {
         const { nativeEvent } = e;
-        onSearchDialogMoveStart(
-          context,
-          refs.globalCache,
-          nativeEvent,
-          getContainer()
-        );
+        onSearchDialogMoveStart(refs.globalCache, nativeEvent, getContainer());
         e.stopPropagation();
       }}
     >

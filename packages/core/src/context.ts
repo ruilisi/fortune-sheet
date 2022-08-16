@@ -11,6 +11,7 @@ import {
   Rect,
   Image,
   Presence,
+  LinkCardProps,
 } from "./types";
 import { getSheetIndex } from "./utils";
 
@@ -28,6 +29,7 @@ export type Context = {
   activeImg?: Image;
   presences?: Presence[];
   showSearchReplace?: boolean;
+  linkCard?: LinkCardProps;
 
   contextMenu: any;
   sheetTabContextMenu: {

@@ -237,7 +237,7 @@ function addToCellIndexList(ctx: Context, txt: string, infoObj: any) {
   }
 }
 
-function getcellrange(ctx: Context, txt: string, formulaId?: string) {
+export function getcellrange(ctx: Context, txt: string, formulaId?: string) {
   if (_.isNil(txt) || txt.length === 0) {
     return null;
   }

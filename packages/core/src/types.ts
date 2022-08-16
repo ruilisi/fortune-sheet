@@ -143,7 +143,7 @@ export type Sheet = {
   luckysheet_conditionformat_save?: any[];
   luckysheet_alternateformat_save?: any[];
   dataVerification?: any;
-  hyperlink?: any;
+  hyperlink?: Record<string, { linkType: string; linkAddress: string }>;
   dynamicArray_compute?: any;
   dynamicArray?: any[];
   frozen?: {
@@ -173,6 +173,19 @@ export type SearchResult = {
   sheetId: string;
   cellPosition: string;
   value: string;
+};
+
+export type LinkCardProps = {
+  sheetId: string;
+  r: number;
+  c: number;
+  rc: string;
+  originText: string;
+  originType: string;
+  originAddress: string;
+  position: { cellLeft: number; cellBottom: number };
+  isEditing: boolean;
+  selectingCellRange?: boolean;
 };
 
 export type History = {
@@ -214,6 +227,13 @@ export type GlobalCache = {
   searchDialog?: {
     mouseEnter?: boolean;
     moveProps?: {
+      initialPosition: Rect | undefined;
+      cursorMoveStartPosition: { x: number; y: number } | undefined;
+    };
+  };
+  linkCard?: {
+    mouseEnter?: boolean;
+    rangeSelectionModal?: {
       initialPosition: Rect | undefined;
       cursorMoveStartPosition: { x: number; y: number } | undefined;
     };

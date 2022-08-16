@@ -192,6 +192,7 @@ export const defaultSettings: Required<Settings> = {
     "|",
     "freeze",
     "sort",
+    "link",
     "image",
     "comment",
     "quick-formula",

@@ -50,6 +50,11 @@ import { GlobalCache } from "../types";
 import { getSheetIndex } from "../utils";
 import { onDropCellSelectEnd, onDropCellSelect } from "../modules/dropCell";
 import {
+  showLinkCard,
+  onRangeSelectionModalMove,
+  onRangeSelectionModalMoveEnd,
+} from "../modules/hyperlink";
+import {
   onSearchDialogMove,
   onSearchDialogMoveEnd,
 } from "../modules/searchReplace";
@@ -238,6 +243,7 @@ export function handleCellAreaMouseDown(
     [col_pre, col, col_index, col_index_ed] = margeset.column;
   }
 
+  showLinkCard(ctx, row_index, col_index, false, true);
   // //单元格单击之前
   if (
     ctx.hooks.beforeCellMouseDown?.(flowdata[row_index]?.[col_index], {
@@ -2979,7 +2985,8 @@ export function handleOverlayMouseMove(
   if (onImageMove(ctx, globalCache, e)) return;
   if (onImageResize(ctx, globalCache, e)) return;
   overShowComment(ctx, e, scrollX, scrollY, container); // 有批注显示
-  onSearchDialogMove(ctx, globalCache, e);
+  onSearchDialogMove(globalCache, e);
+  onRangeSelectionModalMove(globalCache, e);
   // hyperlinkCtrl.overshow(event); // 链接提示显示
 
   // window.cancelAnimationFrame(ctx.jfautoscrollTimeout);
@@ -3240,6 +3247,7 @@ export function handleOverlayMouseUp(
   onCommentBoxResizeEnd(ctx, globalCache, container);
   onFormulaRangeDragEnd(ctx);
   onSearchDialogMoveEnd(globalCache);
+  onRangeSelectionModalMoveEnd(globalCache);
   // if (
   //   luckysheetConfigsetting &&
   //   luckysheetConfigsetting.hook &&

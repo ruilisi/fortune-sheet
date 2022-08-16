@@ -364,7 +364,6 @@ export function searchAll(
 }
 
 export function onSearchDialogMoveStart(
-  ctx: Context,
   globalCache: GlobalCache,
   e: MouseEvent,
   container: HTMLDivElement
@@ -386,11 +385,7 @@ export function onSearchDialogMoveStart(
   });
 }
 
-export function onSearchDialogMove(
-  ctx: Context,
-  globalCache: GlobalCache,
-  e: MouseEvent
-) {
+export function onSearchDialogMove(globalCache: GlobalCache, e: MouseEvent) {
   const searchDialog = globalCache?.searchDialog;
   const moveProps = searchDialog?.moveProps;
   if (moveProps == null) return;

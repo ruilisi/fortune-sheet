@@ -4,6 +4,7 @@ import React, {
   useRef,
   useEffect,
   useLayoutEffect,
+  useMemo,
 } from "react";
 import "./index.css";
 import {
@@ -28,6 +29,11 @@ import {
   handleOverlayTouchStart,
   createDropCellRange,
   expandRowsAndColumns,
+  getCellRowColumn,
+  getCellHyperlink,
+  showLinkCard,
+  Context,
+  GlobalCache,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -37,6 +43,7 @@ import InputBox from "./InputBox";
 import ScrollBar from "./ScrollBar";
 import ContentEditable from "./ContentEditable";
 import SearchReplace from "../SearchReplace";
+import LinkEditCard from "../LinkEidtCard";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
@@ -99,10 +106,60 @@ const SheetOverlay: React.FC = () => {
     });
   }, [setContext]);
 
+  const debouncedShowLinkCard = useMemo(
+    () =>
+      _.debounce(
+        (
+          globalCache: GlobalCache,
+          r: number,
+          c: number,
+          isEditing: boolean,
+          skip = false
+        ) => {
+          if (skip || globalCache.linkCard?.mouseEnter) return;
+          setContext((draftCtx) => {
+            showLinkCard(draftCtx, r, c, isEditing);
+          });
+        },
+        800
+      ),
+    [setContext]
+  );
+
+  const overShowLinkCard = useCallback(
+    (
+      ctx: Context,
+      globalCache: GlobalCache,
+      e: MouseEvent,
+      container: HTMLDivElement,
+      scrollX: HTMLDivElement,
+      scrollY: HTMLDivElement
+    ) => {
+      const rc = getCellRowColumn(ctx, e, container, scrollX, scrollY);
+      if (rc == null) return;
+      const link = getCellHyperlink(ctx, rc.r, rc.c);
+      if (link == null) {
+        debouncedShowLinkCard(globalCache, rc.r, rc.c, false);
+      } else {
+        showLinkCard(ctx, rc.r, rc.c, false);
+        debouncedShowLinkCard(globalCache, rc.r, rc.c, false, true);
+      }
+    },
+    [debouncedShowLinkCard]
+  );
+
   const onMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       const { nativeEvent } = e;
       setContext((draftCtx) => {
+        overShowLinkCard(
+          draftCtx,
+          refs.globalCache,
+          nativeEvent,
+          containerRef.current!,
+          refs.scrollbarX.current!,
+          refs.scrollbarY.current!
+        );
         handleOverlayMouseMove(
           draftCtx,
           refs.globalCache,
@@ -115,6 +172,7 @@ const SheetOverlay: React.FC = () => {
       });
     },
     [
+      overShowLinkCard,
       refs.cellInput,
       refs.globalCache,
       refs.scrollbarX,
@@ -495,6 +553,12 @@ const SheetOverlay: React.FC = () => {
                 </div>
               );
             })}
+          {context.linkCard?.sheetId === context.currentSheetId && (
+            <LinkEditCard
+              {...context.linkCard}
+              getContainer={() => containerRef.current!}
+            />
+          )}
           <InputBox />
           <div id="luckysheet-postil-showBoxs">
             {_.concat(

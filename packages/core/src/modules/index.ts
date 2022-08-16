@@ -23,3 +23,4 @@ export * from "./merge";
 export * from "./sort";
 export * from "./screenshot";
 export * from "./searchReplace";
+export * from "./hyperlink";

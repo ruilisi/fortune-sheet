@@ -34,6 +34,7 @@ import {
   isRealNull,
   isRealNum,
 } from "./validation";
+import { showLinkCard } from "./hyperlink";
 
 type ToolbarItemClickHandler = (
   ctx: Context,
@@ -1396,6 +1397,14 @@ export function handleSum(
   autoSelectionFormula(ctx, cellInput, "SUM", cache!);
 }
 
+export function handleLink(ctx: Context) {
+  const selection = ctx.luckysheet_select_save?.[0];
+  const flowdata = getFlowdata(ctx);
+  if (flowdata != null && selection != null) {
+    showLinkCard(ctx, selection.row[0], selection.column[0], true);
+  }
+}
+
 const handlerMap: Record<string, ToolbarItemClickHandler> = {
   "currency-format": handleCurrencyFormat,
   "percentage-format": handlePercentageFormat,
@@ -1413,6 +1422,7 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
   search: (ctx: Context) => {
     ctx.showSearchReplace = true;
   },
+  link: handleLink,
 };
 
 const selectedMap: Record<string, ToolbarItemSelectedFunc> = {
