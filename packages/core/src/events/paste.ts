@@ -544,7 +544,7 @@ function pasteHandlerOfCutPaste(
   // 应用范围
   const last =
     ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1];
-  if (!last || !last.row_focus || !last.column_focus) return;
+  if (!last || last.row_focus == null || last.column_focus == null) return;
 
   const minh = last.row_focus;
   const maxh = minh + copyh - 1; // 应用范围首尾行
