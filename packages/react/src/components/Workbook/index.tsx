@@ -404,6 +404,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             onKeyDown={onKeyDown}
           >
             <SVGDefines />
+            {/* 工具栏 */}
             <div className="fortune-workarea">
               {mergedSettings.showToolbar && (
                 <Toolbar
@@ -413,6 +414,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               )}
               {mergedSettings.showFormulaBar && <FxEditor />}
             </div>
+            {/* 表格内容主体 */}
             <Sheet sheet={sheet} />
             {mergedSettings.showSheetTabs && <SheetTab />}
             <ContextMenu />

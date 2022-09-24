@@ -157,6 +157,7 @@ const Toolbar: React.FC<{
                 zIndex: 100,
               }}
             />
+            {/* 文本颜色和背景颜色 */}
             <Combo
               iconId={name}
               key={name}
@@ -166,13 +167,17 @@ const Toolbar: React.FC<{
                   name === "font-color"
                     ? refs.globalCache.recentTextColor
                     : refs.globalCache.recentBackgroundColor;
+                // 文本颜色和背景色图标点击事件
                 if (color) pick(color);
               }}
             >
               {(setOpen) => (
                 <ColorPicker
                   onPick={(color) => {
+                    // 颜色选择器
+                    // 选完颜色 pick
                     pick(color);
+                    // 选择完颜色板，然后关闭颜色板
                     setOpen(false);
                   }}
                 />
@@ -236,6 +241,7 @@ const Toolbar: React.FC<{
         );
       }
       if (name === "font-size") {
+        // 字体大小
         return (
           <Combo
             text={cell ? normalizedCellAttr(cell, "fs") : "10"}
@@ -269,6 +275,7 @@ const Toolbar: React.FC<{
         );
       }
       if (name === "horizontal-align") {
+        // 水平对齐图标
         const items = [
           {
             title: "align-left",
@@ -323,6 +330,7 @@ const Toolbar: React.FC<{
         );
       }
       if (name === "vertical-align") {
+        // "垂直对齐"
         const items = [
           {
             title: "align-top",
