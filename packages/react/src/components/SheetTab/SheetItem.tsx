@@ -24,6 +24,14 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
   const { showAlert } = useAlert();
 
   useEffect(() => {
+    setContext((draftCtx) => {
+      draftCtx.scrollLeft = 0;
+      draftCtx.scrollTop = 0;
+      draftCtx.luckysheet_selection_range = [];
+    });
+  }, [context.currentSheetId, setContext]);
+
+  useEffect(() => {
     if (!editable.current) return;
     if (editing) {
       // select all when enter editing mode

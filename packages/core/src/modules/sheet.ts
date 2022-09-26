@@ -89,6 +89,7 @@ export function changeSheet(
 export function addSheet(
   ctx: Context,
   settings: Required<Settings>,
+  newSheetID?: string,
   isPivotTable = false
 ) {
   if (/* isEditMode() || */ ctx.allowEdit === false) {
@@ -96,7 +97,7 @@ export function addSheet(
     return;
   }
   const order = ctx.luckysheetfile.length;
-  const id = settings.generateSheetId();
+  const id = newSheetID ?? settings.generateSheetId();
 
   const sheetname = generateRandomSheetName(
     ctx.luckysheetfile,

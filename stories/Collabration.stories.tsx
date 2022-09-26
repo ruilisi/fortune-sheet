@@ -36,7 +36,7 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
     socket.onmessage = (e) => {
       const msg = JSON.parse(e.data);
       if (msg.req === "getData") {
-        setData(msg.data);
+        setData(msg.data.map((d: any) => ({ id: d._id, ...d })));
       } else if (msg.req === "op") {
         workbookRef.current?.applyOp(msg.data);
       } else if (msg.req === "addPresences") {

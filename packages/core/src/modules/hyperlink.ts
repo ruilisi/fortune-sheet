@@ -98,7 +98,7 @@ export function showLinkCard(
   if (ctx.linkCard?.selectingCellRange) return;
   if (`${r}_${c}` === ctx.linkCard?.rc) return;
   const link = getCellHyperlink(ctx, r, c);
-  const cell = getFlowdata(ctx)?.[r][c];
+  const cell = getFlowdata(ctx)?.[r]?.[c];
   if (
     !isEditing &&
     link == null &&
