@@ -9,7 +9,7 @@ import { CommonOptions, getSheet } from "./common";
 import { INVALID_PARAMS } from "./errors";
 
 export function addSheet(ctx: Context, settings: Required<Settings>) {
-  addSheetInternal(ctx, settings, false);
+  addSheetInternal(ctx, settings, undefined, false);
 }
 
 export function deleteSheet(ctx: Context, options: CommonOptions = {}) {

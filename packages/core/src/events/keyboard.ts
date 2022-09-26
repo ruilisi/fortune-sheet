@@ -438,6 +438,11 @@ export function handleGlobalKeyDown(
   if (ctx.contextMenu) {
     return;
   }
+
+  if (kstr === "Escape" && !!ctx.luckysheet_selection_range) {
+    ctx.luckysheet_selection_range = [];
+  }
+
   if (
     // $("#luckysheet-modal-dialog-mask").is(":visible") ||
     // $(event.target).hasClass("luckysheet-mousedown-cancel") ||
