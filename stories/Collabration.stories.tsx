@@ -35,6 +35,7 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
     };
     socket.onmessage = (e) => {
       const msg = JSON.parse(e.data);
+      console.info(msg, "wsMSA");
       if (msg.req === "getData") {
         setData(msg.data.map((d: any) => ({ id: d._id, ...d })));
       } else if (msg.req === "op") {

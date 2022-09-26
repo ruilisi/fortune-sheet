@@ -23,6 +23,18 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
   const [dragOver, setDragOver] = useState(false);
   const { showAlert } = useAlert();
 
+  console.info(context.luckysheetfile, "files");
+
+  useEffect(() => {
+    setContext((draftCtx) => {
+      console.info(draftCtx.luckysheet_select_save);
+      // draftCtx.luckysheet_select_save = undefined;
+      draftCtx.scrollLeft = 0;
+      draftCtx.scrollTop = 0;
+      draftCtx.luckysheet_selection_range = [];
+    });
+  }, [context.currentSheetId, setContext]);
+
   useEffect(() => {
     setContext((draftCtx) => {
       const r = context.sheetScrollRecord[draftCtx.currentSheetId];

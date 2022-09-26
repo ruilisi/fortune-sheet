@@ -102,6 +102,7 @@ export function getSheetIndex(ctx: Context, id: string) {
       return i;
     }
   }
+  console.info(ctx.luckysheetfile);
   return null;
 }
 
