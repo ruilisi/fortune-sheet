@@ -58,30 +58,30 @@ describe("keyboard", () => {
     expect(getFlowdata(ctx)[0][0]).toEqual({ bl: 1, v: "abc" });
   });
 
-  test("handle with ctrl+z and ctrl+y", async () => {
+  test("handle with ctrl+z", async () => {
     const cellInput = document.createElement("div");
     const fxInput = document.createElement("div");
     const ctx = getContext();
     const undo = jest.fn();
-    const redo = jest.fn();
+    // const redo = jest.fn();
     handleWithCtrlOrMetaKey(
       ctx,
       keypressWithCtrlPressed("z"),
       cellInput,
       fxInput,
-      undo,
-      redo
+      undo
+      // redo
     );
     expect(undo).toHaveBeenCalled();
-    handleWithCtrlOrMetaKey(
-      ctx,
-      keypressWithCtrlPressed("y"),
-      cellInput,
-      fxInput,
-      undo,
-      redo
-    );
-    expect(redo).toHaveBeenCalled();
+    // handleWithCtrlOrMetaKey(
+    //   ctx,
+    //   keypressWithCtrlPressed("shift+z"),
+    //   cellInput,
+    //   fxInput,
+    //   undo
+    // redo
+    // );
+    // expect(redo).toHaveBeenCalled();
   });
 
   test("handle with ctrl+a", async () => {

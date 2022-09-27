@@ -2529,6 +2529,7 @@ export function handleFormulaInput(
 
     rangeHightlightselected(ctx, $editor);
   } else if (value1txt.substring(0, 1) !== "=") {
+    if (!$copyTo) return;
     if ($copyTo.id === "luckysheet-rich-text-editor") {
       if (!$copyTo.innerHTML.startsWith("<span")) {
         $copyTo.innerHTML = value;
