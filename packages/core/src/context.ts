@@ -66,6 +66,8 @@ export type Context = {
   scrollLeft: number;
   scrollTop: number;
 
+  sheetScrollRecord: Record<string, any>;
+
   luckysheet_select_status: boolean;
   luckysheet_select_save: Sheet["luckysheet_select_save"];
   luckysheet_selection_range: Sheet["luckysheet_selection_range"];
@@ -180,6 +182,8 @@ export function defaultContext(): Context {
 
     scrollLeft: 0,
     scrollTop: 0,
+
+    sheetScrollRecord: {},
 
     luckysheet_select_status: false,
     luckysheet_select_save: undefined,

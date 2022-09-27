@@ -25,11 +25,21 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
 
   useEffect(() => {
     setContext((draftCtx) => {
-      draftCtx.scrollLeft = 0;
-      draftCtx.scrollTop = 0;
+      const r = context.sheetScrollRecord[draftCtx.currentSheetId];
+      if (r) {
+        draftCtx.scrollLeft = r.scrollLeft ?? 0;
+        draftCtx.scrollTop = r.scrollTop ?? 0;
+        draftCtx.luckysheet_select_status = r.luckysheet_select_status ?? false;
+        draftCtx.luckysheet_select_save = r.luckysheet_select_save ?? undefined;
+      } else {
+        draftCtx.scrollLeft = 0;
+        draftCtx.scrollTop = 0;
+        draftCtx.luckysheet_select_status = false;
+        draftCtx.luckysheet_select_save = undefined;
+      }
       draftCtx.luckysheet_selection_range = [];
     });
-  }, [context.currentSheetId, setContext]);
+  }, [context.currentSheetId, context.sheetScrollRecord, setContext]);
 
   useEffect(() => {
     if (!editable.current) return;
@@ -151,6 +161,13 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
       onClick={() => {
         if (isDropPlaceholder) return;
         setContext((draftCtx) => {
+          draftCtx.sheetScrollRecord[draftCtx.currentSheetId] = {
+            scrollLeft: draftCtx.scrollLeft,
+            scrollTop: draftCtx.scrollTop,
+            luckysheet_select_status: draftCtx.luckysheet_select_status,
+            luckysheet_select_save: draftCtx.luckysheet_select_save,
+            luckysheet_selection_range: draftCtx.luckysheet_selection_range,
+          };
           draftCtx.currentSheetId = sheet.id!;
         });
       }}

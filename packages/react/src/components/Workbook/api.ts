@@ -54,8 +54,13 @@ export function generateAPIs(
               });
             }
           }
-          const newContext = applyPatches(ctx_, patches);
-          return newContext;
+          if (patches.length === 0) return ctx_;
+          try {
+            const newContext = applyPatches(ctx_, patches);
+            return newContext;
+          } catch {
+            return ctx_;
+          }
         },
         { noHistory: true }
       );

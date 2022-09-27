@@ -89,7 +89,7 @@ export function changeSheet(
 export function addSheet(
   ctx: Context,
   settings: Required<Settings>,
-  newSheetID?: string,
+  newSheetID?: string, // if action is from websocket, there will be a new sheetID
   isPivotTable = false
 ) {
   if (/* isEditMode() || */ ctx.allowEdit === false) {
@@ -125,7 +125,9 @@ export function addSheet(
 
   //   server.saveParam("sha", null, $.extend(true, {}, sheetconfig));
 
-  changeSheet(ctx, id, isPivotTable, true);
+  if (!newSheetID) {
+    changeSheet(ctx, id, isPivotTable, true);
+  }
 
   if (ctx.hooks.afterAddSheet) {
     setTimeout(() => {
