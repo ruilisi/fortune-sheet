@@ -226,9 +226,10 @@ export function updateFormat(
   }
 
   _.forEach(ctx.luckysheet_select_save, (selection) => {
+    // 获取要更改的当前表格的位置-吕竟
     const [row_st, row_ed] = selection.row;
     const [col_st, col_ed] = selection.column;
-
+    console.log(row_st, row_ed, col_st, col_ed);
     updateFormatCell(ctx, d, attr, foucsStatus, row_st, row_ed, col_st, col_ed);
 
     // if (attr === "tb" || attr === "tr" || attr === "fs") {
