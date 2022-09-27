@@ -46,7 +46,7 @@ export function generateAPIs(
               });
             } else if (specialOp.op === "addSheet") {
               ctx_ = produce(ctx_, (draftCtx) => {
-                addSheet(draftCtx, settings);
+                addSheet(draftCtx, settings, specialOp.value.id);
               });
             } else if (specialOp.op === "deleteSheet") {
               ctx_ = produce(ctx_, (draftCtx) => {

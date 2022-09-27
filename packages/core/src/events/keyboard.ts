@@ -152,6 +152,11 @@ export function handleWithCtrlOrMetaKey(
       // $("#luckysheet-rich-text-editor").html(value);
       // luckysheetRangeLast($("#luckysheet-rich-text-editor")[0]);
       handleFormulaInput(ctx, fxInput, cellInput, e.keyCode);
+    } else if (e.key === "z") {
+      // Ctrl + shift + z 重做
+      handleRedo();
+      e.stopPropagation();
+      return;
     }
   } else if (e.key === "b") {
     // Ctrl + B  加粗
@@ -259,11 +264,6 @@ export function handleWithCtrlOrMetaKey(
   } else if (e.key === "z") {
     // Ctrl + Z  撤销
     handleUndo();
-    e.stopPropagation();
-    return;
-  } else if (e.key === "y") {
-    // Ctrl + Y  重做
-    handleRedo();
     e.stopPropagation();
     return;
   } /* else if (e.key === "ArrowUp") {
@@ -438,6 +438,11 @@ export function handleGlobalKeyDown(
   if (ctx.contextMenu) {
     return;
   }
+
+  if (kstr === "Escape" && !!ctx.luckysheet_selection_range) {
+    ctx.luckysheet_selection_range = [];
+  }
+
   if (
     // $("#luckysheet-modal-dialog-mask").is(":visible") ||
     // $(event.target).hasClass("luckysheet-mousedown-cancel") ||
