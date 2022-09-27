@@ -172,7 +172,7 @@ export function opToPatch(ctx: Context, ops: Op[]): [Patch[], Op[]] {
       if (i != null) {
         patch.path = ["luckysheetfile", i, ...op.path];
       } else {
-        // throw new Error(`sheet id: ${op.id} not found`);
+        throw new Error(`sheet id: ${op.id} not found`);
       }
     }
     return patch;
