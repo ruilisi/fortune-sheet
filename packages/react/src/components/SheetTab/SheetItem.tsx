@@ -169,6 +169,8 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
             luckysheet_selection_range: draftCtx.luckysheet_selection_range,
           };
           draftCtx.currentSheetId = sheet.id!;
+          // 解决蓝框跟随问题，当点击sheet列表的时候，把点击的列表数据赋值给当前的表格
+          draftCtx.luckysheet_select_save = sheet.luckysheet_select_save;
         });
       }}
       onContextMenu={(e) => {
