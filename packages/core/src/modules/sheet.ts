@@ -105,6 +105,7 @@ export function addSheet(
     ctx
   );
 
+  // 初始化表格
   const sheetconfig: Sheet = {
     name: sheetname,
     status: 0,
@@ -115,6 +116,12 @@ export function addSheet(
     config: {},
     pivotTable: null,
     isPivotTable: !!isPivotTable,
+    luckysheet_select_save: [
+      {
+        row: [0, 0],
+        column: [0, 0],
+      },
+    ], // 解决蓝框跟随问题，初始化选框，便于后序存储每一个单独的sheet选框
   };
 
   if (ctx.hooks.beforeAddSheet?.(sheetconfig) === false) {
@@ -122,6 +129,9 @@ export function addSheet(
   }
 
   ctx.luckysheetfile.push(sheetconfig);
+  // 解决蓝框跟随bug,把新建的sheet的值赋给当前的表格值
+  ctx.currentSheetId = sheetconfig.id as string;
+  ctx.luckysheet_select_save = sheetconfig.luckysheet_select_save;
 
   //   server.saveParam("sha", null, $.extend(true, {}, sheetconfig));
 
