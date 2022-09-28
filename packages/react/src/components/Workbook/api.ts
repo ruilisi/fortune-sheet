@@ -13,6 +13,7 @@ import {
   Presence,
   Settings,
   SingleRange,
+  createFilterOptions,
 } from "@fortune-sheet/core";
 import produce, { applyPatches } from "immer";
 import _ from "lodash";
@@ -54,6 +55,9 @@ export function generateAPIs(
               });
             }
           }
+          if (ops[0]?.path?.[0] === "filter_select")
+            ctx_.luckysheet_filter_save = ops[0].value;
+          createFilterOptions(ctx_, ctx_.luckysheet_filter_save);
           if (patches.length === 0) return ctx_;
           try {
             const newContext = applyPatches(ctx_, patches);

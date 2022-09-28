@@ -10952,6 +10952,7 @@ export default {
     freeze: "Freeze",
     sort: "Sort",
     filter: "Filter",
+    sortAndFilter: "Sort and filter",
     findAndReplace: "Find and replace",
     "formula-sum": "SUM",
     autoSum: "Auto SUM",

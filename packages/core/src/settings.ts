@@ -141,6 +141,7 @@ export type Settings = {
   toolbarItems?: string[];
   cellContextMenu?: string[];
   sheetTabContextMenu?: string[];
+  filterContextMenu?: string[];
   generateSheetId?: () => string;
   hooks?: Hooks;
 };
@@ -191,7 +192,7 @@ export const defaultSettings: Required<Settings> = {
     "text-rotation",
     "|",
     "freeze",
-    "sort",
+    "filter",
     "link",
     "image",
     "comment",
@@ -228,6 +229,16 @@ export const defaultSettings: Required<Settings> = {
     "|",
     "move",
   ], // 自定义底部sheet页右击菜单
+  filterContextMenu: [
+    "sort-by-asc",
+    "sort-by-desc",
+    "|",
+    "filter-by-color",
+    "|",
+    // "filter-by-condition",
+    // "|",
+    "filter-by-value",
+  ], // 筛选菜单
   generateSheetId: () => uuidv4(),
   hooks: {},
 };

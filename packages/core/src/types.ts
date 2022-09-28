@@ -138,8 +138,8 @@ export type Sheet = {
   showGridLines?: boolean | number;
   pivotTable?: any;
   isPivotTable?: boolean;
-  filter?: any[];
-  filter_select?: any;
+  filter?: Record<string, any>;
+  filter_select?: { row: number[]; column: number[] };
   luckysheet_conditionformat_save?: any[];
   luckysheet_alternateformat_save?: any[];
   dataVerification?: any;
@@ -187,6 +187,25 @@ export type LinkCardProps = {
   isEditing: boolean;
   selectingCellRange?: boolean;
 };
+
+export type FilterOptions = Record<
+  string,
+  {
+    startRow: number;
+    endRow: number;
+    startCol: number;
+    endCol: number;
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    items: {
+      col: number;
+      left: number;
+      top: number;
+    }[];
+  }
+>;
 
 export type History = {
   patches: ImmerPatch[];

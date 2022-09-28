@@ -10935,6 +10935,7 @@ export default {
     freeze: "冻结",
     sort: "排序",
     filter: "筛选",
+    sortAndFilter: "排序和筛选",
     findAndReplace: "查找替换",
     "formula-sum": "求和",
     autoSum: "自动求和",

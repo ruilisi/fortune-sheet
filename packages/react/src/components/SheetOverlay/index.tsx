@@ -44,6 +44,7 @@ import ScrollBar from "./ScrollBar";
 import ContentEditable from "./ContentEditable";
 import SearchReplace from "../SearchReplace";
 import LinkEditCard from "../LinkEidtCard";
+import FilterOptions from "../FilterOption";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
@@ -559,6 +560,7 @@ const SheetOverlay: React.FC = () => {
               getContainer={() => containerRef.current!}
             />
           )}
+          <FilterOptions getContainer={() => containerRef.current!} />
           <InputBox />
           <div id="luckysheet-postil-showBoxs">
             {_.concat(

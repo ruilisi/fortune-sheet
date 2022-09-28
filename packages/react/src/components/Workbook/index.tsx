@@ -43,6 +43,7 @@ import SheetTabContextMenu from "../ContextMenu/SheetTab";
 import MoreItemsContaier from "../Toolbar/MoreItemsContainer";
 import { generateAPIs } from "./api";
 import { ModalProvider } from "../../context/modal";
+import FilterMenu from "../ContextMenu/FilterMenu";
 
 enablePatches();
 
@@ -416,6 +417,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             <Sheet sheet={sheet} />
             {mergedSettings.showSheetTabs && <SheetTab />}
             <ContextMenu />
+            <FilterMenu />
             <SheetTabContextMenu />
             {moreToolbarItems && (
               <MoreItemsContaier onClose={onMoreToolbarItemsClose}>
@@ -427,6 +429,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                 onMouseDown={() => {
                   setContextWithProduce((draftCtx) => {
                     draftCtx.contextMenu = undefined;
+                    draftCtx.filterContextMenu = undefined;
                   });
                 }}
                 onMouseMove={(e) => e.stopPropagation()}
