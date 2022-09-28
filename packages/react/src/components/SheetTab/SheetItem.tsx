@@ -25,7 +25,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
 
   useEffect(() => {
     setContext((draftCtx) => {
-      const r = context.sheetScrollRecord[draftCtx.currentSheetId];
+      const r = context.sheetScrollRecord[draftCtx?.currentSheetId];
       if (r) {
         draftCtx.scrollLeft = r.scrollLeft ?? 0;
         draftCtx.scrollTop = r.scrollTop ?? 0;
