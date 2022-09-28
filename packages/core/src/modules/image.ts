@@ -121,14 +121,12 @@ export function insertImage(ctx: Context, image: HTMLImageElement) {
   }
 }
 
-function getImagePosition(ctx: Context, container: HTMLDivElement) {
+function getImagePosition() {
   const box = document.getElementById("luckysheet-modal-dialog-activeImage");
   if (!box) return undefined;
-  // eslint-disable-next-line prefer-const
-  let { top, left, width, height } = box.getBoundingClientRect();
-  const rect = container.getBoundingClientRect();
-  left -= ctx.rowHeaderWidth + rect.left;
-  top -= ctx.columnHeaderHeight + rect.top;
+  const { width, height } = box.getBoundingClientRect();
+  const left = box.offsetLeft;
+  const top = box.offsetTop;
   return { left, top, width, height };
 }
 
@@ -140,11 +138,10 @@ export function cancelActiveImgItem(ctx: Context, globalCache: GlobalCache) {
 export function onImageMoveStart(
   ctx: Context,
   globalCache: GlobalCache,
-  e: MouseEvent,
-  container: HTMLDivElement
+  e: MouseEvent
   // { r, c, rc }: { r: number; c: number; rc: string },
 ) {
-  const position = getImagePosition(ctx, container);
+  const position = getImagePosition();
   if (position) {
     const { top, left } = position;
     _.set(globalCache, "image", {
@@ -163,10 +160,8 @@ export function onImageMove(
   ctx: Context,
   globalCache: GlobalCache,
   e: MouseEvent
-  // container: HTMLDivElement
 ) {
   const image = globalCache?.image;
-  // const position = getImagePosition(ctx, container);
   const img = document.getElementById("luckysheet-modal-dialog-activeImage");
   if (img && image && !image.resizingSide) {
     const { x: startX, y: startY } = image.cursorMoveStartPosition!;
@@ -181,12 +176,8 @@ export function onImageMove(
   return false;
 }
 
-export function onImageMoveEnd(
-  ctx: Context,
-  globalCache: GlobalCache,
-  container: HTMLDivElement
-) {
-  const position = getImagePosition(ctx, container);
+export function onImageMoveEnd(ctx: Context, globalCache: GlobalCache) {
+  const position = getImagePosition();
   if (!globalCache.image?.resizingSide) {
     globalCache.image = undefined;
 
@@ -202,13 +193,11 @@ export function onImageMoveEnd(
 }
 
 export function onImageResizeStart(
-  ctx: Context,
   globalCache: GlobalCache,
   e: MouseEvent,
-  container: HTMLDivElement,
   resizingSide: string
 ) {
-  const position = getImagePosition(ctx, container);
+  const position = getImagePosition();
   if (position) {
     _.set(globalCache, "image", {
       cursorMoveStartPosition: { x: e.pageX, y: e.pageY },
@@ -277,14 +266,10 @@ export function onImageResize(
   return false;
 }
 
-export function onImageResizeEnd(
-  ctx: Context,
-  globalCache: GlobalCache,
-  container: HTMLDivElement
-) {
+export function onImageResizeEnd(ctx: Context, globalCache: GlobalCache) {
   if (globalCache.image?.resizingSide) {
     globalCache.image = undefined;
-    const position = getImagePosition(ctx, container);
+    const position = getImagePosition();
     if (position) {
       const img = _.find(ctx.insertedImgs, (v) => v.id === ctx.activeImg?.id);
       if (img) {

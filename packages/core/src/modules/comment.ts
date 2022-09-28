@@ -563,18 +563,12 @@ export function overShowComment(
   };
 }
 
-export function getCommentBoxPosition(
-  ctx: Context,
-  commentId: string,
-  container: HTMLDivElement
-) {
+export function getCommentBoxPosition(commentId: string) {
   const box = document.getElementById(commentId);
   if (!box) return undefined;
-  // eslint-disable-next-line prefer-const
-  let { top, left, width, height } = box.getBoundingClientRect();
-  const rect = container.getBoundingClientRect();
-  left -= ctx.rowHeaderWidth + rect.left;
-  top -= ctx.columnHeaderHeight + rect.top;
+  const { width, height } = box.getBoundingClientRect();
+  const left = box.offsetLeft;
+  const top = box.offsetTop;
   return { left, top, width, height };
 }
 
@@ -582,12 +576,11 @@ export function onCommentBoxResizeStart(
   ctx: Context,
   globalCache: GlobalCache,
   e: MouseEvent,
-  container: HTMLDivElement,
   { r, c, rc }: { r: number; c: number; rc: string },
   resizingId: string,
   resizingSide: string
 ) {
-  const position = getCommentBoxPosition(ctx, resizingId, container);
+  const position = getCommentBoxPosition(resizingId);
   if (position) {
     _.set(globalCache, "commentBox", {
       cursorMoveStartPosition: {
@@ -651,18 +644,14 @@ export function onCommentBoxResize(
   return false;
 }
 
-export function onCommentBoxResizeEnd(
-  ctx: Context,
-  globalCache: GlobalCache,
-  container: HTMLDivElement
-) {
+export function onCommentBoxResizeEnd(ctx: Context, globalCache: GlobalCache) {
   if (globalCache.commentBox?.resizingId) {
     const {
       resizingId,
       commentRC: { r, c },
     } = globalCache.commentBox;
     globalCache.commentBox.resizingId = undefined;
-    const position = getCommentBoxPosition(ctx, resizingId, container);
+    const position = getCommentBoxPosition(resizingId);
     if (position) {
       const { top, left, width, height } = position;
       const flowdata = getFlowdata(ctx);
@@ -681,11 +670,10 @@ export function onCommentBoxMoveStart(
   ctx: Context,
   globalCache: GlobalCache,
   e: MouseEvent,
-  container: HTMLDivElement,
   { r, c, rc }: { r: number; c: number; rc: string },
   movingId: string
 ) {
-  const position = getCommentBoxPosition(ctx, movingId, container);
+  const position = getCommentBoxPosition(movingId);
   if (position) {
     const { top, left } = position;
     _.set(globalCache, "commentBox", {
@@ -720,18 +708,14 @@ export function onCommentBoxMove(
   return false;
 }
 
-export function onCommentBoxMoveEnd(
-  ctx: Context,
-  globalCache: GlobalCache,
-  container: HTMLDivElement
-) {
+export function onCommentBoxMoveEnd(ctx: Context, globalCache: GlobalCache) {
   if (globalCache.commentBox?.movingId) {
     const {
       movingId,
       commentRC: { r, c },
     } = globalCache.commentBox;
     globalCache.commentBox.movingId = undefined;
-    const position = getCommentBoxPosition(ctx, movingId, container);
+    const position = getCommentBoxPosition(movingId);
     if (position) {
       const { top, left } = position;
       const flowdata = getFlowdata(ctx);

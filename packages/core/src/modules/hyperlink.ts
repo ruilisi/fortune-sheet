@@ -205,18 +205,15 @@ export function isLinkValid(
 export function onRangeSelectionModalMoveStart(
   ctx: Context,
   globalCache: GlobalCache,
-  e: MouseEvent,
-  container: HTMLDivElement
+  e: MouseEvent
 ) {
   const box = document.querySelector(
     "div.fortune-link-modify-modal.range-selection-modal"
-  );
+  ) as HTMLDivElement;
   if (!box) return;
-  // eslint-disable-next-line prefer-const
-  let { top, left, width, height } = box.getBoundingClientRect();
-  const rect = container.getBoundingClientRect();
-  left -= ctx.rowHeaderWidth + rect.left;
-  top -= ctx.columnHeaderHeight + rect.top;
+  const { width, height } = box.getBoundingClientRect();
+  const left = box.offsetLeft;
+  const top = box.offsetTop;
   const initialPosition = { left, top, width, height };
   _.set(globalCache, "linkCard.rangeSelectionModal", {
     cursorMoveStartPosition: {

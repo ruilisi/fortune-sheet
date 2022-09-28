@@ -23,11 +23,7 @@ import _ from "lodash";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
 
-export const LinkEditCard: React.FC<
-  LinkCardProps & {
-    getContainer: () => HTMLDivElement;
-  }
-> = ({
+export const LinkEditCard: React.FC<LinkCardProps> = ({
   r,
   c,
   rc,
@@ -37,7 +33,6 @@ export const LinkEditCard: React.FC<
   isEditing,
   position,
   selectingCellRange,
-  getContainer,
 }) => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const [linkText, setLinkText] = useState<string>(originText);
@@ -205,12 +200,7 @@ export const LinkEditCard: React.FC<
       {..._.omit(containerEvent, ["onMouseDown", "onMouseMove", "onMouseUp"])}
       onMouseDown={(e) => {
         const { nativeEvent } = e;
-        onRangeSelectionModalMoveStart(
-          context,
-          refs.globalCache,
-          nativeEvent,
-          getContainer()
-        );
+        onRangeSelectionModalMoveStart(context, refs.globalCache, nativeEvent);
         e.stopPropagation();
       }}
     >
