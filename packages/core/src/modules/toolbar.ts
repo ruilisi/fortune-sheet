@@ -1224,6 +1224,19 @@ export function handleClearFormat(ctx: Context) {
         flowdata[r][c] = _.pick(cell, "v", "m", "mc", "f", "ct");
       }
     }
+    // 清空表格样式时，清除边框样式
+    const borderInfo = {
+      rangeType: "range",
+      borderType: "border-none",
+      color: "#000000",
+      style: "1",
+      range: _.cloneDeep(ctx.luckysheet_select_save),
+    };
+    ctx.config.borderInfo?.push(borderInfo);
+    const index = getSheetIndex(ctx, ctx.currentSheetId);
+    if (index == null) return;
+
+    ctx.luckysheetfile[index].config = ctx.config;
   });
 }
 
