@@ -1241,30 +1241,28 @@ export function handleClearFormat(ctx: Context) {
     const index = getSheetIndex(ctx, ctx.currentSheetId);
     if (index == null) return;
     // 表格边框为空时，不对表格进行操作
-    if (typeof ctx.config.borderInfo === "undefined") return;
+    if (ctx.config.borderInfo == null) return;
     // 遍历表格边框信息
-    // @ts-ignore
-    _.forEach(ctx.luckysheetfile[index].config.borderInfo, (border) => {
-      if (
-        _.cloneDeep(border.rangeType) === "range" &&
-        _.cloneDeep(border.borderType) !== "border-none"
-      ) {
+    if (ctx.luckysheetfile[index].config == null) return;
+    _.forEach(ctx.luckysheetfile[index].config!.borderInfo, (border) => {
+      if (border.rangeType === "range" && border.borderType !== "border-none") {
         for (let i = 0; i < border.range.length; i += 1) {
-          const border_row = _.cloneDeep(border.range[i].row);
-          const border_col = _.cloneDeep(border.range[i].column);
+          const border_row = border.range[i].row;
+          const border_col = border.range[i].column;
           const target_row = getIntersection(border_row, [row_st, row_ed]);
           const target_col = getIntersection(border_col, [col_st, col_ed]);
           // 当重复的行或者列小于等于0时，不对表格进行操作
           if (target_row.length <= 0 || target_col.length <= 0) {
             continue;
           }
+
           // 一旦选区内和表格边框信息有交集，则覆盖一层border-none
           const borderInfo = {
             rangeType: "range",
             borderType: "border-none",
             color: "#000000",
             style: "1",
-            range: _.cloneDeep(ctx.luckysheet_select_save),
+            range: ctx.luckysheet_select_save,
           };
           ctx.config.borderInfo?.push(borderInfo);
           ctx.luckysheetfile[index].config = ctx.config;
