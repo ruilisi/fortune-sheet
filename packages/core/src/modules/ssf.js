@@ -1740,6 +1740,13 @@ const make_ssf = function make_ssf(SSF) {
         return v;
       }
 
+      //如果格式为w则四舍五入向上取整
+      if(sfmt === "w") {
+        v = Math.round(v);
+      } else {
+        v = Math.round(v * 100) / 100;
+      }
+
       //var v =300101886.436;
       var acc = sfmt.slice(1); //取得0/0.0/0.00
       var isNegative = false;
@@ -1754,9 +1761,9 @@ const make_ssf = function make_ssf(SSF) {
         if (vlength > 8) {
           var y = parseInt(v / 100000000); //亿
           // var w = parseInt(parseFloat(v).subtract(y * 100000000) / 10000); //万
-          var w = parseInt(((v - y * 100000000)) / 10000); //万
+          var w = parseInt((v - y * 100000000) / 10000); //万
           // var q = parseFloat(v).subtract(y * 100000000 + w * 10000); //千以后
-          var q = parseFloat((v - (y * 100000000 + w * 10000))); //千以后
+          var q = parseFloat(v - (y * 100000000 + w * 10000)); //千以后
           if (acc != "") {
             q = numeral(q).format(acc); //处理精确度
           }
@@ -1764,7 +1771,7 @@ const make_ssf = function make_ssf(SSF) {
         } else {
           var w = parseInt(v / 10000); //万
           // var q = parseFloat(v).subtract(w * 10000); //千以后
-          var q = parseFloat(v - w); //千以后
+          var q = parseFloat(v- w * 10000); //千以后
           if (acc != "") {
             q = numeral(q).format(acc); //处理精确度
           }
