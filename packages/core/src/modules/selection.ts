@@ -419,6 +419,7 @@ export function pasteHandlerOfPaintModel(
 
             if (x[c].v != null) {
               if (value.ct != null && value.ct.fa != null) {
+                // 修改被格式刷的值
                 const mask = update(value.ct.fa, x[c].v);
                 x[c].m = mask;
               }

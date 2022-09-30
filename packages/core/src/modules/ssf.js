@@ -1636,7 +1636,9 @@ const make_ssf = function make_ssf(SSF) {
     if (l < 4 && lat > -1) --l;
     if (fmt.length > 4)
       throw new Error("cannot find right format for |" + fmt.join("|") + "|");
-    if (typeof v !== "number")
+    // 这行代码弃用，有可能v会有"1"的情况出现，并且需要排查true，false，‘ ’这些值所以需要使用parseFloat(v).toString()去判断是不是Number类型
+    // if (typeof v !== "number")
+    if(parseFloat(v).toString() == "NaN")
       return [4, fmt.length === 4 || lat > -1 ? fmt[fmt.length - 1] : "@"];
     switch (fmt.length) {
       case 1:
