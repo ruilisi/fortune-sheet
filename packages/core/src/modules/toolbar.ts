@@ -1204,6 +1204,21 @@ export function handleFormatPainter(ctx: Context) {
   ctx.luckysheetPaintModelOn = true;
   ctx.luckysheetPaintSingle = true;
 }
+
+// 求两个数组的交集
+const getIntersection = (
+  section0: Array<number>,
+  section1: Array<number>
+): Array<number> => {
+  const st_max: number = section0[0] <= section1[0] ? section1[0] : section0[0];
+  const ed_min: number =
+    section0[section0.length - 1] >= section1[section1.length - 1]
+      ? section1[section1.length - 1]
+      : section0[section0.length - 1];
+  const intersection: Array<number> = st_max <= ed_min ? [st_max, ed_min] : [];
+  return intersection;
+};
+
 export function handleClearFormat(ctx: Context) {
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
@@ -1211,7 +1226,6 @@ export function handleClearFormat(ctx: Context) {
   _.forEach(ctx.luckysheet_select_save, (selection) => {
     const [row_st, row_ed] = selection.row;
     const [col_st, col_ed] = selection.column;
-
     for (let r = row_st; r <= row_ed; r += 1) {
       if (!_.isNil(ctx.config.rowhidden) && !_.isNil(ctx.config.rowhidden[r])) {
         continue;
@@ -1220,23 +1234,42 @@ export function handleClearFormat(ctx: Context) {
       for (let c = col_st; c <= col_ed; c += 1) {
         const cell = flowdata[r][c];
         if (!cell) continue;
-
         flowdata[r][c] = _.pick(cell, "v", "m", "mc", "f", "ct");
       }
     }
     // 清空表格样式时，清除边框样式
-    const borderInfo = {
-      rangeType: "range",
-      borderType: "border-none",
-      color: "#000000",
-      style: "1",
-      range: _.cloneDeep(ctx.luckysheet_select_save),
-    };
-    ctx.config.borderInfo?.push(borderInfo);
     const index = getSheetIndex(ctx, ctx.currentSheetId);
     if (index == null) return;
+    // 表格边框为空时，不对表格进行操作
+    if (ctx.config.borderInfo == null) return;
+    // 遍历表格边框信息
+    if (ctx.luckysheetfile[index].config == null) return;
+    _.forEach(ctx.luckysheetfile[index].config!.borderInfo, (border) => {
+      if (border.rangeType === "range" && border.borderType !== "border-none") {
+        for (let i = 0; i < border.range.length; i += 1) {
+          const border_row = border.range[i].row;
+          const border_col = border.range[i].column;
+          const target_row = getIntersection(border_row, [row_st, row_ed]);
+          const target_col = getIntersection(border_col, [col_st, col_ed]);
+          // 当重复的行或者列小于等于0时，不对表格进行操作
+          if (target_row.length <= 0 || target_col.length <= 0) {
+            continue;
+          }
 
-    ctx.luckysheetfile[index].config = ctx.config;
+          // 一旦选区内和表格边框信息有交集，则覆盖一层border-none
+          const borderInfo = {
+            rangeType: "range",
+            borderType: "border-none",
+            color: "#000000",
+            style: "1",
+            range: ctx.luckysheet_select_save,
+          };
+          ctx.config.borderInfo?.push(borderInfo);
+          ctx.luckysheetfile[index].config = ctx.config;
+          return;
+        }
+      }
+    });
   });
 }
 
