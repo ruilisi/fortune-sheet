@@ -387,7 +387,7 @@ export function pasteHandlerOfPaintModel(
               x[c] = { v: x[c] };
             }
             // 加一个判断x[c]是不是空，空就代表这个单元格没有值，那么就不需要修改，否则会出现空单元格也被赋值的情况出现
-            if (JSON.stringify(x[c]) !== "{}") {
+            if (!_.isEmpty(x[c])) {
               x[c] = _.assign(value, x[c]);
             }
             if (x[c].ct && x[c].ct.t === "inlineStr") {
