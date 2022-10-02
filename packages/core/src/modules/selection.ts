@@ -204,8 +204,10 @@ export function pasteHandlerOfPaintModel(
 
   // 应用范围
   if (!ctx.luckysheet_select_save) return;
+  // 框选区域
   const last =
     ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
+  // 框选区域输出
   const minh = last.row[0];
   let maxh = last.row[1]; // 应用范围首尾行
   const minc = last.column[0];
@@ -384,7 +386,10 @@ export function pasteHandlerOfPaintModel(
             } else {
               x[c] = { v: x[c] };
             }
-            x[c] = _.assign(value, x[c]);
+            // 加一个判断x[c]是不是空，空就代表这个单元格没有值，那么就不需要修改，否则会出现空单元格也被赋值的情况出现
+            if (!_.isEmpty(x[c])) {
+              x[c] = _.assign(value, x[c]);
+            }
             if (x[c].ct && x[c].ct.t === "inlineStr") {
               x[c].ct.s.forEach((item: any) => _.assign(value, item));
             }
@@ -419,6 +424,7 @@ export function pasteHandlerOfPaintModel(
 
             if (x[c].v != null) {
               if (value.ct != null && value.ct.fa != null) {
+                // 修改被格式刷的值
                 const mask = update(value.ct.fa, x[c].v);
                 x[c].m = mask;
               }
