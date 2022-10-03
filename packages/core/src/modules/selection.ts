@@ -404,8 +404,25 @@ export function pasteHandlerOfPaintModel(
              * 2022-10-01 加一个判断x[c]是不是空，空就代表这个单元格没有值，那么就不需要修改，否则会出现空单元格也被赋值的情况出现
              */
             // if (!_.isEmpty(x[c])) {
-            x[c] = _.assign(value, x[c]);
             // }
+
+            /**
+             * 2022.10.3弃用x[c] = _.assign(value, x[c]);
+             * 因为如果使用_.assign的话，将会导致x[c]的v和m都是value的值，从而导致一次性刷多个单元格的时候单元格值全为同一个数据
+             */
+            x[c] = {
+              bg: value.bg,
+              bl: value.bl,
+              ct: value.ct,
+              fc: value.fc,
+              ff: value.ff,
+              fs: value.fs,
+              ht: value.ht,
+              it: value.it,
+              vt: value.vt,
+              v: x[c].v,
+              m: x[c].m,
+            };
             if (x[c].ct && x[c].ct.t === "inlineStr") {
               x[c].ct.s.forEach((item: any) => _.assign(value, item));
             }
