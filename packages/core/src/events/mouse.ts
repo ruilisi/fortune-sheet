@@ -1566,6 +1566,25 @@ function mouseRender(
     last.top_move = top;
     last.height_move = height;
 
+    // 判断当前是不去选择整行
+    const isMaxColumn =
+      ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1]
+        .column;
+    const col_max = ctx.visibledatacolumn.length - 1;
+    if (isMaxColumn![0] === 0 && isMaxColumn![1] === col_max) {
+      last.column[1] = col_max;
+      last.width_move = ctx.visibledatacolumn[col_max] - 1;
+    }
+
+    // 判断当前是不是去选择整列
+    const isMaxRow =
+      ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1].row;
+    const row_max = ctx.visibledatarow.length - 1;
+    if (isMaxRow![0] === 0 && isMaxRow![1] === row_max) {
+      last.row[1] = row_max;
+      last.height_move = ctx.visibledatarow[row_max] - 1;
+    }
+
     ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1] = last;
 
     scrollToFrozenRowCol(ctx, globalCache.freezen?.[ctx.currentSheetId]);
@@ -4534,6 +4553,13 @@ export function handleRowHeaderMouseDown(
         column_focus: 0,
         row_select: true,
       });
+      /**
+       * 令ctx.luckysheet_select_status = true，当鼠标按下的时候还可以继续选择
+       * 令ctx.luckysheet_scroll_status = true，可以多选的时候进行下滑滑动条
+       * 当luckysheet_select_status为true的时候，就会执行mouse.ts中的mouseRender
+       */
+      ctx.luckysheet_select_status = true;
+      ctx.luckysheet_scroll_status = true;
     }
     // selectHightlightShow();
     // 允许编辑后的后台更新时
@@ -4934,6 +4960,13 @@ export function handleColumnHeaderMouseDown(
         column_focus: col_index,
         column_select: true,
       });
+      /**
+       * 令ctx.luckysheet_select_status = true，当鼠标按下的时候还可以继续选择
+       * 令ctx.luckysheet_scroll_status = true，可以多选的时候进行下滑滑动条
+       * 当luckysheet_select_status为true的时候，就会执行mouse.ts中的mouseRender
+       */
+      ctx.luckysheet_select_status = true;
+      ctx.luckysheet_scroll_status = true;
     }
 
     // selectHightlightShow();

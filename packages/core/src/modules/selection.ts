@@ -288,7 +288,17 @@ export function pasteHandlerOfPaintModel(
         let x: any[] = [];
         x = flowdata[h];
 
-        for (let c = mtc; c < maxcellCahe; c += 1) {
+        /**
+         * 2022-10-2废弃此for循环，改成更严谨的for循环
+         * 新for循环，新加两个判断!_.isNull(x[c]) && !_.isUndefined(x[c].v)，判断x[c]是不是空单元格，如果是则不需要进行操作
+         * 以此可以解决多选刷单元格字符重复，数字消失，数字重复bug
+         */
+        // for (let c = mtc; c < maxcellCahe; c += 1) {
+        for (
+          let c = mtc;
+          c < maxcellCahe && !_.isNull(x[c]) && !_.isUndefined(x[c].v);
+          c += 1
+        ) {
           if (borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`]) {
             const bd_obj = {
               rangeType: "cell",
@@ -386,10 +396,33 @@ export function pasteHandlerOfPaintModel(
             } else {
               x[c] = { v: x[c] };
             }
-            // 加一个判断x[c]是不是空，空就代表这个单元格没有值，那么就不需要修改，否则会出现空单元格也被赋值的情况出现
-            if (!_.isEmpty(x[c])) {
-              x[c] = _.assign(value, x[c]);
-            }
+            /**
+             * 2022-10-2废弃此if判断，统一放在最前面的for循环中进行判断
+             */
+
+            /**
+             * 2022-10-01 加一个判断x[c]是不是空，空就代表这个单元格没有值，那么就不需要修改，否则会出现空单元格也被赋值的情况出现
+             */
+            // if (!_.isEmpty(x[c])) {
+            // }
+
+            /**
+             * 2022.10.3弃用x[c] = _.assign(value, x[c]);
+             * 因为如果使用_.assign的话，将会导致x[c]的v和m都是value的值，从而导致一次性刷多个单元格的时候单元格值全为同一个数据
+             */
+            x[c] = {
+              bg: value.bg,
+              bl: value.bl,
+              ct: value.ct,
+              fc: value.fc,
+              ff: value.ff,
+              fs: value.fs,
+              ht: value.ht,
+              it: value.it,
+              vt: value.vt,
+              v: x[c].v,
+              m: x[c].m,
+            };
             if (x[c].ct && x[c].ct.t === "inlineStr") {
               x[c].ct.s.forEach((item: any) => _.assign(value, item));
             }
