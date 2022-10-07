@@ -1717,15 +1717,15 @@ const make_ssf = function make_ssf(SSF) {
       if (vlength > 4) {
         if (vlength > 8) {
           var y = parseInt(v / 100000000); //亿
-          var w = parseInt(parseFloat(v).subtract(y * 100000000) / 10000); //万
-          var q = parseFloat(v).subtract(y * 100000000 + w * 10000); //千以后
+          var w = parseInt(parseFloat(v)-(y * 100000000) / 10000); //万
+          var q = parseFloat(v)-(y * 100000000 + w * 10000); //千以后
           if (acc != "") {
             q = numeral(q).format(acc); //处理精确度
           }
           v = y + "亿" + w + "万" + q;
         } else {
           var w = parseInt(v / 10000); //万
-          var q = parseFloat(v).subtract(w * 10000); //千以后
+          var q = parseFloat(v)-(w * 10000); //千以后
           if (acc != "") {
             q = numeral(q).format(acc); //处理精确度
           }
