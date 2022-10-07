@@ -25,6 +25,51 @@ export type PatchOptions = {
   };
 };
 
+const addtionalMergeOps = (ops: Op[], id: string) => {
+  let merge_new = {} as Record<string, any>;
+  ops.some((op) => {
+    if (
+      op.op === "replace" &&
+      op.path[0] === "config" &&
+      op.path[1] === "merge"
+    ) {
+      merge_new = op.value;
+      return true;
+    }
+    return false;
+  });
+
+  const new_ops: Op[] = [];
+  Object.entries(merge_new).forEach(([, v]) => {
+    const { r, c, rs, cs } = v as {
+      r: number;
+      c: number;
+      rs: number;
+      cs: number;
+    };
+    const headerOp = {
+      op: "replace",
+      path: ["data", r, c, "mc"],
+      id,
+      value: v,
+    } as Op;
+
+    for (let i = r; i < r + rs; i += 1) {
+      for (let j = c; j < c + cs; j += 1) {
+        new_ops.push({
+          op: "replace",
+          path: ["data", i, j, "mc"],
+          id,
+          value: { r, c },
+        } as Op);
+      }
+    }
+
+    new_ops.push(headerOp);
+  });
+  return new_ops;
+};
+
 export function filterPatch(patches: Patch[]) {
   return _.filter(
     patches,
@@ -87,6 +132,10 @@ export function patchToOp(
       value: options.insertRowColOp,
     });
     ops = [...ops, ...formulaOps];
+
+    const mergeOps = addtionalMergeOps(ops, ctx.currentSheetId);
+    ops = [...ops, ...mergeOps];
+
     if (options?.restoreDeletedCells) {
       // undoing deleted row/col, find out cells to restore
       const restoreCellsOps: Op[] = [];
@@ -132,6 +181,9 @@ export function patchToOp(
       value: options.deleteRowColOp,
     });
     ops = [...ops, ...formulaOps];
+
+    const mergeOps = addtionalMergeOps(ops, ctx.currentSheetId);
+    ops = [...ops, ...mergeOps];
   } else if (options?.addSheetOp) {
     const [addSheetOps, otherOps] = _.partition(
       ops,
@@ -172,7 +224,7 @@ export function opToPatch(ctx: Context, ops: Op[]): [Patch[], Op[]] {
       if (i != null) {
         patch.path = ["luckysheetfile", i, ...op.path];
       } else {
-        throw new Error(`sheet id: ${op.id} not found`);
+        // throw new Error(`sheet id: ${op.id} not found`);
       }
     }
     return patch;
