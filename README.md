@@ -81,7 +81,7 @@ Before stable release of 1.0, input data structure and APIs may change during de
   - ✅ hooks
   - conditional formatting
   - drag and drop
-  - find and replace
+  - ✅ find and replace
   - location
   - data verification
   - ✅ freeze
@@ -89,7 +89,7 @@ Before stable release of 1.0, input data structure and APIs may change during de
 - More advanced features:
   - pivot tables
   - charts
-  - screenshots
+  - ✅ screenshots
 
 ## Documentation
 
