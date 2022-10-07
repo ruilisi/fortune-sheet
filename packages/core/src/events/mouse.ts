@@ -1570,19 +1570,19 @@ function mouseRender(
     const isMaxColumn =
       ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1]
         .column;
-    const col_max = ctx.visibledatacolumn.length - 1;
-    if (isMaxColumn![0] === 0 && isMaxColumn![1] === col_max) {
-      last.column[1] = col_max;
-      last.width_move = ctx.visibledatacolumn[col_max] - 1;
+    const colMax = ctx.visibledatacolumn.length - 1;
+    if (isMaxColumn![0] === 0 && isMaxColumn![1] === colMax) {
+      last.column[1] = colMax;
+      last.width_move = ctx.visibledatacolumn[colMax] - 1;
     }
 
     // 判断当前是不是去选择整列
     const isMaxRow =
       ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1].row;
-    const row_max = ctx.visibledatarow.length - 1;
-    if (isMaxRow![0] === 0 && isMaxRow![1] === row_max) {
-      last.row[1] = row_max;
-      last.height_move = ctx.visibledatarow[row_max] - 1;
+    const rowMax = ctx.visibledatarow.length - 1;
+    if (isMaxRow![0] === 0 && isMaxRow![1] === rowMax) {
+      last.row[1] = rowMax;
+      last.height_move = ctx.visibledatarow[rowMax] - 1;
     }
 
     ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1] = last;
