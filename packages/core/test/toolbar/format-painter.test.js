@@ -21,13 +21,13 @@ describe("format painter", () => {
   const new_select_save_range = [{ row: [1, 1], column: [0, 1] }];
 
   test("background color", async () => {
-    const expectedCell = { v: null, bg: "#f00" };
+    const expectedCell = { v: 1, bg: "#f00" };
     const ctx = getContext(expectedCell);
 
     handleFormatPainter(ctx);
     ctx.luckysheet_select_save = new_select_save_cell;
     pasteHandlerOfPaintModel(ctx, ctx.luckysheet_copy_save);
-    expect(getFlowdata(ctx)[1][1]).toEqual(expectedCell);
+    expect(getFlowdata(ctx)[0][0]).toEqual(expectedCell);
   });
 
   test("text color", async () => {
@@ -37,7 +37,7 @@ describe("format painter", () => {
     handleFormatPainter(ctx);
     ctx.luckysheet_select_save = new_select_save_cell;
     pasteHandlerOfPaintModel(ctx, ctx.luckysheet_copy_save);
-    expect(getFlowdata(ctx)[1][1]).toEqual(expectedCell);
+    expect(getFlowdata(ctx)[0][0]).toEqual(expectedCell);
   });
 
   test("font size", async () => {
@@ -47,7 +47,7 @@ describe("format painter", () => {
     handleFormatPainter(ctx);
     ctx.luckysheet_select_save = new_select_save_cell;
     pasteHandlerOfPaintModel(ctx, ctx.luckysheet_copy_save);
-    expect(getFlowdata(ctx)[1][1]).toEqual(expectedCell);
+    expect(getFlowdata(ctx)[0][0]).toEqual(expectedCell);
   });
 
   test("bold", async () => {
@@ -57,7 +57,7 @@ describe("format painter", () => {
     handleFormatPainter(ctx);
     ctx.luckysheet_select_save = new_select_save_cell;
     pasteHandlerOfPaintModel(ctx, ctx.luckysheet_copy_save);
-    expect(getFlowdata(ctx)[1][1]).toEqual(expectedCell);
+    expect(getFlowdata(ctx)[0][0]).toEqual(expectedCell);
   });
 
   test("background,text color,font size and italic", async () => {
@@ -74,7 +74,7 @@ describe("format painter", () => {
     handleFormatPainter(ctx);
     ctx.luckysheet_select_save = new_select_save_cell;
     pasteHandlerOfPaintModel(ctx, ctx.luckysheet_copy_save);
-    expect(getFlowdata(ctx)[1][1]).toEqual(expectedCell);
+    expect(getFlowdata(ctx)[0][0]).toEqual(expectedCell);
   });
 
   test("background color in multiple cells", async () => {
@@ -84,8 +84,8 @@ describe("format painter", () => {
     handleFormatPainter(ctx);
     ctx.luckysheet_select_save = new_select_save_range;
     pasteHandlerOfPaintModel(ctx, ctx.luckysheet_copy_save);
-    expect(getFlowdata(ctx)[1][0]).toEqual(expectedCell);
-    expect(getFlowdata(ctx)[1][1]).toEqual(expectedCell);
+    expect(getFlowdata(ctx)[0][0]).toEqual(expectedCell);
+    expect(getFlowdata(ctx)[0][0]).toEqual(expectedCell);
   });
 
   test("background,text color,font size and italic in multiple cells", async () => {
@@ -102,8 +102,8 @@ describe("format painter", () => {
     handleFormatPainter(ctx);
     ctx.luckysheet_select_save = new_select_save_range;
     pasteHandlerOfPaintModel(ctx, ctx.luckysheet_copy_save);
-    expect(getFlowdata(ctx)[1][0]).toEqual(expectedCell);
-    expect(getFlowdata(ctx)[1][1]).toEqual(expectedCell);
+    expect(getFlowdata(ctx)[0][0]).toEqual(expectedCell);
+    expect(getFlowdata(ctx)[0][0]).toEqual(expectedCell);
   });
 
   test("first line", async () => {
@@ -113,6 +113,6 @@ describe("format painter", () => {
     handleFormatPainter(ctx);
     ctx.luckysheet_select_save = [{ row: [0, 0], column: [1, 1] }];
     pasteHandlerOfPaintModel(ctx, ctx.luckysheet_copy_save);
-    expect(getFlowdata(ctx)[0][1]).toEqual(expectedCell);
+    expect(getFlowdata(ctx)[0][0]).toEqual(expectedCell);
   });
 });
