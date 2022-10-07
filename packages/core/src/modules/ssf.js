@@ -42,7 +42,6 @@ const make_ssf = function make_ssf(SSF) {
     var t = "" + v;
     return t.length >= d ? t : fill("0", d - t.length) + t;
   }
-
   var p2_32 = Math.pow(2, 32);
 
   function pad0r(v, d) {
@@ -64,7 +63,6 @@ const make_ssf = function make_ssf(SSF) {
       (s.charCodeAt(i + 6) | 32) === 108
     );
   }
-
   var days = [
     ["Sun", "Sunday"],
     ["Mon", "Monday"],
@@ -72,7 +70,7 @@ const make_ssf = function make_ssf(SSF) {
     ["Wed", "Wednesday"],
     ["Thu", "Thursday"],
     ["Fri", "Friday"],
-    ["Sat", "Saturday"]
+    ["Sat", "Saturday"],
   ];
   var months = [
     ["J", "Jan", "January"],
@@ -86,7 +84,7 @@ const make_ssf = function make_ssf(SSF) {
     ["S", "Sep", "September"],
     ["O", "Oct", "October"],
     ["N", "Nov", "November"],
-    ["D", "Dec", "December"]
+    ["D", "Dec", "December"],
   ];
 
   function init_table(t) {
@@ -118,10 +116,9 @@ const make_ssf = function make_ssf(SSF) {
     t[47] = "mmss.0";
     t[48] = "##0.0E+0";
     t[49] = "@";
-    t[56] = "\"上午/下午 \"hh\"時\"mm\"分\"ss\"秒 \"";
+    t[56] = '"上午/下午 "hh"時"mm"分"ss"秒 "';
     t[65535] = "General";
   }
-
   var table_fmt = {};
   init_table(table_fmt);
   /* Defaults determined by systematically testing in Excel 2019 */
@@ -152,22 +149,22 @@ const make_ssf = function make_ssf(SSF) {
   /* These formats technically refer to Accounting formats with no equivalent */
   var default_str = [];
   //  5 -- Currency,   0 decimal, black negative
-  default_str[5] = default_str[63] = "\"$\"#,##0_);\\(\"$\"#,##0\\)";
+  default_str[5] = default_str[63] = '"$"#,##0_);\\("$"#,##0\\)';
   //  6 -- Currency,   0 decimal, red   negative
-  default_str[6] = default_str[64] = "\"$\"#,##0_);[Red]\\(\"$\"#,##0\\)";
+  default_str[6] = default_str[64] = '"$"#,##0_);[Red]\\("$"#,##0\\)';
   //  7 -- Currency,   2 decimal, black negative
-  default_str[7] = default_str[65] = "\"$\"#,##0.00_);\\(\"$\"#,##0.00\\)";
+  default_str[7] = default_str[65] = '"$"#,##0.00_);\\("$"#,##0.00\\)';
   //  8 -- Currency,   2 decimal, red   negative
-  default_str[8] = default_str[66] = "\"$\"#,##0.00_);[Red]\\(\"$\"#,##0.00\\)";
+  default_str[8] = default_str[66] = '"$"#,##0.00_);[Red]\\("$"#,##0.00\\)';
   // 41 -- Accounting, 0 decimal, No Symbol
-  default_str[41] = "_(* #,##0_);_(* \\(#,##0\\);_(* \"-\"_);_(@_)";
+  default_str[41] = '_(* #,##0_);_(* \\(#,##0\\);_(* "-"_);_(@_)';
   // 42 -- Accounting, 0 decimal, $  Symbol
-  default_str[42] = "_(\"$\"* #,##0_);_(\"$\"* \\(#,##0\\);_(\"$\"* \"-\"_);_(@_)";
+  default_str[42] = '_("$"* #,##0_);_("$"* \\(#,##0\\);_("$"* "-"_);_(@_)';
   // 43 -- Accounting, 2 decimal, No Symbol
-  default_str[43] = "_(* #,##0.00_);_(* \\(#,##0.00\\);_(* \"-\"??_);_(@_)";
+  default_str[43] = '_(* #,##0.00_);_(* \\(#,##0.00\\);_(* "-"??_);_(@_)';
   // 44 -- Accounting, 2 decimal, $  Symbol
   default_str[44] =
-    "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)";
+    '_("$"* #,##0.00_);_("$"* \\(#,##0.00\\);_("$"* "-"??_);_(@_)';
 
   function frac(x, D, mixed) {
     var sgn = x < 0 ? -1 : 1;
@@ -220,7 +217,7 @@ const make_ssf = function make_ssf(SSF) {
       H: 0,
       M: 0,
       S: 0,
-      q: 0
+      q: 0,
     };
     if (Math.abs(out.u) < 1e-6) out.u = 0;
     if (opts && opts.date1904) date += 1462;
@@ -259,7 +256,6 @@ const make_ssf = function make_ssf(SSF) {
     out.q = dow;
     return out;
   }
-
   SSF.parse_date_code = parse_date_code;
   var basedate = new Date(1899, 11, 31, 0, 0, 0);
   var dnthresh = basedate.getTime();
@@ -276,12 +272,10 @@ const make_ssf = function make_ssf(SSF) {
       (24 * 60 * 60 * 1000)
     );
   }
-
   /* The longest 32-bit integer text is "-4294967296", exactly 11 chars */
   function general_fmt_int(v) {
     return v.toString(10);
   }
-
   SSF._general_int = general_fmt_int;
   /* ECMA-376 18.8.30 numFmt*/
   /* Note: `toPrecision` uses standard form when prec > E and E >= -6 */
@@ -293,7 +287,6 @@ const make_ssf = function make_ssf(SSF) {
         ? o
         : o.replace(trailing_zeroes_and_decimal, "$1");
     }
-
     /* General Exponential always shows 2 digits exp and trims the mantissa */
     var mantissa_zeroes_and_decimal = /(?:\.0*|(\.\d*[1-9])0+)[Ee]/;
     var exp_with_single_digit = /(E[+-])(\d)$/;
@@ -304,7 +297,6 @@ const make_ssf = function make_ssf(SSF) {
         .replace(mantissa_zeroes_and_decimal, "$1E")
         .replace(exp_with_single_digit, "$10$2");
     }
-
     /* exponent >= -9 and <= 9 */
     function small_exp(v) {
       var w = v < 0 ? 12 : 11;
@@ -314,7 +306,6 @@ const make_ssf = function make_ssf(SSF) {
       if (o.length <= w) return o;
       return v.toExponential(5);
     }
-
     /* exponent >= 11 or <= -10 likely exponential */
     function large_exp(v) {
       var o = strip_decimal(v.toFixed(11));
@@ -332,11 +323,9 @@ const make_ssf = function make_ssf(SSF) {
       else o = large_exp(v);
       return strip_decimal(normalize_exp(o.toUpperCase()));
     }
-
     return general_fmt_num_base;
   })();
   SSF._general_num = general_fmt_num;
-
   /*
         "General" rules:
         - text is passed through ("@")
@@ -362,7 +351,6 @@ const make_ssf = function make_ssf(SSF) {
     }
     throw new Error("unsupported value in General format: " + v);
   }
-
   SSF._general = general_fmt;
 
   function fix_hijri(date, o) {
@@ -372,10 +360,8 @@ const make_ssf = function make_ssf(SSF) {
     if (date < 60) dow = (dow + 6) % 7;
     return dow;
   }
-
   var THAI_DIGITS =
     "\u0E50\u0E51\u0E52\u0E53\u0E54\u0E55\u0E56\u0E57\u0E58\u0E59".split("");
-
   /*jshint -W086 */
   function write_date(type, fmt, val, ss0) {
     var o = "",
@@ -386,12 +372,10 @@ const make_ssf = function make_ssf(SSF) {
       outl = 0;
     switch (type) {
       case 98:
-        /* 'b' buddhist year */
-        y = val.y + 543;
+        /* 'b' buddhist year */ y = val.y + 543;
       /* falls through */
       case 121:
-        /* 'y' year */
-        switch (fmt.length) {
+        /* 'y' year */ switch (fmt.length) {
           case 1:
           case 2:
             out = y % 100;
@@ -404,8 +388,7 @@ const make_ssf = function make_ssf(SSF) {
         }
         break;
       case 109:
-        /* 'm' month */
-        switch (fmt.length) {
+        /* 'm' month */ switch (fmt.length) {
           case 1:
           case 2:
             out = val.m;
@@ -420,8 +403,7 @@ const make_ssf = function make_ssf(SSF) {
         }
         break;
       case 100:
-        /* 'd' day */
-        switch (fmt.length) {
+        /* 'd' day */ switch (fmt.length) {
           case 1:
           case 2:
             out = val.d;
@@ -434,8 +416,7 @@ const make_ssf = function make_ssf(SSF) {
         }
         break;
       case 104:
-        /* 'h' 12-hour */
-        switch (fmt.length) {
+        /* 'h' 12-hour */ switch (fmt.length) {
           case 1:
           case 2:
             out = 1 + ((val.H + 11) % 12);
@@ -446,8 +427,7 @@ const make_ssf = function make_ssf(SSF) {
         }
         break;
       case 72:
-        /* 'H' 24-hour */
-        switch (fmt.length) {
+        /* 'H' 24-hour */ switch (fmt.length) {
           case 1:
           case 2:
             out = val.H;
@@ -458,8 +438,7 @@ const make_ssf = function make_ssf(SSF) {
         }
         break;
       case 77:
-        /* 'M' minutes */
-        switch (fmt.length) {
+        /* 'M' minutes */ switch (fmt.length) {
           case 1:
           case 2:
             out = val.M;
@@ -470,8 +449,7 @@ const make_ssf = function make_ssf(SSF) {
         }
         break;
       case 115:
-        /* 's' seconds */
-        if (
+        /* 's' seconds */ if (
           fmt != "s" &&
           fmt != "ss" &&
           fmt != ".0" &&
@@ -490,8 +468,7 @@ const make_ssf = function make_ssf(SSF) {
         if (fmt === "ss") return o.substr(0, 2);
         return "." + o.substr(2, fmt.length - 1);
       case 90:
-        /* 'Z' absolute time */
-        switch (fmt) {
+        /* 'Z' absolute time */ switch (fmt) {
           case "[h]":
           case "[hh]":
             out = val.D * 24 + val.H;
@@ -512,15 +489,13 @@ const make_ssf = function make_ssf(SSF) {
         outl = fmt.length === 3 ? 1 : 2;
         break;
       case 101:
-        /* 'e' era */
-        out = y;
+        /* 'e' era */ out = y;
         outl = 1;
         break;
     }
     var outstr = outl > 0 ? pad0(out, outl) : "";
     return outstr;
   }
-
   /*jshint +W086 */
   function commaify(s) {
     var w = 3;
@@ -531,7 +506,6 @@ const make_ssf = function make_ssf(SSF) {
       o += (o.length > 0 ? "," : "") + s.substr(j, w);
     return o;
   }
-
   var write_num = (function make_write_num() {
     var pct1 = /%/g;
 
@@ -578,7 +552,7 @@ const make_ssf = function make_ssf(SSF) {
           }
           o = o.replace(/\+-/, "-");
         }
-        o = o.replace(/^([+-]?)(\d*)\.(\d*)[Ee]/, function($$, $1, $2, $3) {
+        o = o.replace(/^([+-]?)(\d*)\.(\d*)[Ee]/, function ($$, $1, $2, $3) {
           return (
             $1 +
             $2 +
@@ -594,7 +568,6 @@ const make_ssf = function make_ssf(SSF) {
       if (fmt.match(/E\-/) && o.match(/e\+/)) o = o.replace(/e\+/, "e");
       return o.replace("e", "E");
     }
-
     var frac1 = /# (\?+)( ?)\/( ?)(\d+)/;
 
     function write_num_f1(r, aval, sign) {
@@ -620,7 +593,6 @@ const make_ssf = function make_ssf(SSF) {
         fill(" ", r[1].length + 2 + r[4].length)
       );
     }
-
     var dec1 = /^#*0*\.([0#]+)/;
     var closeparen = /\).*[0#]/;
     var phone = /\(###\) ###\\?-####/;
@@ -707,7 +679,7 @@ const make_ssf = function make_ssf(SSF) {
         o = rnd(val, r[1].length)
           .replace(/^([^\.]+)$/, "$1." + hashq(r[1]))
           .replace(/\.$/, "." + hashq(r[1]))
-          .replace(/\.(\d*)$/, function($$, $1) {
+          .replace(/\.(\d*)$/, function ($$, $1) {
             return "." + $1 + fill("0", hashq(r[1]).length - $1.length);
           });
         return fmt.indexOf("0.") !== -1 ? o : o.replace(/^0\./, ".");
@@ -728,8 +700,8 @@ const make_ssf = function make_ssf(SSF) {
         return val < 0
           ? "-" + write_num_flt(type, fmt, -val)
           : commaify("" + (Math.floor(val) + carry(val, r[1].length))) +
-          "." +
-          pad0(dec(val, r[1].length), r[1].length);
+              "." +
+              pad0(dec(val, r[1].length), r[1].length);
       }
       if ((r = fmt.match(/^#,#*,#0/)))
         return write_num_flt(type, fmt.replace(/^#,#*,/, ""), val);
@@ -737,7 +709,7 @@ const make_ssf = function make_ssf(SSF) {
         o = _strrev(write_num_flt(type, fmt.replace(/[\\-]/g, ""), val));
         ri = 0;
         return _strrev(
-          _strrev(fmt.replace(/\\/g, "")).replace(/[0#]/g, function(x) {
+          _strrev(fmt.replace(/\\/g, "")).replace(/[0#]/g, function (x) {
             return ri < o.length ? o.charAt(ri++) : x === "0" ? "0" : "";
           })
         );
@@ -792,14 +764,14 @@ const make_ssf = function make_ssf(SSF) {
         return val < 0
           ? "-" + write_num_flt(type, fmt, -val)
           : commaify(flr(val))
-            .replace(/^\d,\d{3}$/, "0$&")
-            .replace(/^\d*$/, function($$) {
-              return (
-                "00," + ($$.length < 3 ? pad0(0, 3 - $$.length) : "") + $$
-              );
-            }) +
-          "." +
-          pad0(ri, r[1].length);
+              .replace(/^\d,\d{3}$/, "0$&")
+              .replace(/^\d*$/, function ($$) {
+                return (
+                  "00," + ($$.length < 3 ? pad0(0, 3 - $$.length) : "") + $$
+                );
+              }) +
+              "." +
+              pad0(ri, r[1].length);
       }
       switch (fmt) {
         case "###,##0.00":
@@ -857,7 +829,7 @@ const make_ssf = function make_ssf(SSF) {
           else o += "E+" + (fakee - ee);
           o = o.replace(/\+-/, "-");
         }
-        o = o.replace(/^([+-]?)(\d*)\.(\d*)[Ee]/, function($$, $1, $2, $3) {
+        o = o.replace(/^([+-]?)(\d*)\.(\d*)[Ee]/, function ($$, $1, $2, $3) {
           return (
             $1 +
             $2 +
@@ -910,7 +882,7 @@ const make_ssf = function make_ssf(SSF) {
         o = ("" + val)
           .replace(/^([^\.]+)$/, "$1." + hashq(r[1]))
           .replace(/\.$/, "." + hashq(r[1]));
-        o = o.replace(/\.(\d*)$/, function($$, $1) {
+        o = o.replace(/\.(\d*)$/, function ($$, $1) {
           return "." + $1 + fill("0", hashq(r[1]).length - $1.length);
         });
         return fmt.indexOf("0.") !== -1 ? o : o.replace(/^0\./, ".");
@@ -938,7 +910,7 @@ const make_ssf = function make_ssf(SSF) {
         o = _strrev(write_num_int(type, fmt.replace(/[\\-]/g, ""), val));
         ri = 0;
         return _strrev(
-          _strrev(fmt.replace(/\\/g, "")).replace(/[0#]/g, function(x) {
+          _strrev(fmt.replace(/\\/g, "")).replace(/[0#]/g, function (x) {
             return ri < o.length ? o.charAt(ri++) : x === "0" ? "0" : "";
           })
         );
@@ -992,14 +964,14 @@ const make_ssf = function make_ssf(SSF) {
         return val < 0
           ? "-" + write_num_int(type, fmt, -val)
           : commaify("" + val)
-            .replace(/^\d,\d{3}$/, "0$&")
-            .replace(/^\d*$/, function($$) {
-              return (
-                "00," + ($$.length < 3 ? pad0(0, 3 - $$.length) : "") + $$
-              );
-            }) +
-          "." +
-          pad0(0, r[1].length);
+              .replace(/^\d,\d{3}$/, "0$&")
+              .replace(/^\d*$/, function ($$) {
+                return (
+                  "00," + ($$.length < 3 ? pad0(0, 3 - $$.length) : "") + $$
+                );
+              }) +
+              "." +
+              pad0(0, r[1].length);
       }
       switch (fmt) {
         case "###,###":
@@ -1016,7 +988,6 @@ const make_ssf = function make_ssf(SSF) {
       }
       throw new Error("unsupported format |" + fmt + "|");
     }
-
     return function write_num(type, fmt, val) {
       return (val | 0) === val
         ? write_num_int(type, fmt, val)
@@ -1030,8 +1001,7 @@ const make_ssf = function make_ssf(SSF) {
     for (var i = 0, j = 0; i < fmt.length; ++i)
       switch (/*cc=*/ fmt.charCodeAt(i)) {
         case 34:
-          /* '"' */
-          in_str = !in_str;
+          /* '"' */ in_str = !in_str;
           break;
         case 95:
         case 42:
@@ -1040,8 +1010,7 @@ const make_ssf = function make_ssf(SSF) {
           ++i;
           break;
         case 59:
-          /* ';' */
-          out[out.length] = fmt.substr(j, i - j);
+          /* ';' */ out[out.length] = fmt.substr(j, i - j);
           j = i + 1;
       }
     out[out.length] = fmt.substr(j);
@@ -1049,7 +1018,6 @@ const make_ssf = function make_ssf(SSF) {
       throw new Error("Format |" + fmt + "| unterminated string ");
     return out;
   }
-
   SSF._split = split_fmt;
   var abstime = /\[[HhMmSs\u0E0A\u0E19\u0E17]*\]/;
 
@@ -1063,8 +1031,8 @@ const make_ssf = function make_ssf(SSF) {
           if (isgeneral(fmt, i)) i += 6;
           i++;
           break;
-        case "\"":
-          for (; /*cc=*/ fmt.charCodeAt(++i) !== 34 && i < fmt.length;) {
+        case '"':
+          for (; /*cc=*/ fmt.charCodeAt(++i) !== 34 && i < fmt.length; ) {
             /*empty*/
           }
           ++i;
@@ -1121,7 +1089,7 @@ const make_ssf = function make_ssf(SSF) {
               (c == "\\" &&
                 fmt.charAt(i + 1) == "-" &&
                 "0#".indexOf(fmt.charAt(i + 2)) > -1))
-            ) {
+          ) {
             /* empty */
           }
           break;
@@ -1161,7 +1129,6 @@ const make_ssf = function make_ssf(SSF) {
     }
     return false;
   }
-
   SSF.is_date = fmt_is_date;
 
   function eval_fmt(fmt, v, opts, flen) {
@@ -1178,25 +1145,24 @@ const make_ssf = function make_ssf(SSF) {
     while (i < fmt.length) {
       switch ((c = fmt.charAt(i))) {
         case "G":
-          /* General */
-          if (!isgeneral(fmt, i))
+          /* General */ if (!isgeneral(fmt, i))
             throw new Error("unrecognized character " + c + " in " + fmt);
           out[out.length] = {
             t: "G",
-            v: "General"
+            v: "General",
           };
           i += 7;
           break;
-        case "\"":
-          /* Literal text */
-          for (
+        case '"':
+          /* Literal text */ for (
             o = "";
             (cc = fmt.charCodeAt(++i)) !== 34 && i < fmt.length;
+
           )
             o += String.fromCharCode(cc);
           out[out.length] = {
             t: "t",
-            v: o
+            v: o,
           };
           ++i;
           break;
@@ -1205,22 +1171,21 @@ const make_ssf = function make_ssf(SSF) {
             t = w === "(" || w === ")" ? w : "t";
           out[out.length] = {
             t: t,
-            v: w
+            v: w,
           };
           ++i;
           break;
         case "_":
           out[out.length] = {
             t: "t",
-            v: " "
+            v: " ",
           };
           i += 2;
           break;
         case "@":
-          /* Text Placeholder */
-          out[out.length] = {
+          /* Text Placeholder */ out[out.length] = {
             t: "T",
-            v: v
+            v: v,
           };
           ++i;
           break;
@@ -1233,7 +1198,7 @@ const make_ssf = function make_ssf(SSF) {
             }
             out[out.length] = {
               t: "X",
-              v: fmt.substr(i, 2)
+              v: fmt.substr(i, 2),
             };
             lst = c;
             i += 2;
@@ -1266,7 +1231,7 @@ const make_ssf = function make_ssf(SSF) {
           if (c === "h") c = hr;
           out[out.length] = {
             t: c,
-            v: o
+            v: o,
           };
           lst = c;
           break;
@@ -1275,7 +1240,7 @@ const make_ssf = function make_ssf(SSF) {
         case "上":
           var q = {
             t: c,
-            v: c
+            v: c,
           };
           if (dt == null) dt = parse_date_code(v, opts);
           if (fmt.substr(i, 3).toUpperCase() === "A/P") {
@@ -1304,7 +1269,7 @@ const make_ssf = function make_ssf(SSF) {
         case "[":
           o = c;
           while (fmt.charAt(i++) !== "]" && i < fmt.length) o += fmt.charAt(i);
-          if (o.slice(-1) !== "]") throw "unterminated \"[\" block: |" + o + "|";
+          if (o.slice(-1) !== "]") throw 'unterminated "[" block: |' + o + "|";
           if (o.match(abstime)) {
             if (dt == null) {
               dt = parse_date_code(v, opts);
@@ -1312,7 +1277,7 @@ const make_ssf = function make_ssf(SSF) {
             }
             out[out.length] = {
               t: "Z",
-              v: o.toLowerCase()
+              v: o.toLowerCase(),
             };
             lst = o.charAt(1);
           } else if (o.indexOf("$") > -1) {
@@ -1320,7 +1285,7 @@ const make_ssf = function make_ssf(SSF) {
             if (!fmt_is_date(fmt))
               out[out.length] = {
                 t: "t",
-                v: o
+                v: o,
               };
           }
           break;
@@ -1331,7 +1296,7 @@ const make_ssf = function make_ssf(SSF) {
             while (++i < fmt.length && (c = fmt.charAt(i)) === "0") o += c;
             out[out.length] = {
               t: "s",
-              v: o
+              v: o,
             };
             break;
           }
@@ -1342,11 +1307,11 @@ const make_ssf = function make_ssf(SSF) {
           while (
             ++i < fmt.length &&
             "0#?.,E+-%".indexOf((c = fmt.charAt(i))) > -1
-            )
+          )
             o += c;
           out[out.length] = {
             t: "n",
-            v: o
+            v: o,
           };
           break;
         case "?":
@@ -1354,7 +1319,7 @@ const make_ssf = function make_ssf(SSF) {
           while (fmt.charAt(++i) === c) o += c;
           out[out.length] = {
             t: c,
-            v: o
+            v: o,
           };
           lst = c;
           break;
@@ -1366,7 +1331,7 @@ const make_ssf = function make_ssf(SSF) {
         case ")":
           out[out.length] = {
             t: flen === 1 ? "t" : c,
-            v: c
+            v: c,
           };
           ++i;
           break;
@@ -1384,20 +1349,20 @@ const make_ssf = function make_ssf(SSF) {
             o += fmt.charAt(i);
           out[out.length] = {
             t: "D",
-            v: o
+            v: o,
           };
           break;
         case " ":
           out[out.length] = {
             t: c,
-            v: c
+            v: c,
           };
           ++i;
           break;
         case "$":
           out[out.length] = {
             t: "t",
-            v: "$"
+            v: "$",
           };
           ++i;
           break;
@@ -1411,7 +1376,7 @@ const make_ssf = function make_ssf(SSF) {
             throw new Error("unrecognized character " + c + " in " + fmt);
           out[out.length] = {
             t: "t",
-            v: c
+            v: c,
           };
           ++i;
           break;
@@ -1447,8 +1412,7 @@ const make_ssf = function make_ssf(SSF) {
           }
           break;
         case "X":
-          /*if(out[i].v === "B2");*/
-          break;
+          /*if(out[i].v === "B2");*/ break;
         case "Z":
           if (bt < 1 && out[i].v.match(/[Hh]/)) bt = 1;
           if (bt < 2 && out[i].v.match(/[Mm]/)) bt = 2;
@@ -1528,11 +1492,11 @@ const make_ssf = function make_ssf(SSF) {
                   (out[jj].v === " " &&
                     out[jj + 1] != null &&
                     out[jj + 1].t == "?"))))
-            ) {
+          ) {
             out[i].v += out[jj].v;
             out[jj] = {
               v: "",
-              t: ";"
+              t: ";",
             };
             ++jj;
           }
@@ -1550,8 +1514,7 @@ const make_ssf = function make_ssf(SSF) {
       ostr;
     if (nstr.length > 0) {
       if (nstr.charCodeAt(0) == 40) {
-        /* '(' */
-        myv = v < 0 && nstr.charCodeAt(0) === 45 ? -v : v;
+        /* '(' */ myv = v < 0 && nstr.charCodeAt(0) === 45 ? -v : v;
         ostr = write_num("n", nstr, myv);
       } else {
         myv = v < 0 && flen > 1 ? -v : v;
@@ -1636,7 +1599,6 @@ const make_ssf = function make_ssf(SSF) {
 
     return retval;
   }
-
   SSF._eval = eval_fmt;
   var cfregex = /\[[=<>]/;
   var cfregex2 = /\[(=|>[=]?|<[>=]?)(-?\d+(?:\.\d*)?)\]/;
@@ -1709,8 +1671,8 @@ const make_ssf = function make_ssf(SSF) {
       return chkcond(v, m1)
         ? [l, fmt[0]]
         : chkcond(v, m2)
-          ? [l, fmt[1]]
-          : [l, fmt[m1 != null && m2 != null ? 2 : 1]];
+        ? [l, fmt[1]]
+        : [l, fmt[m1 != null && m2 != null ? 2 : 1]];
     }
     return [l, ff];
   }
@@ -1755,18 +1717,15 @@ const make_ssf = function make_ssf(SSF) {
       if (vlength > 4) {
         if (vlength > 8) {
           var y = parseInt(v / 100000000); //亿
-          // var w = parseInt(parseFloat(v).subtract(y * 100000000) / 10000); //万
-          var w = parseInt(((v - y * 100000000)) / 10000); //万
-          // var q = parseFloat(v).subtract(y * 100000000 + w * 10000); //千以后
-          var q = parseFloat((v - (y * 100000000 + w * 10000))); //千以后
+          var w = parseInt(parseFloat(v).subtract(y * 100000000) / 10000); //万
+          var q = parseFloat(v).subtract(y * 100000000 + w * 10000); //千以后
           if (acc != "") {
             q = numeral(q).format(acc); //处理精确度
           }
           v = y + "亿" + w + "万" + q;
         } else {
           var w = parseInt(v / 10000); //万
-          // var q = parseFloat(v).subtract(w * 10000); //千以后
-          var q = parseFloat(v - w); //千以后
+          var q = parseFloat(v).subtract(w * 10000); //千以后
           if (acc != "") {
             q = numeral(q).format(acc); //处理精确度
           }
@@ -1892,7 +1851,6 @@ const make_ssf = function make_ssf(SSF) {
     table_fmt[idx] = fmt;
     return idx;
   }
-
   SSF.load = load_entry;
   SSF._table = table_fmt;
   SSF.get_table = function get_table() {
