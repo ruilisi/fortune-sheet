@@ -150,8 +150,7 @@ const SheetOverlay: React.FC = () => {
   );
 
   const onMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      const { nativeEvent } = e;
+    (nativeEvent: MouseEvent) => {
       setContext((draftCtx) => {
         overShowLinkCard(
           draftCtx,
@@ -183,8 +182,7 @@ const SheetOverlay: React.FC = () => {
   );
 
   const onMouseUp = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      const { nativeEvent } = e;
+    (nativeEvent: MouseEvent) => {
       setContext((draftCtx) => {
         handleOverlayMouseUp(
           draftCtx,
@@ -307,12 +305,24 @@ const SheetOverlay: React.FC = () => {
     context.editingCommentBox,
   ]);
 
+  useEffect(() => {
+    document.addEventListener("mousemove", onMouseMove);
+    return () => {
+      document.removeEventListener("mousemove", onMouseMove);
+    };
+  }, [onMouseMove]);
+
+  useEffect(() => {
+    document.addEventListener("mouseup", onMouseUp);
+    return () => {
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+  }, [onMouseUp]);
+
   return (
     <div
       className="fortune-sheet-overlay"
       ref={containerRef}
-      onMouseMove={onMouseMove}
-      onMouseUp={onMouseUp}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
