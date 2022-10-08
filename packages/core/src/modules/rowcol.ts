@@ -607,7 +607,7 @@ export function insertRowCol(
     for (let c = 0; c < d[0].length; c += 1) {
       const cell = curRow[c];
       const templateCell = cell ? { ...cell, v: "", m: "" } : ctx.defaultCell;
-      if (!d[index + 1][c]?.mc) {
+      if (!d?.[index + 1]?.[c]?.mc) {
         templateCell.mc = undefined;
       }
       delete templateCell.ps;
@@ -778,7 +778,7 @@ export function insertRowCol(
     for (let r = 0; r < d.length; r += 1) {
       const cell = curd[r][index];
       const templateCell = cell ? { ...cell, v: "", m: "" } : ctx.defaultCell;
-      if (!curd[r][index + 1]?.mc) {
+      if (!curd?.[r]?.[index + 1]?.mc) {
         templateCell.mc = undefined;
       }
       delete templateCell.ps;
