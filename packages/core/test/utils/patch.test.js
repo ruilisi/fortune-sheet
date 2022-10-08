@@ -416,19 +416,6 @@ describe("patch", () => {
     ]);
   });
 
-  it("opToPatch throws when no index found", async () => {
-    const wrongContext = {
-      luckysheetfile: [
-        {
-          id: "id_3",
-        },
-      ],
-    };
-    expect(() => {
-      opToPatch(wrongContext, ops);
-    }).toThrow();
-  });
-
   it("inverseRowColOptions insertRowCol", async () => {
     const reverseOp = inverseRowColOptions({
       insertRowColOp: {

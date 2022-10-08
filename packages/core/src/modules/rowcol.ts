@@ -1,8 +1,32 @@
 import _ from "lodash";
 import { Context } from "../context";
+import { Sheet } from "../types";
 import { getSheetIndex } from "../utils";
 import { getcellFormula } from "./cell";
 import { functionStrChange } from "./formula";
+
+const refreshLocalMergeData = (merge_new: Record<string, any>, file: Sheet) => {
+  Object.entries(merge_new).forEach(([, v]) => {
+    const { r, c, rs, cs } = v as {
+      r: number;
+      c: number;
+      rs: number;
+      cs: number;
+    };
+
+    for (let i = r; i < r + rs; i += 1) {
+      for (let j = c; j < c + cs; j += 1) {
+        if (file?.data?.[i]?.[j]) {
+          file.data[i][j] = { ...file.data[i][j], mc: { r, c } };
+        }
+      }
+    }
+
+    if (file?.data?.[r]?.[c]) {
+      file.data[r][c] = { ...file.data[r][c], mc: { r, c, rs, cs } };
+    }
+  });
+};
 
 /**
  * 增加行列
@@ -124,7 +148,7 @@ export function insertRowCol(
   const newCalcChain = [];
   if (calcChain != null && calcChain.length > 0) {
     for (let i = 0; i < calcChain.length; i += 1) {
-      const calc = _.cloneDeep(calcChain[i]);
+      const calc: any = _.cloneDeep(calcChain[i]);
       const calc_r = calc.r;
       const calc_c = calc.c;
       const calc_i = calc.id;
@@ -583,6 +607,9 @@ export function insertRowCol(
     for (let c = 0; c < d[0].length; c += 1) {
       const cell = curRow[c];
       const templateCell = cell ? { ...cell, v: "", m: "" } : ctx.defaultCell;
+      if (!d[index + 1][c]?.mc) {
+        templateCell.mc = undefined;
+      }
       delete templateCell.ps;
       row.push(templateCell);
     }
@@ -751,6 +778,9 @@ export function insertRowCol(
     for (let r = 0; r < d.length; r += 1) {
       const cell = curd[r][index];
       const templateCell = cell ? { ...cell, v: "", m: "" } : ctx.defaultCell;
+      if (!curd[r][index + 1]?.mc) {
+        templateCell.mc = undefined;
+      }
       delete templateCell.ps;
       col.push(templateCell);
     }
@@ -927,6 +957,8 @@ export function insertRowCol(
     // selectHightlightShow();
   }
 
+  refreshLocalMergeData(merge_new, file);
+
   // if (type === "row") {
   //   const scrollLeft = $("#luckysheet-cell-main").scrollLeft();
   //   const scrollTop = $("#luckysheet-cell-main").scrollTop();
@@ -1080,7 +1112,7 @@ export function deleteRowCol(
   const newCalcChain = [];
   if (calcChain != null && calcChain.length > 0) {
     for (let i = 0; i < calcChain.length; i += 1) {
-      const calc = _.cloneDeep(calcChain[i]);
+      const calc: any = _.cloneDeep(calcChain[i]);
       const calc_r = calc.r;
       const calc_c = calc.c;
       const calc_i = calc.id;
@@ -1722,6 +1754,8 @@ export function deleteRowCol(
   file.luckysheet_alternateformat_save = newAFarr;
   file.dataVerification = newDataVerification;
   file.hyperlink = newHyperlink;
+
+  refreshLocalMergeData(merge_new, file);
 
   if (file.id === ctx.currentSheetId) {
     ctx.config = cfg;
