@@ -12,6 +12,7 @@ import {
   Image,
   Presence,
   LinkCardProps,
+  FilterOptions,
 } from "./types";
 import { getSheetIndex } from "./utils";
 
@@ -37,6 +38,17 @@ export type Context = {
     y?: number;
     sheet?: Sheet;
     onRename?: () => void;
+  };
+  filterContextMenu?: {
+    x: number;
+    y: number;
+    col: number;
+    startRow: number;
+    endRow: number;
+    startCol: number;
+    endCol: number;
+    hiddenRows: number[];
+    listBoxMaxHeight: number;
   };
 
   currentSheetId: string;
@@ -88,7 +100,21 @@ export type Context = {
   luckysheet_paste_iscut: boolean;
 
   filterchage: boolean; // 筛选
-  luckysheet_filter_save: { row: any[]; column: any[] };
+  filterOptions?: FilterOptions;
+  luckysheet_filter_save?: { row: number[]; column: number[] } | undefined;
+  filter: Record<
+    string,
+    {
+      caljs: any;
+      rowhidden: Record<string, number>;
+      optionstate: boolean;
+      str: number;
+      edr: number;
+      cindex: number;
+      stc: number;
+      edc: number;
+    }
+  >;
 
   luckysheet_sheet_move_status: boolean;
   luckysheet_sheet_move_data: any[];
@@ -197,7 +223,7 @@ export function defaultContext(): Context {
     luckysheet_paste_iscut: false,
 
     filterchage: true, // 筛选
-    luckysheet_filter_save: { row: [], column: [] },
+    filter: {},
 
     luckysheet_sheet_move_status: false,
     luckysheet_sheet_move_data: [],

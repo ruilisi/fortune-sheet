@@ -31,6 +31,8 @@ import {
   handleHorizontalAlign,
   handleVerticalAlign,
   handleScreenShot,
+  createFilter,
+  clearFilter,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -75,6 +77,7 @@ const Toolbar: React.FC<{
     textWrap,
     rotation,
     screenshot,
+    filter,
   } = locale(context);
   const sheetWidth = context.luckysheetTableContentHW[0];
 
@@ -765,56 +768,6 @@ const Toolbar: React.FC<{
           </Combo>
         );
       }
-      if (name === "sort") {
-        const items = [
-          {
-            title: "sort-asc",
-            text: sort.asc,
-          },
-          {
-            title: "sort-desc",
-            text: sort.desc,
-          },
-        ];
-        return (
-          <Combo
-            iconId="sort-asc"
-            key={name}
-            tooltip={toolbar.sort}
-            onClick={() => {
-              setContext((ctx) => {
-                handleSort(ctx, true);
-              });
-            }}
-          >
-            {(setOpen) => (
-              <Select>
-                {items.map(({ text, title }) => (
-                  <Option
-                    key={title}
-                    onClick={() => {
-                      setContext((ctx) => {
-                        if (title === "sort-asc") {
-                          handleSort(ctx, true);
-                        }
-                        if (title === "sort-desc") {
-                          handleSort(ctx, false);
-                        }
-                      });
-                      setOpen(false);
-                    }}
-                  >
-                    <div className="fortune-toolbar-menu-line">
-                      {text}
-                      <SVGIcon name={title} />
-                    </div>
-                  </Option>
-                ))}
-              </Select>
-            )}
-          </Combo>
-        );
-      }
       if (name === "text-wrap") {
         const items = [
           {
@@ -936,6 +889,72 @@ const Toolbar: React.FC<{
           </Combo>
         );
       }
+      if (name === "filter") {
+        const items = [
+          {
+            iconId: "sort-asc",
+            value: "sort-asc",
+            text: sort.asc,
+            onClick: () => {
+              setContext((ctx) => {
+                handleSort(ctx, true);
+              });
+            },
+          },
+          {
+            iconId: "sort-desc",
+            value: "sort-desc",
+            text: sort.desc,
+            onClick: () => {
+              setContext((ctx) => {
+                handleSort(ctx, false);
+              });
+            },
+          },
+          // { iconId: "sort", value: "sort", text: sort.custom },
+          { iconId: "", value: "divider" },
+          {
+            iconId: "filter1",
+            value: "filter",
+            text: filter.filter,
+            onClick: createFilter,
+          },
+          {
+            iconId: "eraser",
+            value: "eraser",
+            text: filter.clearFilter,
+            onClick: clearFilter,
+          },
+        ];
+        return (
+          <Combo iconId="filter" key={name} tooltip={toolbar.sortAndFilter}>
+            {(setOpen) => (
+              <Select>
+                {items.map(({ text, iconId, value, onClick }, index) =>
+                  value !== "divider" ? (
+                    <Option
+                      key={value}
+                      onClick={() => {
+                        setContext((draftCtx) => {
+                          onClick?.(draftCtx);
+                        });
+                        setOpen(false);
+                      }}
+                    >
+                      <div className="fortune-toolbar-menu-line">
+                        {text}
+                        <SVGIcon name={iconId} />
+                      </div>
+                    </Option>
+                  ) : (
+                    <MenuDivider key={`divider-${index}`} />
+                  )
+                )}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
       return (
         <Button
           iconId={name}
@@ -975,6 +994,7 @@ const Toolbar: React.FC<{
       sort,
       textWrap,
       rotation,
+      filter,
       context.luckysheet_select_save,
     ]
   );

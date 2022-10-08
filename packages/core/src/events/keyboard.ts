@@ -435,7 +435,7 @@ export function handleGlobalKeyDown(
 ) {
   const kcode = e.keyCode;
   const kstr = e.key;
-  if (ctx.contextMenu) {
+  if (ctx.contextMenu || ctx.filterContextMenu) {
     return;
   }
 

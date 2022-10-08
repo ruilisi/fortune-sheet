@@ -50,7 +50,13 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
   useEffect(() => {
     if (!data) return;
     setContext((draftCtx) => updateContextWithSheetData(draftCtx, data));
-  }, [context.config?.rowlen, context.config?.columnlen, data, setContext]);
+  }, [
+    context.config?.rowlen,
+    context.config?.columnlen,
+    context.config?.rowhidden,
+    data,
+    setContext,
+  ]);
 
   /**
    * Init canvas

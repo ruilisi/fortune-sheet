@@ -69,6 +69,7 @@ export function handleGlobalWheel(
   scrollbarY: HTMLDivElement
 ) {
   if (cache.searchDialog?.mouseEnter && ctx.showSearchReplace) return;
+  if (ctx.filterContextMenu != null) return;
   let { scrollLeft } = scrollbarX;
   const { scrollTop } = scrollbarY;
   let visibledatacolumn_c = ctx.visibledatacolumn;
@@ -203,6 +204,7 @@ export function handleCellAreaMouseDown(
   fxInput: HTMLDivElement
 ) {
   ctx.contextMenu = undefined;
+  ctx.filterContextMenu = undefined;
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
   // //有批注在编辑时

@@ -1,4 +1,5 @@
 .fortune-context-menu {
+  max-height: 100%;
   overflow-y: auto;
   border-radius: 4px;
   box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.15);
@@ -17,7 +18,7 @@
   user-select: none;
 }
 
-.fortune-context-menu input {
+.fortune-context-menu input.luckysheet-mousedown-cancel {
   width: 35px;
   text-align: center;
   margin-left: 5px;
@@ -60,4 +61,211 @@
   padding: 6px 7em 6px 30px;
   white-space: nowrap;
   user-select: none;
+}
+
+.fortune-filter-menu .luckysheet-cols-menuitem {
+  padding: 0px;
+}
+
+.fortune-filter-menu .luckysheet-cols-menuitem .luckysheet-cols-menuitem-content {
+  padding: 7px 24px;
+}
+
+.fortune-menuitem-row {
+  display: flex;
+  padding: 7px 24px;
+  white-space:pre;
+  align-items: center;
+}
+
+.fortune-byvalue-btn {
+  cursor: pointer;
+  color: blue;
+  text-decoration: underline;
+}
+
+
+.luckysheet-filter-bycolor-submenu .button-basic,
+.fortune-filter-menu .button-basic {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.luckysheet-filter-bycolor-submenu .button-basic {
+  margin: 5px 20px;
+}
+
+.luckysheet-filter-bycolor-submenu .button-default,
+.fortune-filter-menu .button-default {
+  color: rgb(38, 42, 51);
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(235, 235, 235);
+  margin-left: 10px;
+}
+
+.luckysheet-filter-bycolor-submenu .button-default:hover,
+.fortune-filter-menu .button-default:hover {
+  background-color: #e6e6e6;
+}
+
+.luckysheet-filter-bycolor-submenu .button-primary,
+.fortune-filter-menu .button-primary {
+  color: white;
+  background-color: #0188FB;
+}
+
+.luckysheet-filter-bycolor-submenu .button-primary:hover,
+.fortune-filter-menu .button-primary:hover {
+  background: #5391ff;
+}
+
+.fortune-filter-menu .button-danger {
+  color: white;
+  background-color: #d9534f; 
+  margin-left: 10px;
+}
+
+.fortune-filter-menu .button-danger:hover {
+  background-color: #c9302c;
+}
+
+.filter-bycolor-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filtermenu-input-container {
+  padding: 0px;
+}
+
+.filtermenu-input-container input.luckysheet-mousedown-cancel {
+  margin: 0px 20px;
+  width: 230px;
+  box-sizing: border-box;
+  height: 26px;
+  border-radius: 3px;
+  border: 1px solid #d9d9d9;
+  font-size: 12px;
+  padding: 1px 8px;
+  outline: none;
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+  user-select: auto;
+  text-align: start;
+}
+
+.filtermenu-input-container input.luckysheet-mousedown-cancel {
+  border:1px solid #A1A1A1;
+}
+.filtermenu-input-container input.luckysheet-mousedown-cancel:focus {
+  border: 1px solid rgb(1, 136, 251);
+  outline: none;
+}
+
+.byvalue-btn-row {
+  justify-content: space-between;
+  padding-bottom: 0px;
+  align-items: flex-start;
+}
+
+.filter-caret {
+  width: 0;
+  height: 0;
+  display: inline-block;
+  border: 4px solid transparent;
+}
+
+.filter-caret.right {
+  margin-left: 2px;
+  margin-right: 3px;
+  border-left-color: #000000;
+}
+
+.filter-caret.down {
+  margin-top: 5px;
+  margin-right: 5px;
+  border-top-color: #000000;
+}
+
+.filter-checkbox {
+  margin-left: 0px;
+  margin-right: 5px;
+}
+
+#luckysheet-filter-byvalue-select {
+  min-height: 100px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 24px;
+}
+
+#luckysheet-filter-byvalue-select .count,
+#luckysheet-pivotTableFilter-byvalue-select .count {
+    color: gray;
+    margin-left: 5px;
+}
+
+#luckysheet-filter-byvalue-select .select-item {
+  display: flex;
+  align-items: center;
+}
+
+/*颜色筛选 -- pan*/
+.luckysheet-filter-bycolor-submenu {
+  position: absolute;
+  font-size: 12px;
+  padding: 5px 0;
+  z-index: 1004;
+  border: 1px solid rgba(0, 0, 0, .2);
+  background-color: #ffffff;
+}
+
+.luckysheet-filter-bycolor-submenu .title {
+  padding: 10px;
+  font-weight: 600;
+  color: #333;
+  background-color: #f4f4f4;
+  text-align: center;
+}
+
+.luckysheet-filter-bycolor-submenu .one-color-tip {
+  padding: 7px 30px;
+  text-align: center;
+}
+
+.luckysheet-filter-bycolor-submenu .color-list{
+  max-height: 128px;
+  overflow: auto;
+}
+
+.luckysheet-filter-bycolor-submenu .item {
+  padding: 5px 40px 5px 20px;
+  cursor: pointer;
+  position: relative;
+  background-color: #ffffff;
+}
+
+.luckysheet-filter-bycolor-submenu .item:hover {
+  background-color: #d3d3d3;
+}
+
+.luckysheet-filter-bycolor-submenu .item .color-label {
+  display: block;
+  width: 70px;
+  height: 20px;
+  border: 1px solid #d1d1d1;
+}
+
+.luckysheet-filter-bycolor-submenu .item input[type="checkbox"] {
+  position: absolute;
+  right: 10px;
+  top: 6px;
 }
