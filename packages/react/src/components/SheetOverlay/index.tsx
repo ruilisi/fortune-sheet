@@ -555,10 +555,7 @@ const SheetOverlay: React.FC = () => {
               );
             })}
           {context.linkCard?.sheetId === context.currentSheetId && (
-            <LinkEditCard
-              {...context.linkCard}
-              getContainer={() => containerRef.current!}
-            />
+            <LinkEditCard {...context.linkCard} />
           )}
           <FilterOptions getContainer={() => containerRef.current!} />
           <InputBox />
@@ -626,7 +623,6 @@ const SheetOverlay: React.FC = () => {
                         context,
                         refs.globalCache,
                         nativeEvent,
-                        containerRef.current!,
                         { r, c, rc },
                         commentId
                       );
@@ -656,7 +652,6 @@ const SheetOverlay: React.FC = () => {
                                   context,
                                   refs.globalCache,
                                   nativeEvent,
-                                  containerRef.current!,
                                   { r, c, rc },
                                   commentId,
                                   v
@@ -752,12 +747,7 @@ const SheetOverlay: React.FC = () => {
                   }}
                   onMouseDown={(e) => {
                     const { nativeEvent } = e;
-                    onImageMoveStart(
-                      context,
-                      refs.globalCache,
-                      nativeEvent,
-                      containerRef.current!
-                    );
+                    onImageMoveStart(context, refs.globalCache, nativeEvent);
                     e.stopPropagation();
                   }}
                 />
@@ -769,13 +759,7 @@ const SheetOverlay: React.FC = () => {
                       data-type={v}
                       onMouseDown={(e) => {
                         const { nativeEvent } = e;
-                        onImageResizeStart(
-                          context,
-                          refs.globalCache,
-                          nativeEvent,
-                          containerRef.current!,
-                          v
-                        );
+                        onImageResizeStart(refs.globalCache, nativeEvent, v);
                         e.stopPropagation();
                       }}
                     />

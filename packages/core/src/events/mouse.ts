@@ -2037,7 +2037,7 @@ function mouseRender(
     onDropCellSelect(ctx, e, scrollX, scrollY, container);
   } else if (ctx.luckysheet_cols_change_size) {
     // 调整列宽拖动
-    const x = e.pageX - rect.left - ctx.rowHeaderWidth + container.scrollLeft;
+    const x = e.pageX - rect.left - ctx.rowHeaderWidth + scrollX.scrollLeft;
     if (
       x + 3 - ctx.luckysheet_cols_change_size_start[0] > 30 &&
       x < rect.width + ctx.scrollLeft - 100
@@ -2057,7 +2057,7 @@ function mouseRender(
     }
   } else if (ctx.luckysheet_rows_change_size) {
     // 调整行高拖动
-    const y = e.pageY - rect.top - ctx.columnHeaderHeight + container.scrollTop;
+    const y = e.pageY - rect.top - ctx.columnHeaderHeight + scrollY.scrollTop;
     if (
       y + 3 - ctx.luckysheet_rows_change_size_start[0] > 19 &&
       y < rect.height + ctx.scrollTop - 20
@@ -3262,10 +3262,10 @@ export function handleOverlayMouseUp(
 ) {
   const rect = container.getBoundingClientRect();
   // 批注框 移动结束
-  onImageMoveEnd(ctx, globalCache, container);
-  onImageResizeEnd(ctx, globalCache, container);
-  onCommentBoxMoveEnd(ctx, globalCache, container);
-  onCommentBoxResizeEnd(ctx, globalCache, container);
+  onImageMoveEnd(ctx, globalCache);
+  onImageResizeEnd(ctx, globalCache);
+  onCommentBoxMoveEnd(ctx, globalCache);
+  onCommentBoxResizeEnd(ctx, globalCache);
   onFormulaRangeDragEnd(ctx);
   onSearchDialogMoveEnd(globalCache);
   onRangeSelectionModalMoveEnd(globalCache);

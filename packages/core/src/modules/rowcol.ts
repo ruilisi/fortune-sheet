@@ -212,7 +212,7 @@ export function insertRowCol(
   const { filter_select } = file;
   const { filter } = file;
   let newFilterObj: any = null;
-  if (!_.isEmpty(filter_select)) {
+  if (!_.isEmpty(filter_select) && filter_select != null) {
     newFilterObj = { filter_select: null, filter: null };
 
     let f_r1 = filter_select.row[0];
@@ -1168,7 +1168,7 @@ export function deleteRowCol(
   const { filter_select } = file;
   const { filter } = file;
   let newFilterObj: any = null;
-  if (!_.isEmpty(filter_select)) {
+  if (!_.isEmpty(filter_select) && filter_select != null) {
     newFilterObj = { filter_select: null, filter: null };
 
     let f_r1 = filter_select.row[0];

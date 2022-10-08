@@ -10,25 +10,29 @@ import {
   isRealNum,
 } from "..";
 
-function orderbydata(isAsc: boolean, index: number, data: (Cell | null)[][]) {
+export function orderbydata(
+  isAsc: boolean,
+  index: number,
+  data: (Cell | null)[][]
+) {
   if (isAsc == null) {
     isAsc = true;
   }
   const a = (x: any, y: any) => {
     let x1 = x[index];
     let y1 = y[index];
-    if (x[index].v != null) {
+    if (x[index] != null) {
       x1 = x[index].v;
     }
-    if (y[index].v != null) {
+    if (y[index] != null) {
       y1 = y[index].v;
     }
     if (isRealNull(x1)) {
-      return 1;
+      return isAsc ? 1 : -1;
     }
 
     if (isRealNull(y1)) {
-      return -1;
+      return isAsc ? -1 : 1;
     }
     if (isdatetime(x1) && isdatetime(y1)) {
       return diff(x1, y1);
