@@ -7,7 +7,6 @@
 <div align="center">
 
 [![CircleCI Status](https://circleci.com/gh/ruilisi/fortune-sheet.svg?style=shield)](https://circleci.com/gh/ruilisi/fortune-sheet)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet?ref=badge_shield)
 [![Known Vulnerabilities](https://snyk.io/test/github/ruilisi/fortune-sheet/badge.svg)](https://snyk.io/test/github/ruilisi/fortune-sheet)
 [![Build with father](https://img.shields.io/badge/build%20with-father-028fe4.svg)](https://github.com/umijs/father/)
 [![xiemala](https://img.shields.io/badge/maintained%20by-xiemala-cc00ff.svg)](https://xiemala.com/)
@@ -186,5 +185,3 @@ yarn build
 
 ## License
 This project is licensed under the MIT License. See [MIT](http://opensource.org/licenses/MIT) for the full license text.
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet?ref=badge_large)
