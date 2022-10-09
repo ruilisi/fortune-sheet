@@ -186,5 +186,3 @@ yarn build
 
 ## License
 This project is licensed under the MIT License. See [MIT](http://opensource.org/licenses/MIT) for the full license text.
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fruilisi%2Ffortune-sheet?ref=badge_large)
