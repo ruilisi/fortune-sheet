@@ -1619,11 +1619,14 @@ export class Canvas {
       renderCtx.fillStyle = fillStyle;
     }
 
+    // 这里计算canvas需要绘制的矩形范围时,需要留下原本单元格边框的位置
+    // 让 fillRect 绘制矩形的起始xy坐标增加1,绘制长宽减少2
+
     const cellsize = [
-      startX + offsetLeft + borderfix[0],
-      startY + offsetTop + borderfix[1],
-      endX - startX + borderfix[2] - (isMerge ? 1 : 0),
-      endY - startY + borderfix[3],
+      startX + offsetLeft + borderfix[0] + 1,
+      startY + offsetTop + borderfix[1] + 1,
+      endX - startX + borderfix[2] - (isMerge ? 1 : 0) - 2,
+      endY - startY + borderfix[3] - 2,
     ];
 
     // 单元格渲染前，考虑到合并单元格会再次渲染一遍，统一放到这里
@@ -1716,9 +1719,9 @@ export class Canvas {
     // 即溢出单元格跨此单元格，此单元格不绘制右边框
     if (!cellOverflow_colInObj.colIn || cellOverflow_colInObj.colLast) {
       // 右边框
+      // 无论是否有背景色，都默认绘制右边框
       if (
         !this.sheetCtx.luckysheetcurrentisPivotTable &&
-        !fillStyle &&
         this.sheetCtx.showGridLines
       ) {
         renderCtx.beginPath();
@@ -1732,9 +1735,9 @@ export class Canvas {
     }
 
     // 下边框
+    // 无论是否有背景色，都默认绘制下边框
     if (
       !this.sheetCtx.luckysheetcurrentisPivotTable &&
-      !fillStyle &&
       this.sheetCtx.showGridLines
     ) {
       renderCtx.beginPath();
@@ -1826,12 +1829,15 @@ export class Canvas {
     }
 
     const borderfix = getBorderFix(flowdata, r, c);
-    // console.log(value, fillStyle,borderfix);
+
+    // 这里计算canvas需要绘制的矩形范围时,需要留下原本单元格边框的位置
+    // 让 fillRect 绘制矩形的起始xy坐标增加1,绘制长宽减少2
+
     const cellsize = [
-      startX + offsetLeft + borderfix[0],
-      startY + offsetTop + borderfix[1],
-      endX - startX + borderfix[2] - (isMerge ? 1 : 0),
-      endY - startY + borderfix[3],
+      startX + offsetLeft + borderfix[0] + 1,
+      startY + offsetTop + borderfix[1] + 1,
+      endX - startX + borderfix[2] - (isMerge ? 1 : 0) - 2,
+      endY - startY + borderfix[3] - 2,
     ];
 
     // 单元格渲染前，考虑到合并单元格会再次渲染一遍，统一放到这里
@@ -2229,7 +2235,6 @@ export class Canvas {
       // 右边框
       if (
         !this.sheetCtx.luckysheetcurrentisPivotTable &&
-        !fillStyle &&
         this.sheetCtx.showGridLines
       ) {
         renderCtx.beginPath();
@@ -2245,7 +2250,6 @@ export class Canvas {
     // 下边框
     if (
       !this.sheetCtx.luckysheetcurrentisPivotTable &&
-      !fillStyle &&
       this.sheetCtx.showGridLines
     ) {
       renderCtx.beginPath();

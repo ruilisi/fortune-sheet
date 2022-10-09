@@ -191,11 +191,11 @@ describe("cell related hooks", () => {
     expect(parameters[0]).toEqual(getContext().luckysheetfile[0].data[0][0]);
     expect(parameters[1]).toEqual({
       column: 0,
-      endX: 119,
-      endY: 39,
+      endX: 118,
+      endY: 38,
       row: 0,
-      startX: 45,
-      startY: 19,
+      startX: 46,
+      startY: 20,
     });
     expect(parameters[2]).toEqual(canvas.canvasElement.getContext("2d"));
     cellRenderParams.splice(6, 0, 30);
@@ -203,11 +203,11 @@ describe("cell related hooks", () => {
     expect(parameters[3]).toEqual(getContext().luckysheetfile[0].data[0][0]);
     expect(parameters[4]).toEqual({
       column: 0,
-      endX: 119,
-      endY: 39,
+      endX: 118,
+      endY: 38,
       row: 0,
-      startX: 45,
-      startY: 19,
+      startX: 46,
+      startY: 20,
     });
     expect(parameters[5]).toEqual(canvas.canvasElement.getContext("2d"));
     cellRenderParams.splice(6, 2);
@@ -228,11 +228,11 @@ describe("cell related hooks", () => {
     expect(parameters[0]).toEqual(getContext().luckysheetfile[0].data[0][0]);
     expect(parameters[1]).toEqual({
       column: 0,
-      endX: 119,
-      endY: 39,
+      endX: 118,
+      endY: 38,
       row: 0,
-      startX: 45,
-      startY: 19,
+      startX: 46,
+      startY: 20,
     });
     expect(parameters[2]).toEqual(canvas.canvasElement.getContext("2d"));
     cellRenderParams.splice(6, 0, 30);
@@ -240,11 +240,11 @@ describe("cell related hooks", () => {
     expect(parameters[3]).toEqual(getContext().luckysheetfile[0].data[0][0]);
     expect(parameters[4]).toEqual({
       column: 0,
-      endX: 119,
-      endY: 39,
+      endX: 118,
+      endY: 38,
       row: 0,
-      startX: 45,
-      startY: 19,
+      startX: 46,
+      startY: 20,
     });
     expect(parameters[5]).toEqual(canvas.canvasElement.getContext("2d"));
     cellRenderParams.splice(6, 2);
