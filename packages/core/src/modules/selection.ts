@@ -435,6 +435,8 @@ export function pasteHandlerOfPaintModel(
                 x[c].m = mask;
               }
             }
+          } else {
+            x[c] = value;
           }
         }
         flowdata[h] = x;
