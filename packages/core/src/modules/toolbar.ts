@@ -1219,19 +1219,32 @@ const getIntersection = (
   return intersection;
 };
 
+// 覆盖border-none
+function coverBorderNone(ctx: Context) {
+  const index = getSheetIndex(ctx, ctx.currentSheetId)!;
+  const borderInfo = {
+    rangeType: "range",
+    borderType: "border-none",
+    color: "#000000",
+    style: "1",
+    range: ctx.luckysheet_select_save,
+  };
+  ctx.config.borderInfo?.push(borderInfo);
+  ctx.luckysheetfile[index].config = ctx.config;
+}
+
+// 2022-10-10 废弃了handleClearFormat中的foreach写法，改为可跳出的every写法，以防止选区多次覆盖
 export function handleClearFormat(ctx: Context) {
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
-
-  _.forEach(ctx.luckysheet_select_save, (selection) => {
-    const [row_st, row_ed] = selection.row;
-    const [col_st, col_ed] = selection.column;
-    for (let r = row_st; r <= row_ed; r += 1) {
+  ctx.luckysheet_select_save?.every((selection) => {
+    const [rowSt, rowEd] = selection.row;
+    const [colSt, colEd] = selection.column;
+    for (let r = rowSt; r <= rowEd; r += 1) {
       if (!_.isNil(ctx.config.rowhidden) && !_.isNil(ctx.config.rowhidden[r])) {
-        continue;
+        return true;
       }
-
-      for (let c = col_st; c <= col_ed; c += 1) {
+      for (let c = colSt; c <= colEd; c += 1) {
         const cell = flowdata[r][c];
         if (!cell) continue;
         flowdata[r][c] = _.pick(cell, "v", "m", "mc", "f", "ct");
@@ -1239,37 +1252,45 @@ export function handleClearFormat(ctx: Context) {
     }
     // 清空表格样式时，清除边框样式
     const index = getSheetIndex(ctx, ctx.currentSheetId);
-    if (index == null) return;
+    if (index == null) return false;
     // 表格边框为空时，不对表格进行操作
-    if (ctx.config.borderInfo == null) return;
+    if (ctx.config.borderInfo == null) return false;
     // 遍历表格边框信息
-    if (ctx.luckysheetfile[index].config == null) return;
-    _.forEach(ctx.luckysheetfile[index].config!.borderInfo, (border) => {
-      if (border.rangeType === "range" && border.borderType !== "border-none") {
-        for (let i = 0; i < border.range.length; i += 1) {
-          const border_row = border.range[i].row;
-          const border_col = border.range[i].column;
-          const target_row = getIntersection(border_row, [row_st, row_ed]);
-          const target_col = getIntersection(border_col, [col_st, col_ed]);
+    ctx.luckysheetfile[index].config?.borderInfo?.every((border) => {
+      if (border.borderType !== "border-none" && border.rangeType === "range") {
+        if (_.isNil(border.range) || border.range.length <= 0) return false;
+        border.range?.every((borderRange: any) => {
+          const borderRow = borderRange.row;
+          const borderCol = borderRange.column;
+          const targetRow = getIntersection(borderRow, [rowSt, rowEd]);
+          const targetCol = getIntersection(borderCol, [colSt, colEd]);
           // 当重复的行或者列小于等于0时，不对表格进行操作
-          if (target_row.length <= 0 || target_col.length <= 0) {
-            continue;
+          if (targetRow.length <= 0 || targetCol.length <= 0) {
+            return true;
           }
 
           // 一旦选区内和表格边框信息有交集，则覆盖一层border-none
-          const borderInfo = {
-            rangeType: "range",
-            borderType: "border-none",
-            color: "#000000",
-            style: "1",
-            range: ctx.luckysheet_select_save,
-          };
-          ctx.config.borderInfo?.push(borderInfo);
-          ctx.luckysheetfile[index].config = ctx.config;
-          return;
+          coverBorderNone(ctx);
+          return true;
+        });
+      } else if (
+        !(border.borderType === "border-none") &&
+        border.rangeType === "cell"
+      ) {
+        if (
+          rowSt <= border.value.row_index &&
+          border.value.row_index <= rowEd &&
+          colSt <= border.value.col_index &&
+          border.value.col_index <= colEd
+        ) {
+          // 一旦选区内和表格边框信息有交集，则覆盖一层border-none
+          coverBorderNone(ctx);
+          return true;
         }
       }
+      return true;
     });
+    return true;
   });
 }
 
