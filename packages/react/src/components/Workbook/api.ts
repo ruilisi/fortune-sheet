@@ -14,6 +14,7 @@ import {
   Settings,
   SingleRange,
   createFilterOptions,
+  getSheetIndex,
 } from "@fortune-sheet/core";
 import produce, { applyPatches } from "immer";
 import _ from "lodash";
@@ -61,6 +62,11 @@ export function generateAPIs(
           if (patches.length === 0) return ctx_;
           try {
             const newContext = applyPatches(ctx_, patches);
+            const index = getSheetIndex(newContext, newContext.currentSheetId)!;
+            const newConfig = newContext.luckysheetfile?.[index].config;
+            if (newConfig) {
+              newContext.config = newConfig;
+            }
             return newContext;
           } catch {
             return ctx_;
