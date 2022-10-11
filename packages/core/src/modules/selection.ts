@@ -392,15 +392,7 @@ export function pasteHandlerOfPaintModel(
              * 因为如果使用_.assign的话，将会导致x[c]的v和m都是value的值，从而导致一次性刷多个单元格的时候单元格值全为同一个数据
              */
             x[c] = {
-              bg: value.bg,
-              bl: value.bl,
-              ct: value.ct,
-              fc: value.fc,
-              ff: value.ff,
-              fs: value.fs,
-              ht: value.ht,
-              it: value.it,
-              vt: value.vt,
+              ...value,
               v: x[c].v,
               m: x[c].m,
             };
@@ -443,6 +435,8 @@ export function pasteHandlerOfPaintModel(
                 x[c].m = mask;
               }
             }
+          } else {
+            x[c] = value;
           }
         }
         flowdata[h] = x;
