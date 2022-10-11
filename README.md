@@ -76,7 +76,7 @@ Before stable release of 1.0, input data structure and APIs may change during de
 - Support Vue.
 - More features:
   - ✅ sort
-  - filter
+  - ✅ filter
   - ✅ hooks
   - conditional formatting
   - drag and drop
