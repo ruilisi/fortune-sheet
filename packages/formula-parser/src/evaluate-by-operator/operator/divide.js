@@ -7,10 +7,12 @@ export default function func(first, ...rest) {
   const result = rest.reduce((acc, value) => acc / toNumber(value), toNumber(first));
 
   if (result === Infinity) {
-    throw Error(ERROR_DIV_ZERO);
+    return ERROR_DIV_ZERO;
+    // throw Error(ERROR_DIV_ZERO);
   }
   if (isNaN(result)) {
-    throw Error(ERROR_VALUE);
+    return ERROR_VALUE;
+    // throw Error(ERROR_VALUE);
   }
 
   return result;
