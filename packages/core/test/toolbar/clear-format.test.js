@@ -28,8 +28,64 @@ describe("clear format", () => {
               },
             ],
           ],
+          config: {
+            borderInfo: [
+              {
+                rangeType: "range",
+                borderType: "border-all",
+                style: "3",
+                color: "#0000ff",
+                range: [
+                  {
+                    row: [0, 3],
+                    column: [0, 2],
+                  },
+                ],
+              },
+              {
+                rangeType: "range",
+                borderType: "border-inside",
+                style: "3",
+                color: "#0000ff",
+                range: [
+                  {
+                    row: [7, 8],
+                    column: [8, 9],
+                  },
+                ],
+              },
+            ],
+          },
         },
       ],
+      config: {
+        borderInfo: [
+          {
+            rangeType: "range",
+            borderType: "border-all",
+            style: "3",
+            color: "#0000ff",
+            range: [
+              {
+                row: [0, 3],
+                column: [0, 2],
+              },
+            ],
+          },
+          {
+            rangeType: "range",
+            borderType: "border-inside",
+            style: "3",
+            color: "#0000ff",
+            range: [
+              {
+                row: [7, 8],
+                column: [8, 9],
+              },
+            ],
+          },
+        ],
+      },
     });
 
   test("clear format", async () => {
@@ -44,5 +100,44 @@ describe("clear format", () => {
       },
     };
     expect(getFlowdata(ctx)[0][0]).toEqual(expectedCell);
+  });
+
+  test("clear border info", async () => {
+    const ctx = getContext();
+    const expectedBorderInfo = [
+      {
+        rangeType: "range",
+        borderType: "border-all",
+        style: "3",
+        color: "#0000ff",
+        range: [
+          {
+            row: [0, 3],
+            column: [0, 2],
+          },
+        ],
+      },
+      {
+        rangeType: "range",
+        borderType: "border-inside",
+        style: "3",
+        color: "#0000ff",
+        range: [
+          {
+            row: [7, 8],
+            column: [8, 9],
+          },
+        ],
+      },
+      {
+        rangeType: "range",
+        borderType: "border-none",
+        color: "#000000",
+        style: "1",
+        range: [{ row: [0, 0], column: [0, 0], row_focus: 0, column_focus: 0 }],
+      },
+    ];
+    handleClearFormat(ctx);
+    expect(ctx.luckysheetfile[0].config.borderInfo).toEqual(expectedBorderInfo);
   });
 });
