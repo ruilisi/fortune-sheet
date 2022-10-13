@@ -1437,8 +1437,14 @@ export function handleFreeze(ctx: Context, type: string) {
   const firstSelection = ctx.luckysheet_select_save?.[0];
   if (!firstSelection) return;
 
-  const { row_focus, column_focus } = firstSelection;
+  let { row_focus, column_focus } = firstSelection;
   if (!row_focus || !column_focus) return;
+
+  const m = ctx.config.merge?.[`${row_focus}_${column_focus}`];
+  if (m) {
+    row_focus = m.r + m.rs - 1;
+    column_focus = m.c + m.cs - 1;
+  }
 
   file.frozen = { type: "both", range: { row_focus, column_focus } };
   if (type === "freeze-row") {
