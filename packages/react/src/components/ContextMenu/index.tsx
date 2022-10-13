@@ -8,6 +8,7 @@ import {
 import _ from "lodash";
 import React, { useContext, useRef, useLayoutEffect, useCallback } from "react";
 import WorkbookContext, { SetContextOptions } from "../../context";
+import { useAlert } from "../../hooks/useAlert";
 import Divider from "./Divider";
 import "./index.css";
 import Menu from "./Menu";
@@ -16,6 +17,7 @@ const ContextMenu: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { context, setContext, settings } = useContext(WorkbookContext);
   const { contextMenu } = context;
+  const { showAlert } = useAlert();
   const { rightclick } = locale(context);
   const getMenuElement = useCallback(
     (name: string, i: number) => {
@@ -79,8 +81,12 @@ const ContextMenu: React.FC = () => {
                   };
                   setContext(
                     (draftCtx) => {
-                      insertRowCol(draftCtx, insertRowColOp);
-                      draftCtx.contextMenu = undefined;
+                      try {
+                        insertRowCol(draftCtx, insertRowColOp);
+                        draftCtx.contextMenu = undefined;
+                      } catch (err: any) {
+                        showAlert(err.message);
+                      }
                     },
                     {
                       insertRowColOp,
@@ -142,8 +148,12 @@ const ContextMenu: React.FC = () => {
                   };
                   setContext(
                     (draftCtx) => {
-                      insertRowCol(draftCtx, insertRowColOp);
-                      draftCtx.contextMenu = undefined;
+                      try {
+                        insertRowCol(draftCtx, insertRowColOp);
+                        draftCtx.contextMenu = undefined;
+                      } catch (err: any) {
+                        showAlert(err.message);
+                      }
                     },
                     { insertRowColOp }
                   );

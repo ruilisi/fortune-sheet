@@ -72,6 +72,18 @@ export function insertRowCol(
   const d = file.data;
   if (!d) return;
 
+  if (type === "row" && d.length + count >= 10000) {
+    throw new Error(
+      "This action would increase the number of rows in the workbook above the limit of 10000."
+    );
+  }
+
+  if (type === "column" && d[0] && d[0].length + count >= 1000) {
+    throw new Error(
+      "This action would increase the number of columns in the workbook above the limit of 1000."
+    );
+  }
+
   count = Math.floor(count);
   const cfg = file.config || {};
 

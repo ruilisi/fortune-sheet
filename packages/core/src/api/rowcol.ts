@@ -48,13 +48,17 @@ export function insertRowOrColumn(
 
   const sheet = getSheet(ctx, options);
 
-  insertRowCol(ctx, {
-    type,
-    index,
-    count,
-    direction,
-    id: sheet.id!,
-  });
+  try {
+    insertRowCol(ctx, {
+      type,
+      index,
+      count,
+      direction,
+      id: sheet.id!,
+    });
+  } catch (e: any) {
+    console.error(e);
+  }
 }
 
 export function deleteRowOrColumn(

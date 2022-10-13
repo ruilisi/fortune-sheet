@@ -236,6 +236,17 @@ export function expandRowsAndColumns(
     return data;
   }
 
+  if (data.length + rowsToAdd >= 10000) {
+    throw new Error(
+      "This action would increase the number of rows in the workbook above the limit of 10000."
+    );
+  }
+
+  if (data[0].length + columnsToAdd >= 1000) {
+    throw new Error(
+      "This action would increase the number of columns in the workbook above the limit of 1000."
+    );
+  }
   if (rowsToAdd <= 0) {
     rowsToAdd = 0;
   }
