@@ -304,7 +304,7 @@ const make_ssf = function make_ssf(SSF) {
       if (o.length <= w) return o;
       o = v.toPrecision(10);
       if (o.length <= w) return o;
-      return v.toExponential(5);
+      return Number(v).toExponential(5);
     }
     /* exponent >= 11 or <= -10 likely exponential */
     function large_exp(v) {
@@ -562,7 +562,7 @@ const make_ssf = function make_ssf(SSF) {
             "E"
           );
         });
-      } else o = val.toExponential(idx);
+      } else o = Number(val).toExponential(idx);
       if (fmt.match(/E\+00$/) && o.match(/e[+-]\d$/))
         o = o.substr(0, o.length - 1) + "0" + o.charAt(o.length - 1);
       if (fmt.match(/E\-/) && o.match(/e\+/)) o = o.replace(/e\+/, "e");
@@ -839,7 +839,7 @@ const make_ssf = function make_ssf(SSF) {
             "E"
           );
         });
-      } else o = val.toExponential(idx);
+      } else o = Number(val).toExponential(idx);
       if (fmt.match(/E\+00$/) && o.match(/e[+-]\d$/))
         o = o.substr(0, o.length - 1) + "0" + o.charAt(o.length - 1);
       if (fmt.match(/E\-/) && o.match(/e\+/)) o = o.replace(/e\+/, "e");
