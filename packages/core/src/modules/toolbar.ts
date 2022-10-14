@@ -1438,8 +1438,8 @@ export function handleFreeze(ctx: Context, type: string) {
   if (!firstSelection) return;
 
   let { row_focus, column_focus } = firstSelection;
-  if (!row_focus || !column_focus) return;
-
+  // if (!row_focus || !column_focus) return;
+  if (_.isUndefined(row_focus) || _.isUndefined(column_focus)) return;
   const m = ctx.config.merge?.[`${row_focus}_${column_focus}`];
   if (m) {
     row_focus = m.r + m.rs - 1;
