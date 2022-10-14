@@ -45,6 +45,7 @@ import ContentEditable from "./ContentEditable";
 import SearchReplace from "../SearchReplace";
 import LinkEditCard from "../LinkEidtCard";
 import FilterOptions from "../FilterOption";
+import { useAlert } from "../../hooks/useAlert";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
@@ -52,6 +53,7 @@ const SheetOverlay: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const bottomAddRowInputRef = useRef<HTMLInputElement>(null);
   const flowdata = getFlowdata(context);
+  const { showAlert } = useAlert();
   // const isMobile = browser.mobilecheck();
   const cellAreaMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -245,9 +247,13 @@ const SheetOverlay: React.FC = () => {
 
     setContext((draftCtx) => {
       const data = getFlowdata(draftCtx);
-      expandRowsAndColumns(data!, value, 0);
+      try {
+        expandRowsAndColumns(data!, value, 0);
+      } catch (e: any) {
+        showAlert(e.message);
+      }
     });
-  }, [setContext]);
+  }, [setContext, showAlert]);
 
   useEffect(() => {
     refs.cellArea.current!.scrollLeft = context.scrollLeft;

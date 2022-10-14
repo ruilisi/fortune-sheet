@@ -40,7 +40,11 @@ export function generateAPIs(
             const [specialOp] = specialOps;
             if (specialOp.op === "insertRowCol") {
               ctx_ = produce(ctx_, (draftCtx) => {
-                insertRowCol(draftCtx, specialOp.value);
+                try {
+                  insertRowCol(draftCtx, specialOp.value);
+                } catch (e: any) {
+                  console.error(e);
+                }
               });
             } else if (specialOp.op === "deleteRowCol") {
               ctx_ = produce(ctx_, (draftCtx) => {

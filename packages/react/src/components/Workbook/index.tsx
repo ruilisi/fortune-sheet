@@ -354,7 +354,11 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         // deal with multi instance case, only the focused sheet handles the paste
         if (cellInput.current === document.activeElement) {
           setContextWithProduce((draftCtx) => {
-            handlePaste(draftCtx, e);
+            try {
+              handlePaste(draftCtx, e);
+            } catch (err: any) {
+              console.error(err);
+            }
           });
         }
       },
