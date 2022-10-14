@@ -22,6 +22,8 @@ import {
   onFormulaRangeDragEnd,
   createFormulaRangeSelect,
   createRangeHightlight,
+  onCellsMoveEnd,
+  onCellsMove,
 } from "../modules";
 import { scrollToFrozenRowCol } from "../modules/freeze";
 import {
@@ -3005,6 +3007,7 @@ export function handleOverlayMouseMove(
   if (onCommentBoxMove(ctx, globalCache, e)) return;
   if (onImageMove(ctx, globalCache, e)) return;
   if (onImageResize(ctx, globalCache, e)) return;
+  onCellsMove(ctx, e, scrollX, scrollY, container);
   overShowComment(ctx, e, scrollX, scrollY, container); // 有批注显示
   onSearchDialogMove(globalCache, e);
   onRangeSelectionModalMove(globalCache, e);
@@ -3258,6 +3261,8 @@ export function handleOverlayMouseUp(
   globalCache: GlobalCache,
   settings: Settings,
   e: MouseEvent,
+  scrollbarX: HTMLDivElement,
+  scrollbarY: HTMLDivElement,
   container: HTMLDivElement
 ) {
   const rect = container.getBoundingClientRect();
@@ -3269,6 +3274,7 @@ export function handleOverlayMouseUp(
   onFormulaRangeDragEnd(ctx);
   onSearchDialogMoveEnd(globalCache);
   onRangeSelectionModalMoveEnd(globalCache);
+  onCellsMoveEnd(ctx, e, scrollbarX, scrollbarY, container);
   // if (
   //   luckysheetConfigsetting &&
   //   luckysheetConfigsetting.hook &&

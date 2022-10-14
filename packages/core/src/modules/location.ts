@@ -5,7 +5,7 @@ export function mousePosition(x: number, y: number, ctx: Context) {
   const newX = x - ctx.rowHeaderWidth;
   const newY =
     y -
-    ctx.infobarHeight -
+    // ctx.infobarHeight -
     ctx.toolbarHeight -
     ctx.calculatebarHeight -
     ctx.columnHeaderHeight;

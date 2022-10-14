@@ -77,7 +77,10 @@ const FxEditor: React.FC = () => {
     if (!context.allowEdit) {
       return;
     }
-    if ((context.luckysheet_select_save?.length ?? 0) > 0) {
+    if (
+      (context.luckysheet_select_save?.length ?? 0) > 0 &&
+      !context.luckysheet_cell_selected_move
+    ) {
       setFocused(true);
       setContext((draftCtx) => {
         const last =
@@ -95,6 +98,7 @@ const FxEditor: React.FC = () => {
     }
   }, [
     context.allowEdit,
+    context.luckysheet_cell_selected_move,
     context.luckysheet_select_save?.length,
     refs.globalCache,
     setContext,

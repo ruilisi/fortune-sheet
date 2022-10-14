@@ -34,6 +34,7 @@ import {
   showLinkCard,
   Context,
   GlobalCache,
+  onCellsMoveStart,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -45,9 +46,11 @@ import ContentEditable from "./ContentEditable";
 import SearchReplace from "../SearchReplace";
 import LinkEditCard from "../LinkEidtCard";
 import FilterOptions from "../FilterOption";
+import { useAlert } from "../../hooks/useAlert";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
+  const { showAlert } = useAlert();
   const { info } = locale(context);
   const containerRef = useRef<HTMLDivElement>(null);
   const bottomAddRowInputRef = useRef<HTMLInputElement>(null);
@@ -184,16 +187,29 @@ const SheetOverlay: React.FC = () => {
   const onMouseUp = useCallback(
     (nativeEvent: MouseEvent) => {
       setContext((draftCtx) => {
-        handleOverlayMouseUp(
-          draftCtx,
-          refs.globalCache,
-          settings,
-          nativeEvent,
-          containerRef.current!
-        );
+        try {
+          handleOverlayMouseUp(
+            draftCtx,
+            refs.globalCache,
+            settings,
+            nativeEvent,
+            refs.scrollbarX.current!,
+            refs.scrollbarY.current!,
+            containerRef.current!
+          );
+        } catch (e: any) {
+          showAlert(e.message);
+        }
       });
     },
-    [refs.globalCache, setContext, settings]
+    [
+      refs.globalCache,
+      refs.scrollbarX,
+      refs.scrollbarY,
+      setContext,
+      settings,
+      showAlert,
+    ]
   );
 
   const onTouchStart = useCallback(
@@ -438,6 +454,10 @@ const SheetOverlay: React.FC = () => {
                 : {}
             }
           />
+          <div
+            className="luckysheet-cell-selected-move"
+            id="luckysheet-cell-selected-move"
+          />
           {(context.luckysheet_selection_range?.length ?? 0) > 0 && (
             <div id="fortune-selection-copy">
               {context.luckysheet_selection_range!.map((range) => {
@@ -489,6 +509,19 @@ const SheetOverlay: React.FC = () => {
                     selection,
                     refs.globalCache.freezen?.[context.currentSheetId]
                   )}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    const { nativeEvent } = e;
+                    setContext((draftCtx) => {
+                      onCellsMoveStart(
+                        draftCtx,
+                        nativeEvent,
+                        refs.scrollbarX.current!,
+                        refs.scrollbarY.current!,
+                        containerRef.current!
+                      );
+                    });
+                  }}
                 >
                   <div className="luckysheet-cs-inner-border" />
                   <div
