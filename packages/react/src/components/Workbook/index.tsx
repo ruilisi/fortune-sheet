@@ -107,6 +107,25 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                   options,
                 });
                 globalCache.current.redoList = [];
+              } else if (options.deleteSheetOp) {
+                const index = getSheetIndex(ctx_, ctx_.currentSheetId);
+                const leftList = globalCache.current.undoList.filter(
+                  (history) =>
+                    !_.isNil(index) && history.inversePatches[0].path[1] < index
+                );
+                const rightList = globalCache.current.undoList.filter(
+                  (history) =>
+                    !_.isNil(index) && history.inversePatches[0].path[1] > index
+                );
+                rightList.forEach((history) => {
+                  history.patches.map((item) =>
+                    item.path.map((path) => (path as number) - 1)
+                  );
+                  history.inversePatches.map((item) =>
+                    item.path.map((path) => (path as number) - 1)
+                  );
+                });
+                globalCache.current.undoList = leftList.concat(rightList);
               }
               emitOp(result, filteredPatches, options);
             }
