@@ -27,6 +27,13 @@ class ContentEditable extends React.Component<ContentEditableProps> {
     }
   }
 
+  UNSAFE_componentWillUpdate() {
+    const { initialContent } = this.props;
+    if (initialContent && this.root) {
+      this.root.innerHTML = initialContent;
+    }
+  }
+
   emitChange() {
     const { onChange } = this.props;
     const html = this.root?.innerHTML;
