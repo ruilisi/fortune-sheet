@@ -25,3 +25,4 @@ export * from "./screenshot";
 export * from "./searchReplace";
 export * from "./hyperlink";
 export * from "./filter";
+export * from "./moveCells";
