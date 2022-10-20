@@ -436,7 +436,15 @@ export function pasteHandlerOfPaintModel(
               }
             }
           } else {
-            x[c] = value;
+            if (x[c]) {
+              x[c] = {
+                ...value,
+                v: x[c].v,
+                m: x[c].m,
+              };
+            } else {
+              x[c] = value;
+            }
           }
         }
         flowdata[h] = x;
