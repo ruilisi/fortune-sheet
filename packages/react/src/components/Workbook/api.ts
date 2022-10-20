@@ -63,7 +63,9 @@ export function generateAPIs(
               });
             } else if (specialOp.op === "addSheet") {
               ctx_ = produce(ctx_, (draftCtx) => {
-                addSheet(draftCtx, settings, specialOp.value.id);
+                if (specialOp.value?.id) {
+                  addSheet(draftCtx, settings, specialOp.value.id);
+                }
               });
               // 添加addSheet完后，给sheet初始化data
               const fileIndex = getSheetIndex(
@@ -95,7 +97,6 @@ export function generateAPIs(
             if (newConfig) {
               newContext.config = newConfig;
             }
-
             return newContext;
           } catch (e) {
             console.error(e);

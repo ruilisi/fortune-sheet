@@ -141,7 +141,10 @@ export function deleteSheet(ctx: Context, id: string) {
   }
 
   const arrIndex = getSheetIndex(ctx, id);
-  if (arrIndex == null) return;
+
+  if (arrIndex == null) {
+    return;
+  }
 
   // const file = ctx.luckysheetfile[arrIndex];
 
@@ -153,6 +156,13 @@ export function deleteSheet(ctx: Context, id: string) {
 
   // $(`#luckysheet-sheets-item${index}`).remove();
   // $(`#luckysheet-datavisual-selection-set-${index}`).remove();
+  ctx.luckysheetfile = ctx.luckysheetfile.map((sheet) => {
+    sheet.order =
+      (sheet.order as number) < (ctx.luckysheetfile[arrIndex].order as number)
+        ? sheet.order
+        : (sheet.order as number) - 1;
+    return sheet;
+  });
 
   ctx.luckysheetfile.splice(arrIndex, 1);
   // _this.reOrderAllSheet();
