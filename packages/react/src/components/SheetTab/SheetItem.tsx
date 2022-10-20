@@ -176,6 +176,8 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
         const rect = refs.workbookContainer.current!.getBoundingClientRect();
         const { pageX, pageY } = e;
         setContext((ctx) => {
+          //右击的时候先进行跳转
+          ctx.currentSheetId = sheet.id!
           ctx.sheetTabContextMenu = {
             x: pageX - rect.left,
             y: pageY - rect.top,
@@ -189,6 +191,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
       <span
         className="luckysheet-sheets-item-name"
         spellCheck="false"
+        suppressContentEditableWarning
         contentEditable={isDropPlaceholder ? false : editing}
         onDoubleClick={() => setEditing(true)}
         onBlur={onBlur}
