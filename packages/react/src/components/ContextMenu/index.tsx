@@ -4,6 +4,11 @@ import {
   handlePasteByClick,
   deleteRowCol,
   insertRowCol,
+  removeActiveImage,
+  deleteSelectedCellText,
+  sortSelection,
+  createFilter,
+  showImgChooser, handleLink
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, { useContext, useRef, useLayoutEffect, useCallback } from "react";
@@ -240,6 +245,116 @@ const ContextMenu: React.FC = () => {
           >
             {rightclick.deleteSelected}
             {rightclick.row}
+          </Menu>
+        );
+      }
+      if (name === "clear") {
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                if (!draftCtx.allowEdit) return;
+                if (draftCtx.activeImg?.id != null) {
+                  removeActiveImage(draftCtx);
+                } else {
+                  deleteSelectedCellText(draftCtx);
+                }
+                draftCtx.contextMenu = undefined;
+              });
+            }}
+          >
+            {rightclick.clearContent}
+          </Menu>
+        );
+      }
+      if (name === "orderAZ") {
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                sortSelection(draftCtx, true);
+                draftCtx.contextMenu = undefined;
+              });
+            }}
+          >
+            {rightclick.orderAZ}
+          </Menu>
+        );
+      }
+      if (name === "orderZA") {
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                sortSelection(draftCtx, false);
+                draftCtx.contextMenu = undefined;
+              });
+            }}
+          >
+            {rightclick.orderZA}
+          </Menu>
+        );
+      }
+      if (name === "orderZA") {
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                sortSelection(draftCtx, false);
+                draftCtx.contextMenu = undefined;
+              });
+            }}
+          >
+            {rightclick.orderZA}
+          </Menu>
+        );
+      }
+      if (name === "filter") {
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                createFilter(draftCtx);
+                draftCtx.contextMenu = undefined;
+              });
+            }}
+          >
+            {rightclick.filterSelection}
+          </Menu>
+        );
+      }
+      if (name === "image") {
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                showImgChooser();
+                draftCtx.contextMenu = undefined;
+              });
+            }}
+          >
+            {rightclick.image}
+          </Menu>
+        );
+      }
+      if (name === "link") {
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                handleLink(draftCtx);
+                draftCtx.contextMenu = undefined;
+              });
+            }}
+          >
+            {rightclick.link}
           </Menu>
         );
       }
