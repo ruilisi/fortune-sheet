@@ -871,8 +871,7 @@ export function getCellTextInfo(
             if (
               height + space_height > cellHeight &&
               !_.isNil(text_all_split[splitIndex]) &&
-              tb === "2" &&
-              i !== inlineStringArr.length
+              tb === "2"
             ) {
               // console.log("cut",anchor, i , str);
 
@@ -961,8 +960,7 @@ export function getCellTextInfo(
             if (
               width + space_width > cellWidth &&
               !_.isNil(text_all_split[splitIndex]) &&
-              tb === "2" &&
-              i !== inlineStringArr.length
+              tb === "2"
             ) {
               if (!_.isNil(spaceOrTwoByteIndex) && spaceOrTwoByteIndex < i) {
                 for (let s = 0; s < spaceOrTwoByteIndex - anchor; s += 1) {
@@ -1084,8 +1082,7 @@ export function getCellTextInfo(
             // console.log("all",anchor, i , str);
             if (
               height + space_height > cellHeight &&
-              !_.isNil(text_all_split[splitIndex]) &&
-              i !== value.length
+              !_.isNil(text_all_split[splitIndex])
             ) {
               // console.log("cut",anchor, i , str);
 
@@ -1160,8 +1157,7 @@ export function getCellTextInfo(
             // plain
             if (
               width + space_width > cellWidth &&
-              !_.isNil(text_all_split[splitIndex]) &&
-              i !== value.length
+              !_.isNil(text_all_split[splitIndex])
             ) {
               // console.log(spaceOrTwoByte, i, anchor);
               if (!_.isNil(spaceOrTwoByte) && spaceOrTwoByte.index < i) {

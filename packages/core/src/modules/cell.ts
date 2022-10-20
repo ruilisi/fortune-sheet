@@ -44,7 +44,7 @@ export function normalizedCellAttr(cell: Cell, attr: keyof Cell): any {
     value ||= "none";
   } else if (attr === "ht" || attr === "vt") {
     const defaultValue = attr === "ht" ? "1" : "0";
-    value ||= defaultValue;
+    value = value ? value.toString() : defaultValue;
     if (["0", "1", "2"].indexOf(value.toString()) === -1) {
       value = defaultValue;
     }
