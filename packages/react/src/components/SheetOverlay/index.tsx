@@ -50,7 +50,6 @@ import { useAlert } from "../../hooks/useAlert";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
-  const { showAlert } = useAlert();
   const { info } = locale(context);
   const containerRef = useRef<HTMLDivElement>(null);
   const bottomAddRowInputRef = useRef<HTMLInputElement>(null);
