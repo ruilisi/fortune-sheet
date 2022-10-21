@@ -11469,6 +11469,8 @@ export default {
     copyAs: "复制为",
     paste: "粘贴",
     insert: "插入",
+    image: "插入图片",
+    link: "插入链接",
     delete: "删除",
     deleteCell: "删除单元格",
     deleteSelected: "删除选中",
