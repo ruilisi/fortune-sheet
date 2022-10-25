@@ -1356,7 +1356,7 @@ export function getInlineStringHTML(r: number, c: number, data: CellMatrix) {
         const styleStr = _.map(style, (v, key) => {
           return `${_.kebabCase(key)}:${_.isNumber(v) ? `${v}px` : v};`;
         }).join("");
-        value += `<span index='${i}' style='${styleStr}'>${strObj.v}</span>`;
+        value += `<span class="luckysheet-input-span" index='${i}' style='${styleStr}'>${strObj.v}</span>`;
       }
     }
     return value;

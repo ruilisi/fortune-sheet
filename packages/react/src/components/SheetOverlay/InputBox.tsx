@@ -133,7 +133,8 @@ const InputBox: React.FC = () => {
       } else if (e.key === "Enter" && context.luckysheetCellUpdate.length > 0) {
         if (e.altKey || e.metaKey) {
           // originally `enterKeyControll`
-          document.execCommand("insertHTML", false, "\n");
+          document.execCommand("insertHTML", false, "\n "); // 换行符后面的空白符是为了强制让他换行，在下一步的delete中会删掉
+          document.execCommand("delete", false);
           e.stopPropagation();
         }
         // if (
