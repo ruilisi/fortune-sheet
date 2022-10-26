@@ -794,7 +794,18 @@ export function getCellTextInfo(
               }
             }
 
-            if (shareCells.length === 1 || i === inlineStringArr.length) {
+            if (
+              shareCells.length === 1 ||
+              i === inlineStringArr.length ||
+              inlineStringArr[i]?.wrap === true
+            ) {
+              if (
+                shareCells.length !== 1 &&
+                (i === inlineStringArr.length ||
+                  inlineStringArr[i]?.wrap === true)
+              ) {
+                splitIndex += 1;
+              }
               const sc = shareCells[0];
               const measureText = getMeasureText(
                 "M",
@@ -1064,16 +1075,14 @@ export function getCellTextInfo(
             textHeight * Math.cos((rt * Math.PI) / 180); // consider text box wdith and line height
           const lastWord = str.substr(str.length - 1, 1);
           if (lastWord === " " || checkWordByteLength(lastWord) === 2) {
-            if (!_.isNil(preMeasureText)) {
-              spaceOrTwoByte = {
-                index: i,
-                str: preStr + lastWord,
-                width: preTextWidth,
-                height: preTextHeight,
-                asc: preMeasureText.actualBoundingBoxAscent,
-                desc: preMeasureText.actualBoundingBoxDescent,
-              };
-            }
+            spaceOrTwoByte = {
+              index: i,
+              str,
+              width,
+              height,
+              asc: measureText.actualBoundingBoxAscent,
+              desc: measureText.actualBoundingBoxDescent,
+            };
           }
           // textW_all += textW;
           // console.log(str,anchor,i);
@@ -1193,8 +1202,8 @@ export function getCellTextInfo(
                   left: 0,
                   top: 0,
                   splitIndex,
-                  asc: measureText.actualBoundingBoxAscent,
-                  desc: measureText.actualBoundingBoxDescent,
+                  asc: preMeasureText.actualBoundingBoxAscent,
+                  desc: preMeasureText.actualBoundingBoxDescent,
                   fs: fontSize,
                 });
 
@@ -1233,8 +1242,6 @@ export function getCellTextInfo(
           preTextWidth = textWidth;
           preMeasureText = measureText;
         }
-
-        // console.log(text_all_split)
       }
 
       const split_all_size = [];
@@ -1657,17 +1664,15 @@ export function getCellTextInfo(
 
         if (horizonAlign === "0") {
           // center
+          textContent.textLeftAll = cellWidth / 2;
           if (verticalAlign === "0") {
             // mid
-            textContent.textLeftAll = cellWidth / 2;
             textContent.textTopAll = cellHeight / 2;
           } else if (verticalAlign === "1") {
             // top
-            textContent.textLeftAll = cellWidth / 2;
             textContent.textTopAll = rh / 2;
           } else if (verticalAlign === "2") {
             // bottom
-            textContent.textLeftAll = cellWidth / 2;
             textContent.textTopAll = cellHeight - rh / 2;
           }
         } else if (horizonAlign === "1") {
