@@ -143,6 +143,11 @@ export function convertSpanToShareString($dom: NodeListOf<HTMLSpanElement>) {
     // let v = span.innerHTML;
     let v = span.innerText;
     v = v.replace(/\n/g, "\r\n");
+    if (i === $dom.length - 1) {
+      if (v.endsWith("\r\n") && !v.endsWith("\r\n\r\n")) {
+        v = v.slice(0, v.length - 2);
+      }
+    }
 
     if (curStyleListString === preStyleListString) {
       preStyleList!.v += v;

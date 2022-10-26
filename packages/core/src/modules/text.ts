@@ -794,18 +794,7 @@ export function getCellTextInfo(
               }
             }
 
-            if (
-              shareCells.length === 1 ||
-              i === inlineStringArr.length ||
-              inlineStringArr[i]?.wrap === true
-            ) {
-              if (
-                shareCells.length !== 1 &&
-                (i === inlineStringArr.length ||
-                  inlineStringArr[i]?.wrap === true)
-              ) {
-                splitIndex += 1;
-              }
+            if (shareCells.length === 1) {
               const sc = shareCells[0];
               const measureText = getMeasureText(
                 "M",
