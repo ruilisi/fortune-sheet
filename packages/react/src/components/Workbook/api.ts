@@ -71,8 +71,10 @@ export function generateAPIs(
             if (newConfig) {
               newContext.config = newConfig;
             }
+
             return newContext;
-          } catch {
+          } catch (e) {
+            console.error(e);
             return ctx_;
           }
         },
