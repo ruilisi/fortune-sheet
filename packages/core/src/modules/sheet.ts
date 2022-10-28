@@ -104,7 +104,9 @@ export function addSheet(
     isPivotTable,
     ctx
   );
-
+  const expandedData: Sheet["data"] = _.times(ctx.defaultrowNum + 1, () =>
+    _.times(ctx.defaultcolumnNum + 1, () => null)
+  );
   const sheetconfig: Sheet = {
     name: sheetname,
     status: 0,
@@ -115,6 +117,7 @@ export function addSheet(
     config: {},
     pivotTable: null,
     isPivotTable: !!isPivotTable,
+    data: expandedData,
   };
 
   if (ctx.hooks.beforeAddSheet?.(sheetconfig) === false) {
