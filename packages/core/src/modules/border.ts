@@ -12,7 +12,7 @@ export function getBorderInfoComputeRange(
   dataset_col_ed: number,
   sheetId?: string
 ) {
-  const borderInfoCompute: any = {};
+  const borderInfoCompute: Record<string, any> = {};
   const flowdata = getFlowdata(ctx);
 
   let cfg;
@@ -43,7 +43,7 @@ export function getBorderInfoComputeRange(
       const borderColor = borderInfo[i].color;
       const borderStyle = borderInfo[i].style;
 
-      const borderRange = borderInfo[i].range;
+      const borderRange: any = borderInfo[i].range;
 
       for (let j = 0; j < borderRange.length; j += 1) {
         let bd_r1 = borderRange[j].row[0];
@@ -67,6 +67,22 @@ export function getBorderInfoComputeRange(
           bd_c2 = dataset_col_ed;
         }
 
+        if (borderType === "border-slash") {
+          const bd_r = borderRange[0].row_focus;
+          const bd_c = borderRange[0].column_focus;
+          if (!_.isNil(cfg.rowhidden) && !_.isNil(cfg.rowhidden[bd_r])) {
+            continue;
+          }
+          if (bd_c < dataset_col_st || bd_c > dataset_col_ed) continue;
+          if (bd_r < dataset_row_st || bd_r > dataset_row_ed) continue;
+          if (borderInfoCompute[`${bd_r}_${bd_c}`] === undefined) {
+            borderInfoCompute[`${bd_r}_${bd_c}`] = {};
+          }
+          borderInfoCompute[`${bd_r}_${bd_c}`].s = {
+            color: borderColor,
+            style: borderStyle,
+          };
+        }
         if (borderType === "border-left") {
           for (let bd_r = bd_r1; bd_r <= bd_r2; bd_r += 1) {
             if (!_.isNil(cfg.rowhidden) && !_.isNil(cfg.rowhidden[bd_r])) {

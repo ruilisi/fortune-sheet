@@ -436,6 +436,24 @@ const SVGDefines: React.FC = () => (
           strokeWidth="1.5"
         />
       </symbol>
+      <symbol viewBox="0 0 24 24" fill="none" id="border-slash">
+        <line
+          x1="5.75"
+          y1="5.75"
+          x2="17.95"
+          y2="17.95"
+          stroke="#535A68"
+          strokeWidth="1.5"
+        />
+        <rect
+          x="5.75"
+          y="5.75"
+          width="12.5"
+          height="12.5"
+          stroke="#CCCED2"
+          strokeWidth="1.5"
+        />
+      </symbol>
       <symbol viewBox="0 0 24 24" fill="none" id="border-style">
         <line
           x1="5"

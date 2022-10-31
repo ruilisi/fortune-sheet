@@ -45,10 +45,10 @@ function setLineDash(
   canvasborder: CanvasRenderingContext2D,
   type: any,
   hv: string,
-  moveStart: number,
-  moveEnd: number,
-  lineStart: number,
-  lineEnd: number
+  moveX: number,
+  moveY: number,
+  toX: number,
+  toY: number
 ) {
   const borderType: any = {
     "0": "none",
@@ -91,21 +91,21 @@ function setLineDash(
 
   if (type.indexOf("Medium") > -1) {
     if (hv === "h") {
-      canvasborder.moveTo(moveStart, moveEnd - 0.5);
-      canvasborder.lineTo(lineStart, lineEnd - 0.5);
+      canvasborder.moveTo(moveX, moveY - 0.5);
+      canvasborder.lineTo(toX, toY - 0.5);
     } else {
-      canvasborder.moveTo(moveStart - 0.5, moveEnd);
-      canvasborder.lineTo(lineStart - 0.5, lineEnd);
+      canvasborder.moveTo(moveX - 0.5, moveY);
+      canvasborder.lineTo(toX - 0.5, toY);
     }
 
     canvasborder.lineWidth = 2;
   } else if (type === "Thick") {
-    canvasborder.moveTo(moveStart, moveEnd);
-    canvasborder.lineTo(lineStart, lineEnd);
+    canvasborder.moveTo(moveX, moveY);
+    canvasborder.lineTo(toX, toY);
     canvasborder.lineWidth = 3;
   } else {
-    canvasborder.moveTo(moveStart, moveEnd);
-    canvasborder.lineTo(lineStart, lineEnd);
+    canvasborder.moveTo(moveX, moveY);
+    canvasborder.lineTo(toX, toY);
     canvasborder.lineWidth = 1;
   }
 }
@@ -1155,6 +1155,33 @@ export class Canvas {
         canvas: CanvasRenderingContext2D
       ) => void;
 
+      const borderSlashRender: BorderRender = (
+        style,
+        color,
+        startY,
+        startX,
+        endY,
+        endX,
+        _offsetLeft,
+        _offsetTop,
+        canvas
+      ) => {
+        const linetype = style;
+
+        const moveX = startX - 2 + bodrder05 + _offsetLeft;
+        const moveY = startY + _offsetTop;
+        const toX = endX - 2 + bodrder05 + _offsetLeft;
+        const toY = endY - 2 + bodrder05 + _offsetTop;
+        canvas.save();
+        setLineDash(canvas, linetype, "v", moveX, moveY, toX, toY);
+
+        canvas.strokeStyle = color;
+
+        canvas.stroke();
+        canvas.closePath();
+        canvas.restore();
+      };
+
       const borderLeftRender: BorderRender = (
         style,
         color,
@@ -1168,20 +1195,12 @@ export class Canvas {
       ) => {
         const linetype = style;
 
-        const moveStart = startX - 2 + bodrder05 + _offsetLeft;
-        const moveEnd = startY + _offsetTop - 1;
-        const lineStart = startX - 2 + bodrder05 + _offsetLeft;
-        const lineEnd = endY - 2 + bodrder05 + _offsetTop;
+        const moveX = startX - 2 + bodrder05 + _offsetLeft;
+        const moveY = startY + _offsetTop - 1;
+        const toX = startX - 2 + bodrder05 + _offsetLeft;
+        const toY = endY - 2 + bodrder05 + _offsetTop;
         canvas.save();
-        setLineDash(
-          canvas,
-          linetype,
-          "v",
-          moveStart,
-          moveEnd,
-          lineStart,
-          lineEnd
-        );
+        setLineDash(canvas, linetype, "v", moveX, moveY, toX, toY);
 
         canvas.strokeStyle = color;
 
@@ -1203,20 +1222,12 @@ export class Canvas {
       ) => {
         const linetype = style;
 
-        const moveStart = endX - 2 + bodrder05 + _offsetLeft;
-        const moveEnd = startY + _offsetTop - 1;
-        const lineStart = endX - 2 + bodrder05 + _offsetLeft;
-        const lineEnd = endY - 2 + bodrder05 + _offsetTop;
+        const moveX = endX - 2 + bodrder05 + _offsetLeft;
+        const moveY = startY + _offsetTop - 1;
+        const toX = endX - 2 + bodrder05 + _offsetLeft;
+        const toY = endY - 2 + bodrder05 + _offsetTop;
         canvas.save();
-        setLineDash(
-          canvas,
-          linetype,
-          "v",
-          moveStart,
-          moveEnd,
-          lineStart,
-          lineEnd
-        );
+        setLineDash(canvas, linetype, "v", moveX, moveY, toX, toY);
 
         canvas.strokeStyle = color;
 
@@ -1238,20 +1249,12 @@ export class Canvas {
       ) => {
         const linetype = style;
 
-        const moveStart = startX - 2 + bodrder05 + _offsetLeft;
-        const moveEnd = endY - 2 + bodrder05 + _offsetTop;
-        const lineStart = endX - 2 + bodrder05 + _offsetLeft;
-        const lineEnd = endY - 2 + bodrder05 + _offsetTop;
+        const moveX = startX - 2 + bodrder05 + _offsetLeft;
+        const moveY = endY - 2 + bodrder05 + _offsetTop;
+        const toX = endX - 2 + bodrder05 + _offsetLeft;
+        const toY = endY - 2 + bodrder05 + _offsetTop;
         canvas.save();
-        setLineDash(
-          canvas,
-          linetype,
-          "h",
-          moveStart,
-          moveEnd,
-          lineStart,
-          lineEnd
-        );
+        setLineDash(canvas, linetype, "h", moveX, moveY, toX, toY);
 
         canvas.strokeStyle = color;
 
@@ -1273,20 +1276,12 @@ export class Canvas {
       ) => {
         const linetype = style;
 
-        const moveStart = startX - 2 + bodrder05 + _offsetLeft;
-        const moveEnd = startY - 1 + bodrder05 + _offsetTop;
-        const lineStart = endX - 2 + bodrder05 + _offsetLeft;
-        const lineEnd = startY - 1 + bodrder05 + _offsetTop;
+        const moveX = startX - 2 + bodrder05 + _offsetLeft;
+        const moveY = startY - 1 + bodrder05 + _offsetTop;
+        const toX = endX - 2 + bodrder05 + _offsetLeft;
+        const toY = startY - 1 + bodrder05 + _offsetTop;
         canvas.save();
-        setLineDash(
-          canvas,
-          linetype,
-          "h",
-          moveStart,
-          moveEnd,
-          lineStart,
-          lineEnd
-        );
+        setLineDash(canvas, linetype, "h", moveX, moveY, toX, toY);
 
         canvas.strokeStyle = color;
 
@@ -1320,6 +1315,37 @@ export class Canvas {
             colStart,
             colEnd
           );
+
+          const borderSlash = borderInfoCompute[x].s;
+          if (
+            borderSlash &&
+            (!cellOverflow_colInObj.colIn ||
+              cellOverflow_colInObj.stc === bdCol)
+          ) {
+            const mergeMap = this.sheetCtx.config.merge;
+            const mergeCell = mergeMap?.[`${bdRow}_${bdCol}`];
+            let mergeCellEndX;
+            let mergeCellEndY;
+            if (mergeCell) {
+              const mergeCellOffset =
+                borderOffset[
+                  `${bdRow + mergeCell.rs - 1}_${bdCol + mergeCell.cs - 1}`
+                ];
+              mergeCellEndX = mergeCellOffset.endX;
+              mergeCellEndY = mergeCellOffset.endY;
+            }
+            borderSlashRender(
+              borderSlash.style,
+              borderSlash.color,
+              startY,
+              startX,
+              mergeCellEndY ?? endY,
+              mergeCellEndX ?? endX,
+              offsetLeft!,
+              offsetTop!,
+              renderCtx
+            );
+          }
 
           const borderLeft = borderInfoCompute[x].l;
           if (
