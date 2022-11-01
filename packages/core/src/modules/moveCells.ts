@@ -13,6 +13,8 @@ import { hasPartMC } from "./validation";
 import { locale } from "../locale";
 import { getBorderInfoCompute } from "./border";
 import { normalizeSelection } from "./selection";
+import { getSheetIndex } from "../utils";
+import { cfSplitRange } from "./conditionalFormat";
 
 function getCellLocationByMouse(
   ctx: Context,
@@ -209,7 +211,7 @@ export function onCellsMoveEnd(
 
   const data = _.cloneDeep(getdatabyselection(ctx, last, ctx.currentSheetId));
 
-  const cfg = _.assign({}, ctx.config);
+  const cfg = ctx.config;
   if (cfg.merge == null) {
     cfg.merge = {};
   }
@@ -318,22 +320,20 @@ export function onCellsMoveEnd(
       const bd_rangeType = cfg.borderInfo[i].rangeType;
 
       if (bd_rangeType === "range") {
-        // const bd_range = cfg.borderInfo[i].range;
-        const bd_emptyRange: any[] = [];
-
-        // for (let j = 0; j < bd_range.length; j += 1) {
-        //   bd_emptyRange = bd_emptyRange.concat(
-        //     conditionformat.CFSplitRange(
-        //       bd_range[j],
-        //       { row: last.row, column: last.column },
-        //       { row: [row_s, row_e], column: [col_s, col_e] },
-        //       "restPart"
-        //     )
-        //   );
-        // }
+        const bd_range = cfg.borderInfo[i].range;
+        let bd_emptyRange: any[] = [];
+        for (let j = 0; j < bd_range.length; j += 1) {
+          bd_emptyRange = bd_emptyRange.concat(
+            cfSplitRange(
+              bd_range[j],
+              { row: last.row, column: last.column },
+              { row: [row_s, row_e], column: [col_s, col_e] },
+              "restPart"
+            )
+          );
+        }
 
         cfg.borderInfo[i].range = bd_emptyRange;
-
         borderInfo.push(cfg.borderInfo[i]);
       } else if (bd_rangeType === "cell") {
         const bd_r = cfg.borderInfo[i].value.row_index;
@@ -402,7 +402,7 @@ export function onCellsMoveEnd(
   }
 
   // if (RowlChange) {
-  // cfg = rowlenByRange(d, last.row[0], last.row[1], cfg);
+  //   cfg = rowlenByRange(d, last.row[0], last.row[1], cfg);
   //   cfg = rowlenByRange(d, row_s, row_e, cfg);
   // }
 
@@ -459,6 +459,10 @@ export function onCellsMoveEnd(
   last.row_focus = rf;
   last.column_focus = cf;
   ctx.luckysheet_select_save = normalizeSelection(ctx, [last]);
+  const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
+  if (sheetIndex != null) {
+    ctx.luckysheetfile[sheetIndex].config = _.assign({}, cfg);
+  }
 
   // const allParam = {
   //   cfg,

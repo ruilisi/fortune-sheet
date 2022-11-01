@@ -583,10 +583,10 @@ const SheetOverlay: React.FC = () => {
           )}
           <FilterOptions getContainer={() => containerRef.current!} />
           <InputBox />
-          <NotationBoxes/>
+          <NotationBoxes />
           <div id="luckysheet-multipleRange-show" />
           <div id="luckysheet-dynamicArray-hightShow" />
-          <ImgBoxs/>
+          <ImgBoxs />
           <div id="luckysheet-dataVerification-dropdown-btn" />
           <div
             id="luckysheet-dataVerification-dropdown-List"
