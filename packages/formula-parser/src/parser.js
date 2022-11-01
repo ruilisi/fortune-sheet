@@ -3,7 +3,7 @@ import evaluateByOperator from './evaluate-by-operator/evaluate-by-operator';
 import {Parser as GrammarParser} from './grammar-parser/grammar-parser';
 import {trimEdges} from './helper/string';
 import {toNumber, invertNumber} from './helper/number';
-import errorParser, {isValidStrict as isErrorValid, ERROR, ERROR_NAME} from './error';
+import errorParser, {isValidStrict as isErrorValid, ERROR, ERROR_NAME, ERROR_VALUE} from './error';
 import {extractLabel, toLabel} from './helper/cell';
 
 /**
@@ -26,6 +26,7 @@ class Parser extends Emitter {
     };
     this.variables = Object.create(null);
     this.functions = Object.create(null);
+    this.options = Object.create(null);
 
     this
       .setVariable('TRUE', true)
@@ -36,12 +37,15 @@ class Parser extends Emitter {
   /**
    * Parse formula expression.
    *
-   * @param {String} expression to parse.
+   * @param {string} expression to parse.
+   * @param {object} options additional params.
+   * @param {string} options.sheetId id of sheet which the formula expression belongs to.
    * @return {*} Returns an object with tow properties `error` and `result`.
    */
-  parse(expression) {
+  parse(expression, options) {
     let result = null;
     let error = null;
+    this.options = options;
 
     try {
       if (expression === '') {
@@ -172,12 +176,10 @@ class Parser extends Emitter {
    * @private
    */
   _callCellValue(label) {
-    label = label.toUpperCase();
-
-    const [row, column] = extractLabel(label);
+    const [row, column, sheetName] = extractLabel(label);
     let value = void 0;
 
-    this.emit('callCellValue', {label, row, column}, (_value) => {
+    this.emit('callCellValue', {label, row, column, sheetName}, this.options, (_value) => {
       value = _value;
     });
 
@@ -193,13 +195,14 @@ class Parser extends Emitter {
    * @private
    */
   _callRangeValue(startLabel, endLabel) {
-    startLabel = startLabel.toUpperCase();
-    endLabel = endLabel.toUpperCase();
-
-    const [startRow, startColumn] = extractLabel(startLabel);
-    const [endRow, endColumn] = extractLabel(endLabel);
+    const [startRow, startColumn, startSheetName] = extractLabel(startLabel);
+    const [endRow, endColumn, endSheetName] = extractLabel(endLabel);
+    if (endSheetName != null && startSheetName != endSheetName) {
+      throw Error(ERROR_VALUE);
+    }
     let startCell = {};
     let endCell = {};
+    startCell.sheetName = startSheetName;
 
     if (startRow.index <= endRow.index) {
       startCell.row = startRow;
@@ -222,7 +225,7 @@ class Parser extends Emitter {
 
     let value = [];
 
-    this.emit('callRangeValue', startCell, endCell, (_value = []) => {
+    this.emit('callRangeValue', startCell, endCell, this.options, (_value = []) => {
       value = _value;
     });
 

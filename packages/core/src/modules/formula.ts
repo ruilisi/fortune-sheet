@@ -1,6 +1,6 @@
 import _ from "lodash";
 // @ts-ignore
-import { Parser } from "@fortune-sheet/formula-parser";
+import { Parser, ERROR_REF } from "@fortune-sheet/formula-parser";
 import type { Cell, Rect, Selection } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
@@ -8,6 +8,7 @@ import {
   escapeScriptTag,
   getSheetIndex,
   indexToColumnChar,
+  getSheetIdByName,
 } from "../utils";
 import {
   getcellFormula,
@@ -36,6 +37,14 @@ const operatorjson: Record<string, number> = {};
 for (let i = 0; i < operatorArr.length; i += 1) {
   operatorjson[operatorArr[i].toString()] = 1;
 }
+const simpleSheetName = "[A-Za-z0-9_\u00C0-\u02AF]+";
+const quotedSheetName = "'(?:(?!').|'')*'";
+const sheetNameRegexp = `(${simpleSheetName}|${quotedSheetName})!`;
+const rowColumnRegexp = `[$]?[A-Za-z]+[$]?[0-9]+`;
+const rowColumnWithSheetName = `(?:${sheetNameRegexp})?(${rowColumnRegexp})`;
+const LABEL_EXTRACT_REGEXP = new RegExp(
+  `^${rowColumnWithSheetName}(?:[:]${rowColumnWithSheetName})?$`
+);
 
 // FormulaCache is defined as class to avoid being frozen by immer
 export class FormulaCache {
@@ -93,24 +102,35 @@ export class FormulaCache {
     this.execFunctionGlobalData = {};
     this.cellTextToIndexList = {};
     this.parser = new Parser();
-    this.parser.on("callCellValue", (cellCoord: any, done: any) => {
-      const context = that.parser.context as Context;
-      const flowdata = getFlowdata(context);
-      const id = context?.currentSheetId;
-      const cell =
-        context?.formulaCache.execFunctionGlobalData?.[
-          `${cellCoord.row.index}_${cellCoord.column.index}_${id}`
-        ] || flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
-      const v = that.tryGetCellAsNumber(cell);
-      done(v);
-    });
+    this.parser.on(
+      "callCellValue",
+      (cellCoord: any, options: any, done: any) => {
+        const context = that.parser.context as Context;
+        const id =
+          cellCoord.sheetName == null
+            ? options.sheetId
+            : getSheetIdByName(context, cellCoord.sheetName);
+        if (id == null) throw Error(ERROR_REF);
+        const flowdata = getFlowdata(context, id);
+        const cell =
+          context?.formulaCache.execFunctionGlobalData?.[
+            `${cellCoord.row.index}_${cellCoord.column.index}_${id}`
+          ] || flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
+        const v = that.tryGetCellAsNumber(cell);
+        done(v);
+      }
+    );
 
     this.parser.on(
       "callRangeValue",
-      (startCellCoord: any, endCellCoord: any, done: any) => {
+      (startCellCoord: any, endCellCoord: any, options: any, done: any) => {
         const context = that.parser.context as Context;
-        const flowdata = getFlowdata(context);
-        const id = context?.currentSheetId;
+        const id =
+          startCellCoord.sheetName == null
+            ? options.sheetId
+            : getSheetIdByName(context, startCellCoord.sheetName);
+        if (id == null) throw Error(ERROR_REF);
+        const flowdata = getFlowdata(context, id);
         const fragment = [];
 
         for (
@@ -241,7 +261,7 @@ export function getcellrange(ctx: Context, txt: string, formulaId?: string) {
   if (_.isNil(txt) || txt.length === 0) {
     return null;
   }
-  const flowdata = getFlowdata(ctx);
+  const flowdata = getFlowdata(ctx, formulaId);
 
   let sheettxt = "";
   let rangetxt = "";
@@ -255,16 +275,20 @@ export function getcellrange(ctx: Context, txt: string, formulaId?: string) {
       return ctx.formulaCache.cellTextToIndexList[txt];
     }
 
-    const val = txt.split("!");
-    [sheettxt, rangetxt] = val;
-
-    sheettxt = sheettxt.replace(/\\'/g, "'").replace(/''/g, "'");
-    if (
-      sheettxt.substring(0, 1) === "'" &&
-      sheettxt.substring(sheettxt.length - 1, 1) === "'"
-    ) {
-      sheettxt = sheettxt.substring(1, sheettxt.length - 1);
+    const matchRes = txt.match(LABEL_EXTRACT_REGEXP);
+    if (matchRes == null) {
+      return null;
     }
+    const [, sheettxt1, starttxt1, sheettxt2, starttxt2] = matchRes;
+    if (sheettxt2 != null && sheettxt1 !== sheettxt2) {
+      return null;
+    }
+    rangetxt = starttxt2 ? `${starttxt1}:${starttxt2}` : starttxt1;
+    sheettxt = sheettxt1
+      .replace(/^'|'$/g, "")
+      .replace(/\\'/g, "'")
+      .replace(/''/g, "'");
+
     _.forEach(luckysheetfile, (f) => {
       if (sheettxt === f.name) {
         sheetId = f.id;
@@ -1113,7 +1137,8 @@ export function execfunction(
 
   ctx.formulaCache.parser.context = ctx;
   const { result, error: formulaError } = ctx.formulaCache.parser.parse(
-    txt.substring(1)
+    txt.substring(1),
+    { sheetId: id || ctx.currentSheetId }
   );
 
   if (!_.isNil(r) && !_.isNil(c)) {
