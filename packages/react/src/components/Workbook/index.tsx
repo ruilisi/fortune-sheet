@@ -15,6 +15,7 @@ import {
   Op,
   inverseRowColOptions,
   ensureSheetIndex,
+  CellMatrix,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -73,6 +74,34 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       // props expect data, onChage, onOp
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [..._.values(props)]
+    );
+
+    const initSheetData = useCallback(
+      (
+        draftCtx: Context,
+        cellData: CellWithRowAndCol[],
+        index: number
+      ): CellMatrix | null => {
+        const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
+        const lastCol = _.maxBy(cellData, "c");
+        const lastRowNum = Math.max(lastRow?.r ?? 0, draftCtx.defaultrowNum);
+        const lastColNum = Math.max(lastCol?.c ?? 0, draftCtx.defaultcolumnNum);
+        if (lastRowNum && lastColNum) {
+          const expandedData: SheetType["data"] = _.times(lastRowNum + 1, () =>
+            _.times(lastColNum + 1, () => null)
+          );
+          cellData?.forEach((d) => {
+            // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
+            expandedData[d.r][d.c] = d.v;
+          });
+          draftCtx.luckysheetfile = produce(draftCtx.luckysheetfile, (d) => {
+            d[index!].data = expandedData;
+          });
+          return expandedData;
+        }
+        return null;
+      },
+      []
     );
 
     const emitOp = useCallback(
@@ -193,6 +222,12 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               ensureSheetIndex(draftData, mergedSettings.generateSheetId);
             });
             draftCtx.luckysheetfile = newData;
+            newData.forEach((newDatum) => {
+              const index = getSheetIndex(draftCtx, newDatum.id!) as number;
+              const sheet = draftCtx.luckysheetfile?.[index];
+              const cellData = sheet.celldata;
+              initSheetData(draftCtx, cellData!, index);
+            });
           }
           draftCtx.defaultcolumnNum = mergedSettings.column;
           draftCtx.defaultrowNum = mergedSettings.row;
@@ -220,32 +255,9 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           let { data } = sheet;
           // expand cell data
           if (_.isEmpty(data)) {
-            const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
-            const lastCol = _.maxBy(cellData, "c");
-            const lastRowNum = Math.max(
-              lastRow?.r ?? 0,
-              draftCtx.defaultrowNum
-            );
-            const lastColNum = Math.max(
-              lastCol?.c ?? 0,
-              draftCtx.defaultcolumnNum
-            );
-            if (lastRowNum && lastColNum) {
-              const expandedData: SheetType["data"] = _.times(
-                lastRowNum + 1,
-                () => _.times(lastColNum + 1, () => null)
-              );
-              cellData?.forEach((d) => {
-                // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
-                expandedData[d.r][d.c] = d.v;
-              });
-              draftCtx.luckysheetfile = produce(
-                draftCtx.luckysheetfile,
-                (d) => {
-                  d[sheetIdx!].data = expandedData;
-                }
-              );
-              data = expandedData;
+            const temp = initSheetData(draftCtx, cellData!, sheetIdx);
+            if (!_.isNull(temp)) {
+              data = temp;
             }
           }
 
