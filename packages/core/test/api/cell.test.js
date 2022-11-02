@@ -5,6 +5,7 @@ import {
   clearCell,
   setCellFormat,
 } from "../../src/api/cell";
+import { getFlowdata, valueShowEs } from "../../src";
 
 describe("cell", () => {
   const getContext = () =>
@@ -57,6 +58,18 @@ describe("cell", () => {
       setCellValue(ctx, 1, 1, item.v, cellInput, { id: item.id });
       expect(getCellValue(ctx, 1, 1, { id: item.id, type: "v" })).toBe(item.rs);
     });
+  });
+
+  test("setCellHtmlValue", async () => {
+    const ctx = getContext();
+    const cellInput = document.createElement("div");
+    setCellValue(ctx, 0, 0, "<a>qqq</a>", cellInput, { id: "id_1" });
+    expect(getCellValue(ctx, 0, 0, { id: "id_1", type: "v" })).toBe(
+      "<a>qqq</a>"
+    );
+    const flowdata = getFlowdata(ctx);
+    const value = valueShowEs(0, 0, flowdata);
+    expect(value).toBe("&lt;a&gt;qqq&lt;/a&gt;");
   });
 
   test("clearCell", async () => {

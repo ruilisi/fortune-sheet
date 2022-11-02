@@ -21,7 +21,11 @@ import { moveToEnd } from "./cursor";
 import { locale } from "../locale";
 import { colors } from "./color";
 import { colLocation, rowLocation } from "./location";
-import { cancelFunctionrangeSelected, seletedHighlistByindex } from ".";
+import {
+  cancelFunctionrangeSelected,
+  escapeHTML,
+  seletedHighlistByindex,
+} from ".";
 
 let functionHTMLIndex = 0;
 const operatorPriority: any = {
@@ -2497,9 +2501,11 @@ export function handleFormulaInput(
   //   return;
   // }
   let value1 = $editor.innerHTML;
+  value1 = escapeHTML(value1);
   const value1txt = $editor.innerText;
   let value = $editor.innerText;
   value = escapeScriptTag(value);
+  value = escapeHTML(value);
   if (
     value.length > 0 &&
     value.substring(0, 1) === "=" &&
