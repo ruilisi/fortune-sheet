@@ -434,10 +434,7 @@ const SheetOverlay: React.FC = () => {
                   }
                 : {}
             }
-          />
-          <div
-            className="luckysheet-cell-selected-move"
-            id="luckysheet-cell-selected-move"
+            onMouseDown={(e) => e.preventDefault()}
           />
           {(context.luckysheet_selection_range?.length ?? 0) > 0 && (
             <div id="fortune-selection-copy">
@@ -477,7 +474,11 @@ const SheetOverlay: React.FC = () => {
           )}
           <div id="luckysheet-chart-rangeShow" />
           <div className="fortune-cell-selected-extend" />
-          <div className="fortune-cell-selected-move" />
+          <div
+            className="fortune-cell-selected-move"
+            id="fortune-cell-selected-move"
+            onMouseDown={(e) => e.preventDefault()}
+          />
           {(context.luckysheet_select_save?.length ?? 0) > 0 && (
             <div id="luckysheet-cell-selected-boxs">
               {context.luckysheet_select_save!.map((selection, index) => (
@@ -496,6 +497,7 @@ const SheetOverlay: React.FC = () => {
                     setContext((draftCtx) => {
                       onCellsMoveStart(
                         draftCtx,
+                        refs.globalCache,
                         nativeEvent,
                         refs.scrollbarX.current!,
                         refs.scrollbarY.current!,
@@ -520,10 +522,22 @@ const SheetOverlay: React.FC = () => {
                     }}
                   />
                   <div className="luckysheet-cs-inner-border" />
-                  <div className="luckysheet-cs-draghandle-top luckysheet-cs-draghandle" />
-                  <div className="luckysheet-cs-draghandle-bottom luckysheet-cs-draghandle" />
-                  <div className="luckysheet-cs-draghandle-left luckysheet-cs-draghandle" />
-                  <div className="luckysheet-cs-draghandle-right luckysheet-cs-draghandle" />
+                  <div
+                    className="luckysheet-cs-draghandle-top luckysheet-cs-draghandle"
+                    onMouseDown={(e) => e.preventDefault()}
+                  />
+                  <div
+                    className="luckysheet-cs-draghandle-bottom luckysheet-cs-draghandle"
+                    onMouseDown={(e) => e.preventDefault()}
+                  />
+                  <div
+                    className="luckysheet-cs-draghandle-left luckysheet-cs-draghandle"
+                    onMouseDown={(e) => e.preventDefault()}
+                  />
+                  <div
+                    className="luckysheet-cs-draghandle-right luckysheet-cs-draghandle"
+                    onMouseDown={(e) => e.preventDefault()}
+                  />
                   <div className="luckysheet-cs-touchhandle luckysheet-cs-touchhandle-lt">
                     <div className="luckysheet-cs-touchhandle-btn" />
                   </div>

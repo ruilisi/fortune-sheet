@@ -15,6 +15,9 @@ import { getBorderInfoCompute } from "./border";
 import { normalizeSelection } from "./selection";
 import { getSheetIndex } from "../utils";
 import { cfSplitRange } from "./conditionalFormat";
+import { GlobalCache } from "../types";
+
+const dragCellThreshold = 8;
 
 function getCellLocationByMouse(
   ctx: Context,
@@ -35,6 +38,7 @@ function getCellLocationByMouse(
 
 export function onCellsMoveStart(
   ctx: Context,
+  globalCache: GlobalCache,
   e: MouseEvent,
   scrollbarX: HTMLDivElement,
   scrollbarY: HTMLDivElement,
@@ -46,6 +50,7 @@ export function onCellsMoveStart(
     return;
   }
 
+  globalCache.dragCellStartPos = { x: e.pageX, y: e.pageY };
   ctx.luckysheet_cell_selected_move = true;
   ctx.luckysheet_scroll_status = true;
 
@@ -58,17 +63,17 @@ export function onCellsMoveStart(
   if (range == null) return;
 
   if (row_index < range.row[0]) {
-    row_index += 1;
-  } else if (row_index > range.row[1]) row_index -= 1;
+    [row_index] = range.row;
+  } else if (row_index > range.row[1]) [, row_index] = range.row;
   if (col_index < range.column[0]) {
-    col_index += 1;
-  } else if (col_index > range.column[1]) col_index -= 1;
+    [col_index] = range.column;
+  } else if (col_index > range.column[1]) [, col_index] = range.column;
   [row_pre, row] = rowLocationByIndex(row_index, ctx.visibledatarow);
   [col_pre, col] = colLocationByIndex(col_index, ctx.visibledatacolumn);
 
   ctx.luckysheet_cell_selected_move_index = [row_index, col_index];
 
-  const ele = document.getElementById("luckysheet-cell-selected-move");
+  const ele = document.getElementById("fortune-cell-selected-move");
   if (ele == null) return;
   ele.style.left = `${col_pre}px`;
   ele.style.top = `${row_pre}px`;
@@ -81,12 +86,21 @@ export function onCellsMoveStart(
 
 export function onCellsMove(
   ctx: Context,
+  globalCache: GlobalCache,
   e: MouseEvent,
   scrollbarX: HTMLDivElement,
   scrollbarY: HTMLDivElement,
   container: HTMLDivElement
 ) {
   if (!ctx.luckysheet_cell_selected_move) return;
+  if (globalCache.dragCellStartPos != null) {
+    const deltaX = Math.abs(globalCache.dragCellStartPos.x - e.pageX);
+    const deltaY = Math.abs(globalCache.dragCellStartPos.y - e.pageY);
+    if (deltaX < dragCellThreshold && deltaY < dragCellThreshold) {
+      return;
+    }
+    globalCache.dragCellStartPos = undefined;
+  }
   const [x, y] = mousePosition(e.pageX, e.pageY, ctx);
 
   const rect = container.getBoundingClientRect();
@@ -155,7 +169,7 @@ export function onCellsMove(
   row_pre = row_s - 1 === -1 ? 0 : ctx.visibledatarow[row_s - 1];
   row = ctx.visibledatarow[row_e];
 
-  const ele = document.getElementById("luckysheet-cell-selected-move");
+  const ele = document.getElementById("fortune-cell-selected-move");
   if (ele == null) return;
   ele.style.left = `${col_pre}px`;
   ele.style.top = `${row_pre}px`;
@@ -166,6 +180,7 @@ export function onCellsMove(
 
 export function onCellsMoveEnd(
   ctx: Context,
+  globalCache: GlobalCache,
   e: MouseEvent,
   scrollbarX: HTMLDivElement,
   scrollbarY: HTMLDivElement,
@@ -173,10 +188,14 @@ export function onCellsMoveEnd(
 ) {
   // 改变选择框的位置并替换目标单元格
   if (!ctx.luckysheet_cell_selected_move) return;
-  const ele = document.getElementById("luckysheet-cell-selected-move");
-  if (ele != null) ele.style.display = "none";
-
   ctx.luckysheet_cell_selected_move = false;
+  const ele = document.getElementById("fortune-cell-selected-move");
+  if (ele != null) ele.style.display = "none";
+  if (globalCache.dragCellStartPos != null) {
+    globalCache.dragCellStartPos = undefined;
+    return;
+  }
+
   const [x, y] = mousePosition(e.pageX, e.pageY, ctx);
 
   // if (

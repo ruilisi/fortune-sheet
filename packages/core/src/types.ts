@@ -257,6 +257,10 @@ export type GlobalCache = {
       cursorMoveStartPosition: { x: number; y: number } | undefined;
     };
   };
+  dragCellStartPos?: {
+    x: number;
+    y: number;
+  };
   touchMoveStatus?: boolean;
   touchHandleStatus?: boolean;
   touchMoveStartPos?: {
