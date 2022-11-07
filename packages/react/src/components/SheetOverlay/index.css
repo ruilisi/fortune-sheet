@@ -180,8 +180,9 @@
 }
 
 .fortune-cell-selected-move {
+  cursor: move;
   position: absolute;
-  pointer-events: none;
+  /* pointer-events: none; */
   z-index: 16;
   border: 2px solid #0188fb;
   margin: -1px 0 0 -1px;
@@ -878,15 +879,4 @@
 
 .luckysheet-filter-selected {
   background: #ffffff00;
-}
-
-.luckysheet-cell-selected-move {
-  cursor: move;
-  position: absolute;
-  /* pointer-events: none; */
-  z-index: 16;
-  border: 2px solid #0188fb;
-  margin: -1px 0 0 -1px;
-  display: none;
-  /*transition: all 0.1s;*/
 }

@@ -3007,7 +3007,7 @@ export function handleOverlayMouseMove(
   if (onCommentBoxMove(ctx, globalCache, e)) return;
   if (onImageMove(ctx, globalCache, e)) return;
   if (onImageResize(ctx, globalCache, e)) return;
-  onCellsMove(ctx, e, scrollX, scrollY, container);
+  onCellsMove(ctx, globalCache, e, scrollX, scrollY, container);
   overShowComment(ctx, e, scrollX, scrollY, container); // 有批注显示
   onSearchDialogMove(globalCache, e);
   onRangeSelectionModalMove(globalCache, e);
@@ -3274,7 +3274,7 @@ export function handleOverlayMouseUp(
   onFormulaRangeDragEnd(ctx);
   onSearchDialogMoveEnd(globalCache);
   onRangeSelectionModalMoveEnd(globalCache);
-  onCellsMoveEnd(ctx, e, scrollbarX, scrollbarY, container);
+  onCellsMoveEnd(ctx, globalCache, e, scrollbarX, scrollbarY, container);
   // if (
   //   luckysheetConfigsetting &&
   //   luckysheetConfigsetting.hook &&
