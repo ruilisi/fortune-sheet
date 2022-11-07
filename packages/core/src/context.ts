@@ -292,9 +292,9 @@ export function defaultContext(): Context {
   };
 }
 
-export function getFlowdata(ctx?: Context) {
+export function getFlowdata(ctx?: Context, id?: string | null) {
   if (!ctx) return null;
-  const i = getSheetIndex(ctx, ctx.currentSheetId);
+  const i = getSheetIndex(ctx, id || ctx.currentSheetId);
   if (_.isNil(i)) {
     return null;
   }

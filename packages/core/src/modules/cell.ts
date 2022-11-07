@@ -1,12 +1,7 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { Cell, CellMatrix, Range, Selection, SingleRange } from "../types";
-import {
-  getSheetByIndex,
-  getSheetIndex,
-  indexToColumnChar,
-  rgbToHex,
-} from "../utils";
+import { getSheetIndex, indexToColumnChar, rgbToHex } from "../utils";
 import { genarate, update } from "./format";
 import {
   delFunctionGroup,
@@ -1041,16 +1036,9 @@ export function updateCell(
 }
 
 export function getOrigincell(ctx: Context, r: number, c: number, i: string) {
-  const flowdata = getFlowdata(ctx);
+  const data = getFlowdata(ctx, i);
   if (_.isNil(r) || _.isNil(c)) {
     return null;
-  }
-  let data;
-  if (_.isNil(i)) {
-    data = flowdata;
-  } else {
-    const sheet = getSheetByIndex(ctx, i);
-    data = sheet?.data;
   }
 
   if (!data || !data[r] || !data[r][c]) {
@@ -1067,10 +1055,10 @@ export function getcellFormula(
   data?: any
 ) {
   let cell;
-  if (!_.isNil(data)) {
-    cell = data[r][c];
-  } else {
+  if (_.isNil(data)) {
     cell = getOrigincell(ctx, r, c, i);
+  } else {
+    cell = data[r][c];
   }
 
   if (_.isNil(cell)) {

@@ -105,6 +105,15 @@ export function getSheetIndex(ctx: Context, id: string) {
   return null;
 }
 
+export function getSheetIdByName(ctx: Context, name: string) {
+  for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
+    if (ctx.luckysheetfile[i].name === name) {
+      return ctx.luckysheetfile[i].id;
+    }
+  }
+  return null;
+}
+
 export function getSheetByIndex(ctx: Context, id: string) {
   if (_.isNil(id)) {
     id = ctx.currentSheetId;

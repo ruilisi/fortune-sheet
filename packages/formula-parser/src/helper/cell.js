@@ -73,7 +73,10 @@ export function columnIndexToLabel(column) {
   return result.toUpperCase();
 }
 
-const LABEL_EXTRACT_REGEXP = /^([$])?([A-Za-z]+)([$])?([0-9]+)$/;
+const simpleSheetName = '[A-Za-z0-9_\u00C0-\u02AF]+';
+const quotedSheetName = "'(?:(?!').|'')*'";
+const sheetNameRegexp = `(${simpleSheetName}|${quotedSheetName})!`;
+const LABEL_EXTRACT_REGEXP = new RegExp(`^(?:${sheetNameRegexp})?([$])?([A-Za-z]+)([$])?([0-9]+)$`);
 
 /**
  * Extract cell coordinates.
@@ -85,7 +88,8 @@ export function extractLabel(label) {
   if (typeof label !== 'string' || !LABEL_EXTRACT_REGEXP.test(label)) {
     return [];
   }
-  const [, columnAbs, column, rowAbs, row] = label.toUpperCase().match(LABEL_EXTRACT_REGEXP);
+  const [, sheetNameStr, columnAbs, column, rowAbs, row] = label.toUpperCase().match(LABEL_EXTRACT_REGEXP);
+  const sheetName = sheetNameStr == null ? null : label.slice(0, sheetNameStr.length).replace(/^'|'$/g, "").replace(/''/g, "'");
 
   return [
     {
@@ -98,6 +102,7 @@ export function extractLabel(label) {
       label: column,
       isAbsolute: columnAbs === '$',
     },
+    sheetName,
   ];
 }
 
