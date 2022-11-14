@@ -674,6 +674,10 @@ const Toolbar: React.FC<{
             text: border.borderVertical,
             value: "border-vertical",
           },
+          {
+            text: border.borderSlash,
+            value: "border-slash",
+          },
         ];
         return (
           <Combo

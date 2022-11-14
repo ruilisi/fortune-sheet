@@ -11312,6 +11312,7 @@ export default {
     borderVertical: "內側分隔號",
     borderColor: "邊框顏色",
     borderSize: "邊框粗細",
+    borderSlash: "邊框斜線",
   },
   merge: {
     mergeAll: "全部合併",
