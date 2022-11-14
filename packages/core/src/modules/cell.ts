@@ -2,7 +2,7 @@ import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { Cell, CellMatrix, Range, Selection, SingleRange } from "../types";
 import { getSheetIndex, indexToColumnChar, rgbToHex } from "../utils";
-import { genarate, update } from "./format";
+import { escapeHTML, genarate, update } from "./format";
 import {
   delFunctionGroup,
   execfunction,
@@ -1339,12 +1339,14 @@ export function getInlineStringHTML(r: number, c: number, data: CellMatrix) {
     let value = "";
     for (let i = 0; i < strings.length; i += 1) {
       const strObj = strings[i];
-      if (strObj.v) {
+      let strObjValue = strObj.v;
+      if (strObjValue) {
+        strObjValue = escapeHTML(strObjValue);
         const style = getFontStyleByCell(strObj);
         const styleStr = _.map(style, (v, key) => {
           return `${_.kebabCase(key)}:${_.isNumber(v) ? `${v}px` : v};`;
         }).join("");
-        value += `<span class="luckysheet-input-span" index='${i}' style='${styleStr}'>${strObj.v}</span>`;
+        value += `<span class="luckysheet-input-span" index='${i}' style='${styleStr}'>${strObjValue}</span>`;
       }
     }
     return value;
