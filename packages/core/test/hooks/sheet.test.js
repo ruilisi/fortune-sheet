@@ -62,7 +62,6 @@ describe("sheet related hooks", () => {
     expect(parameters[0]).toEqual({
       column: undefined,
       config: {},
-      data: [],
       id: ctx.luckysheetfile[2].id,
       isPivotTable: false,
       name: "Sheet3",
@@ -95,7 +94,6 @@ describe("sheet related hooks", () => {
     expect(parameters[0]).toEqual({
       column: undefined,
       config: {},
-      data: [],
       id: ctx.luckysheetfile[2].id,
       isPivotTable: false,
       name: "Sheet3",

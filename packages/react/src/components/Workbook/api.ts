@@ -15,6 +15,7 @@ import {
   SingleRange,
   createFilterOptions,
   getSheetIndex,
+  Sheet
 } from "@fortune-sheet/core";
 import produce, { applyPatches } from "immer";
 import _ from "lodash";
@@ -54,6 +55,17 @@ export function generateAPIs(
               ctx_ = produce(ctx_, (draftCtx) => {
                 addSheet(draftCtx, settings, specialOp.value.id);
               });
+              // 添加addSheet完后，给sheet初始化data
+              const fileIndex = getSheetIndex(ctx_,specialOp.value.id) as number;
+              let data = ctx_.luckysheetfile[fileIndex].data;
+              if (_.isUndefined(data)) {
+                const expandeData: Sheet["data"] = _.times(
+                  ctx_.defaultrowNum + 1,
+                  () => _.times(ctx_.defaultcolumnNum + 1, () => null)
+                );
+                ctx_.luckysheetfile[fileIndex].data = expandeData;
+              }
+
             } else if (specialOp.op === "deleteSheet") {
               ctx_ = produce(ctx_, (draftCtx) => {
                 deleteSheet(draftCtx, specialOp.value.id);
