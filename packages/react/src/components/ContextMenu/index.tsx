@@ -8,7 +8,8 @@ import {
   deleteSelectedCellText,
   sortSelection,
   createFilter,
-  showImgChooser, handleLink
+  showImgChooser,
+  handleLink,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, { useContext, useRef, useLayoutEffect, useCallback } from "react";
