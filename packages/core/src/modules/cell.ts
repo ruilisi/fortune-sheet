@@ -702,7 +702,7 @@ export function updateCell(
       .replace(/\r/g, "_x000D_")
       .replace(/\n/g, "_x000D_")
       .split("_x000D_");
-    if (splitArr.length > 1) {
+    if (splitArr.length > 1 && inputHtml !== "<br>") {
       isCopyVal = true;
       isCurInline = true;
       inputText = splitArr.join("\r\n");
