@@ -70,6 +70,55 @@ const addtionalMergeOps = (ops: Op[], id: string) => {
   return new_ops;
 };
 
+function additionalCellOps(
+  ctx: Context,
+  insertRowColOp: {
+    id: string;
+    index: number;
+    direction: string;
+    count: number;
+    type: string;
+  }
+) {
+  const { id, index, direction, count, type } = insertRowColOp;
+  const d = getFlowdata(ctx);
+  const startIndex = index + (direction === "rightbottom" ? 1 : 0);
+  if (d == null) {
+    return [];
+  }
+  const cellOps: Op[] = [];
+  if (type === "row") {
+    for (let i = 0; i < d[startIndex].length; i += 1) {
+      const cell = d[startIndex][i];
+      if (cell != null) {
+        for (let j = 0; j < count; j += 1) {
+          cellOps.push({
+            op: "replace",
+            id,
+            path: ["data", startIndex + j, i],
+            value: cell,
+          });
+        }
+      }
+    }
+  } else {
+    for (let i = 0; i < d.length; i += 1) {
+      const cell = d[i][startIndex];
+      if (cell != null) {
+        for (let j = 0; j < count; j += 1) {
+          cellOps.push({
+            op: "replace",
+            id,
+            path: ["data", i, startIndex + j],
+            value: cell,
+          });
+        }
+      }
+    }
+  }
+  return cellOps;
+}
+
 export function filterPatch(patches: Patch[]) {
   return _.filter(
     patches,
@@ -134,7 +183,8 @@ export function patchToOp(
     ops = [...ops, ...formulaOps];
 
     const mergeOps = addtionalMergeOps(ops, ctx.currentSheetId);
-    ops = [...ops, ...mergeOps];
+    const cellOps = additionalCellOps(ctx, options.insertRowColOp);
+    ops = [...ops, ...mergeOps, ...cellOps];
 
     if (options?.restoreDeletedCells) {
       // undoing deleted row/col, find out cells to restore

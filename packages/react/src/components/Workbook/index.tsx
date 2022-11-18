@@ -341,6 +341,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       mergedSettings.hooks,
       mergedSettings.generateSheetId,
       setContextWithProduce,
+      initSheetData,
     ]);
 
     const onKeyDown = useCallback(
