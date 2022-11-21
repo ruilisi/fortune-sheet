@@ -145,7 +145,7 @@ const Toolbar: React.FC<{
           }
         };
         return (
-          <div style={{ position: "relative" }}>
+          <div style={{ position: "relative" }} key={name}>
             <div
               style={{
                 width: 17,
@@ -162,7 +162,6 @@ const Toolbar: React.FC<{
             />
             <Combo
               iconId={name}
-              key={name}
               tooltip={tooltip}
               onClick={() => {
                 const color =
