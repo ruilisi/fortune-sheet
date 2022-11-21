@@ -166,6 +166,10 @@ export function patchToOp(
       const id = ctx.luckysheetfile[p.path[1]].id!;
       op.id = id;
       op.path = p.path.slice(2);
+      if (_.isEqual(op.path, ["calcChain", "length"])) {
+        op.path = ["calcChain"];
+        op.value = ctx.luckysheetfile[p.path[1]].calcChain;
+      }
     }
     return op;
   });
