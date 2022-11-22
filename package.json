@@ -63,6 +63,6 @@
   },
   "dependencies": {},
   "gitHooks": {
-    "pre-commit": "lint-staged"
+    "pre-commit": "yarn lint"
   }
 }
