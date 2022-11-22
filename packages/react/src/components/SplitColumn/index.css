@@ -1,0 +1,84 @@
+#fortunesheet-split-column {
+    /* position: absolute;
+    padding: 30px 42px;
+    z-index: 1002; */
+    min-width: 500px;
+}
+#fortunesheet-split-column label {
+    user-select: none
+}
+#fortunesheet-split-column .title {
+    font-size: 16px;
+}
+#fortunesheet-split-column .splitDelimiters {
+    margin-top: 10px;
+}
+#fortunesheet-split-column .splitSymbols {
+    position: relative;
+    border: 1px solid #dfdfdf;
+    padding: 5px;
+    margin: 5px 0px;
+}
+#fortunesheet-split-column .splitSymbol {
+    font-size: 14px;
+}
+#fortunesheet-split-column .splitSimple {
+    position: absolute;
+    top: 114px;
+    left: 0px;
+}
+#fortunesheet-split-column #otherValue {
+    margin-left: 5px;
+    width: 50px;
+    padding: 0 5px;
+}
+#fortunesheet-split-column .splitDataPreview {
+    font-size: 14px;
+    margin-top: 26px;
+}
+#fortunesheet-split-column .splitColumnData {
+    border: 1px solid #dfdfdf;
+    padding: 5px;
+    margin: 5px 0px;
+    height: 100px;
+    overflow-y: scroll;
+}
+#fortunesheet-split-column .button-basic {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    white-space: nowrap;
+    padding: 4px 8px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    border-radius: 2px;
+    user-select: none;
+}
+#fortunesheet-split-column .button-primary {
+    background: #0188fb;
+    border: 1px solid #0188fb;
+    color: #fff;
+    margin-right: 10px;
+}
+#fortunesheet-split-column .button-close {
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+#fortunesheet-split-column table {
+    border-collapse: collapse;
+}
+#fortunesheet-split-column tr {
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
+}
+#fortunesheet-split-column td {
+    border: 1px solid #333;
+    display: table-cell;
+    vertical-align: inherit;
+}
