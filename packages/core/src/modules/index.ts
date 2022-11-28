@@ -27,3 +27,4 @@ export * from "./hyperlink";
 export * from "./filter";
 export * from "./moveCells";
 export * from "./conditionalFormat";
+export * from "./splitColumn";

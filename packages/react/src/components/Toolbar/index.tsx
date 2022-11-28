@@ -45,6 +45,7 @@ import Select, { Option } from "./Select";
 import SVGIcon from "../SVGIcon";
 import { useDialog } from "../../hooks/useDialog";
 import { FormulaSearch } from "../FormulaSearch";
+import { SplitColumn } from "../SplitColumn";
 
 const Toolbar: React.FC<{
   setMoreItems: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -78,6 +79,7 @@ const Toolbar: React.FC<{
     rotation,
     screenshot,
     filter,
+    splitText,
   } = locale(context);
   const sheetWidth = context.luckysheetTableContentHW[0];
 
@@ -419,6 +421,32 @@ const Toolbar: React.FC<{
                     />
                   </div>
                 );
+              }
+            }}
+          />
+        );
+      }
+      if (name === "splitColumn") {
+        return (
+          <Button
+            iconId={name}
+            tooltip={tooltip}
+            key={name}
+            onClick={() => {
+              if (_.isUndefined(context.luckysheet_select_save)) {
+                showDialog(splitText.tipNoSelect, "ok");
+              } else {
+                const currentColumn =
+                  context.luckysheet_select_save[
+                    context.luckysheet_select_save.length - 1
+                  ].column;
+                if (context.luckysheet_select_save.length > 1) {
+                  showDialog(splitText.tipNoMulti, "ok");
+                } else if (currentColumn[0] !== currentColumn[1]) {
+                  showDialog(splitText.tipNoMultiColumn, "ok");
+                } else {
+                  showDialog(<SplitColumn />);
+                }
               }
             }}
           />

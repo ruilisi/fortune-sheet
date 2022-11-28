@@ -11558,10 +11558,17 @@ export default {
     splitDataPreview: "数据预览",
     splitTextTitle: "文本分列",
     splitConfirmToExe: "此处已有数据，是否替换它？",
+    splitSymbols: [
+      { name: "Tab键", value: "Tab" },
+      { name: "分号", value: "semicolon" },
+      { name: "逗号", value: "comma" },
+      { name: "空格", value: "space" },
+    ],
 
     tipNoMulti: "不能对多重选择区域执行此操作，请选择单个区域，然后再试",
     tipNoMultiColumn:
       "一次只能转换一列数据，选定区域可以有多行，但不能有多列，请在选定单列区域以后再试",
+    tipNoSelect: "没有选择单元格不能进行分列",
   },
   imageText: {
     imageSetting: "图片设置",

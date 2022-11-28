@@ -11526,10 +11526,17 @@ export default {
     splitDataPreview: "數據預覽",
     splitTextTitle: "文字分列",
     splitConfirmToExe: "此處已有數據,是否替換它？",
+    splitSymbols: [
+      { name: "Tab鍵", value: "Tab" },
+      { name: "分號", value: "semicolon" },
+      { name: "逗號", value: "comma" },
+      { name: "空格", value: "space" },
+    ],
 
     tipNoMulti: "能對多重選擇區域執行此操作,請選擇單個區域,然後再試",
     tipNoMultiColumn:
       "一次只能轉換一列數據,選定區域可以有多行,但不能有多列,請在選定單列區域以後再試",
+    tipNoSelect: "沒有選擇儲存格不能進行分列",
   },
   imageText: {
     imageSetting: "圖片設定",
