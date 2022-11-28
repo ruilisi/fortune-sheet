@@ -50,7 +50,7 @@
 .fortune-modal-dialog-header {
   outline: 0;
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 .fortune-modal-dialog-icon-close {

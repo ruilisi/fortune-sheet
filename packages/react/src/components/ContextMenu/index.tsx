@@ -8,7 +8,8 @@ import {
   deleteSelectedCellText,
   sortSelection,
   createFilter,
-  showImgChooser, handleLink
+  showImgChooser,
+  handleLink,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, { useContext, useRef, useLayoutEffect, useCallback } from "react";
@@ -366,6 +367,7 @@ const ContextMenu: React.FC = () => {
       context.luckysheet_select_save,
       rightclick,
       setContext,
+      showAlert,
     ]
   );
 

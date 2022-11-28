@@ -33,6 +33,8 @@ describe("rowcol", () => {
   });
 
   test("insertRowOrColumn", () => {
+    const cellTmpl = { ct: { fa: "General", t: "g" }, v: 0, m: "0" };
+    const emptyTmpl = { ct: { fa: "General", t: "g" }, v: "", m: "" };
     [
       { t: "row", i: 1, c: 1, d: "lefttop" },
       { t: "row", i: 1, c: 2, d: "lefttop" },
@@ -42,6 +44,12 @@ describe("rowcol", () => {
       { t: "column", i: 2, c: 3, d: "rightbottom" },
     ].forEach((k) => {
       const ctx = getContext();
+      if (k.t === "row") {
+        ctx.luckysheetfile[0].data[k.i] = [cellTmpl, null, cellTmpl, null];
+      } else {
+        ctx.luckysheetfile[0].data[0][k.i] = cellTmpl;
+        ctx.luckysheetfile[0].data[2][k.i] = cellTmpl;
+      }
       ctx.defaultCell = { v: "inserted" };
       insertRowOrColumn(ctx, k.t, k.i, k.c, k.d, { id: "id_1" });
       for (let i = 0; i < k.c; i += 1) {
@@ -56,7 +64,9 @@ describe("rowcol", () => {
           } else {
             receivedValue = ctx.luckysheetfile[0].data[j][k.i + i + l];
           }
-          expect(receivedValue).toEqual({ v: "inserted" });
+          expect(receivedValue).toEqual(
+            _.includes([0, 2], j) ? emptyTmpl : null
+          );
         }
       }
     });

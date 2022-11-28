@@ -5,6 +5,15 @@ describe("common", () => {
   const expectedSheet = {
     id: "id_2",
     data: [[{ v: "rose" }]],
+    celldat: [
+      {
+        c: 0,
+        r: 0,
+        v: {
+          v: "rose",
+        },
+      },
+    ],
   };
   const getContext = () =>
     contextFactory({

@@ -442,6 +442,18 @@ export function getCellTextInfo(
       for (let x = 0; x < splitArr.length; x += 1) {
         const newValue = splitArr[x];
 
+        // incase the value is empty
+        // if (newValue === "" && splitArr.length === 1) {
+        //   inlineStringArr.push({
+        //     fontset: scfontset,
+        //     fc: !fc ? "#000" : fc,
+        //     cl: !cl ? 0 : cl,
+        //     un: !un ? 0 : un,
+        //     v: "",
+        //     si: similarIndex,
+        //     fs: !fs ? 11 : fs,
+        //   });
+        // } else
         if (newValue === "" && x !== splitArr.length - 1) {
           inlineStringArr.push({
             fontset: scfontset,

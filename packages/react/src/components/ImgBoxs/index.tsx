@@ -3,10 +3,8 @@ import { onImageMoveStart, onImageResizeStart } from "@fortune-sheet/core";
 import React, { useContext } from "react";
 import WorkbookContext from "../../context";
 
-
 const ImgBoxs: React.FC = () => {
-
-  const { context, setContext,refs } = useContext(WorkbookContext);
+  const { context, setContext, refs } = useContext(WorkbookContext);
 
   return (
     <div id="luckysheet-image-showBoxs">
@@ -96,15 +94,15 @@ const ImgBoxs: React.FC = () => {
                   /> */}
           </div>
           <div className="luckysheet-modal-dialog-controll">
-                  <span
-                    className="luckysheet-modal-controll-btn luckysheet-modal-controll-crop"
-                    role="button"
-                    tabIndex={0}
-                    aria-label="裁剪"
-                    title="裁剪"
-                  >
-                    <i className="fa fa-pencil" aria-hidden="true" />
-                  </span>
+            <span
+              className="luckysheet-modal-controll-btn luckysheet-modal-controll-crop"
+              role="button"
+              tabIndex={0}
+              aria-label="裁剪"
+              title="裁剪"
+            >
+              <i className="fa fa-pencil" aria-hidden="true" />
+            </span>
             <span
               className="luckysheet-modal-controll-btn luckysheet-modal-controll-restore"
               role="button"
@@ -112,8 +110,8 @@ const ImgBoxs: React.FC = () => {
               aria-label="恢复原图"
               title="恢复原图"
             >
-                    <i className="fa fa-window-maximize" aria-hidden="true" />
-                  </span>
+              <i className="fa fa-window-maximize" aria-hidden="true" />
+            </span>
             <span
               className="luckysheet-modal-controll-btn luckysheet-modal-controll-del"
               role="button"
@@ -121,8 +119,8 @@ const ImgBoxs: React.FC = () => {
               aria-label="删除"
               title="删除"
             >
-                    <i className="fa fa-trash" aria-hidden="true" />
-                  </span>
+              <i className="fa fa-trash" aria-hidden="true" />
+            </span>
           </div>
         </div>
       )}
@@ -202,15 +200,15 @@ const ImgBoxs: React.FC = () => {
           <div className="resize-item rb" data-type="rb" />
         </div>
         <div className="luckysheet-modal-dialog-controll">
-                <span
-                  className="luckysheet-modal-controll-btn luckysheet-modal-controll-crop"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="裁剪"
-                  title="裁剪"
-                >
-                  <i className="fa fa-pencil" aria-hidden="true" />
-                </span>
+          <span
+            className="luckysheet-modal-controll-btn luckysheet-modal-controll-crop"
+            role="button"
+            tabIndex={0}
+            aria-label="裁剪"
+            title="裁剪"
+          >
+            <i className="fa fa-pencil" aria-hidden="true" />
+          </span>
           <span
             className="luckysheet-modal-controll-btn luckysheet-modal-controll-restore"
             role="button"
@@ -218,8 +216,8 @@ const ImgBoxs: React.FC = () => {
             aria-label="恢复原图"
             title="恢复原图"
           >
-                  <i className="fa fa-window-maximize" aria-hidden="true" />
-                </span>
+            <i className="fa fa-window-maximize" aria-hidden="true" />
+          </span>
           <span
             className="luckysheet-modal-controll-btn luckysheet-modal-controll-del"
             role="button"
@@ -227,8 +225,8 @@ const ImgBoxs: React.FC = () => {
             aria-label="删除"
             title="删除"
           >
-                  <i className="fa fa-trash" aria-hidden="true" />
-                </span>
+            <i className="fa fa-trash" aria-hidden="true" />
+          </span>
         </div>
       </div>
 
@@ -241,6 +239,6 @@ const ImgBoxs: React.FC = () => {
       </div>
     </div>
   );
-}
+};
 
 export default ImgBoxs;
