@@ -131,6 +131,7 @@ const ImgBoxs: React.FC = () => {
           return (
             <div
               id={id}
+              key={id}
               className="luckysheet-modal-dialog luckysheet-modal-dialog-image"
               style={{
                 width,

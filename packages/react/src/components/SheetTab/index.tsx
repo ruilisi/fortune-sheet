@@ -19,27 +19,29 @@ const SheetTab: React.FC = () => {
       id="luckysheet-sheet-area"
     >
       <div id="luckysheet-sheet-content">
-        <div
-          className="fortune-sheettab-button"
-          onClick={() => {
-            setContext(
-              (draftCtx) => {
-                if (draftCtx.luckysheetCellUpdate.length > 0) {
-                  updateCell(
-                    draftCtx,
-                    draftCtx.luckysheetCellUpdate[0],
-                    draftCtx.luckysheetCellUpdate[1],
-                    refs.cellInput.current!
-                  );
-                }
-                addSheet(draftCtx, settings);
-              },
-              { addSheetOp: true }
-            );
-          }}
-        >
-          <SVGIcon name="plus" width={16} height={16} />
-        </div>
+        {context.allowEdit && (
+          <div
+            className="fortune-sheettab-button"
+            onClick={() => {
+              setContext(
+                (draftCtx) => {
+                  if (draftCtx.luckysheetCellUpdate.length > 0) {
+                    updateCell(
+                      draftCtx,
+                      draftCtx.luckysheetCellUpdate[0],
+                      draftCtx.luckysheetCellUpdate[1],
+                      refs.cellInput.current!
+                    );
+                  }
+                  addSheet(draftCtx, settings);
+                },
+                { addSheetOp: true }
+              );
+            }}
+          >
+            <SVGIcon name="plus" width={16} height={16} />
+          </div>
+        )}
         <div
           id="luckysheet-sheets-m"
           className="luckysheet-sheets-m lucky-button-custom"

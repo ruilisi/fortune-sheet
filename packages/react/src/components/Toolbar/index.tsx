@@ -507,7 +507,7 @@ const Toolbar: React.FC<{
           }
         }
         let itemData: { key: any; text: any; onClick: any }[];
-        if (flowdata?.[row_index][col_index]?.ps != null) {
+        if (flowdata?.[row_index]?.[col_index]?.ps != null) {
           itemData = [
             { key: "edit", text: "编辑评论", onClick: editComment },
             { key: "delete", text: "删除", onClick: deleteComment },
@@ -1026,6 +1026,7 @@ const Toolbar: React.FC<{
       textWrap,
       rotation,
       filter,
+      splitText,
       context.luckysheet_select_save,
     ]
   );

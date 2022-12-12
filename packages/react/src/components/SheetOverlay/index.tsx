@@ -641,7 +641,10 @@ const SheetOverlay: React.FC = () => {
                   onKeyPress={(e) => e.stopPropagation()}
                   onClick={(e) => e.stopPropagation()}
                   onDoubleClick={(e) => e.stopPropagation()}
-                  style={{ left: context.scrollLeft }}
+                  style={{
+                    left: context.scrollLeft,
+                    display: context.allowEdit ? "block" : "none",
+                  }}
                 >
                   <div
                     className="fortune-add-row-button"

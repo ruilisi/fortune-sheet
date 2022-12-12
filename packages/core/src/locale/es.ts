@@ -11191,7 +11191,7 @@ export default {
   defaultFmt: [
     { text: "Automático", value: "General", example: "" },
     { text: "Texto", value: "@", example: "" },
-    { text: "", value: "partir", example: "" },
+    { text: "", value: "split", example: "" },
     { text: "Número", value: "##0.00", example: "1000.12" },
     { text: "Porcentaje", value: "#0.00%", example: "12.21%" },
     { text: "Científico", value: "0.00E+00", example: "1.01E+5" },
@@ -11200,7 +11200,7 @@ export default {
 
     { text: "Moneda", value: "¥0.00", example: "¥1200.09" },
 
-    { text: "", value: "partir", example: "" },
+    { text: "", value: "split", example: "" },
     { text: "Fecha", value: "yyyy-MM-dd", example: "2017-11-29" },
     { text: "Hora", value: "hh:mm AM/PM", example: "3:00 PM" },
     { text: "Hora 24H", value: "hh:mm", example: "15:00" },
@@ -11214,7 +11214,7 @@ export default {
       value: "yyyy-MM-dd hh:mm",
       example: "2017-11-29 15:00",
     },
-    { text: "", value: "partir", example: "" },
+    { text: "", value: "split", example: "" },
     { text: "Formatos personalizados", value: "fmtOtherSelf", example: "más" },
   ],
   dateFmtList: [

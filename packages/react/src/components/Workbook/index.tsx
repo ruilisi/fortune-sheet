@@ -84,11 +84,17 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       ): CellMatrix | null => {
         const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
         const lastCol = _.maxBy(cellData, "c");
-        const lastRowNum = Math.max(lastRow?.r ?? 0, draftCtx.defaultrowNum);
-        const lastColNum = Math.max(lastCol?.c ?? 0, draftCtx.defaultcolumnNum);
+        const lastRowNum = Math.max(
+          (lastRow?.r ?? 0) + 1,
+          draftCtx.defaultrowNum
+        );
+        const lastColNum = Math.max(
+          (lastCol?.c ?? 0) + 1,
+          draftCtx.defaultcolumnNum
+        );
         if (lastRowNum && lastColNum) {
-          const expandedData: SheetType["data"] = _.times(lastRowNum + 1, () =>
-            _.times(lastColNum + 1, () => null)
+          const expandedData: SheetType["data"] = _.times(lastRowNum, () =>
+            _.times(lastColNum, () => null)
           );
           cellData?.forEach((d) => {
             // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
@@ -217,6 +223,9 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     useEffect(() => {
       setContextWithProduce(
         (draftCtx) => {
+          draftCtx.defaultcolumnNum = mergedSettings.column;
+          draftCtx.defaultrowNum = mergedSettings.row;
+          draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
           if (_.isEmpty(draftCtx.luckysheetfile)) {
             const newData = produce(originalData, (draftData) => {
               ensureSheetIndex(draftData, mergedSettings.generateSheetId);
@@ -229,9 +238,6 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               initSheetData(draftCtx, cellData!, index);
             });
           }
-          draftCtx.defaultcolumnNum = mergedSettings.column;
-          draftCtx.defaultrowNum = mergedSettings.row;
-          draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
           draftCtx.lang = mergedSettings.lang;
           draftCtx.allowEdit = mergedSettings.allowEdit;
           draftCtx.hooks = mergedSettings.hooks;
