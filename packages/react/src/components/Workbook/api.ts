@@ -16,8 +16,11 @@ import {
   createFilterOptions,
   getSheetIndex,
   Sheet,
+  GlobalCache,
+  inverseRowColOptions,
+  PatchOptions,
 } from "@fortune-sheet/core";
-import produce, { applyPatches } from "immer";
+import produce, { applyPatches, Patch } from "immer";
 import _ from "lodash";
 import { SetContextOptions } from "../../context";
 
@@ -27,6 +30,13 @@ export function generateAPIs(
     recipe: (ctx: Context) => void,
     options?: SetContextOptions
   ) => void,
+  emitOp: (
+    ctx: Context,
+    patches: Patch[],
+    patchOptions: PatchOptions | undefined
+  ) => void,
+  setContextWithoutProduce: (ctx: Context) => void,
+  globalCache: GlobalCache,
   settings: Required<Settings>,
   cellInput: HTMLDivElement | null,
   scrollbarX: HTMLDivElement | null,
@@ -277,6 +287,38 @@ export function generateAPIs(
           );
         }
       });
+    },
+
+    handleUndo: () => {
+      const history = globalCache.undoList.pop();
+      if (history) {
+        // @ts-ignore
+        setContextWithoutProduce((draftCtx: Context) => {
+          const newContext = applyPatches(
+            draftCtx as Context,
+            history.inversePatches
+          );
+          const inversedOptions = inverseRowColOptions(history.options);
+          if (inversedOptions?.insertRowColOp) {
+            inversedOptions.restoreDeletedCells = true;
+          }
+          emitOp(newContext, history.inversePatches, inversedOptions);
+          return newContext;
+        });
+      }
+    },
+
+    handleRedo: () => {
+      const history = globalCache.redoList.pop();
+      if (history) {
+        // @ts-ignore
+        setContextWithoutProduce((draftCtx) => {
+          const newContext = applyPatches(draftCtx, history.patches);
+          globalCache.undoList.push(history);
+          emitOp(newContext, history.patches, history.options);
+          return newContext;
+        });
+      }
     },
   };
 }
