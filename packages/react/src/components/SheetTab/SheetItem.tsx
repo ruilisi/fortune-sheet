@@ -64,10 +64,9 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
         range.select();
       }
     }
-
     // store the current text
     editable.current.dataset.oldText = editable.current.innerText;
-  }, [editing]);
+  }, [context.allowEdit, editing, sheet.name]);
 
   const onBlur = useCallback(() => {
     setContext((draftCtx) => {
@@ -89,41 +88,43 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
 
   const onDragStart = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
-      e.dataTransfer.setData("sheetId", `${sheet.id}`);
+      if (context.allowEdit) e.dataTransfer.setData("sheetId", `${sheet.id}`);
       e.stopPropagation();
     },
-    [sheet.id]
+    [context.allowEdit, sheet.id]
   );
 
   const onDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       const draggingId = e.dataTransfer.getData("sheetId");
-      setContext((draftCtx) => {
-        const droppingId = sheet.id;
-        let draggingSheet: Sheet | undefined;
-        let droppingSheet: Sheet | undefined;
-        _.sortBy(draftCtx.luckysheetfile, ["order"]).forEach((f, i) => {
-          f.order = i;
-          if (f.id === draggingId) {
-            draggingSheet = f;
-          } else if (f.id === droppingId) {
-            droppingSheet = f;
-          }
-        });
-        if (draggingSheet && droppingSheet) {
-          draggingSheet.order = droppingSheet.order! - 0.1;
-          // re-order all sheets
+      if (context.allowEdit) {
+        setContext((draftCtx) => {
+          const droppingId = sheet.id;
+          let draggingSheet: Sheet | undefined;
+          let droppingSheet: Sheet | undefined;
           _.sortBy(draftCtx.luckysheetfile, ["order"]).forEach((f, i) => {
             f.order = i;
+            if (f.id === draggingId) {
+              draggingSheet = f;
+            } else if (f.id === droppingId) {
+              droppingSheet = f;
+            }
           });
-        } else if (draggingSheet && isDropPlaceholder) {
-          draggingSheet.order = draftCtx.luckysheetfile.length;
-        }
-      });
-      setDragOver(false);
-      e.stopPropagation();
+          if (draggingSheet && droppingSheet) {
+            draggingSheet.order = droppingSheet.order! - 0.1;
+            // re-order all sheets
+            _.sortBy(draftCtx.luckysheetfile, ["order"]).forEach((f, i) => {
+              f.order = i;
+            });
+          } else if (draggingSheet && isDropPlaceholder) {
+            draggingSheet.order = draftCtx.luckysheetfile.length;
+          }
+        });
+        setDragOver(false);
+        e.stopPropagation();
+      }
     },
-    [isDropPlaceholder, setContext, sheet.id]
+    [context.allowEdit, isDropPlaceholder, setContext, sheet.id]
   );
 
   return (

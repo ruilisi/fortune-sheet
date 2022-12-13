@@ -167,7 +167,10 @@ export function deleteSheet(ctx: Context, id: string) {
 }
 
 export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
+  const index = getSheetIndex(ctx, ctx.currentSheetId);
   if (ctx.allowEdit === false) {
+    if (index == null) return;
+    editable.innerText = ctx.luckysheetfile[index].name;
     return;
   }
   const { sheetconfig } = locale(ctx);
@@ -195,7 +198,7 @@ export function editSheetName(ctx: Context, editable: HTMLSpanElement) {
     throw new Error(sheetconfig.sheetNameSpecCharError);
   }
 
-  const index = getSheetIndex(ctx, ctx.currentSheetId);
+  // const index = getSheetIndex(ctx, ctx.currentSheetId);
   if (index == null) return;
 
   for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {

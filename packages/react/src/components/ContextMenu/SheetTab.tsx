@@ -39,7 +39,7 @@ const SheetTabContextMenu: React.FC = () => {
 
   const moveSheet = useCallback(
     (delta: number) => {
-      if (!sheet) return;
+      if (!sheet || context.allowEdit === false) return;
       setContext((ctx) => {
         let currentOrder = -1;
         _.sortBy(ctx.luckysheetfile, ["order"]).forEach((_sheet, i) => {
@@ -51,7 +51,7 @@ const SheetTabContextMenu: React.FC = () => {
         api.setSheetOrder(ctx, { [sheet.id!]: currentOrder + delta });
       });
     },
-    [setContext, sheet]
+    [context.allowEdit, setContext, sheet]
   );
 
   if (!sheet || x == null || y == null) return null;
