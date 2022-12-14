@@ -1,4 +1,8 @@
-import { Sheet, editSheetName } from "@fortune-sheet/core";
+import {
+  Sheet,
+  editSheetName,
+  cancelNormalSelected,
+} from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
   useContext,
@@ -169,6 +173,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
             luckysheet_selection_range: draftCtx.luckysheet_selection_range,
           };
           draftCtx.currentSheetId = sheet.id!;
+          cancelNormalSelected(draftCtx);
         });
       }}
       onContextMenu={(e) => {
@@ -176,8 +181,8 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
         const rect = refs.workbookContainer.current!.getBoundingClientRect();
         const { pageX, pageY } = e;
         setContext((ctx) => {
-          //右击的时候先进行跳转
-          ctx.currentSheetId = sheet.id!
+          // 右击的时候先进行跳转
+          ctx.currentSheetId = sheet.id!;
           ctx.sheetTabContextMenu = {
             x: pageX - rect.left,
             y: pageY - rect.top,
