@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { Workbook, WorkbookInstance } from "@fortune-sheet/react";
+import { Sheet } from "@fortune-sheet/core";
 
 export default {
   component: Workbook,
@@ -44,22 +45,38 @@ const ApiExecContainer: React.FC<{ onRun: () => any }> = ({
 
 export const GetCellValue: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      data: [[{ v: "fortune" }]],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         return ref.current?.getCellValue(0, 0);
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[{ name: "Sheet1", data: [[{ v: "fortune" }]] }]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const SetCellValue: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
@@ -75,56 +92,87 @@ export const SetCellValue: ComponentStory<typeof Workbook> = () => {
         ref.current?.setCellValue(4, 5, "=SUM(A5:E5)");
       }}
     >
-      <Workbook ref={ref} data={[{ name: "Sheet1" }]} />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const ClearCell: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      data: [[{ bg: "green", v: "fortune", m: "fortune" }]],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         ref.current?.clearCell(0, 0);
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            data: [[{ bg: "green", v: "fortune", m: "fortune" }]],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const SetCellFormat: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      data: [[{ v: "set bg = green" }]],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         ref.current?.setCellFormat(0, 0, "bg", "green");
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            config: { columnlen: { "0": 120 } },
-            data: [[{ v: "set bg = green" }]],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const AutoFillCell: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      data: [
+        [
+          { m: "1", v: 1, ct: { t: "n", fa: "General" } },
+          { m: "2", v: 2, ct: { t: "n", fa: "General" } },
+        ],
+        [
+          { m: "2", v: 2, ct: { t: "n", fa: "General" } },
+          { m: "4", v: 4, ct: { t: "n", fa: "General" } },
+        ],
+        [null, null],
+        [null, null],
+        [null, null],
+        [null, null],
+        [null, null],
+        [null, null],
+        [null, null],
+        [null, null],
+        [null, null],
+      ],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
@@ -135,60 +183,45 @@ export const AutoFillCell: ComponentStory<typeof Workbook> = () => {
         );
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            config: { columnlen: { "0": 120 } },
-            data: [
-              [
-                { m: "1", v: 1, ct: { t: "n", fa: "General" } },
-                { m: "2", v: 2, ct: { t: "n", fa: "General" } },
-              ],
-              [
-                { m: "2", v: 2, ct: { t: "n", fa: "General" } },
-                { m: "4", v: 4, ct: { t: "n", fa: "General" } },
-              ],
-              [null, null],
-              [null, null],
-              [null, null],
-              [null, null],
-              [null, null],
-              [null, null],
-              [null, null],
-              [null, null],
-              [null, null],
-            ],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const Freeze: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         ref.current?.freeze("both", { row: 1, column: 1 });
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const InsertRowCol: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      data: [[{ v: "original" }]],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
@@ -198,318 +231,346 @@ export const InsertRowCol: ComponentStory<typeof Workbook> = () => {
         ref.current?.setCellValue(0, 1, "inserted");
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            data: [[{ v: "original" }]],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const DeleteRowCol: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      data: [
+        [{ v: "0" }],
+        [{ v: "1" }],
+        [{ v: "2" }],
+        [{ v: "3" }],
+        [{ v: "4" }],
+      ],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         ref.current?.deleteRowOrColumn("row", 1, 3);
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            data: [
-              [{ v: "0" }],
-              [{ v: "1" }],
-              [{ v: "2" }],
-              [{ v: "3" }],
-              [{ v: "4" }],
-            ],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const GetRowHeight: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      config: { rowlen: { 2: 200 } },
+      data: [
+        [{ v: "0" }],
+        [{ v: "1" }],
+        [{ v: "2" }],
+        [{ v: "3" }],
+        [{ v: "4" }],
+      ],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         return JSON.stringify(ref.current?.getRowHeight([0, 1, 2, 3, 4]));
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            config: { rowlen: { 2: 200 } },
-            data: [
-              [{ v: "0" }],
-              [{ v: "1" }],
-              [{ v: "2" }],
-              [{ v: "3" }],
-              [{ v: "4" }],
-            ],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const GetColumnWidth: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      config: { columnlen: { 2: 200 } },
+      data: [[{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }]],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         return JSON.stringify(ref.current?.getColumnWidth([0, 1, 2, 3, 4]));
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            config: { columnlen: { 2: 200 } },
-            data: [
-              [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
-            ],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const SetRowHeight: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      data: [
+        [{ v: "0" }],
+        [{ v: "1" }],
+        [{ v: "height = 100" }],
+        [{ v: "3" }],
+        [{ v: "4" }],
+      ],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         ref.current?.setRowHeight({ "2": 100 });
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            data: [
-              [{ v: "0" }],
-              [{ v: "1" }],
-              [{ v: "height = 100" }],
-              [{ v: "3" }],
-              [{ v: "4" }],
-            ],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const SetColumnWidth: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      data: [
+        [{ v: "0" }, { v: "1" }, { v: "width = 200" }, { v: "3" }, { v: "4" }],
+      ],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         ref.current?.setColumnWidth({ "2": 200 });
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            data: [
-              [
-                { v: "0" },
-                { v: "1" },
-                { v: "width = 200" },
-                { v: "3" },
-                { v: "4" },
-              ],
-            ],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const GetSelection: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      luckysheet_select_save: [{ row: [0, 1], column: [1, 2] }],
+      data: [
+        [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
+        [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
+      ],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         return JSON.stringify(ref.current?.getSelection());
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            luckysheet_select_save: [{ row: [0, 1], column: [1, 2] }],
-            data: [
-              [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
-              [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
-            ],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const SetSelection: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      data: [
+        [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
+        [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
+      ],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         ref.current?.setSelection([{ row: [0, 1], column: [1, 2] }]);
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            data: [
-              [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
-              [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
-            ],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const MergeCells: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      data: [
+        [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
+        [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
+      ],
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         ref.current?.mergeCells([{ row: [0, 1], column: [1, 2] }], "merge-all");
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            data: [
-              [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
-              [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
-            ],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const GetAllSheets: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      data: [[{ v: "0" }, { v: "1" }]],
+      order: 0,
+    },
+    {
+      name: "Sheet2",
+      data: [[{ v: "0" }], [{ v: "1" }]],
+      order: 1,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         return JSON.stringify(ref.current?.getAllSheets());
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-            data: [[{ v: "0" }, { v: "1" }]],
-          },
-          {
-            name: "Sheet2",
-            data: [[{ v: "0" }], [{ v: "1" }]],
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const AddSheet: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    { id: "1", name: "Sheet1", data: [[{ v: "1" }]], order: 0 },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         ref.current?.addSheet();
       }}
     >
-      <Workbook ref={ref} data={[{ name: "Sheet1", data: [[{ v: "1" }]] }]} />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const DeleteSheet: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    { id: "1", name: "Sheet1", data: [[{ v: "1" }]], order: 0 },
+    { id: "2", name: "Sheet2", data: [[{ v: "2" }]], order: 1 },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         ref.current?.deleteSheet({ id: "2" });
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          { id: "1", name: "Sheet1", data: [[{ v: "1" }]] },
-          { id: "2", name: "Sheet2", data: [[{ v: "2" }]] },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const ActivateSheet: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    { id: "1", name: "Sheet1", data: [[{ v: "1" }]], order: 0 },
+    { id: "2", name: "Sheet2", data: [[{ v: "2" }]], order: 1 },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         ref.current?.activateSheet({ id: "2" });
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          { id: "1", name: "Sheet1", data: [[{ v: "1" }]] },
-          { id: "2", name: "Sheet2", data: [[{ v: "2" }]] },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const SetSheetName: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         ref.current?.setSheetName("Fortune");
       }}
     >
-      <Workbook ref={ref} data={[{ name: "Sheet1" }]} />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const SetSheetOrder: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    { id: "1", name: "Sheet1", order: 0 },
+    { id: "2", name: "Sheet2", order: 1 },
+    { id: "3", name: "Sheet3", order: 2 },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
@@ -520,20 +581,22 @@ export const SetSheetOrder: ComponentStory<typeof Workbook> = () => {
         });
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          { id: "1", name: "Sheet1" },
-          { id: "2", name: "Sheet2" },
-          { id: "3", name: "Sheet3" },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const Scroll: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
@@ -542,47 +605,51 @@ export const Scroll: ComponentStory<typeof Workbook> = () => {
         });
       }}
     >
-      <Workbook ref={ref} data={[{ name: "Sheet1" }]} />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const Undo: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         return JSON.stringify(ref.current?.handleUndo());
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
 
 export const Redo: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      order: 0,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
   return (
     <ApiExecContainer
       onRun={() => {
         return JSON.stringify(ref.current?.handleRedo());
       }}
     >
-      <Workbook
-        ref={ref}
-        data={[
-          {
-            name: "Sheet1",
-          },
-        ]}
-      />
+      <Workbook ref={ref} data={data} onChange={onChange} />
     </ApiExecContainer>
   );
 };
