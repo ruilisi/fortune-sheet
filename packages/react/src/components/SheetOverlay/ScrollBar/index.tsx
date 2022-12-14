@@ -21,7 +21,14 @@ const ScrollBar: React.FC<Props> = ({ axis }) => {
   return (
     <div
       ref={axis === "x" ? refs.scrollbarX : refs.scrollbarY}
-      style={axis === "x" ? { width: "100%" } : { height: "100%" }}
+      style={
+        axis === "x"
+          ? {
+              left: context.rowHeaderWidth,
+              width: context.cellmainWidth,
+            }
+          : { height: "100%" }
+      }
       className={`luckysheet-scrollbars luckysheet-scrollbar-ltr luckysheet-scrollbar-${axis}`}
       onScroll={() => {
         if (axis === "x") {

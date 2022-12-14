@@ -146,7 +146,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
       }}
       onDrop={onDrop}
       onDragStart={onDragStart}
-      draggable
+      draggable={context.allowEdit}
       key={sheet.id}
       ref={containerRef}
       className={
