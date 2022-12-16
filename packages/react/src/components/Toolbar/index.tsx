@@ -33,6 +33,7 @@ import {
   handleScreenShot,
   createFilter,
   clearFilter,
+  applyLocation,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -46,6 +47,7 @@ import SVGIcon from "../SVGIcon";
 import { useDialog } from "../../hooks/useDialog";
 import { FormulaSearch } from "../FormulaSearch";
 import { SplitColumn } from "../SplitColumn";
+import { LocationCondition } from "../LocationCondition";
 
 const Toolbar: React.FC<{
   setMoreItems: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -80,6 +82,7 @@ const Toolbar: React.FC<{
     screenshot,
     filter,
     splitText,
+    findAndReplace,
   } = locale(context);
   const sheetWidth = context.luckysheetTableContentHW[0];
 
@@ -450,6 +453,191 @@ const Toolbar: React.FC<{
               }
             }}
           />
+        );
+      }
+      if (name === "locationCondition") {
+        const items = [
+          {
+            text: findAndReplace.location,
+            value: "location",
+          },
+          {
+            text: findAndReplace.locationFormula,
+            value: "locationFormula",
+          },
+          {
+            text: findAndReplace.locationDate,
+            value: "locationDate",
+          },
+          {
+            text: findAndReplace.locationDigital,
+            value: "locationDigital",
+          },
+          {
+            text: findAndReplace.locationString,
+            value: "locationString",
+          },
+          {
+            text: findAndReplace.locationError,
+            value: "locationError",
+          },
+          // TODO 条件格式
+          // {
+          //   text: findAndReplace.locationCondition,
+          //   value: "locationCondition",
+          // },
+          {
+            text: findAndReplace.locationRowSpan,
+            value: "locationRowSpan",
+          },
+          {
+            text: findAndReplace.columnSpan,
+            value: "locationColumnSpan",
+          },
+        ];
+        return (
+          <Combo
+            iconId="locationCondition"
+            key={name}
+            tooltip={findAndReplace.location}
+          >
+            {(setOpen) => (
+              <Select>
+                {items.map(({ text, value }) => (
+                  <Option
+                    key={value}
+                    onClick={() => {
+                      const last = context.luckysheet_select_save![0];
+                      let range: { row: any[]; column: any[] }[];
+                      let rangeArr = [];
+                      if (
+                        context.luckysheet_select_save?.length === 0 ||
+                        (context.luckysheet_select_save?.length === 1 &&
+                          last.row[0] === last.row[1] &&
+                          last.column[0] === last.column[1])
+                      ) {
+                        // 当选中的是一个单元格，则变为全选
+                        range = [
+                          {
+                            row: [0, flowdata!.length - 1],
+                            column: [0, flowdata![0].length - 1],
+                          },
+                        ];
+                      } else {
+                        range = _.assignIn([], context.luckysheet_select_save);
+                      }
+                      if (value === "location") {
+                        showDialog(<LocationCondition />);
+                      } else if (value === "locationFormula") {
+                        setContext((ctx) => {
+                          rangeArr = applyLocation(
+                            range,
+                            "locationFormula",
+                            "all",
+                            ctx
+                          );
+                        });
+                      } else if (value === "locationDate") {
+                        setContext((ctx) => {
+                          rangeArr = applyLocation(
+                            range,
+                            "locationConstant",
+                            "d",
+                            ctx
+                          );
+                        });
+                      } else if (value === "locationDigital") {
+                        setContext((ctx) => {
+                          rangeArr = applyLocation(
+                            range,
+                            "locationConstant",
+                            "n",
+                            ctx
+                          );
+                        });
+                      } else if (value === "locationString") {
+                        setContext((ctx) => {
+                          rangeArr = applyLocation(
+                            range,
+                            "locationConstant",
+                            "s,g",
+                            ctx
+                          );
+                        });
+                      } else if (value === "locationError") {
+                        setContext((ctx) => {
+                          rangeArr = applyLocation(
+                            range,
+                            "locationConstant",
+                            "e",
+                            ctx
+                          );
+                        });
+                      } else if (value === "locationCondition") {
+                        setContext((ctx) => {
+                          rangeArr = applyLocation(
+                            range,
+                            "locationCF",
+                            undefined,
+                            ctx
+                          );
+                        });
+                      } else if (value === "locationRowSpan") {
+                        if (
+                          context.luckysheet_select_save?.length === 0 ||
+                          (context.luckysheet_select_save?.length === 1 &&
+                            context.luckysheet_select_save[0].row[0] ===
+                              context.luckysheet_select_save[0].row[1])
+                        ) {
+                          showDialog(
+                            findAndReplace.locationTiplessTwoRow,
+                            "ok"
+                          );
+                          return;
+                        }
+                        range = _.assignIn([], context.luckysheet_select_save);
+                        setContext((ctx) => {
+                          rangeArr = applyLocation(
+                            range,
+                            "locationRowSpan",
+                            undefined,
+                            ctx
+                          );
+                        });
+                      } else if (value === "locationColumnSpan") {
+                        if (
+                          context.luckysheet_select_save?.length === 0 ||
+                          (context.luckysheet_select_save?.length === 1 &&
+                            context.luckysheet_select_save[0].column[0] ===
+                              context.luckysheet_select_save[0].column[1])
+                        ) {
+                          showDialog(
+                            findAndReplace.locationTiplessTwoColumn,
+                            "ok"
+                          );
+                          return;
+                        }
+                        range = _.assignIn([], context.luckysheet_select_save);
+                        setContext((ctx) => {
+                          rangeArr = applyLocation(
+                            range,
+                            "locationColumnSpan",
+                            undefined,
+                            ctx
+                          );
+                        });
+                      }
+                      if (rangeArr.length === 0 && value !== "location")
+                        showDialog(findAndReplace.locationTipNotFindCell, "ok");
+                      setOpen(false);
+                    }}
+                  >
+                    <div className="fortune-toolbar-menu-line">{text}</div>
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Combo>
         );
       }
       if (name === "image") {
@@ -1027,6 +1215,7 @@ const Toolbar: React.FC<{
       rotation,
       filter,
       splitText,
+      findAndReplace,
       context.luckysheet_select_save,
     ]
   );

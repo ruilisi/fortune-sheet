@@ -199,6 +199,7 @@ export const defaultSettings: Required<Settings> = {
     "quick-formula",
     "screenshot",
     "splitColumn",
+    "locationCondition",
     "search",
   ], // 自定义工具栏
   cellContextMenu: [
