@@ -546,3 +546,43 @@ export const Scroll: ComponentStory<typeof Workbook> = () => {
     </ApiExecContainer>
   );
 };
+
+export const Undo: ComponentStory<typeof Workbook> = () => {
+  const ref = useRef<WorkbookInstance>(null);
+  return (
+    <ApiExecContainer
+      onRun={() => {
+        return JSON.stringify(ref.current?.handleUndo());
+      }}
+    >
+      <Workbook
+        ref={ref}
+        data={[
+          {
+            name: "Sheet1",
+          },
+        ]}
+      />
+    </ApiExecContainer>
+  );
+};
+
+export const Redo: ComponentStory<typeof Workbook> = () => {
+  const ref = useRef<WorkbookInstance>(null);
+  return (
+    <ApiExecContainer
+      onRun={() => {
+        return JSON.stringify(ref.current?.handleRedo());
+      }}
+    >
+      <Workbook
+        ref={ref}
+        data={[
+          {
+            name: "Sheet1",
+          },
+        ]}
+      />
+    </ApiExecContainer>
+  );
+};

@@ -402,6 +402,9 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         generateAPIs(
           context,
           setContextWithProduce,
+          emitOp,
+          setContext,
+          globalCache.current,
           mergedSettings,
           cellInput.current,
           scrollbarX.current,
