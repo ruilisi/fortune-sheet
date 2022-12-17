@@ -1,4 +1,8 @@
-import { Sheet, editSheetName } from "@fortune-sheet/core";
+import {
+  Sheet,
+  editSheetName,
+  cancelNormalSelected,
+} from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
   useContext,
@@ -169,6 +173,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
             luckysheet_selection_range: draftCtx.luckysheet_selection_range,
           };
           draftCtx.currentSheetId = sheet.id!;
+          cancelNormalSelected(draftCtx);
         });
       }}
       onContextMenu={(e) => {
