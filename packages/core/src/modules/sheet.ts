@@ -90,31 +90,44 @@ export function addSheet(
   ctx: Context,
   settings: Required<Settings>,
   newSheetID?: string, // if action is from websocket, there will be a new sheetID
-  isPivotTable = false
+  isPivotTable = false,
+  sheetName: string | undefined = undefined,
+  sheetData: Sheet | undefined = undefined
 ) {
   if (/* isEditMode() || */ ctx.allowEdit === false) {
     // alert("非编辑模式下不允许该操作！");
     return;
   }
   const order = ctx.luckysheetfile.length;
-  const id = newSheetID ?? settings.generateSheetId();
-
+  const id = newSheetID ?? (settings?.generateSheetId() as string);
   const sheetname = generateRandomSheetName(
     ctx.luckysheetfile,
     isPivotTable,
     ctx
   );
-  const sheetconfig: Sheet = {
-    name: sheetname,
-    status: 0,
-    order,
-    id,
-    row: ctx.defaultrowNum,
-    column: ctx.defaultcolumnNum,
-    config: {},
-    pivotTable: null,
-    isPivotTable: !!isPivotTable,
-  };
+  if (!_.isNil(sheetData)) {
+    delete sheetData.data;
+    ctx.luckysheetfile = ctx.luckysheetfile.map((sheet) => {
+      sheet.order =
+        (sheet.order as number) < sheetData.order!
+          ? sheet.order
+          : (sheet.order as number) + 1;
+      return sheet;
+    });
+  }
+  const sheetconfig: Sheet = _.isNil(sheetData)
+    ? {
+        name: sheetName === undefined ? sheetname : sheetName,
+        status: 0,
+        order,
+        id,
+        row: ctx.defaultrowNum,
+        column: ctx.defaultcolumnNum,
+        config: {},
+        pivotTable: null,
+        isPivotTable: !!isPivotTable,
+      }
+    : sheetData;
 
   if (ctx.hooks.beforeAddSheet?.(sheetconfig) === false) {
     return;

@@ -80,6 +80,7 @@ export function generateAPIs(
                 );
                 ctx_.luckysheetfile[fileIndex].data = expandeData;
               }
+              api.initSheetData(ctx_, fileIndex, specialOp.value?.celldata);
             } else if (specialOp.op === "deleteSheet") {
               ctx_ = produce(ctx_, (draftCtx) => {
                 deleteSheet(draftCtx, specialOp.value.id);

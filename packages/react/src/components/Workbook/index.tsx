@@ -175,8 +175,8 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
 
     function dataToCelldata(data: CellMatrix) {
       const cellData: CellWithRowAndCol[] = [];
-      for (let row = 0; row < data.length; row += 1) {
-        for (let col = 0; col < data[row].length; col += 1) {
+      for (let row = 0; row < data?.length; row += 1) {
+        for (let col = 0; col < data[row]?.length; col += 1) {
           if (data[row][col] !== null) {
             cellData.push({
               r: row,
@@ -202,7 +202,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               console.info("patch", patches);
             }
             const filteredPatches = filterPatch(patches);
-            const filteredInversePatches = filterPatch(inversePatches);
+            let filteredInversePatches = filterPatch(inversePatches);
             if (filteredInversePatches.length > 0) {
               options.id = ctx_.currentSheetId;
               if (options.deleteSheetOp) {
@@ -223,6 +223,14 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                     options.deletedSheet!.value!.data as CellMatrix
                   );
                   delete options.deletedSheet!.value!.data;
+                  options.deletedSheet.value!.status = 0;
+                  filteredInversePatches = [
+                    {
+                      op: "add",
+                      path: ["luckysheetfile", 0],
+                      value: options.deletedSheet.value,
+                    },
+                  ];
                 }
               } else if (options.addSheetOp) {
                 options.addSheet = {};
@@ -235,12 +243,12 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                 options,
               });
               globalCache.current.redoList = [];
-              // setContext(newContext);
               emitOp(result, filteredPatches, options);
             }
           }
           if (
-            patches?.[0]?.value?.luckysheetfile < ctx_.luckysheetfile.length
+            patches?.[0]?.value?.luckysheetfile?.length <
+            ctx_?.luckysheetfile?.length
           ) {
             reduceUndoList(result, ctx_);
           }
@@ -254,6 +262,26 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       const history = globalCache.current.undoList.pop();
       if (history) {
         setContext((ctx_) => {
+          if (history.options?.deleteSheetOp) {
+            history.inversePatches[0].path[1] = ctx_.luckysheetfile.length;
+            const order = history.options.deletedSheet?.value?.order as number;
+            const sheetsRight = ctx_.luckysheetfile.filter(
+              (sheet) =>
+                (sheet?.order as number) >= (order as number) &&
+                sheet.id !== history?.options?.deleteSheetOp?.id
+            );
+            _.forEach(sheetsRight, (sheet) => {
+              history.inversePatches.push({
+                op: "replace",
+                path: [
+                  "luckysheetfile",
+                  getSheetIndex(ctx_, sheet.id as string) as number,
+                  "order",
+                ],
+                value: (sheet?.order as number) + 1,
+              } as Patch);
+            });
+          }
           const newContext = applyPatches(ctx_, history.inversePatches);
           globalCache.current.redoList.push(history);
           const inversedOptions = inverseRowColOptions(history.options);
@@ -271,7 +299,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               value: _.cloneDeep(ctx_.luckysheetfile[index]),
             };
             inversedOptions!.addSheet!.value!.celldata = dataToCelldata(
-              inversedOptions!.addSheet!.value!.data as CellMatrix
+              inversedOptions!.addSheet!.value?.data as CellMatrix
             );
             delete inversedOptions!.addSheet!.value!.data;
           }
@@ -523,7 +551,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           scrollbarX.current,
           scrollbarY.current
         ),
-      [context, mergedSettings, setContextWithProduce]
+      [context, mergedSettings, setContextWithProduce, emitOp]
     );
 
     const i = getSheetIndex(context, context.currentSheetId);

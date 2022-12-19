@@ -303,7 +303,27 @@ export function patchToOp(
           path: [],
           value: options.deletedSheet?.value,
         },
+        {
+          id: options.deleteSheetOp.id,
+          op: "replace",
+          path: ["name"],
+          value: options.deletedSheet?.value?.name,
+        },
       ];
+      const order = options.deletedSheet?.value?.order as number;
+      const sheetsRight = ctx.luckysheetfile.filter(
+        (sheet) =>
+          (sheet?.order as number) >= (order as number) &&
+          sheet.id !== options.deleteSheetOp?.id
+      );
+      _.forEach(sheetsRight, (sheet) => {
+        ops.push({
+          id: sheet.id,
+          op: "replace",
+          path: ["order"],
+          value: sheet?.order as number,
+        });
+      });
     } else {
       // 正常删表
       ops = [
@@ -314,20 +334,20 @@ export function patchToOp(
           value: options.deletedSheet,
         },
       ];
-    }
-    const order = options.deletedSheet?.value?.order as number;
-    if (options.deletedSheet?.index !== ctx.luckysheetfile.length) {
-      const sheetsRight = ctx.luckysheetfile.filter(
-        (sheet) => (sheet?.order as number) >= (order as number)
-      );
-      _.forEach(sheetsRight, (sheet) => {
-        ops.push({
-          id: sheet.id,
-          op: "replace",
-          path: ["order"],
-          value: sheet?.order as number,
+      const order = options.deletedSheet?.value?.order as number;
+      if (options.deletedSheet?.index !== ctx.luckysheetfile.length) {
+        const sheetsRight = ctx.luckysheetfile.filter(
+          (sheet) => (sheet?.order as number) >= (order as number)
+        );
+        _.forEach(sheetsRight, (sheet) => {
+          ops.push({
+            id: sheet.id,
+            op: "replace",
+            path: ["order"],
+            value: sheet?.order as number,
+          });
         });
-      });
+      }
     }
   }
   return ops;

@@ -58,17 +58,12 @@ async function applyOp(collection, ops) {
       /**
        * special op: addSheet
        */
-      if (op.value?.id) {
-        collection.insertOne(op.value);
-      }
+      collection.insertOne(op.value);
     } else if (op.op === "deleteSheet") {
       /**
        * special op: deleteSheet
        */
-      const sheetData = await collection.find(filter).toArray();
-      if (sheetData.length > 0) {
-        collection.deleteOne(filter);
-      }
+      collection.deleteOne(filter);
     } else if (
       path.length >= 3 &&
       path[0] === "data" &&
