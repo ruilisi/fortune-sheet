@@ -1,0 +1,74 @@
+label {
+    cursor: default;
+}
+#fortunesheet-location-condition {
+    min-width: 500px;
+}
+#fortunesheet-location-condition .title {
+    background-color: #fff;
+    color: #000;
+    cursor: default;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 48px;
+}
+#fortunesheet-location-condition .listbox {
+    border: 1px solid #dfdfdf;
+    padding: 10px;
+    font-size: 14px;
+    color: #000;
+}
+#fortunesheet-location-condition .listbox .listItem {
+    padding: 5px 0;
+}
+#fortunesheet-location-condition .listbox .listItem input[type="radio"] {
+    float: left;
+    margin-top: 5px;
+}
+#fortunesheet-location-condition .listItem {
+    padding: 5px 0;
+}
+#fortunesheet-location-condition .listItem .subItem {
+    height: 30px;
+    padding: 0 10px;
+    display: block;
+}
+#fortunesheet-location-condition input[type="radio"] {
+    float: left;
+    margin-top: 3px;
+}
+#fortunesheet-location-condition .listbox .listItem .subbox {
+    height: 30px;
+    padding: 0 10px;
+}
+#fortunesheet-location-condition .listbox .listItem .subbox .subItem {
+    float: left;
+    margin-right: 5px;
+}
+#fortunesheet-location-condition .button-basic {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    white-space: nowrap;
+    padding: 4px 8px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    border-radius: 2px;
+    user-select: none;
+    margin-top: 10px;
+}
+#fortunesheet-location-condition .button-primary {
+    background: #0188fb;
+    border: 1px solid #0188fb;
+    color: #fff;
+    margin-right: 10px;
+}
+#fortunesheet-location-condition .button-close {
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
