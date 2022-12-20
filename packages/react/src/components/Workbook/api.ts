@@ -15,7 +15,6 @@ import {
   SingleRange,
   createFilterOptions,
   getSheetIndex,
-  Sheet,
   GlobalCache,
   inverseRowColOptions,
   PatchOptions,
@@ -62,46 +61,38 @@ export function generateAPIs(
                 deleteRowCol(draftCtx, specialOp.value);
               });
             } else if (specialOp.op === "addSheet") {
-              ctx_ = produce(ctx_, (draftCtx) => {
-                if (specialOp.value?.id) {
-                  addSheet(draftCtx, settings, specialOp.value.id);
-                }
-              });
+              const name = patches.filter(
+                (path) => path.path[0] === "name"
+              )?.[0]?.value;
+              if (specialOp.value?.id) {
+                addSheet(
+                  ctx_,
+                  settings,
+                  specialOp.value.id,
+                  false,
+                  name,
+                  specialOp.value
+                );
+              }
               // 添加addSheet完后，给sheet初始化data
               const fileIndex = getSheetIndex(
                 ctx_,
                 specialOp.value.id
               ) as number;
-              const { data } = ctx_.luckysheetfile[fileIndex];
-              if (_.isUndefined(data)) {
-                const expandeData: Sheet["data"] = _.times(
-                  ctx_.defaultrowNum + 1,
-                  () => _.times(ctx_.defaultcolumnNum + 1, () => null)
-                );
-                ctx_.luckysheetfile[fileIndex].data = expandeData;
-              }
               api.initSheetData(ctx_, fileIndex, specialOp.value?.celldata);
             } else if (specialOp.op === "deleteSheet") {
-              ctx_ = produce(ctx_, (draftCtx) => {
-                deleteSheet(draftCtx, specialOp.value.id);
-              });
+              deleteSheet(ctx_, specialOp.value.id);
+              patches.length = 0;
             }
           }
           if (ops[0]?.path?.[0] === "filter_select")
             ctx_.luckysheet_filter_save = ops[0].value;
           createFilterOptions(ctx_, ctx_.luckysheet_filter_save);
-          if (patches.length === 0) return ctx_;
+          if (patches.length === 0) return;
           try {
-            const newContext = applyPatches(ctx_, patches);
-            const index = getSheetIndex(newContext, newContext.currentSheetId)!;
-            const newConfig = newContext.luckysheetfile?.[index].config;
-            if (newConfig) {
-              newContext.config = newConfig;
-            }
-            return newContext;
+            applyPatches(ctx_, patches);
           } catch (e) {
             console.error(e);
-            return ctx_;
           }
         },
         { noHistory: true }
