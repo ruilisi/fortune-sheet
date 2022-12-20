@@ -111,13 +111,83 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     );
 
     const emitOp = useCallback(
-      (ctx: Context, patches: Patch[], options?: SetContextOptions) => {
+      (
+        ctx: Context,
+        patches: Patch[],
+        options?: SetContextOptions,
+        undo: boolean = false
+      ) => {
         if (onOp) {
-          onOp(patchToOp(ctx, patches, options));
+          onOp(patchToOp(ctx, patches, options, undo));
         }
       },
       [onOp]
     );
+
+    function reduceUndoList(ctx: Context, ctxBefore: Context) {
+      const sheetsId = ctx.luckysheetfile.map((sheet) => sheet.id);
+      const sheetDeletedByMe = globalCache.current.undoList
+        .filter((undo) => undo.options?.deleteSheetOp)
+        .map((item) => item.options?.deleteSheetOp?.id);
+      globalCache.current.undoList = globalCache.current.undoList.filter(
+        (undo) =>
+          undo.options?.deleteSheetOp ||
+          undo.options?.id === undefined ||
+          _.indexOf(sheetsId, undo.options?.id) !== -1 ||
+          _.indexOf(sheetDeletedByMe, undo.options?.id) !== -1
+      );
+      if (ctxBefore.luckysheetfile.length > ctx.luckysheetfile.length) {
+        const sheetDeleted = ctxBefore.luckysheetfile
+          .filter(
+            (oneSheet) =>
+              _.indexOf(
+                ctx.luckysheetfile.map((item) => item.id),
+                oneSheet.id
+              ) === -1
+          )
+          .map((item) => getSheetIndex(ctxBefore, item.id as string));
+        const deletedIndex = sheetDeleted[0];
+        globalCache.current.undoList = globalCache.current.undoList.map(
+          (oneStep) => {
+            oneStep.patches = oneStep.patches.map((onePatch) => {
+              if (
+                typeof onePatch.path[1] === "number" &&
+                onePatch.path[1] > (deletedIndex as number)
+              ) {
+                onePatch.path[1] -= 1;
+              }
+              return onePatch;
+            });
+            oneStep.inversePatches = oneStep.inversePatches.map((onePatch) => {
+              if (
+                typeof onePatch.path[1] === "number" &&
+                onePatch.path[1] > (deletedIndex as number)
+              ) {
+                onePatch.path[1] -= 1;
+              }
+              return onePatch;
+            });
+            return oneStep;
+          }
+        );
+      }
+    }
+
+    function dataToCelldata(data: CellMatrix) {
+      const cellData: CellWithRowAndCol[] = [];
+      for (let row = 0; row < data?.length; row += 1) {
+        for (let col = 0; col < data[row]?.length; col += 1) {
+          if (data[row][col] !== null) {
+            cellData.push({
+              r: row,
+              c: col,
+              v: data[row][col],
+            });
+          }
+        }
+      }
+      return cellData;
+    }
 
     const setContextWithProduce = useCallback(
       (recipe: (ctx: Context) => void, options: SetContextOptions = {}) => {
@@ -132,19 +202,55 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               console.info("patch", patches);
             }
             const filteredPatches = filterPatch(patches);
-            const filteredInversePatches = filterPatch(inversePatches);
+            let filteredInversePatches = filterPatch(inversePatches);
             if (filteredInversePatches.length > 0) {
-              if (!options.addSheetOp && !options.deleteSheetOp) {
-                // add and delete sheet does not support undo/redo
-                globalCache.current.undoList.push({
-                  patches: filteredPatches,
-                  inversePatches: filteredInversePatches,
-                  options,
-                });
-                globalCache.current.redoList = [];
+              options.id = ctx_.currentSheetId;
+              if (options.deleteSheetOp) {
+                const target = ctx_.luckysheetfile.filter(
+                  (sheet) => sheet.id === options.deleteSheetOp?.id
+                );
+                if (target) {
+                  const index = getSheetIndex(
+                    ctx_,
+                    options.deleteSheetOp.id as string
+                  ) as number;
+                  options.deletedSheet = {
+                    id: options.deleteSheetOp.id as string,
+                    index: index as number,
+                    value: _.cloneDeep(ctx_.luckysheetfile[index]),
+                  };
+                  options.deletedSheet!.value!.celldata = dataToCelldata(
+                    options.deletedSheet!.value!.data as CellMatrix
+                  );
+                  delete options.deletedSheet!.value!.data;
+                  options.deletedSheet.value!.status = 0;
+                  filteredInversePatches = [
+                    {
+                      op: "add",
+                      path: ["luckysheetfile", 0],
+                      value: options.deletedSheet.value,
+                    },
+                  ];
+                }
+              } else if (options.addSheetOp) {
+                options.addSheet = {};
+                options.addSheet!.id =
+                  result.luckysheetfile[result.luckysheetfile.length - 1].id;
               }
+              globalCache.current.undoList.push({
+                patches: filteredPatches,
+                inversePatches: filteredInversePatches,
+                options,
+              });
+              globalCache.current.redoList = [];
               emitOp(result, filteredPatches, options);
             }
+          }
+          if (
+            patches?.[0]?.value?.luckysheetfile?.length <
+            ctx_?.luckysheetfile?.length
+          ) {
+            reduceUndoList(result, ctx_);
           }
           return result;
         });
@@ -156,13 +262,48 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       const history = globalCache.current.undoList.pop();
       if (history) {
         setContext((ctx_) => {
+          if (history.options?.deleteSheetOp) {
+            history.inversePatches[0].path[1] = ctx_.luckysheetfile.length;
+            const order = history.options.deletedSheet?.value?.order as number;
+            const sheetsRight = ctx_.luckysheetfile.filter(
+              (sheet) =>
+                (sheet?.order as number) >= (order as number) &&
+                sheet.id !== history?.options?.deleteSheetOp?.id
+            );
+            _.forEach(sheetsRight, (sheet) => {
+              history.inversePatches.push({
+                op: "replace",
+                path: [
+                  "luckysheetfile",
+                  getSheetIndex(ctx_, sheet.id as string) as number,
+                  "order",
+                ],
+                value: (sheet?.order as number) + 1,
+              } as Patch);
+            });
+          }
           const newContext = applyPatches(ctx_, history.inversePatches);
           globalCache.current.redoList.push(history);
           const inversedOptions = inverseRowColOptions(history.options);
           if (inversedOptions?.insertRowColOp) {
             inversedOptions.restoreDeletedCells = true;
           }
-          emitOp(newContext, history.inversePatches, inversedOptions);
+          if (history.options?.addSheetOp) {
+            const index = getSheetIndex(
+              ctx_,
+              history.options.addSheet!.id as string
+            ) as number;
+            inversedOptions!.addSheet = {
+              id: history.options.addSheet!.id as string,
+              index: index as number,
+              value: _.cloneDeep(ctx_.luckysheetfile[index]),
+            };
+            inversedOptions!.addSheet!.value!.celldata = dataToCelldata(
+              inversedOptions!.addSheet!.value?.data as CellMatrix
+            );
+            delete inversedOptions!.addSheet!.value!.data;
+          }
+          emitOp(newContext, history.inversePatches, inversedOptions, true);
           return newContext;
         });
       }
@@ -410,7 +551,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           scrollbarX.current,
           scrollbarY.current
         ),
-      [context, mergedSettings, setContextWithProduce]
+      [context, mergedSettings, setContextWithProduce, emitOp]
     );
 
     const i = getSheetIndex(context, context.currentSheetId);

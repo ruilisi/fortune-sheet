@@ -10,6 +10,13 @@ const defaultData = {
   name: "Demo",
   id: uuid.v4(),
   celldata: [{ r: 0, c: 0, v: null }],
+  order: 0,
+  row: 84,
+  column: 60,
+  config: {},
+  pivotTable: null,
+  isPivotTable: false,
+  status: 0,
 };
 
 const dbName = "fortune-sheet";

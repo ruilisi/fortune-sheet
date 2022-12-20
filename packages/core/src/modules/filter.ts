@@ -148,7 +148,7 @@ export function createFilterOptions(
   const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
   if (sheetIndex == null) return;
   if (luckysheet_filter_save == null || _.size(luckysheet_filter_save) === 0) {
-    ctx.filterOptions = undefined;
+    delete ctx.filterOptions;
     return;
   }
 

@@ -2,7 +2,14 @@ import _ from "lodash";
 import { Patch } from "immer";
 import { getSheetIndex } from ".";
 import { Context, getFlowdata } from "../context";
-import { Op } from "../types";
+import { Op, Sheet } from "../types";
+
+export type ChangedSheet = {
+  index?: number;
+  id?: string;
+  value?: Sheet;
+  order?: number;
+};
 
 export type PatchOptions = {
   insertRowColOp?: {
@@ -23,6 +30,9 @@ export type PatchOptions = {
   deleteSheetOp?: {
     id: string;
   };
+  addSheet?: ChangedSheet;
+  deletedSheet?: ChangedSheet;
+  id?: string;
 };
 
 const addtionalMergeOps = (ops: Op[], id: string) => {
@@ -154,7 +164,8 @@ export function extractFormulaCellOps(ops: Op[]) {
 export function patchToOp(
   ctx: Context,
   patches: Patch[],
-  options?: PatchOptions
+  options?: PatchOptions,
+  undo: boolean = false
 ): Op[] {
   let ops = patches.map((p) => {
     const op: Op = {
@@ -245,21 +256,99 @@ export function patchToOp(
       ops,
       (op) => op.path.length === 0 && op.op === "add"
     );
-    ops = otherOps;
-    ops.push({
-      op: "addSheet",
-      path: [],
-      value: addSheetOps[0]?.value,
-    });
-  } else if (options?.deleteSheetOp) {
-    ops = [
-      {
+    if (undo) {
+      // 撤消增表
+      const index = getSheetIndex(
+        ctx,
+        options.addSheet!.id as string
+      ) as number;
+      const order = options.addSheet?.value?.order;
+      ops = otherOps;
+      ops.push({
         op: "deleteSheet",
-        id: options.deleteSheetOp.id,
+        id: options.addSheet?.id,
         path: [],
-        value: options.deleteSheetOp,
-      },
-    ];
+        value: options.addSheet,
+      });
+      if (index !== ctx.luckysheetfile.length) {
+        const sheetsRight = ctx.luckysheetfile.filter(
+          (sheet) => (sheet?.order as number) >= (order as number)
+        );
+        _.forEach(sheetsRight, (sheet) => {
+          ops.push({
+            id: sheet.id,
+            op: "replace",
+            path: ["order"],
+            value: (sheet?.order as number) - 1,
+          });
+        });
+      }
+    } else {
+      // 正常增表
+      ops = otherOps;
+      ops.push({
+        op: "addSheet",
+        id: options.addSheet?.id,
+        path: [],
+        value: addSheetOps[0]?.value,
+      });
+    }
+  } else if (options?.deleteSheetOp) {
+    if (undo) {
+      // 撤销删表
+      ops = [
+        {
+          op: "addSheet",
+          id: options.deleteSheetOp.id,
+          path: [],
+          value: options.deletedSheet?.value,
+        },
+        {
+          id: options.deleteSheetOp.id,
+          op: "replace",
+          path: ["name"],
+          value: options.deletedSheet?.value?.name,
+        },
+      ];
+      const order = options.deletedSheet?.value?.order as number;
+      const sheetsRight = ctx.luckysheetfile.filter(
+        (sheet) =>
+          (sheet?.order as number) >= (order as number) &&
+          sheet.id !== options.deleteSheetOp?.id
+      );
+      _.forEach(sheetsRight, (sheet) => {
+        ops.push({
+          id: sheet.id,
+          op: "replace",
+          path: ["order"],
+          value: sheet?.order as number,
+        });
+      });
+    } else {
+      // 正常删表
+      ops = [
+        {
+          op: "deleteSheet",
+          id: options.deleteSheetOp.id,
+          path: [],
+          value: options.deletedSheet,
+        },
+      ];
+      const order = options.deletedSheet?.value?.order as number;
+      if (options.deletedSheet?.index !== ctx.luckysheetfile.length) {
+        const sheetsRight = ctx.luckysheetfile.filter(
+          (sheet) => (sheet?.order as number) >= (order as number)
+        );
+        _.forEach(sheetsRight, (sheet) => {
+          ops.push({
+            id: sheet.id,
+            op: "replace",
+            path: ["order"],
+            value: sheet?.order as number,
+          });
+        });
+      }
+    }
   }
   return ops;
 }
