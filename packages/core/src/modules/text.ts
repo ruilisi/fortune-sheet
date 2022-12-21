@@ -1249,6 +1249,7 @@ export function getCellTextInfo(
       let oneLinemaxWordCount = 0;
       // console.log("split",splitIndex, text_all_split);
       const splitLen = Object.keys(text_all_split).length;
+      if (splitLen === 0) return textContent;
       for (let j = 0; j < splitLen; j += 1) {
         const splitLists = text_all_split[j];
         if (_.isNil(splitLists)) {
