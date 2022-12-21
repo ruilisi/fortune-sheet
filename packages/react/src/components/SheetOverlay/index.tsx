@@ -75,11 +75,13 @@ const SheetOverlay: React.FC = () => {
           draftCtx,
           settings,
           nativeEvent,
-          refs.workbookContainer.current!
+          refs.workbookContainer.current!,
+          refs.cellArea.current!,
+          "cell"
         );
       });
     },
-    [refs.workbookContainer, setContext, settings]
+    [refs.workbookContainer, setContext, settings, refs.cellArea]
   );
 
   const cellAreaDoubleClick = useCallback(
