@@ -367,6 +367,9 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           draftCtx.defaultcolumnNum = mergedSettings.column;
           draftCtx.defaultrowNum = mergedSettings.row;
           draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
+          draftCtx.rowHeaderWidth = mergedSettings.rowHeaderWidth || 1.5;
+          draftCtx.columnHeaderHeight =
+            mergedSettings.columnHeaderHeight || 1.5;
           if (_.isEmpty(draftCtx.luckysheetfile)) {
             const newData = produce(originalData, (draftData) => {
               ensureSheetIndex(draftData, mergedSettings.generateSheetId);
@@ -489,6 +492,8 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       mergedSettings.generateSheetId,
       setContextWithProduce,
       initSheetData,
+      mergedSettings.rowHeaderWidth,
+      mergedSettings.columnHeaderHeight,
     ]);
 
     const onKeyDown = useCallback(

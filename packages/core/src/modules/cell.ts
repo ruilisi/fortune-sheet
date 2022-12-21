@@ -22,7 +22,11 @@ import { isRealNull, isRealNum, valueIsError } from "./validation";
 // let rangedrag_column_start = false;
 // let rangedrag_row_start = false;
 
-export function normalizedCellAttr(cell: Cell, attr: keyof Cell): any {
+export function normalizedCellAttr(
+  cell: Cell,
+  attr: keyof Cell,
+  defaultFontSize = 10
+): any {
   const tf = { bl: 1, it: 1, ff: 1, cl: 1, un: 1 };
   let value: any = cell?.[attr];
 
@@ -44,7 +48,7 @@ export function normalizedCellAttr(cell: Cell, attr: keyof Cell): any {
       value = defaultValue;
     }
   } else if (attr === "fs") {
-    value ||= "10";
+    value ||= defaultFontSize.toString();
   } else if (attr === "tb" || attr === "tr") {
     value ||= "0";
   }
@@ -383,7 +387,7 @@ export function mergeBorder(
   const value = d[row_index][col_index];
   if (!value) return null;
 
-  if ("mc" in value) {
+  if (value?.mc) {
     const margeMaindata = value.mc;
     if (!margeMaindata) {
       console.warn("Merge info is null", row_index, col_index);

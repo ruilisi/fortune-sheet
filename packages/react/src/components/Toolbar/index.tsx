@@ -245,7 +245,11 @@ const Toolbar: React.FC<{
       if (name === "font-size") {
         return (
           <Combo
-            text={cell ? normalizedCellAttr(cell, "fs") : "10"}
+            text={
+              cell
+                ? normalizedCellAttr(cell, "fs", context.defaultFontSize)
+                : context.defaultFontSize.toString()
+            }
             key={name}
             tooltip={tooltip}
           >
@@ -1217,6 +1221,7 @@ const Toolbar: React.FC<{
       splitText,
       findAndReplace,
       context.luckysheet_select_save,
+      context.defaultFontSize,
     ]
   );
 
