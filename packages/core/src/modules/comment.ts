@@ -271,7 +271,7 @@ export function newComment(
   // if(!checkProtectionAuthorityNormal(Store.currentSheetId, "editObjects")){
   //     return;
   // }
-
+  if (ctx.allowEdit === false) return;
   if (ctx.hooks.beforeInsertComment?.(r, c) === false) {
     return;
   }
@@ -313,6 +313,7 @@ export function editComment(
   // if(!checkProtectionAuthorityNormal(Store.currentSheetId, "editObjects")){
   //     return;
   // }
+  if (ctx.allowEdit === false) return;
   const flowdata = getFlowdata(ctx);
   removeEditingComment(ctx, globalCache);
   const comment = flowdata?.[r][c]?.ps;
@@ -340,7 +341,7 @@ export function deleteComment(
   // if(!checkProtectionAuthorityNormal(Store.currentSheetId, "editObjects")){
   //     return;
   // }
-
+  if (ctx.allowEdit === false) return;
   if (ctx.hooks.beforeDeleteComment?.(r, c) === false) {
     return;
   }
@@ -600,6 +601,7 @@ export function onCommentBoxResize(
   globalCache: GlobalCache,
   e: MouseEvent
 ) {
+  if (ctx.allowEdit === false) return false;
   const commentBox = globalCache?.commentBox;
   if (commentBox?.resizingId && commentBox.resizingSide) {
     const box = document.getElementById(commentBox.resizingId);
@@ -693,6 +695,7 @@ export function onCommentBoxMove(
   globalCache: GlobalCache,
   e: MouseEvent
 ) {
+  if (ctx.allowEdit === false) return false;
   const commentBox = globalCache?.commentBox;
   if (commentBox?.movingId) {
     const box = document.getElementById(commentBox.movingId);

@@ -39,6 +39,7 @@ const SheetTabContextMenu: React.FC = () => {
 
   const moveSheet = useCallback(
     (delta: number) => {
+      if (context.allowEdit === false) return;
       if (!sheet) return;
       setContext((ctx) => {
         let currentOrder = -1;
@@ -51,7 +52,7 @@ const SheetTabContextMenu: React.FC = () => {
         api.setSheetOrder(ctx, { [sheet.id!]: currentOrder + delta });
       });
     },
-    [setContext, sheet]
+    [context.allowEdit, setContext, sheet]
   );
 
   if (!sheet || x == null || y == null) return null;

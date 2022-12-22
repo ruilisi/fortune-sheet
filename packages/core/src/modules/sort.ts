@@ -65,6 +65,7 @@ export function sortSelection(ctx: Context, isAsc: boolean) {
   // if (!checkProtectionAuthorityNormal(ctx.currentSheetIndex, "sort")) {
   //   return;
   // }
+  if (ctx.allowEdit === false) return;
   if (ctx.luckysheet_select_save == null) return;
   if (ctx.luckysheet_select_save.length > 1) {
     // if (isEditMode()) {
