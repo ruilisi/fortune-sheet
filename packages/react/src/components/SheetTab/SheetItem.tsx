@@ -2,6 +2,7 @@ import {
   Sheet,
   editSheetName,
   cancelNormalSelected,
+  cancelActiveImgItem,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
@@ -175,6 +176,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
             luckysheet_selection_range: draftCtx.luckysheet_selection_range,
           };
           draftCtx.currentSheetId = sheet.id!;
+          cancelActiveImgItem(draftCtx, refs.globalCache);
           cancelNormalSelected(draftCtx);
         });
       }}
