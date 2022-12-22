@@ -72,6 +72,7 @@ export function saveHyperlink(
 }
 
 export function removeHyperlink(ctx: Context, r: number, c: number) {
+  if (ctx.allowEdit === false) return;
   const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
   const flowdata = getFlowdata(ctx);
   if (flowdata != null && sheetIndex != null) {

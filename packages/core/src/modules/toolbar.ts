@@ -667,6 +667,7 @@ export function autoSelectionFormula(
   formula: string,
   cache: GlobalCache
 ) {
+  if (ctx.allowEdit === false) return;
   const flowdata = getFlowdata(ctx);
   if (flowdata == null) return;
   // const nullfindnum = 40;
@@ -1104,7 +1105,7 @@ export function handleFormatPainter(ctx: Context) {
 
   // let _locale = locale();
   // let locale_paint = _locale.paint;
-
+  if (ctx.allowEdit === false) return;
   if (
     ctx.luckysheet_select_save == null ||
     ctx.luckysheet_select_save.length === 0
@@ -1235,6 +1236,7 @@ function coverBorderNone(ctx: Context) {
 
 // 2022-10-10 废弃了handleClearFormat中的foreach写法，改为可跳出的every写法，以防止选区多次覆盖
 export function handleClearFormat(ctx: Context) {
+  if (ctx.allowEdit === false) return;
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
   ctx.luckysheet_select_save?.every((selection) => {
@@ -1323,6 +1325,7 @@ export function handleBorder(ctx: Context, type: string) {
   // const d = editor.deepCopyFlowData(Store.flowdata);
   // let type = $(this).attr("type");
   // let type = "border-all";
+  if (ctx.allowEdit === false) return;
   if (type == null) {
     type = "border-all";
   }
@@ -1372,6 +1375,7 @@ export function handleBorder(ctx: Context, type: string) {
 }
 
 export function handleMerge(ctx: Context, type: string) {
+  if (ctx.allowEdit === false) return;
   // if (!checkProtectionNotEnable(ctx.currentSheetId)) {
   //   return;
   // }
@@ -1471,6 +1475,7 @@ export function handleSum(
 }
 
 export function handleLink(ctx: Context) {
+  if (ctx.allowEdit === false) return;
   const selection = ctx.luckysheet_select_save?.[0];
   const flowdata = getFlowdata(ctx);
   if (flowdata != null && selection != null) {

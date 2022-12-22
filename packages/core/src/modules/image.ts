@@ -161,6 +161,7 @@ export function onImageMove(
   globalCache: GlobalCache,
   e: MouseEvent
 ) {
+  if (ctx.allowEdit === false) return false;
   const image = globalCache?.image;
   const img = document.getElementById("luckysheet-modal-dialog-activeImage");
   if (img && image && !image.resizingSide) {
@@ -212,6 +213,7 @@ export function onImageResize(
   globalCache: GlobalCache,
   e: MouseEvent
 ) {
+  if (ctx.allowEdit === false) return false;
   const image = globalCache?.image;
   if (image?.resizingSide) {
     const imgContainer = document.getElementById(

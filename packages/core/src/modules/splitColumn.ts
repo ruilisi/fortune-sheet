@@ -23,6 +23,7 @@ export function updateMoreCell(
   dataMatrix: string[][],
   ctx: Context
 ) {
+  if (ctx.allowEdit === false) return;
   const flowdata = getFlowdata(ctx);
   dataMatrix.forEach((datas, i) => {
     datas.forEach((data, j) => {

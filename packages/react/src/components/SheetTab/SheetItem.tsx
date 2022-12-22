@@ -93,14 +93,16 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
 
   const onDragStart = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
-      e.dataTransfer.setData("sheetId", `${sheet.id}`);
+      if (context.allowEdit === true)
+        e.dataTransfer.setData("sheetId", `${sheet.id}`);
       e.stopPropagation();
     },
-    [sheet.id]
+    [context.allowEdit, sheet.id]
   );
 
   const onDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
+      if (context.allowEdit === false) return;
       const draggingId = e.dataTransfer.getData("sheetId");
       setContext((draftCtx) => {
         const droppingId = sheet.id;
@@ -127,7 +129,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
       setDragOver(false);
       e.stopPropagation();
     },
-    [isDropPlaceholder, setContext, sheet.id]
+    [context.allowEdit, isDropPlaceholder, setContext, sheet.id]
   );
 
   return (

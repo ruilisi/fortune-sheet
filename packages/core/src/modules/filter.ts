@@ -144,7 +144,7 @@ export function createFilterOptions(
 ) {
   // $(`#luckysheet-filter-selected-sheet${ctx.currentSheetIndex}`).remove();
   // $(`#luckysheet-filter-options-sheet${ctx.currentSheetIndex}`).remove();
-
+  if (ctx.allowEdit === false) return;
   const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
   if (sheetIndex == null) return;
   if (luckysheet_filter_save == null || _.size(luckysheet_filter_save) === 0) {
@@ -193,6 +193,7 @@ export function createFilterOptions(
 }
 
 export function clearFilter(ctx: Context) {
+  if (ctx.allowEdit === false) return;
   const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
   const hiddenRows = _.reduce(
     ctx.filter,

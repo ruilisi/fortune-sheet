@@ -169,26 +169,29 @@ export const LinkEditCard: React.FC<LinkCardProps> = ({
             ? insertLink.openLink
             : replaceHtml(insertLink.goTo, { linkAddress })}
         </div>
-        <div className="divider" />
-        {linkType === "webpage" &&
+        {context.allowEdit === true && <div className="divider" />}
+        {context.allowEdit === true &&
+          linkType === "webpage" &&
           renderToolbarButton("copy", () => {
             navigator.clipboard.writeText(originAddress);
             hideLinkCard();
           })}
-        {renderToolbarButton("pencil", () =>
-          setContext((draftCtx) => {
-            if (draftCtx.linkCard != null) {
-              draftCtx.linkCard.isEditing = true;
-            }
-          })
-        )}
-        <div className="divider" />
-        {renderToolbarButton("unlink", () =>
-          setContext((draftCtx) => {
-            _.set(refs.globalCache, "linkCard.mouseEnter", false);
-            removeHyperlink(draftCtx, r, c);
-          })
-        )}
+        {context.allowEdit === true &&
+          renderToolbarButton("pencil", () =>
+            setContext((draftCtx) => {
+              if (draftCtx.linkCard != null && draftCtx.allowEdit) {
+                draftCtx.linkCard.isEditing = true;
+              }
+            })
+          )}
+        {context.allowEdit === true && <div className="divider" />}
+        {context.allowEdit === true &&
+          renderToolbarButton("unlink", () =>
+            setContext((draftCtx) => {
+              _.set(refs.globalCache, "linkCard.mouseEnter", false);
+              removeHyperlink(draftCtx, r, c);
+            })
+          )}
       </div>
     );
   }

@@ -148,6 +148,7 @@ const NotationBoxes: React.FC = () => {
                   data-c={c}
                   onKeyDown={(e) => e.stopPropagation()}
                   onFocus={(e) => {
+                    if (context.allowEdit === false) return;
                     refs.globalCache.editingCommentBoxEle =
                       e.target as HTMLDivElement;
                   }}
