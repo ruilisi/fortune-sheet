@@ -143,6 +143,7 @@ const NotationBoxes: React.FC = () => {
                     wordBreak: "break-all",
                     outline: "none",
                   }}
+                  allowEdit={context.allowEdit}
                   spellCheck={false}
                   data-r={r}
                   data-c={c}

@@ -297,6 +297,7 @@ const InputBox: React.FC = () => {
           onChange={onChange}
           onKeyDown={onKeyDown}
           onPaste={onPaste}
+          allowEdit={context.allowEdit}
         />
       </div>
       {document.activeElement === inputRef.current && (
