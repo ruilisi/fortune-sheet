@@ -519,6 +519,49 @@ export const DeleteSheet: ComponentStory<typeof Workbook> = () => {
   );
 };
 
+export const UpdateSheet: ComponentStory<typeof Workbook> = () => {
+  const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    { id: "1", name: "sheet1", data: [[{ v: "1" }]], order: 0 },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
+  return (
+    <ApiExecContainer
+      onRun={() => {
+        // 使用cellData模式更新样例
+        // ref.current?.updateSheet([
+        //   {
+        //     id: "1",
+        //     name: "sheet1",
+        //     celldata: [
+        //       {
+        //         r: 0,
+        //         c: 0,
+        //         v: { ct: { fa: "General", t: "n" }, m: "1", v: "1" },
+        //       },
+        //     ],
+        //     order: 0,
+        //   },
+        // ]);
+        // 使用data更新样例
+        ref.current?.updateSheet([
+          { id: "1", name: "lvjing", data: [[{ v: "1" }]], order: 0 },
+          {
+            id: "2",
+            name: "lvjing2",
+            data: [[{ v: "12" }, { v: "lvjing" }]],
+            order: 1,
+          },
+        ]);
+      }}
+    >
+      <Workbook ref={ref} data={data} onChange={onChange} />
+    </ApiExecContainer>
+  );
+};
+
 export const ActivateSheet: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
   const [data, setData] = useState<Sheet[]>([
