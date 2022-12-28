@@ -1412,21 +1412,19 @@ export function handleContextMenu(
     const mouseY = e.pageY - rect.top;
     let selected_x = mouseX + ctx.scrollLeft;
     let selected_y = mouseY + ctx.scrollTop;
-    const new_x = e.pageX - rect.left;
-    const new_y = e.pageY - rect.top;
     [selected_x, selected_y] = fixPositionOnFrozenCells(
       undefined,
-      new_x,
-      new_y,
       selected_x,
-      selected_y
+      selected_y,
+      mouseX,
+      mouseY
     );
-    const row_location = rowLocation(new_y, ctx.visibledatarow);
+    const row_location = rowLocation(selected_y, ctx.visibledatarow);
     const row = row_location[1];
     const row_pre = row_location[0];
     const row_index = row_location[2];
 
-    const col_location = colLocation(new_x, ctx.visibledatacolumn);
+    const col_location = colLocation(selected_x, ctx.visibledatacolumn);
     const col = col_location[1];
     const col_pre = col_location[0];
     const col_index = col_location[2];
