@@ -242,21 +242,18 @@ const SheetOverlay: React.FC = () => {
 
   const handleBottomAddRow = useCallback(() => {
     let valueStr = bottomAddRowInputRef.current?.value || "";
-    if (valueStr === "") {
-      valueStr = "100";
-    }
-    const value = parseInt(valueStr, 10);
-
-    if (Number.isNaN(value)) {
-      return;
-    }
-
-    if (value < 1) {
-      return;
-    }
-
     setContext((draftCtx) => {
       const data = getFlowdata(draftCtx);
+      if (valueStr === "") {
+        valueStr = draftCtx.addDefaultRows;
+      }
+      const value = parseInt(valueStr, 10);
+      if (Number.isNaN(value)) {
+        return;
+      }
+      if (value < 1) {
+        return;
+      }
       try {
         expandRowsAndColumns(data!, value, 0);
       } catch (e: any) {
@@ -660,7 +657,7 @@ const SheetOverlay: React.FC = () => {
                     ref={bottomAddRowInputRef}
                     type="text"
                     style={{ width: 50 }}
-                    placeholder="100"
+                    placeholder={context.addDefaultRows}
                   />{" "}
                   <span style={{ fontSize: 14 }}>{info.row}</span>{" "}
                   <span style={{ fontSize: 14, color: "#9c9c9c" }}>
