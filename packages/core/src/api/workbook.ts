@@ -1,8 +1,9 @@
 import _ from "lodash";
-import { Context } from "..";
+import { Context, Sheet } from "..";
 import {
   addSheet as addSheetInternal,
   deleteSheet as deleteSheetInternal,
+  updateSheet as updateSheetInternal,
 } from "../modules";
 import { Settings } from "../settings";
 import { CommonOptions, getSheet } from "./common";
@@ -15,6 +16,10 @@ export function addSheet(ctx: Context, settings: Required<Settings>) {
 export function deleteSheet(ctx: Context, options: CommonOptions = {}) {
   const sheet = getSheet(ctx, options);
   deleteSheetInternal(ctx, sheet.id!);
+}
+
+export function updateSheet(ctx: Context, data: Sheet[]) {
+  updateSheetInternal(ctx, data);
 }
 
 export function activateSheet(ctx: Context, options: CommonOptions = {}) {

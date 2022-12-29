@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { initSheetData } from "../api/sheet";
 import { Context } from "../context";
 import { locale } from "../locale";
 import { Settings } from "../settings";
@@ -187,6 +188,33 @@ export function deleteSheet(ctx: Context, id: string) {
       ctx.hooks.afterDeleteSheet?.(id);
     });
   }
+}
+
+export function updateSheet(ctx: Context, newData: Sheet[]) {
+  newData.forEach((newDatum) => {
+    const { data } = newDatum;
+    const index = getSheetIndex(ctx, newDatum.id!) as number;
+    if (data != null) {
+      const lastRowNum = Math.max(data[0].length, ctx.defaultrowNum);
+      const lastColNum = Math.max(data.length, ctx.defaultcolumnNum);
+      const expandedData: Sheet["data"] = _.times(lastRowNum + 1, () =>
+        _.times(lastColNum + 1, () => null)
+      );
+      for (let i = 0; i < data.length; i += 1) {
+        for (let j = 0; j < data[i].length; j += 1) {
+          expandedData[i][j] = data[i][j];
+        }
+      }
+      newDatum.data = expandedData;
+      if (ctx.luckysheetfile[index] == null) {
+        ctx.luckysheetfile.push(newDatum);
+      } else {
+        ctx.luckysheetfile[index] = newDatum;
+      }
+    } else if (newDatum.celldata != null) {
+      initSheetData(ctx, index, newDatum.celldata);
+    }
+  });
 }
 
 export function editSheetName(ctx: Context, editable: HTMLSpanElement) {

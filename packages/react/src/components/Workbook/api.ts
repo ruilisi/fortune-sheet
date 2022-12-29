@@ -18,6 +18,7 @@ import {
   GlobalCache,
   inverseRowColOptions,
   PatchOptions,
+  Sheet,
 } from "@fortune-sheet/core";
 import produce, { applyPatches, Patch } from "immer";
 import _ from "lodash";
@@ -240,6 +241,9 @@ export function generateAPIs(
 
     deleteSheet: (options: api.CommonOptions = {}) =>
       setContext((draftCtx) => api.deleteSheet(draftCtx, options)),
+
+    updateSheet: (data: Sheet[]) =>
+      setContext((draftCtx) => api.updateSheet(draftCtx, data)),
 
     activateSheet: (options: api.CommonOptions = {}) =>
       setContext((draftCtx) => api.activateSheet(draftCtx, options)),
