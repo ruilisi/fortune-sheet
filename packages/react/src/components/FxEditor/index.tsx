@@ -74,7 +74,7 @@ const FxEditor: React.FC = () => {
   ]);
 
   const onFocus = useCallback(() => {
-    if (!context.allowEdit) {
+    if (context.allowEdit === false) {
       return;
     }
     if (
@@ -106,7 +106,7 @@ const FxEditor: React.FC = () => {
 
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (!context.allowEdit) {
+      if (context.allowEdit === false) {
         return;
       }
       lastKeyDownEventRef.current = new KeyboardEvent(e.type, e.nativeEvent);
@@ -276,6 +276,7 @@ const FxEditor: React.FC = () => {
           onChange={onChange}
           onBlur={() => setFocused(false)}
           tabIndex={0}
+          allowEdit={context.allowEdit}
         />
         {focused && (
           <>

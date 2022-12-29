@@ -56,7 +56,6 @@
   margin: 0;
   outline: none;
   cursor: text;
-  -webkit-user-modify: read-write-plaintext-only;
   white-space: pre-wrap;
   word-wrap: break-word;
   -webkit-transform: translateZ(0);
@@ -65,4 +64,7 @@
   background-color: white;
   padding-top: 7px;
   box-sizing: border-box;
+}
+.fortune-fx-input[contenteditable="true"] {
+  -webkit-user-modify: read-write-plaintext-only;
 }

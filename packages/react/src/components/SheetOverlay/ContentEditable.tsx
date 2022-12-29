@@ -10,6 +10,7 @@ type ContentEditableProps = Omit<
   onChange?: (html: string) => void;
   onBlur?: (e: React.FocusEvent<HTMLDivElement, Element>) => void;
   autoFocus?: boolean;
+  allowEdit?: boolean;
 };
 
 class ContentEditable extends React.Component<ContentEditableProps> {
@@ -45,6 +46,8 @@ class ContentEditable extends React.Component<ContentEditableProps> {
 
   render() {
     const { innerRef, onBlur } = this.props;
+    let { allowEdit } = this.props;
+    if (_.isNil(allowEdit)) allowEdit = true;
     return (
       <div
         onMouseDown={(e) => e.stopPropagation()}
@@ -57,6 +60,7 @@ class ContentEditable extends React.Component<ContentEditableProps> {
           "html",
           "onBlur",
           "autoFocus",
+          "allowEdit",
           "initialContent"
         )}
         ref={(e) => {
@@ -69,7 +73,7 @@ class ContentEditable extends React.Component<ContentEditableProps> {
           this.emitChange.bind(this)();
           onBlur?.(e);
         }}
-        contentEditable
+        contentEditable={allowEdit}
       />
     );
   }
