@@ -20,6 +20,7 @@ export type Context = {
   luckysheetfile: Sheet[];
   defaultcolumnNum: number;
   defaultrowNum: number;
+  addDefaultRows: number;
   fullscreenmode: boolean;
   devicePixelRatio: number;
   commentBoxes?: CommentBox[];
@@ -176,6 +177,7 @@ export function defaultContext(): Context {
     luckysheetfile: [],
     defaultcolumnNum: 60,
     defaultrowNum: 84,
+    addDefaultRows: 50,
     fullscreenmode: true,
     devicePixelRatio: (global || window).devicePixelRatio,
 

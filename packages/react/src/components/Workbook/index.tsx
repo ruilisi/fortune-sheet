@@ -450,6 +450,12 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             draftCtx.defaultrowlen = mergedSettings.defaultRowHeight;
           }
 
+          if (!_.isNil(sheet.addRows)) {
+            draftCtx.addDefaultRows = Number(sheet.addRows);
+          } else {
+            draftCtx.addDefaultRows = mergedSettings.addRows;
+          }
+
           if (!_.isNil(sheet.defaultColWidth)) {
             draftCtx.defaultcollen = Number(sheet.defaultColWidth);
           } else {
@@ -494,6 +500,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       initSheetData,
       mergedSettings.rowHeaderWidth,
       mergedSettings.columnHeaderHeight,
+      mergedSettings.addRows,
     ]);
 
     const onKeyDown = useCallback(

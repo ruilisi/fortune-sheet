@@ -124,6 +124,7 @@ export type Hooks = {
 export type Settings = {
   column?: number;
   row?: number;
+  addRows?: number;
   allowEdit?: boolean;
   showToolbar?: boolean;
   showFormulaBar?: boolean;
@@ -149,6 +150,7 @@ export type Settings = {
 export const defaultSettings: Required<Settings> = {
   column: 60, // 空表格默认的列数量
   row: 84, // 空表格默认的行数据量
+  addRows: 50, // It will add the rows when we click on add row button
   showToolbar: true, // 是否显示工具栏
   showFormulaBar: true, // 是否显示公式栏
   showSheetTabs: true, // 是否显示底部表格名称区域
