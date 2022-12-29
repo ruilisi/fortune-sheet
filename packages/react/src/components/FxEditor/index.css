@@ -64,6 +64,8 @@
   background-color: white;
   padding-top: 7px;
   box-sizing: border-box;
+  color:black;
+  text-align: left;
 }
 .fortune-fx-input[contenteditable="true"] {
   -webkit-user-modify: read-write-plaintext-only;
