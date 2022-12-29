@@ -126,6 +126,7 @@ export type Sheet = {
   zoomRatio?: number;
   column?: number;
   row?: number;
+  addRows?: number;
   status?: number;
   luckysheet_select_save?: Selection[];
   luckysheet_selection_range?: {
