@@ -35,6 +35,8 @@ const InputBox: React.FC = () => {
   const prevCellUpdate = usePrevious<any[]>(context.luckysheetCellUpdate);
   const prevSheetId = usePrevious<string>(context.currentSheetId);
   const firstSelection = context.luckysheet_select_save?.[0];
+  const row_index = firstSelection?.row_focus!;
+  const col_index = firstSelection?.column_focus!;
 
   const inputBoxStyle = useMemo(() => {
     if (firstSelection && context.luckysheetCellUpdate.length > 0) {
@@ -69,8 +71,8 @@ const InputBox: React.FC = () => {
         return;
       }
       const flowdata = getFlowdata(context);
-      const row_index = firstSelection.row_focus!;
-      const col_index = firstSelection.column_focus!;
+      //const row_index = firstSelection.row_focus!;
+      //const col_index = firstSelection.column_focus!;
       const cell = flowdata?.[row_index]?.[col_index];
       let value = "";
       if (cell && !refs.globalCache.overwriteCell) {
@@ -259,7 +261,26 @@ const InputBox: React.FC = () => {
     },
     [context.luckysheetCellUpdate]
   );
+  
+  const sheetIndex =  Number(context.currentSheetId);
+  const sheet = context.luckysheetfile[sheetIndex];
+  const cfg = sheet.config || {};
+  let rowReadOnly: number[] = [];
+  let colReadOnly: number[] = [];
 
+  if (! _.isNil(cfg.rowReadOnly)) {
+      rowReadOnly = cfg.rowReadOnly
+  }
+  
+  if (! _.isNil(cfg.colReadOnly)) {
+      colReadOnly = cfg.colReadOnly
+  }
+  
+  let edit = context.allowEdit;
+  if((colReadOnly.indexOf(col_index) !== -1 || rowReadOnly.indexOf(row_index) !== -1) && context.allowEdit === true){
+    edit = false;
+  }
+  
   return (
     <div
       className="luckysheet-input-box"
@@ -297,7 +318,7 @@ const InputBox: React.FC = () => {
           onChange={onChange}
           onKeyDown={onKeyDown}
           onPaste={onPaste}
-          allowEdit={context.allowEdit}
+          allowEdit={edit}
         />
       </div>
       {document.activeElement === inputRef.current && (
