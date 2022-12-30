@@ -381,8 +381,8 @@ const ContextMenu: React.FC = () => {
     const rect = containerRef.current.getBoundingClientRect();
     const menuW = rect.width;
     const menuH = rect.height;
-    let top = contextMenu.pageY;
-    let left = contextMenu.pageX;
+    let top = contextMenu.y;
+    let left = contextMenu.x;
 
     let hasOverflow = false;
     if (left + menuW > winW) {
