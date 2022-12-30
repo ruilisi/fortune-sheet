@@ -533,8 +533,14 @@ export function handleCellAreaMouseDown(
         };
       }
 
-      rangeSetValue(ctx, cellInput, { row: rowseleted, column: columnseleted });
-
+      if (document.activeElement?.className === "fortune-fx-input") {
+        rangeSetValue(ctx, fxInput, { row: rowseleted, column: columnseleted });
+      } else {
+        rangeSetValue(ctx, cellInput, {
+          row: rowseleted,
+          column: columnseleted,
+        });
+      }
       ctx.formulaCache.rangestart = true;
       ctx.formulaCache.rangedrag_column_start = false;
       ctx.formulaCache.rangedrag_row_start = false;

@@ -3079,13 +3079,13 @@ export function rangeSetValue(
       ctx.formulaCache.rangetosheet
     );
   }
-
   // let $editor;
 
   if (
-    ctx.formulaCache.rangestart ||
-    ctx.formulaCache.rangedrag_column_start ||
-    ctx.formulaCache.rangedrag_row_start
+    !israngeseleciton(ctx) &&
+    (ctx.formulaCache.rangestart ||
+      ctx.formulaCache.rangedrag_column_start ||
+      ctx.formulaCache.rangedrag_row_start)
   ) {
     //   if (
     //     $("#luckysheet-search-formula-parm").is(":visible") ||
