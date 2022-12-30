@@ -104,6 +104,8 @@ export type SheetConfig = {
   customWidth?: Record<string, number>;
   borderInfo?: any[]; // 边框
   authority?: any;
+  rowReadOnly?: number[];
+  colReadOnly?: number[];
 };
 
 export type Image = {
