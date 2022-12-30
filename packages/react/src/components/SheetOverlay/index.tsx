@@ -245,7 +245,7 @@ const SheetOverlay: React.FC = () => {
     setContext((draftCtx) => {
       const data = getFlowdata(draftCtx);
       if (valueStr === "") {
-        valueStr = draftCtx.addDefaultRows;
+        valueStr = draftCtx.addDefaultRows.toString();
       }
       const value = parseInt(valueStr, 10);
       if (Number.isNaN(value)) {
@@ -657,7 +657,7 @@ const SheetOverlay: React.FC = () => {
                     ref={bottomAddRowInputRef}
                     type="text"
                     style={{ width: 50 }}
-                    placeholder={context.addDefaultRows}
+                    placeholder={context.addDefaultRows.toString()}
                   />{" "}
                   <span style={{ fontSize: 14 }}>{info.row}</span>{" "}
                   <span style={{ fontSize: 14, color: "#9c9c9c" }}>
