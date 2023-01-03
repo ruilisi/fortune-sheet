@@ -11304,6 +11304,7 @@ export default {
     borderVertical: "Vertical borders",
     borderColor: "borderColor",
     borderSize: "borderSize",
+    borderSlash: "Slash border",
   },
   merge: {
     mergeAll: "Merge all",
@@ -11434,6 +11435,8 @@ export default {
     copyAs: "Copy as",
     paste: "Paste",
     insert: "Insert",
+    image: "Insert image",
+    link: "Insert link",
     delete: "Delete",
     deleteCell: "Delete cell",
     deleteSelected: "Delete selected ",

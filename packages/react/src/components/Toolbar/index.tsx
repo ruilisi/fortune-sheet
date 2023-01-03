@@ -83,6 +83,7 @@ const Toolbar: React.FC<{
     filter,
     splitText,
     findAndReplace,
+    comment,
   } = locale(context);
   const sheetWidth = context.luckysheetTableContentHW[0];
 
@@ -705,25 +706,25 @@ const Toolbar: React.FC<{
         let itemData: { key: any; text: any; onClick: any }[];
         if (flowdata?.[row_index]?.[col_index]?.ps != null) {
           itemData = [
-            { key: "edit", text: "编辑评论", onClick: editComment },
-            { key: "delete", text: "删除", onClick: deleteComment },
+            { key: "edit", text: comment.edit, onClick: editComment },
+            { key: "delete", text: comment.delete, onClick: deleteComment },
             {
               key: "showOrHide",
-              text: "显示/隐藏评论",
+              text: comment.showOne,
               onClick: showHideComment,
             },
             {
               key: "showOrHideAll",
-              text: "显示/隐藏所有评论",
+              text: comment.showAll,
               onClick: showHideAllComments,
             },
           ];
         } else {
           itemData = [
-            { key: "new", text: "新建评论", onClick: newComment },
+            { key: "new", text: comment.insert, onClick: newComment },
             {
               key: "showOrHideAll",
-              text: "显示/隐藏所有评论",
+              text: comment.showAll,
               onClick: showHideAllComments,
             },
           ];
