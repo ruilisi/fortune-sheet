@@ -128,6 +128,7 @@ export type Sheet = {
   row?: number;
   addRows?: number;
   status?: number;
+  hide?: number;
   luckysheet_select_save?: Selection[];
   luckysheet_selection_range?: {
     row: number[];
