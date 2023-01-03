@@ -45,6 +45,7 @@ import MoreItemsContaier from "../Toolbar/MoreItemsContainer";
 import { generateAPIs } from "./api";
 import { ModalProvider } from "../../context/modal";
 import FilterMenu from "../ContextMenu/FilterMenu";
+import SheetList from "../SheetList";
 
 enablePatches();
 
@@ -600,6 +601,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             <ContextMenu />
             <FilterMenu />
             <SheetTabContextMenu />
+            {context.showSheetList && <SheetList />}
             {moreToolbarItems && (
               <MoreItemsContaier onClose={onMoreToolbarItemsClose}>
                 {moreToolbarItems}
@@ -611,6 +613,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                   setContextWithProduce((draftCtx) => {
                     draftCtx.contextMenu = undefined;
                     draftCtx.filterContextMenu = undefined;
+                    draftCtx.showSheetList = undefined;
                   });
                 }}
                 onMouseMove={(e) => e.stopPropagation()}

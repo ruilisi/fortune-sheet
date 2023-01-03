@@ -189,7 +189,18 @@
 .fortune-sheettab-button {
   display: flex;
   align-items: center;
-  margin: 0 8px;
+  justify-content: center;
+  height: 29px;
+  width: 29px;
+}
+
+.fortune-sheettab-button:hover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 29px;
+  width: 29px;
+  background-color: #efefef;
 }
 
 .luckysheet-noselected-text {
@@ -218,4 +229,11 @@
   height: 29px;
   line-height: 29px;
   vertical-align: middle;
+}
+
+.sheet-list-container {
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }

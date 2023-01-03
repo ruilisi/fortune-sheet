@@ -182,6 +182,13 @@ export function deleteSheet(ctx: Context, id: string) {
   // _this.reOrderAllSheet();
 
   // server.saveParam("shd", null, { deleIndex: index });
+  if (id === ctx.currentSheetId) {
+    const shownSheets = _.cloneDeep(ctx.luckysheetfile).filter(
+      (singleSheet) => _.isUndefined(singleSheet.hide) || singleSheet.hide !== 1
+    );
+    const orderSheets = _.sortBy(shownSheets, (sheet) => sheet.order);
+    ctx.currentSheetId = orderSheets?.[0]?.id as string;
+  }
 
   if (ctx.hooks.afterDeleteSheet) {
     setTimeout(() => {

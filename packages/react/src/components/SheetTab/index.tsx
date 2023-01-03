@@ -106,6 +106,24 @@ const SheetTab: React.FC = () => {
             <SVGIcon name="plus" width={16} height={16} />
           </div>
         )}
+        {context.allowEdit && (
+          <div className="sheet-list-container">
+            <div
+              id="all-sheets"
+              className="fortune-sheettab-button"
+              ref={tabContainerRef}
+              onMouseDown={() => {
+                setContext((ctx) => {
+                  ctx.showSheetList = _.isUndefined(ctx.showSheetList)
+                    ? true
+                    : !ctx.showSheetList;
+                });
+              }}
+            >
+              <SVGIcon name="all-sheets" width={16} height={16} />
+            </div>
+          </div>
+        )}
         <div
           id="luckysheet-sheets-m"
           className="luckysheet-sheets-m lucky-button-custom"
