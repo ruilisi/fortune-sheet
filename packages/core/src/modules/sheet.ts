@@ -192,13 +192,21 @@ export function deleteSheet(ctx: Context, id: string) {
 
 export function updateSheet(ctx: Context, newData: Sheet[]) {
   newData.forEach((newDatum) => {
-    const { data } = newDatum;
+    const { data, row, column } = newDatum;
     const index = getSheetIndex(ctx, newDatum.id!) as number;
     if (data != null) {
-      const lastRowNum = Math.max(data[0].length, ctx.defaultrowNum);
-      const lastColNum = Math.max(data.length, ctx.defaultcolumnNum);
-      const expandedData: Sheet["data"] = _.times(lastRowNum + 1, () =>
-        _.times(lastColNum + 1, () => null)
+      // 如果row和column存在的话则进行row和column和data进行比较，如果row和column不存在的话则进行data和default进行比较。
+      let lastRowNum = data[0].length;
+      let lastColNum = data.length;
+      if (row != null && column != null && row > 0 && column > 0) {
+        lastRowNum = Math.max(lastRowNum, row);
+        lastColNum = Math.max(lastColNum, column);
+      } else {
+        lastRowNum = Math.max(lastRowNum, ctx.defaultrowNum);
+        lastColNum = Math.max(lastColNum, ctx.defaultcolumnNum);
+      }
+      const expandedData: Sheet["data"] = _.times(lastRowNum, () =>
+        _.times(lastColNum, () => null)
       );
       for (let i = 0; i < data.length; i += 1) {
         for (let j = 0; j < data[i].length; j += 1) {
@@ -212,7 +220,7 @@ export function updateSheet(ctx: Context, newData: Sheet[]) {
         ctx.luckysheetfile[index] = newDatum;
       }
     } else if (newDatum.celldata != null) {
-      initSheetData(ctx, index, newDatum.celldata);
+      initSheetData(ctx, index, newDatum);
     }
   });
 }

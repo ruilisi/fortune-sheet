@@ -12,20 +12,33 @@ export { getSheet };
 export function initSheetData(
   draftCtx: Context,
   index: number,
-  cellData?: CellWithRowAndCol[]
+  newData: Sheet
 ): CellMatrix | null {
-  const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
-  const lastCol = _.maxBy(cellData, "c");
-  const lastRowNum = Math.max(lastRow?.r ?? 0, draftCtx.defaultrowNum);
-  const lastColNum = Math.max(lastCol?.c ?? 0, draftCtx.defaultcolumnNum);
+  const { celldata, row, column } = newData;
+  const lastRow = _.maxBy<CellWithRowAndCol>(celldata, "r");
+  const lastCol = _.maxBy(celldata, "c");
+  let lastRowNum = (lastRow?.r ?? 0) + 1;
+  let lastColNum = (lastCol?.c ?? 0) + 1;
+  if (row != null && column != null && row > 0 && column > 0) {
+    lastRowNum = Math.max(lastRowNum, row);
+    lastColNum = Math.max(lastColNum, column);
+  } else {
+    lastRowNum = Math.max(lastRowNum, draftCtx.defaultrowNum);
+    lastColNum = Math.max(lastColNum, draftCtx.defaultcolumnNum);
+  }
   if (lastRowNum && lastColNum) {
-    const expandedData: Sheet["data"] = _.times(lastRowNum + 1, () =>
-      _.times(lastColNum + 1, () => null)
+    const expandedData: Sheet["data"] = _.times(lastRowNum, () =>
+      _.times(lastColNum, () => null)
     );
-    cellData?.forEach((d) => {
+    celldata?.forEach((d) => {
       expandedData[d.r][d.c] = d.v;
     });
-    draftCtx.luckysheetfile[index].data = expandedData;
+    if (draftCtx.luckysheetfile[index] == null) {
+      newData.data = expandedData;
+      draftCtx.luckysheetfile.push(newData);
+    } else {
+      draftCtx.luckysheetfile[index].data = expandedData;
+    }
     return expandedData;
   }
   return null;
