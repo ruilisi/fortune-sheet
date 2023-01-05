@@ -11440,6 +11440,8 @@ export default {
     copyAs: "複製為",
     paste: "粘貼",
     insert: "插入",
+    image: "插入圖片",
+    link: "插入連結",
     delete: "删除",
     deleteCell: "删除儲存格",
     deleteSelected: "删除選中",
