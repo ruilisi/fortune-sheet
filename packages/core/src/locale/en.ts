@@ -11378,8 +11378,8 @@ export default {
   filter: {
     filter: "create filter",
 
-    sortByAsc: "Sort A-Z",
-    sortByDesc: "Sort Z-A",
+    sortByAsc: "Ascending sort",
+    sortByDesc: "Descending sort",
     filterByColor: "Filter by color",
     filterByCondition: "Filter by condition",
     filterByValues: "Filter by values",
@@ -11457,8 +11457,8 @@ export default {
     height: "Height",
     number: "Number",
     confirm: "Confirm",
-    orderAZ: "A-Z order",
-    orderZA: "Z-A order",
+    orderAZ: "Ascending sort",
+    orderZA: "Descending sort",
     clearContent: "Clear content",
     matrix: "Matrix operation",
     sortSelection: "Sort",
