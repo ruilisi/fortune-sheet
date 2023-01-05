@@ -1428,7 +1428,25 @@ export function handleContextMenu(
     const col = col_location[1];
     const col_pre = col_location[0];
     const col_index = col_location[2];
+    // 如果右键点击在选区内则不做选区处理
+    let isInSelection = false;
+    ctx.luckysheet_select_save?.some((obj_s) => {
+      if (
+        obj_s.row != null &&
+        row_index >= obj_s.row[0] &&
+        row_index <= obj_s.row[1] &&
+        col_index >= obj_s.column[0] &&
+        col_index <= obj_s.column[1]
+      ) {
+        isInSelection = true;
+        return false;
+      }
+      return true;
+    });
 
+    if (isInSelection) {
+      return;
+    }
     const row_index_ed = row_index;
     const col_index_ed = col_index;
     ctx.luckysheet_select_save = [
