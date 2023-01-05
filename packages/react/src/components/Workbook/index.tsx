@@ -382,6 +382,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               initSheetData(draftCtx, cellData!, index);
             });
           }
+          draftCtx.devicePixelRatio = mergedSettings.devicePixelRatio;
           draftCtx.lang = mergedSettings.lang;
           draftCtx.allowEdit = mergedSettings.allowEdit;
           draftCtx.hooks = mergedSettings.hooks;
@@ -492,6 +493,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       mergedSettings.column,
       mergedSettings.row,
       mergedSettings.defaultFontSize,
+      mergedSettings.devicePixelRatio,
       mergedSettings.lang,
       mergedSettings.allowEdit,
       mergedSettings.hooks,
