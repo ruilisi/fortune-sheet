@@ -80,7 +80,7 @@ export function generateAPIs(
                 ctx_,
                 specialOp.value.id
               ) as number;
-              api.initSheetData(ctx_, fileIndex, specialOp.value?.celldata);
+              api.initSheetData(ctx_, fileIndex, specialOp.value);
             } else if (specialOp.op === "deleteSheet") {
               deleteSheet(ctx_, specialOp.value.id);
               patches.length = 0;

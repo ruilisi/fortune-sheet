@@ -79,24 +79,26 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     const initSheetData = useCallback(
       (
         draftCtx: Context,
-        cellData: CellWithRowAndCol[],
+        newData: SheetType,
         index: number
       ): CellMatrix | null => {
-        const lastRow = _.maxBy<CellWithRowAndCol>(cellData, "r");
-        const lastCol = _.maxBy(cellData, "c");
-        const lastRowNum = Math.max(
-          (lastRow?.r ?? 0) + 1,
-          draftCtx.defaultrowNum
-        );
-        const lastColNum = Math.max(
-          (lastCol?.c ?? 0) + 1,
-          draftCtx.defaultcolumnNum
-        );
+        const { celldata, row, column } = newData;
+        const lastRow = _.maxBy<CellWithRowAndCol>(celldata, "r");
+        const lastCol = _.maxBy(celldata, "c");
+        let lastRowNum = (lastRow?.r ?? 0) + 1;
+        let lastColNum = (lastCol?.c ?? 0) + 1;
+        if (row != null && column != null && row > 0 && column > 0) {
+          lastRowNum = Math.max(lastRowNum, row);
+          lastColNum = Math.max(lastColNum, column);
+        } else {
+          lastRowNum = Math.max(lastRowNum, draftCtx.defaultrowNum);
+          lastColNum = Math.max(lastColNum, draftCtx.defaultcolumnNum);
+        }
         if (lastRowNum && lastColNum) {
           const expandedData: SheetType["data"] = _.times(lastRowNum, () =>
             _.times(lastColNum, () => null)
           );
-          cellData?.forEach((d) => {
+          celldata?.forEach((d) => {
             // TODO setCellValue(draftCtx, d.r, d.c, expandedData, d.v);
             expandedData[d.r][d.c] = d.v;
           });
@@ -378,8 +380,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             newData.forEach((newDatum) => {
               const index = getSheetIndex(draftCtx, newDatum.id!) as number;
               const sheet = draftCtx.luckysheetfile?.[index];
-              const cellData = sheet.celldata;
-              initSheetData(draftCtx, cellData!, index);
+              initSheetData(draftCtx, sheet, index);
             });
           }
           draftCtx.devicePixelRatio = mergedSettings.devicePixelRatio;
@@ -402,11 +403,10 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           const sheet = draftCtx.luckysheetfile?.[sheetIdx];
           if (!sheet) return;
 
-          const cellData = sheet.celldata;
           let { data } = sheet;
           // expand cell data
           if (_.isEmpty(data)) {
-            const temp = initSheetData(draftCtx, cellData!, sheetIdx);
+            const temp = initSheetData(draftCtx, sheet, sheetIdx);
             if (!_.isNull(temp)) {
               data = temp;
             }
