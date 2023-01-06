@@ -1,5 +1,5 @@
 import _ from "lodash";
-import React, { useContext, useRef } from "react";
+import React, { useCallback, useContext, useRef, useState } from "react";
 import { updateCell, addSheet } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
@@ -11,6 +11,55 @@ const SheetTab: React.FC = () => {
   const tabContainerRef = useRef<HTMLDivElement>(null);
   const leftScrollRef = useRef<HTMLDivElement>(null);
   const rightScrollRef = useRef<HTMLDivElement>(null);
+  const [sheetScrollAni, setSheetScrollAni] = useState<any>(null);
+  const [sheetScrollStep] = useState<number>(150);
+  const [sheetsLenght] = useState<number>(840);
+  const [isShowBoundary, setIsShowBoundary] = useState<boolean>(true);
+
+  const scrollToLeft = useCallback(
+    (moveType: string) => {
+      if (
+        tabContainerRef.current == null ||
+        tabContainerRef.current.scrollLeft == null
+      )
+        return;
+      if (moveType === "left") {
+        const scrollLeft = tabContainerRef.current.scrollLeft as number;
+        let sheetScrollStart = scrollLeft;
+        const sheetScrollEnd = scrollLeft - sheetScrollStep;
+
+        if (sheetScrollEnd <= 0) setIsShowBoundary(true);
+        clearInterval(sheetScrollAni);
+        setSheetScrollAni((ani: any) => {
+          ani = setInterval(() => {
+            sheetScrollStart -= 4;
+            tabContainerRef.current!.scrollLeft = sheetScrollStart;
+            if (sheetScrollStart <= sheetScrollEnd) {
+              clearInterval(ani);
+            }
+          }, 1);
+          return ani;
+        });
+      } else if (moveType === "right") {
+        const scrollLeft = tabContainerRef.current.scrollLeft as number;
+        let sheetScrollStart = scrollLeft;
+        const sheetScrollEnd = scrollLeft + sheetScrollStep;
+        if (sheetScrollStart > 0) setIsShowBoundary(false);
+        clearInterval(sheetScrollAni);
+        setSheetScrollAni((ani: any) => {
+          ani = setInterval(() => {
+            sheetScrollStart += 4;
+            tabContainerRef.current!.scrollLeft = sheetScrollStart;
+            if (sheetScrollStart >= sheetScrollEnd) {
+              clearInterval(ani);
+            }
+          }, 1);
+          return ani;
+        });
+      }
+    },
+    [sheetScrollAni, sheetScrollStep]
+  );
 
   return (
     <div
@@ -52,6 +101,7 @@ const SheetTab: React.FC = () => {
           className="fortune-sheettab-container"
           id="fortune-sheettab-container"
         >
+          {!isShowBoundary && <div className="boundary boundary-left" />}
           <div
             className="fortune-sheettab-container-c"
             id="fortune-sheettab-container-c"
@@ -67,27 +117,40 @@ const SheetTab: React.FC = () => {
               sheet={{ name: "", id: "drop-placeholder" }}
             />
           </div>
+          {isShowBoundary &&
+            tabContainerRef.current?.offsetWidth != null &&
+            tabContainerRef.current?.scrollWidth >= sheetsLenght && (
+              <div className="boundary boundary-right" />
+            )}
         </div>
-        <div
-          id="fortune-sheettab-leftscroll"
-          className="fortune-sheettab-scroll"
-          ref={leftScrollRef}
-          onClick={() => {
-            tabContainerRef.current!.scrollLeft -= 150;
-          }}
-        >
-          <SVGIcon name="arrow-doubleleft" width={12} height={12} />
-        </div>
-        <div
-          id="fortune-sheettab-rightscroll"
-          className="fortune-sheettab-scroll"
-          ref={rightScrollRef}
-          onClick={() => {
-            tabContainerRef.current!.scrollLeft += 150;
-          }}
-        >
-          <SVGIcon name="arrow-doubleright" width={12} height={12} />
-        </div>
+        {!!tabContainerRef.current?.scrollWidth &&
+          tabContainerRef.current?.scrollWidth >= sheetsLenght && (
+            <div
+              id="fortune-sheettab-leftscroll"
+              className="fortune-sheettab-scroll"
+              ref={leftScrollRef}
+              onClick={() => {
+                // tabContainerRef.current!.scrollLeft -= 150;
+                scrollToLeft("left");
+              }}
+            >
+              <SVGIcon name="arrow-doubleleft" width={12} height={12} />
+            </div>
+          )}
+        {!!tabContainerRef.current?.scrollWidth &&
+          tabContainerRef.current?.scrollWidth >= sheetsLenght && (
+            <div
+              id="fortune-sheettab-rightscroll"
+              className="fortune-sheettab-scroll"
+              ref={rightScrollRef}
+              onClick={() => {
+                // tabContainerRef.current!.scrollLeft += 150;
+                scrollToLeft("right");
+              }}
+            >
+              <SVGIcon name="arrow-doubleright" width={12} height={12} />
+            </div>
+          )}
       </div>
     </div>
   );
