@@ -1,38 +1,39 @@
 import { createFilterOptions, getSheetIndex } from "@fortune-sheet/core";
 import _ from "lodash";
-import React, { useCallback, useContext, useMemo, useEffect } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
 
 const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
   getContainer,
 }) => {
+  const { context, setContext, refs } = useContext(WorkbookContext);
   const {
-    context: {
-      filterOptions,
-      currentSheetId,
-      filter,
-      visibledatarow,
-      visibledatacolumn,
-    },
-    setContext,
-    refs,
-  } = useContext(WorkbookContext);
-  const currentOptions = useMemo(
-    () => filterOptions?.[currentSheetId],
-    [filterOptions, currentSheetId]
-  );
+    filterOptions,
+    currentSheetId,
+    filter,
+    visibledatarow,
+    visibledatacolumn,
+  } = context;
+  const sheetIndex = getSheetIndex(context, context.currentSheetId);
+  const { filter_select } = context.luckysheetfile[sheetIndex!];
 
   useEffect(() => {
     setContext((draftCtx) => {
-      const sheetIndex = getSheetIndex(draftCtx, draftCtx.currentSheetId);
-      if (sheetIndex == null) return;
+      const sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetId);
+      if (sheetIdx == null) return;
       draftCtx.luckysheet_filter_save =
-        draftCtx.luckysheetfile[sheetIndex].filter_select;
-      draftCtx.filter = draftCtx.luckysheetfile[sheetIndex].filter || {};
-      createFilterOptions(draftCtx, draftCtx.luckysheet_filter_save);
+        draftCtx.luckysheetfile[sheetIdx].filter_select;
+      draftCtx.filter = draftCtx.luckysheetfile[sheetIdx].filter || {};
+      createFilterOptions(draftCtx, draftCtx.luckysheet_filter_save, undefined);
     });
-  }, [visibledatarow, visibledatacolumn, setContext, currentSheetId]);
+  }, [
+    visibledatarow,
+    visibledatacolumn,
+    setContext,
+    currentSheetId,
+    filter_select,
+  ]);
 
   const showFilterContextMenu = useCallback(
     (
@@ -43,10 +44,10 @@ const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
       },
       i: number
     ) => {
-      if (currentOptions == null) return;
+      if (filterOptions == null) return;
       setContext((draftCtx) => {
         const container = getContainer();
-        if (draftCtx.filterContextMenu?.col === currentOptions.startCol + i)
+        if (draftCtx.filterContextMenu?.col === filterOptions.startCol + i)
           return;
         draftCtx.filterContextMenu = {
           x:
@@ -59,11 +60,11 @@ const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
             container.getBoundingClientRect().y +
             draftCtx.columnHeaderHeight -
             refs.scrollbarY.current!.scrollTop,
-          col: currentOptions.startCol + i,
-          startRow: currentOptions.startRow,
-          endRow: currentOptions.endRow,
-          startCol: currentOptions.startCol,
-          endCol: currentOptions.endCol,
+          col: filterOptions.startCol + i,
+          startRow: filterOptions.startRow,
+          endRow: filterOptions.endRow,
+          startCol: filterOptions.startCol,
+          endCol: filterOptions.endCol,
           hiddenRows: _.keys(draftCtx.filter[i]?.rowhidden).map((r) =>
             parseInt(r, 10)
           ),
@@ -71,10 +72,10 @@ const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
         };
       });
     },
-    [currentOptions, getContainer, refs.scrollbarX, refs.scrollbarY, setContext]
+    [filterOptions, getContainer, refs.scrollbarX, refs.scrollbarY, setContext]
   );
 
-  return currentOptions == null ? (
+  return filterOptions == null ? (
     <div />
   ) : (
     <>
@@ -82,14 +83,14 @@ const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
         id="luckysheet-filter-selected-sheet"
         className="luckysheet-cell-selected luckysheet-filter-selected"
         style={{
-          left: currentOptions.left,
-          width: currentOptions.width,
-          top: currentOptions.top,
-          height: currentOptions.height,
+          left: filterOptions.left,
+          width: filterOptions.width,
+          top: filterOptions.top,
+          height: filterOptions.height,
           display: "block",
         }}
       />
-      {currentOptions.items.map((v, i) => {
+      {filterOptions.items.map((v, i) => {
         const filterParam = filter[i];
         return (
           <div

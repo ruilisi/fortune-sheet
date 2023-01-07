@@ -1145,13 +1145,19 @@ const Toolbar: React.FC<{
             iconId: "filter1",
             value: "filter",
             text: filter.filter,
-            onClick: createFilter,
+            onClick: () =>
+              setContext((draftCtx) => {
+                createFilter(draftCtx);
+              }),
           },
           {
             iconId: "eraser",
             value: "eraser",
             text: filter.clearFilter,
-            onClick: clearFilter,
+            onClick: () =>
+              setContext((draftCtx) => {
+                clearFilter(draftCtx);
+              }),
           },
         ];
         return (
@@ -1163,9 +1169,7 @@ const Toolbar: React.FC<{
                     <Option
                       key={value}
                       onClick={() => {
-                        setContext((draftCtx) => {
-                          onClick?.(draftCtx);
-                        });
+                        onClick?.();
                         setOpen(false);
                       }}
                     >

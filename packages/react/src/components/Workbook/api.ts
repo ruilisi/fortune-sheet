@@ -102,7 +102,7 @@ export function generateAPIs(
               )[0].id as string;
             }
           }
-          createFilterOptions(ctx_, ctx_.luckysheet_filter_save);
+          createFilterOptions(ctx_, ctx_.luckysheet_filter_save, ops[0]?.id);
           if (patches.length === 0) return;
           try {
             applyPatches(ctx_, patches);
