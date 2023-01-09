@@ -1,5 +1,11 @@
 import _ from "lodash";
-import React, { useCallback, useContext, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { updateCell, addSheet } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
@@ -13,7 +19,7 @@ const SheetTab: React.FC = () => {
   const rightScrollRef = useRef<HTMLDivElement>(null);
   const [sheetScrollAni, setSheetScrollAni] = useState<any>(null);
   const [sheetScrollStep] = useState<number>(150);
-  const [sheetsLenght] = useState<number>(840);
+  const [isShowScrollBtn, setIsShowScrollBtn] = useState<boolean>(false);
   const [isShowBoundary, setIsShowBoundary] = useState<boolean>(true);
 
   const scrollToLeft = useCallback(
@@ -61,6 +67,11 @@ const SheetTab: React.FC = () => {
     [sheetScrollAni, sheetScrollStep]
   );
 
+  useEffect(() => {
+    const tabCurrent = tabContainerRef.current;
+    setIsShowScrollBtn(tabCurrent!.scrollWidth > tabCurrent!.clientWidth);
+  }, []);
+
   return (
     <div
       className="luckysheet-sheet-area luckysheet-noselected-text"
@@ -83,6 +94,10 @@ const SheetTab: React.FC = () => {
                     );
                   }
                   addSheet(draftCtx, settings);
+                  const tabCurrent = tabContainerRef.current;
+                  setIsShowScrollBtn(
+                    tabCurrent!.scrollWidth > tabCurrent!.clientWidth
+                  );
                 },
                 { addSheetOp: true }
               );
@@ -117,40 +132,36 @@ const SheetTab: React.FC = () => {
               sheet={{ name: "", id: "drop-placeholder" }}
             />
           </div>
-          {isShowBoundary &&
-            tabContainerRef.current?.offsetWidth != null &&
-            tabContainerRef.current?.scrollWidth >= sheetsLenght && (
-              <div className="boundary boundary-right" />
-            )}
+          {isShowBoundary && isShowScrollBtn && (
+            <div className="boundary boundary-right" />
+          )}
         </div>
-        {!!tabContainerRef.current?.scrollWidth &&
-          tabContainerRef.current?.scrollWidth >= sheetsLenght && (
-            <div
-              id="fortune-sheettab-leftscroll"
-              className="fortune-sheettab-scroll"
-              ref={leftScrollRef}
-              onClick={() => {
-                // tabContainerRef.current!.scrollLeft -= 150;
-                scrollToLeft("left");
-              }}
-            >
-              <SVGIcon name="arrow-doubleleft" width={12} height={12} />
-            </div>
-          )}
-        {!!tabContainerRef.current?.scrollWidth &&
-          tabContainerRef.current?.scrollWidth >= sheetsLenght && (
-            <div
-              id="fortune-sheettab-rightscroll"
-              className="fortune-sheettab-scroll"
-              ref={rightScrollRef}
-              onClick={() => {
-                // tabContainerRef.current!.scrollLeft += 150;
-                scrollToLeft("right");
-              }}
-            >
-              <SVGIcon name="arrow-doubleright" width={12} height={12} />
-            </div>
-          )}
+        {isShowScrollBtn && (
+          <div
+            id="fortune-sheettab-leftscroll"
+            className="fortune-sheettab-scroll"
+            ref={leftScrollRef}
+            onClick={() => {
+              // tabContainerRef.current!.scrollLeft -= 150;
+              scrollToLeft("left");
+            }}
+          >
+            <SVGIcon name="arrow-doubleleft" width={12} height={12} />
+          </div>
+        )}
+        {isShowScrollBtn && (
+          <div
+            id="fortune-sheettab-rightscroll"
+            className="fortune-sheettab-scroll"
+            ref={rightScrollRef}
+            onClick={() => {
+              // tabContainerRef.current!.scrollLeft += 150;
+              scrollToLeft("right");
+            }}
+          >
+            <SVGIcon name="arrow-doubleright" width={12} height={12} />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1228,6 +1228,7 @@ const Toolbar: React.FC<{
       context.luckysheet_select_save,
       context.defaultFontSize,
       context.allowEdit,
+      comment,
     ]
   );
 
