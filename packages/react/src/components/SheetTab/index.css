@@ -61,15 +61,15 @@
 .fortune-sheettab-container .boundary-left {
   left: 0;
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
-  --tw-gradient-from: #d7d7d7;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(0, 0, 0, 0));
+  --tw-gradient-from: #4445;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, #8880);
 }
 
 .fortune-sheettab-container .boundary-right {
   right: 0;
   background-image: linear-gradient(to left, var(--tw-gradient-stops));
-  --tw-gradient-from: #d7d7d7;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(0, 0, 0, 0));
+  --tw-gradient-from: #4445;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, #8880);
 }
 
 .fortune-sheettab-container .fortune-sheettab-container-c {
