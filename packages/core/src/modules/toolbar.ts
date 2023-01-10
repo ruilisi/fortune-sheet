@@ -892,7 +892,7 @@ export function handleNumberDecrease(ctx: Context, cellInput: HTMLDivElement) {
 
   const row_index = ctx.luckysheet_select_save[0].row_focus;
   const col_index = ctx.luckysheet_select_save[0].column_focus;
-  if (!row_index || !col_index) return;
+  if (row_index === undefined || col_index === undefined) return;
 
   let foucsStatus = normalizedAttr(flowdata, row_index, col_index, "ct");
   const cell = flowdata[row_index][col_index];
@@ -983,7 +983,7 @@ export function handleNumberIncrease(ctx: Context, cellInput: HTMLDivElement) {
   if (!ctx.luckysheet_select_save) return;
   const row_index = ctx.luckysheet_select_save[0].row_focus;
   const col_index = ctx.luckysheet_select_save[0].column_focus;
-  if (!row_index || !col_index) return;
+  if (row_index === undefined || col_index === undefined) return;
   let foucsStatus = normalizedAttr(flowdata, row_index, col_index, "ct");
   const cell = flowdata[row_index][col_index];
 
