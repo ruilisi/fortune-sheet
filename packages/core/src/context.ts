@@ -170,6 +170,7 @@ export type Context = {
   groupValuesRefreshData: any[];
   formulaCache: FormulaCache;
   hooks: Hooks;
+  showSheetList?: Boolean;
 };
 
 export function defaultContext(): Context {
@@ -423,10 +424,16 @@ export function ensureSheetIndex(data: Sheet[], generateSheetId: () => string) {
 
 export function initSheetIndex(ctx: Context) {
   // get current sheet
-  ctx.currentSheetId = ctx.luckysheetfile[0].id!;
-
+  const shownSheets = ctx.luckysheetfile.filter(
+    (singleSheet) => _.isUndefined(singleSheet.hide) || singleSheet.hide !== 1
+  );
+  ctx.currentSheetId = _.sortBy(shownSheets, (sheet) => sheet.order)[0]
+    .id as string;
   for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
-    if (ctx.luckysheetfile[i].status === 1) {
+    if (
+      ctx.luckysheetfile[i].status === 1 &&
+      ctx.luckysheetfile[i].hide !== 1
+    ) {
       ctx.currentSheetId = ctx.luckysheetfile[i].id!;
       break;
     }

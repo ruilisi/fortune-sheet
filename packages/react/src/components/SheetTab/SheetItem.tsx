@@ -195,7 +195,10 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
           };
         });
       }}
-      style={dragOver ? { borderLeft: "2px solid #0188fb" } : {}}
+      style={{
+        borderLeft: dragOver ? "2px solid #0188fb" : "",
+        display: sheet.hide === 1 ? "none" : "",
+      }}
     >
       <span
         className="luckysheet-sheets-item-name"

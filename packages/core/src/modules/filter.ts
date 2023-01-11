@@ -139,12 +139,14 @@ export function createFilterOptions(
         column: number[];
       }
     | undefined,
+  sheetId: string | undefined,
   filterObj?: any,
   saveData?: boolean
 ) {
   // $(`#luckysheet-filter-selected-sheet${ctx.currentSheetIndex}`).remove();
   // $(`#luckysheet-filter-options-sheet${ctx.currentSheetIndex}`).remove();
   if (ctx.allowEdit === false) return;
+  if (sheetId != null && sheetId !== ctx.currentSheetId) return;
   const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
   if (sheetIndex == null) return;
   if (luckysheet_filter_save == null || _.size(luckysheet_filter_save) === 0) {
@@ -175,6 +177,7 @@ export function createFilterOptions(
   };
 
   for (let c = c1; c <= c2; c += 1) {
+    // TODO: filterObj
     if (filterObj == null || filterObj?.[c - c1] == null) {
     } else {
     }
@@ -189,7 +192,7 @@ export function createFilterOptions(
     const file = ctx.luckysheetfile[sheetIndex];
     file.filter_select = luckysheet_filter_save;
   }
-  _.set(ctx, ["filterOptions", ctx.currentSheetId], options);
+  ctx.filterOptions = options;
 }
 
 export function clearFilter(ctx: Context) {
@@ -285,7 +288,7 @@ export function createFilter(ctx: Context) {
     filterSave?.[0] || ctx.luckysheet_select_save?.[0]
   );
 
-  createFilterOptions(ctx, ctx.luckysheet_filter_save, {}, true);
+  createFilterOptions(ctx, ctx.luckysheet_filter_save, undefined, {}, true);
 
   // server.saveParam("all", ctx.currentSheetIndex, ctx.luckysheet_filter_save, {
   //   k: "filter_select",
@@ -590,7 +593,7 @@ export function getFilterColumnColors(
     }
     if (fc != null) {
       const fcData = fcMap.get(fc);
-      if (fcData != null) {
+      if (fcData != null && cell != null && !isRealNull(cell.v)) {
         fcData.rows.push(r);
         if (isRowHidden) fcData.checked = false;
       } else if (cell != null && !isRealNull(cell.v)) {
@@ -598,9 +601,11 @@ export function getFilterColumnColors(
       }
     }
   }
+  const bgColors = _.flatten(Array.from(bgMap.values()));
+  const fcColors = _.flatten(Array.from(fcMap.values()));
   return {
-    bgColors: _.flatten(Array.from(bgMap.values())),
-    fcColors: _.flatten(Array.from(fcMap.values())),
+    bgColors: bgColors.length < 2 ? [] : bgColors,
+    fcColors: fcColors.length < 2 ? [] : fcColors,
   };
 }
 

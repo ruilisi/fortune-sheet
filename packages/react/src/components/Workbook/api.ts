@@ -80,7 +80,7 @@ export function generateAPIs(
                 ctx_,
                 specialOp.value.id
               ) as number;
-              api.initSheetData(ctx_, fileIndex, specialOp.value?.celldata);
+              api.initSheetData(ctx_, fileIndex, specialOp.value);
             } else if (specialOp.op === "deleteSheet") {
               deleteSheet(ctx_, specialOp.value.id);
               patches.length = 0;
@@ -88,7 +88,21 @@ export function generateAPIs(
           }
           if (ops[0]?.path?.[0] === "filter_select")
             ctx_.luckysheet_filter_save = ops[0].value;
-          createFilterOptions(ctx_, ctx_.luckysheet_filter_save);
+          else if (ops[0]?.path?.[0] === "hide") {
+            //  hide sheet
+            if (ctx_.currentSheetId === ops[0].id) {
+              const shownSheets = ctx_.luckysheetfile.filter(
+                (sheet) =>
+                  (_.isUndefined(sheet.hide) || sheet?.hide !== 1) &&
+                  sheet.id !== ops[0].id
+              );
+              ctx_.currentSheetId = _.sortBy(
+                shownSheets,
+                (sheet) => sheet.order
+              )[0].id as string;
+            }
+          }
+          createFilterOptions(ctx_, ctx_.luckysheet_filter_save, ops[0]?.id);
           if (patches.length === 0) return;
           try {
             applyPatches(ctx_, patches);
