@@ -533,8 +533,14 @@ export function handleCellAreaMouseDown(
         };
       }
 
-      rangeSetValue(ctx, cellInput, { row: rowseleted, column: columnseleted });
-
+      if (document.activeElement?.className === "fortune-fx-input") {
+        rangeSetValue(ctx, fxInput, { row: rowseleted, column: columnseleted });
+      } else {
+        rangeSetValue(ctx, cellInput, {
+          row: rowseleted,
+          column: columnseleted,
+        });
+      }
       ctx.formulaCache.rangestart = true;
       ctx.formulaCache.rangedrag_column_start = false;
       ctx.formulaCache.rangedrag_row_start = false;
@@ -1406,6 +1412,7 @@ export function handleContextMenu(
     pageY: e.pageY,
   };
   // select current cell when clicking the right button
+  e.preventDefault();
   if (area === "cell") {
     const rect = container.getBoundingClientRect();
     const mouseX = e.pageX - rect.left;
@@ -1428,7 +1435,25 @@ export function handleContextMenu(
     const col = col_location[1];
     const col_pre = col_location[0];
     const col_index = col_location[2];
+    // 如果右键点击在选区内则不做选区处理
+    let isInSelection = false;
+    ctx.luckysheet_select_save?.some((obj_s) => {
+      if (
+        obj_s.row != null &&
+        row_index >= obj_s.row[0] &&
+        row_index <= obj_s.row[1] &&
+        col_index >= obj_s.column[0] &&
+        col_index <= obj_s.column[1]
+      ) {
+        isInSelection = true;
+        return false;
+      }
+      return true;
+    });
 
+    if (isInSelection) {
+      return;
+    }
     const row_index_ed = row_index;
     const col_index_ed = col_index;
     ctx.luckysheet_select_save = [
@@ -1454,6 +1479,23 @@ export function handleContextMenu(
     const row = row_location[1];
     const row_pre = row_location[0];
     const row_index = row_location[2];
+    // 如果右键点击在选区内则不做选区处理
+    let isInSelection = false;
+    ctx.luckysheet_select_save?.some((obj_s) => {
+      if (
+        obj_s.row != null &&
+        row_index >= obj_s.row[0] &&
+        row_index <= obj_s.row[1]
+      ) {
+        isInSelection = true;
+        return false;
+      }
+      return true;
+    });
+
+    if (isInSelection) {
+      return;
+    }
     const col_index = ctx.visibledatacolumn.length - 1;
     const col = ctx.visibledatacolumn[col_index];
     const col_pre = 0;
@@ -1489,6 +1531,23 @@ export function handleContextMenu(
     const col = col_location[1];
     const col_pre = col_location[0];
     const col_index = col_location[2];
+    // 如果右键点击在选区内则不做选区处理
+    let isInSelection = false;
+    ctx.luckysheet_select_save?.some((obj_s) => {
+      if (
+        obj_s.row != null &&
+        col_index >= obj_s.column[0] &&
+        col_index <= obj_s.column[1]
+      ) {
+        isInSelection = true;
+        return false;
+      }
+      return true;
+    });
+
+    if (isInSelection) {
+      return;
+    }
     const left = col_pre;
     const width = col - col_pre - 1;
     const columnseleted = [col_index, col_index];
@@ -1512,7 +1571,6 @@ export function handleContextMenu(
       column_select: true,
     });
   }
-  e.preventDefault();
 }
 
 function mouseRender(

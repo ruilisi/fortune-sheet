@@ -1,0 +1,41 @@
+.fortune-sheet-list {
+  overflow: visible;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: absolute;
+  z-index: 10002;
+  bottom: 31px;
+  left: 72px;
+}
+
+.fortune-sheet-list-item {
+  height: 30px;
+  line-height: 30px;
+  display: inline-block;
+  width: 100%;
+  text-indent: 15px;
+  margin-right: 46px;
+  cursor: pointer;
+}
+
+.fortune-sheet-list-item-name {
+  margin-right: 15px;
+}
+
+.fortune-sheet-list :hover {
+  background-color: #EFEFEF;
+}
+
+.fortune-sheet-hidden-button {
+  margin-right: 15px;
+  display: inline-flex;
+  position: absolute;
+  right: 0;
+  justify-content: flex-end;
+}
+
+.fortune-sheet-hidden-button :hover {
+  background-color: #D0D0D0;
+}

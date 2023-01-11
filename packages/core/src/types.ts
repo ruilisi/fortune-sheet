@@ -128,6 +128,7 @@ export type Sheet = {
   row?: number;
   addRows?: number;
   status?: number;
+  hide?: number;
   luckysheet_select_save?: Selection[];
   luckysheet_selection_range?: {
     row: number[];
@@ -189,24 +190,21 @@ export type LinkCardProps = {
   selectingCellRange?: boolean;
 };
 
-export type FilterOptions = Record<
-  string,
-  {
-    startRow: number;
-    endRow: number;
-    startCol: number;
-    endCol: number;
+export type FilterOptions = {
+  startRow: number;
+  endRow: number;
+  startCol: number;
+  endCol: number;
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  items: {
+    col: number;
     left: number;
     top: number;
-    width: number;
-    height: number;
-    items: {
-      col: number;
-      left: number;
-      top: number;
-    }[];
-  }
->;
+  }[];
+};
 
 export type History = {
   patches: ImmerPatch[];

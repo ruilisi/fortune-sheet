@@ -55,6 +55,21 @@ const SheetTabContextMenu: React.FC = () => {
     [context.allowEdit, setContext, sheet]
   );
 
+  const hideSheet = useCallback(() => {
+    if (context.allowEdit === false) return;
+    if (!sheet) return;
+    setContext((ctx) => {
+      const shownSheets = ctx.luckysheetfile.filter(
+        (oneSheet) => _.isUndefined(oneSheet.hide) || oneSheet?.hide !== 1
+      );
+      if (shownSheets.length > 1) {
+        api.hideSheet(ctx, sheet.id as string);
+      } else {
+        showAlert(sheetconfig.noMoreSheet, "ok");
+      }
+    });
+  }, [context.allowEdit, setContext, sheet, showAlert, sheetconfig]);
+
   if (!sheet || x == null || y == null) return null;
 
   return (
@@ -70,19 +85,30 @@ const SheetTabContextMenu: React.FC = () => {
             <Menu
               key={name}
               onClick={() => {
-                showAlert(sheetconfig.confirmDelete, "yesno", () => {
-                  setContext(
-                    (draftCtx) => {
-                      deleteSheet(draftCtx, sheet.id!);
-                    },
-                    {
-                      deleteSheetOp: {
-                        id: sheet.id!,
+                const shownSheets = context.luckysheetfile.filter(
+                  (singleSheet) =>
+                    _.isUndefined(singleSheet.hide) || singleSheet.hide !== 1
+                );
+                if (
+                  context.luckysheetfile.length > 1 &&
+                  shownSheets.length > 1
+                ) {
+                  showAlert(sheetconfig.confirmDelete, "yesno", () => {
+                    setContext(
+                      (ctx) => {
+                        deleteSheet(ctx, sheet.id!);
                       },
-                    }
-                  );
-                  hideAlert();
-                });
+                      {
+                        deleteSheetOp: {
+                          id: sheet.id!,
+                        },
+                      }
+                    );
+                    hideAlert();
+                  });
+                } else {
+                  showAlert(sheetconfig.noMoreSheet, "ok");
+                }
                 close();
               }}
             >
@@ -123,6 +149,19 @@ const SheetTabContextMenu: React.FC = () => {
                 {sheetconfig.moveRight}
               </Menu>
             </React.Fragment>
+          );
+        }
+        if (name === "hide") {
+          return (
+            <Menu
+              key={name}
+              onClick={() => {
+                hideSheet();
+                close();
+              }}
+            >
+              {sheetconfig.hide}
+            </Menu>
           );
         }
         if (name === "|") {
