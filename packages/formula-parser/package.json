@@ -35,7 +35,7 @@
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "cross-env": "^5.2.0",
-    "eslint": "^4.2.0",
+    "eslint": "^8.31.0",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.14.0",
     "fs-extra": "^9.0.1",
