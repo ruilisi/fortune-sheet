@@ -16,6 +16,7 @@ import { normalizeSelection } from "./selection";
 import { getSheetIndex } from "../utils";
 import { cfSplitRange } from "./conditionalFormat";
 import { GlobalCache } from "../types";
+import { jfrefreshgrid } from "./refresh";
 
 const dragCellThreshold = 8;
 
@@ -489,7 +490,7 @@ export function onCellsMoveEnd(
   //   cdformat,
   // };
 
-  // jfrefreshgrid(d, range, allParam);
+  jfrefreshgrid(ctx, d, range);
 
   // selectHightlightShow();
 

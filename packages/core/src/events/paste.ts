@@ -15,6 +15,7 @@ import { getSheetIndex } from "../utils";
 import { hasPartMC, isRealNum } from "../modules/validation";
 import { getBorderInfoCompute } from "../modules/border";
 import { expandRowsAndColumns, storeSheetParamALL } from "../modules/sheet";
+import { jfrefreshgrid } from "../modules/refresh";
 
 function postPasteCut(
   ctx: Context,
@@ -1361,14 +1362,14 @@ function pasteHandlerOfCopyPaste(
     //   cdformat,
     //   dataVerification,
     // };
-    // jfrefreshgrid(d, ctx.luckysheet_select_save, allParam);
+    jfrefreshgrid(ctx, d, ctx.luckysheet_select_save);
   } else {
     // const allParam = {
     //   cfg,
     //   cdformat,
     //   dataVerification,
     // };
-    // jfrefreshgrid(d, ctx.luckysheet_select_save, allParam);
+    jfrefreshgrid(ctx, d, ctx.luckysheet_select_save);
     // selectHightlightShow();
   }
 }
