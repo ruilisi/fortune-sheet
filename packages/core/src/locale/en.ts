@@ -11304,6 +11304,7 @@ export default {
     borderVertical: "Vertical borders",
     borderColor: "borderColor",
     borderSize: "borderSize",
+    borderSlash: "Slash border",
   },
   merge: {
     mergeAll: "Merge all",
@@ -11377,8 +11378,8 @@ export default {
   filter: {
     filter: "create filter",
 
-    sortByAsc: "Sort A-Z",
-    sortByDesc: "Sort Z-A",
+    sortByAsc: "Ascending sort",
+    sortByDesc: "Descending sort",
     filterByColor: "Filter by color",
     filterByCondition: "Filter by condition",
     filterByValues: "Filter by values",
@@ -11434,6 +11435,8 @@ export default {
     copyAs: "Copy as",
     paste: "Paste",
     insert: "Insert",
+    image: "Insert image",
+    link: "Insert link",
     delete: "Delete",
     deleteCell: "Delete cell",
     deleteSelected: "Delete selected ",
@@ -11454,8 +11457,8 @@ export default {
     height: "Height",
     number: "Number",
     confirm: "Confirm",
-    orderAZ: "A-Z order",
-    orderZA: "Z-A order",
+    orderAZ: "Ascending sort",
+    orderZA: "Descending sort",
     clearContent: "Clear content",
     matrix: "Matrix operation",
     sortSelection: "Sort",

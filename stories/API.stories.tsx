@@ -530,29 +530,100 @@ export const UpdateSheet: ComponentStory<typeof Workbook> = () => {
   return (
     <ApiExecContainer
       onRun={() => {
-        // 使用cellData模式更新样例
-        // ref.current?.updateSheet([
-        //   {
-        //     id: "1",
-        //     name: "sheet1",
-        //     celldata: [
-        //       {
-        //         r: 0,
-        //         c: 0,
-        //         v: { ct: { fa: "General", t: "n" }, m: "1", v: "1" },
-        //       },
-        //     ],
-        //     order: 0,
-        //   },
-        // ]);
-        // 使用data更新样例
+        // 更新样例
         ref.current?.updateSheet([
-          { id: "1", name: "lvjing", data: [[{ v: "1" }]], order: 0 },
+          {
+            id: "1",
+            name: "lvjing",
+            data: [[{ v: "1" }]],
+            order: 0,
+            row: 10,
+            column: 20,
+            luckysheet_select_save: [
+              {
+                row: [2, 4],
+                column: [4, 6],
+                column_focus: 6,
+                height: 19,
+                height_move: 59,
+                left: 444,
+                left_move: 296,
+                row_focus: 4,
+                top: 80,
+                top_move: 40,
+                width: 73,
+                width_move: 221,
+              },
+            ],
+          },
           {
             id: "2",
             name: "lvjing2",
             data: [[{ v: "12" }, { v: "lvjing" }]],
             order: 1,
+          },
+          {
+            id: "3",
+            name: "lvjing3",
+            celldata: [
+              {
+                r: 0,
+                c: 0,
+                v: {
+                  v: "1",
+                  ct: {
+                    fa: "General",
+                    t: "n",
+                  },
+                  m: "1",
+                },
+              },
+              {
+                r: 1,
+                c: 0,
+                v: {
+                  mc: {
+                    r: 1,
+                    c: 0,
+                    rs: 2,
+                    cs: 2,
+                  },
+                },
+              },
+              {
+                r: 1,
+                c: 1,
+                v: {
+                  mc: {
+                    r: 1,
+                    c: 0,
+                  },
+                },
+              },
+              {
+                r: 2,
+                c: 0,
+                v: {
+                  mc: {
+                    r: 1,
+                    c: 0,
+                  },
+                },
+              },
+              {
+                r: 2,
+                c: 1,
+                v: {
+                  mc: {
+                    r: 1,
+                    c: 0,
+                  },
+                },
+              },
+            ],
+            row: 20,
+            column: 20,
+            order: 3,
           },
         ]);
       }}

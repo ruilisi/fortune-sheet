@@ -8,6 +8,7 @@ import {
   FilterValue,
   FilterDate,
   FilterColor,
+  Context,
 } from "@fortune-sheet/core";
 import React, {
   useCallback,
@@ -141,8 +142,9 @@ const DateSelectTree: React.FC<{
 };
 
 const FilterMenu: React.FC = () => {
-  const { context, setContext, refs, settings } = useContext(WorkbookContext);
+  const { context, setContext, settings } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
+  const contextRef = useRef<Context>(context);
   const byColorMenuRef = useRef<HTMLDivElement>(null);
   const subMenuRef = useRef<HTMLDivElement>(null);
   const { filterContextMenu } = context;
@@ -340,16 +342,14 @@ const FilterMenu: React.FC = () => {
     if (containerH < 0) {
       containerH = 100;
     }
-    if (hasOverflow) {
-      setContext((draftCtx) => {
+    setContext((draftCtx) => {
+      if (hasOverflow) {
         _.set(draftCtx, "filterContextMenu.x", left);
         _.set(draftCtx, "filterContextMenu.y", top);
-      });
-    }
-    setContext((draftCtx) => {
+      }
       _.set(draftCtx, "filterContextMenu.listBoxMaxHeight", containerH);
     });
-  }, [filterContextMenu, setContext, refs]);
+  }, [filterContextMenu, setContext]);
 
   useLayoutEffect(() => {
     // re-position the subMenu if it overflows the window
@@ -369,27 +369,24 @@ const FilterMenu: React.FC = () => {
     }
   }, [subMenuPos]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (col == null) return;
     setSearchText("");
     setShowSubMenu(false);
     dateTreeExpandState.current = {};
     hiddenRows.current = filterContextMenu?.hiddenRows || [];
-    setContext((draftCtx) => {
-      const res = getFilterColumnValues(
-        draftCtx,
-        col,
-        startRow,
-        endRow,
-        startCol
-      );
-      setData(res);
-      setDatesUncheck(res.datesUncheck);
-      setValuesUncheck(res.valuesUncheck);
-      setShowValues(res.flattenValues);
-    });
+    const res = getFilterColumnValues(
+      contextRef.current,
+      col,
+      startRow,
+      endRow,
+      startCol
+    );
+    setData(_.omit(res, ["datesUncheck", "valuesUncheck"]));
+    setDatesUncheck(res.datesUncheck);
+    setValuesUncheck(res.valuesUncheck);
+    setShowValues(res.flattenValues);
   }, [
-    setContext,
     col,
     endRow,
     startRow,
@@ -400,10 +397,10 @@ const FilterMenu: React.FC = () => {
 
   useEffect(() => {
     if (col == null) return;
-    setContext((draftCtx) => {
-      setFilterColors(getFilterColumnColors(draftCtx, col, startRow, endRow));
-    });
-  }, [col, endRow, startRow, setContext]);
+    setFilterColors(
+      getFilterColumnColors(contextRef.current, col, startRow, endRow)
+    );
+  }, [col, endRow, startRow]);
 
   if (filterContextMenu == null) return null;
 
