@@ -513,7 +513,11 @@ const Toolbar: React.FC<{
                   <Option
                     key={value}
                     onClick={() => {
-                      const last = context.luckysheet_select_save![0];
+                      if (context.luckysheet_select_save == null) {
+                        showDialog(freezen.noSeletionError, "ok");
+                        return;
+                      }
+                      const last = context.luckysheet_select_save[0];
                       let range: { row: any[]; column: any[] }[];
                       let rangeArr = [];
                       if (
