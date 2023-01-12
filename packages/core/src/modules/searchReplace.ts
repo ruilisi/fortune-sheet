@@ -6,7 +6,7 @@ import { CellMatrix, Selection, SearchResult, GlobalCache } from "../types";
 import { chatatABC, getRegExpStr, getSheetIndex, replaceHtml } from "../utils";
 import { setCellValue } from "./cell";
 import { valueShowEs } from "./format";
-import { normalizeSelection } from "./selection";
+import { normalizeSelection, scrollToHighlightCell } from "./selection";
 
 export function getSearchIndexArr(
   searchText: string,
@@ -115,10 +115,7 @@ export function searchNext(
     regCheck: boolean;
     wordCheck: boolean;
     caseCheck: boolean;
-  },
-  container: HTMLDivElement,
-  scrollbarX: HTMLDivElement,
-  scrollbarY: HTMLDivElement
+  }
 ) {
   const { findAndReplace } = locale(ctx);
   const flowdata = getFlowdata(ctx);
@@ -235,34 +232,7 @@ export function searchNext(
 
   // selectHightlightShow();
 
-  const { scrollLeft } = scrollbarX;
-  const { scrollTop } = scrollbarY;
-  const rect = container.getBoundingClientRect();
-  const winH = rect.height - 20 * ctx.zoomRatio;
-  const winW = rect.width - 60 * ctx.zoomRatio;
-
-  const row = ctx.visibledatarow[searchIndexArr[count].r];
-  const row_pre =
-    searchIndexArr[count].r - 1 === -1
-      ? 0
-      : ctx.visibledatarow[searchIndexArr[count].r - 1];
-  const col = ctx.visibledatacolumn[searchIndexArr[count].c];
-  const col_pre =
-    searchIndexArr[count].c - 1 === -1
-      ? 0
-      : ctx.visibledatacolumn[searchIndexArr[count].c - 1];
-
-  if (col - scrollLeft - winW + 20 > 0) {
-    scrollbarX.scrollLeft = col - winW + 20;
-  } else if (col_pre - scrollLeft - 20 < 0) {
-    scrollbarX.scrollLeft = col_pre - 20;
-  }
-
-  if (row - scrollTop - winH + 20 > 0) {
-    scrollbarY.scrollLeft = row - winH + 20;
-  } else if (row_pre - scrollTop - 20 < 0) {
-    scrollbarY.scrollLeft = row_pre - 20;
-  }
+  scrollToHighlightCell(ctx, searchIndexArr[count].r, searchIndexArr[count].c);
 
   return null;
 }
@@ -411,10 +381,7 @@ export function replace(
     regCheck: boolean;
     wordCheck: boolean;
     caseCheck: boolean;
-  },
-  container: HTMLDivElement,
-  scrollbarX: HTMLDivElement,
-  scrollbarY: HTMLDivElement
+  }
 ) {
   const { findAndReplace } = locale(ctx);
   if (!ctx.allowEdit) {
@@ -520,28 +487,7 @@ export function replace(
   // jfrefreshgrid(d, ctx.luckysheet_select_save);
   // selectHightlightShow();
 
-  const { scrollLeft } = scrollbarX;
-  const { scrollTop } = scrollbarY;
-  const rect = container.getBoundingClientRect();
-  const winH = rect.height - 20 * ctx.zoomRatio;
-  const winW = rect.width - 60 * ctx.zoomRatio;
-
-  const row = ctx.visibledatarow[r];
-  const row_pre = r - 1 === -1 ? 0 : ctx.visibledatarow[r - 1];
-  const col = ctx.visibledatacolumn[c];
-  const col_pre = c - 1 === -1 ? 0 : ctx.visibledatacolumn[c - 1];
-
-  if (col - scrollLeft - winW + 20 > 0) {
-    scrollbarX.scrollLeft = col - winW + 20;
-  } else if (col_pre - scrollLeft - 20 < 0) {
-    scrollbarX.scrollLeft = col_pre - 20;
-  }
-
-  if (row - scrollTop - winH + 20 > 0) {
-    scrollbarY.scrollLeft = row - winH + 20;
-  } else if (row_pre - scrollTop - 20 < 0) {
-    scrollbarY.scrollLeft = row_pre - 20;
-  }
+  scrollToHighlightCell(ctx, r, c);
   return null;
 }
 
