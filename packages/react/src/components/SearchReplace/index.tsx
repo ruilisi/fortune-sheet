@@ -7,6 +7,7 @@ import {
   onSearchDialogMoveStart,
   replace,
   replaceAll,
+  scrollToHighlightCell,
 } from "@fortune-sheet/core";
 import produce from "immer";
 import React, { useContext, useState, useCallback } from "react";
@@ -176,16 +177,12 @@ const SearchReplace: React.FC<{
                   className="fortune-message-box-button button-default"
                   onClick={() =>
                     setContext((draftCtx) => {
-                      const container = getContainer();
                       setSelectedCell(undefined);
                       const alertMsg = replace(
                         draftCtx,
                         searchText,
                         replaceText,
-                        checkMode,
-                        container,
-                        refs.scrollbarX.current!,
-                        refs.scrollbarY.current!
+                        checkMode
                       );
                       if (alertMsg != null) {
                         showAlert(alertMsg);
@@ -217,16 +214,8 @@ const SearchReplace: React.FC<{
               className="fortune-message-box-button button-default"
               onClick={() =>
                 setContext((draftCtx) => {
-                  const container = getContainer();
                   setSearchResult([]);
-                  const alertMsg = searchNext(
-                    draftCtx,
-                    searchText,
-                    checkMode,
-                    container,
-                    refs.scrollbarX.current!,
-                    refs.scrollbarY.current!
-                  );
+                  const alertMsg = searchNext(draftCtx, searchText, checkMode);
                   if (alertMsg != null) showAlert(alertMsg);
                 })
               }
@@ -267,6 +256,7 @@ const SearchReplace: React.FC<{
                             },
                           ]
                         );
+                        scrollToHighlightCell(draftCtx, v.r, v.c);
                       });
                       setSelectedCell({ r: v.r, c: v.c });
                     }}
