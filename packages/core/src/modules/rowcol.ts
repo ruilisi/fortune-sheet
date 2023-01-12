@@ -1819,3 +1819,203 @@ export function computeRowlenArr(ctx: Context, rowHeight: number, cfg: any) {
 
   return rowlenArr;
 }
+
+// 隐藏选中行列
+export function hideSelected(ctx: Context, type: string) {
+  if (!ctx.luckysheet_select_save || ctx.luckysheet_select_save.length > 1)
+    return "noMulti";
+  const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
+  // 隐藏行
+  if (type === "row") {
+    /* TODO: 工作表保护判断
+    if (
+      !checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatRows")
+    ) {
+      return ;
+    } */
+    const rowhidden = ctx.config.rowhidden ?? {};
+    const r1 = ctx.luckysheet_select_save[0].row[0];
+    const r2 = ctx.luckysheet_select_save[0].row[1];
+    const rowhiddenNumber = r2;
+    for (let r = r1; r <= r2; r += 1) {
+      rowhidden[r] = 0;
+    }
+    /* 保存撤销,luck中保存撤销用以下方式实现，而在本项目中不需要另外处理
+      if(Store.clearjfundo){
+        let redo = {};
+        redo["type"] = "showHidRows";
+        redo["sheetIndex"] = Store.currentSheetIndex;
+        redo["config"] = $.extend(true, {}, Store.config);
+        redo["curconfig"] = cfg;
+
+        Store.jfundo.length  = 0;
+        Store.jfredo.push(redo);
+    } */
+    ctx.config.rowhidden = rowhidden;
+    const rowLen = ctx.luckysheetfile[index].data!.length;
+    /**
+     * 计算要隐藏的行是否是最后一列
+     * 符合最后一列的条件：要隐藏的index===表格的长度-1 或者
+     * 记录隐藏数组里面的数-1===要隐藏的index
+     */
+    const isEndRow =
+      rowLen - 1 === rowhiddenNumber ||
+      Object.keys(rowhidden).findIndex(
+        (o) => parseInt(o, 10) - 1 === rowhiddenNumber
+      ) >= 0;
+    if (isEndRow) {
+      ctx.luckysheet_select_save[0].row[0] -= 1;
+      ctx.luckysheet_select_save[0].row[1] -= 1;
+    } else {
+      ctx.luckysheet_select_save[0].row[0] += 1;
+      ctx.luckysheet_select_save[0].row[1] += 1;
+    }
+  } else if (type === "column") {
+    // 隐藏列
+    const colhidden = ctx.config.colhidden ?? {};
+    const c1 = ctx.luckysheet_select_save[0].column[0];
+    const c2 = ctx.luckysheet_select_save[0].column[1];
+    const colhiddenNumber = c2;
+    for (let c = c1; c <= c2; c += 1) {
+      colhidden[c] = 0;
+    }
+    ctx.config.colhidden = colhidden;
+    const columnLen = ctx.luckysheetfile[index].data![0].length;
+    // 计算要隐藏的列是否是最后一列
+    const isEndColumn =
+      columnLen - 1 === colhiddenNumber ||
+      Object.keys(colhidden).findIndex(
+        (o) => parseInt(o, 10) - 1 === colhiddenNumber
+      ) >= 0;
+    if (isEndColumn) {
+      ctx.luckysheet_select_save[0].column[0] -= 1;
+      ctx.luckysheet_select_save[0].column[1] -= 1;
+    } else {
+      ctx.luckysheet_select_save[0].column[0] += 1;
+      ctx.luckysheet_select_save[0].column[1] += 1;
+    }
+  }
+  ctx.luckysheetfile[index].config = ctx.config;
+  return "";
+}
+
+// 取消隐藏选中行列
+export function showSelected(ctx: Context, type: string) {
+  if (!ctx.luckysheet_select_save || ctx.luckysheet_select_save.length > 1)
+    return "noMulti";
+  const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
+  // 取消隐藏行
+  if (type === "row") {
+    const rowhidden = ctx.config.rowhidden ?? {};
+    const r1 = ctx.luckysheet_select_save[0].row[0];
+    const r2 = ctx.luckysheet_select_save[0].row[1];
+    for (let r = r1; r <= r2; r += 1) {
+      delete rowhidden[r];
+    }
+    ctx.config.rowhidden = rowhidden;
+  } else if (type === "column") {
+    // 取消隐藏列
+    const colhidden = ctx.config.colhidden ?? {};
+    const c1 = ctx.luckysheet_select_save[0].column[0];
+    const c2 = ctx.luckysheet_select_save[0].column[1];
+    for (let c = c1; c <= c2; c += 1) {
+      delete colhidden[c];
+    }
+    ctx.config.colhidden = colhidden;
+  }
+  ctx.luckysheetfile[index].config = ctx.config;
+  return "";
+}
+
+// 判断当前选区是不是隐藏行列
+export function isShowHidenCR(ctx: Context): boolean {
+  if (
+    !ctx.luckysheet_select_save ||
+    (!ctx.config.colhidden && !ctx.config.rowhidden)
+  )
+    return false;
+  // 如果当先选区处在隐藏行列的时候则不可编辑
+  if (!!ctx.config.colhidden && _.size(ctx.config.colhidden) >= 1) {
+    const ctxColumn = ctx.luckysheet_select_save[0].column[0];
+    const isHidenColumn =
+      Object.keys(ctx.config.colhidden).findIndex((o) => {
+        return ctxColumn === parseInt(o, 10);
+      }) >= 0;
+    if (isHidenColumn) {
+      return true;
+    }
+  }
+  if (!!ctx.config.rowhidden && _.size(ctx.config.rowhidden) >= 1) {
+    const ctxRow = ctx.luckysheet_select_save[0].row[0];
+    const isHidenRow =
+      Object.keys(ctx.config.rowhidden).findIndex((o) => {
+        return ctxRow === parseInt(o, 10);
+      }) >= 0;
+    if (isHidenRow) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// 计算键盘选区中要经过的隐藏行列的个数
+export function hideCRCount(ctx: Context, type: string): number {
+  let count = 1;
+  if (!ctx.luckysheet_select_save) return 0;
+  const section = ctx.luckysheet_select_save[0];
+  const rowhidden = ctx.config.rowhidden ?? {};
+  const colhidden = ctx.config.colhidden ?? {};
+  if (type === "ArrowUp" || type === "ArrowDown") {
+    const rowArr = Object.keys(rowhidden);
+    if (type === "ArrowUp") {
+      let row = section.row[0] - 1;
+      const rowIndex = rowArr.indexOf(row.toString());
+      for (let i = rowIndex; i >= 0; i -= 1) {
+        if (parseInt(rowArr[i], 10) === row) {
+          count += 1;
+          row -= 1;
+        } else {
+          return count;
+        }
+      }
+    } else {
+      let row = section.row[0] + 1;
+      const rowIndex = rowArr.indexOf(`${row}`);
+      for (let i = rowIndex; i < rowArr.length; i += 1) {
+        if (parseInt(rowArr[i], 10) === row) {
+          count += 1;
+          row += 1;
+        } else {
+          return count;
+        }
+      }
+    }
+  } else if (type === "ArrowLeft" || type === "ArrowRight") {
+    const columnArr = Object.keys(colhidden);
+    if (type === "ArrowLeft") {
+      let column = section.column[0] - 1;
+      const columnIndex = columnArr.indexOf(column.toString());
+      for (let i = columnIndex; i >= 0; i -= 1) {
+        if (parseInt(columnArr[i], 10) === column) {
+          count += 1;
+          column -= 1;
+        } else {
+          return count;
+        }
+      }
+    } else {
+      let column = section.column[0] + 1;
+      const columnIndex = columnArr.indexOf(`${column}`);
+      for (let i = columnIndex; i < columnArr.length; i += 1) {
+        if (parseInt(columnArr[i], 10) === column) {
+          count += 1;
+          column += 1;
+        } else {
+          return count;
+        }
+      }
+    }
+  }
+
+  return count;
+}
