@@ -192,9 +192,9 @@ const SheetTabContextMenu: React.FC = () => {
               }}
             >
               {sheetconfig.copy}
-              </Menu>
-          )
-      }
+            </Menu>
+          );
+        }
         if (name === "color") {
           return (
             <Menu
