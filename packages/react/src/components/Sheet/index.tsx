@@ -55,6 +55,7 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
     context.config?.rowlen,
     context.config?.columnlen,
     context.config?.rowhidden,
+    context.config.colhidden,
     data,
     setContext,
   ]);

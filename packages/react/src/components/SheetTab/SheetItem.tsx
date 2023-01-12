@@ -212,6 +212,12 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
         style={dragOver ? { pointerEvents: "none" } : {}}
       >
         {sheet.name}
+        {!!sheet.color && (
+          <div
+            className="luckysheet-sheets-item-color"
+            style={{ background: sheet.color }}
+          />
+        )}
       </span>
     </div>
   );

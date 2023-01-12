@@ -10,6 +10,8 @@ import React, {
 import WorkbookContext from "../../context";
 import { useAlert } from "../../hooks/useAlert";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
+import { ChangeColor } from "../ChangeColor";
+import SVGIcon from "../SVGIcon";
 import Divider from "./Divider";
 import "./index.css";
 import Menu from "./Menu";
@@ -19,6 +21,8 @@ const SheetTabContextMenu: React.FC = () => {
   const { x, y, sheet, onRename } = context.sheetTabContextMenu;
   const { sheetconfig } = locale(context);
   const [position, setPosition] = useState({ x: -1, y: -1 });
+  const [isShowChangeColor, setIsShowChangeColor] = useState<boolean>(false);
+  const [isShowInputColor, setIsShowInputColor] = useState<boolean>(false);
   const { showAlert, hideAlert } = useAlert();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -80,6 +84,9 @@ const SheetTabContextMenu: React.FC = () => {
       { addSheetOp: true }
     );
   }, [context.allowEdit, setContext, sheet?.id]);
+  const updateShowInputColor = useCallback((state: boolean) => {
+    setIsShowInputColor(state);
+  }, []);
 
   if (!sheet || x == null || y == null) return null;
 
@@ -185,6 +192,29 @@ const SheetTabContextMenu: React.FC = () => {
               }}
             >
               {sheetconfig.copy}
+              </Menu>
+          )
+      }
+        if (name === "color") {
+          return (
+            <Menu
+              key={name}
+              onMouseEnter={() => {
+                setIsShowChangeColor(true);
+              }}
+              onMouseLeave={() => {
+                if (!isShowInputColor) {
+                  setIsShowChangeColor(false);
+                }
+              }}
+            >
+              {sheetconfig.changeColor}
+              <span className="change-color-triangle">
+                <SVGIcon name="changeColor" width={18} />
+              </span>
+              {isShowChangeColor && context.allowEdit && (
+                <ChangeColor triggerParentUpdate={updateShowInputColor} />
+              )}
             </Menu>
           );
         }
