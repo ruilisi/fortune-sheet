@@ -26,8 +26,12 @@ describe("paste", () => {
     clipboardData.files = [];
     newEvent.clipboardData = clipboardData;
     handlePaste(ctx, newEvent);
-    expect(document.execCommand).toBeCalledWith("insertText", false, "abcd");
-    expect(newEvent.clipboardData.getData).toBeCalledWith("text/plain");
+    expect(document.execCommand).toHaveBeenCalledWith(
+      "insertText",
+      false,
+      "abcd"
+    );
+    expect(newEvent.clipboardData.getData).toHaveBeenCalledWith("text/plain");
 
     ctx.luckysheet_copy_save = { copyRange: [] };
     selectionCache.isPasteAction = true;
@@ -36,7 +40,7 @@ describe("paste", () => {
       return pastedHtmlFactory("WPS");
     });
     handlePaste(ctx, newEvent);
-    expect(newEvent.clipboardData.getData).toBeCalledWith("text/html");
+    expect(newEvent.clipboardData.getData).toHaveBeenCalledWith("text/html");
     expect(ctx.luckysheetfile[0].data[0][0].v).toBe(1);
     expect(ctx.luckysheetfile[0].data[3][0].v).toBe(6);
     expect(ctx.luckysheetfile[0].data[0][2]).toEqual({

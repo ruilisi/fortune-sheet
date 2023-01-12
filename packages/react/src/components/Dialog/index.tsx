@@ -10,6 +10,7 @@ type Props = {
   onCancel?: () => void;
   containerStyle?: React.CSSProperties;
   contentStyle?: React.CSSProperties;
+  children?: React.ReactNode;
 };
 
 const Dialog: React.FC<Props> = ({

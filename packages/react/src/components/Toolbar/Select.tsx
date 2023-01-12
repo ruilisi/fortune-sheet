@@ -1,7 +1,7 @@
 import React from "react";
 import SVGIcon from "../SVGIcon";
 
-const Select: React.FC = ({ children }) => {
+const Select: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   return <div className="fortune-toolbar-select">{children}</div>;
 };
 

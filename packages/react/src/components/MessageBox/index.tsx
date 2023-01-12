@@ -5,6 +5,7 @@ type Props = {
   type: "ok" | "yesno";
   onOk?: () => void;
   onCancel?: () => void;
+  children?: React.ReactNode;
 };
 
 const MessageBox: React.FC<Props> = ({
