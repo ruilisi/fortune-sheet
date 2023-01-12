@@ -10,7 +10,9 @@ const ModalContext = React.createContext<{
   hideModal: () => {},
 });
 
-const ModalProvider: React.FC = ({ children }) => {
+const ModalProvider: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => {
   const [component, setComponent] = useState<React.ReactNode>(null);
 
   const showModal = useCallback((c: React.ReactNode) => {

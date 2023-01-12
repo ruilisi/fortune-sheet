@@ -7,10 +7,10 @@ export default {
   component: Workbook,
 } as ComponentMeta<typeof Workbook>;
 
-const ApiExecContainer: React.FC<{ onRun: () => any }> = ({
-  children,
-  onRun,
-}) => {
+const ApiExecContainer: React.FC<{
+  onRun: () => any;
+  children?: React.ReactNode;
+}> = ({ children, onRun }) => {
   const [result, setResult] = useState<string>();
   return (
     <div

@@ -140,7 +140,7 @@ export const LocationCondition: React.FC<{}> = () => {
 
   // 选中事件处理
   const isSelect = useCallback(
-    (currentType) => conditionType === currentType,
+    (currentType: string) => conditionType === currentType,
     [conditionType]
   );
 

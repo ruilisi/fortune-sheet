@@ -1162,7 +1162,7 @@ export function getBorderInfoComputeRange(
         }
       }
     } else if (rangeType === "cell") {
-      const { value } = borderInfo[i];
+      const { value } = borderInfo[i] as any;
 
       const bd_r = value.row_index;
       const bd_c = value.col_index;

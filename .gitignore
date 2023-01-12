@@ -132,6 +132,7 @@ dist
 # production
 **/dist
 /.vscode
+/.idea
 **/**/lib/**
 **/**/es/**
 

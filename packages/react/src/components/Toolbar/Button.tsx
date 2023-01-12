@@ -7,6 +7,7 @@ type Props = {
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   disabled?: boolean;
   selected?: boolean;
+  children?: React.ReactNode;
 };
 
 const Button: React.FC<Props> = ({
