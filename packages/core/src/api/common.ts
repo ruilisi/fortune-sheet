@@ -5,7 +5,7 @@ import { SHEET_NOT_FOUND } from "./errors";
 
 export type CommonOptions = { index?: number; id?: string };
 
-const dataToCelldata = (data: CellMatrix | undefined) => {
+export const dataToCelldata = (data: CellMatrix | undefined) => {
   const celldata: CellWithRowAndCol[] = [];
   if (data == null) {
     return celldata;

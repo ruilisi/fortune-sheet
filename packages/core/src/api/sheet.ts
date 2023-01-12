@@ -1,8 +1,10 @@
 import _ from "lodash";
-import { getSheet } from "./common";
+import { v4 as uuidv4 } from "uuid";
+import { dataToCelldata, getSheet } from "./common";
 import { Context } from "../context";
 import { CellMatrix, CellWithRowAndCol, Sheet } from "../types";
 import { getSheetIndex } from "../utils";
+import { api, locale } from "..";
 
 export function getAllSheets(ctx: Context) {
   return ctx.luckysheetfile;
@@ -27,6 +29,7 @@ export function initSheetData(
     lastRowNum = Math.max(lastRowNum, draftCtx.defaultrowNum);
     lastColNum = Math.max(lastColNum, draftCtx.defaultcolumnNum);
   }
+  delete draftCtx.luckysheetfile[index]?.celldata;
   if (lastRowNum && lastColNum) {
     const expandedData: Sheet["data"] = _.times(lastRowNum, () =>
       _.times(lastColNum, () => null)
@@ -58,4 +61,77 @@ export function hideSheet(ctx: Context, sheetId: string) {
 export function showSheet(ctx: Context, sheetId: string) {
   const index = getSheetIndex(ctx, sheetId) as number;
   ctx.luckysheetfile[index].hide = undefined;
+}
+
+function generateCopySheetName(ctx: Context, sheetId: string) {
+  const { info } = locale(ctx);
+  const copyWord = `(${info.copy}`;
+  const SheetIndex = getSheetIndex(ctx, sheetId) as number;
+  let sheetName = ctx.luckysheetfile[SheetIndex].name;
+  const copy_i = sheetName.indexOf(copyWord);
+  let index: number = 0;
+
+  if (copy_i !== -1) {
+    sheetName = sheetName.toString().substring(0, copy_i);
+  }
+
+  const nameCopy = sheetName + copyWord;
+  const sheetNames = [];
+
+  for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
+    const fileName = ctx.luckysheetfile[i].name;
+    sheetNames.push(fileName);
+    const st_i = fileName.indexOf(nameCopy);
+
+    if (st_i === 0) {
+      index = index || 2;
+      const ed_i = fileName.indexOf(")", st_i + nameCopy.length);
+      const num = fileName.substring(st_i + nameCopy.length, ed_i);
+
+      if (_.isNumber(num)) {
+        if (Number.parseInt(num, 10) >= index) {
+          index = Number.parseInt(num, 10) + 1;
+        }
+      }
+    }
+  }
+
+  let sheetCopyName;
+
+  do {
+    const postfix = `${copyWord + (index || "")})`;
+    const lengthLimit = 31 - postfix.length;
+    sheetCopyName = sheetName;
+    if (sheetCopyName.length > lengthLimit) {
+      sheetCopyName = `${sheetCopyName.slice(0, lengthLimit - 1)}…`;
+    }
+    sheetCopyName += postfix;
+    index = (index || 1) + 1;
+  } while (sheetNames.indexOf(sheetCopyName) !== -1);
+
+  return sheetCopyName;
+}
+
+export function copySheet(ctx: Context, sheetId: string) {
+  const index = getSheetIndex(ctx, sheetId) as number;
+  const order = ctx.luckysheetfile[index].order! + 1;
+  const sheetName = generateCopySheetName(ctx, sheetId);
+  const sheetData = _.cloneDeep(ctx.luckysheetfile[index]);
+  delete sheetData.id;
+  delete sheetData.status;
+  sheetData.celldata = dataToCelldata(sheetData.data);
+  delete sheetData.data;
+  api.addSheet(
+    ctx,
+    undefined,
+    uuidv4(),
+    ctx.luckysheetfile[index].isPivotTable,
+    sheetName,
+    sheetData
+  );
+  const sheetOrderList: Record<string, number> = {};
+  sheetOrderList[
+    ctx.luckysheetfile[ctx.luckysheetfile.length - 1].id as string
+  ] = order;
+  api.setSheetOrder(ctx, sheetOrderList);
 }

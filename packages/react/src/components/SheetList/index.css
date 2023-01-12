@@ -1,21 +1,18 @@
 .fortune-sheet-list {
-  overflow: visible;
+  overflow-y: scroll;
+  overflow-x: hidden;
   min-width: 120px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
   position: absolute;
   z-index: 10002;
   bottom: 31px;
   left: 72px;
+  max-height: 60%;
 }
 
 .fortune-sheet-list-item {
   height: 30px;
   line-height: 30px;
-  display: inline-block;
   width: 100%;
-  text-indent: 15px;
   margin-right: 46px;
   cursor: pointer;
 }
@@ -38,4 +35,10 @@
 
 .fortune-sheet-hidden-button :hover {
   background-color: #D0D0D0;
+}
+
+.fortune-sheet-selected-check-sapce {
+  width: 20px;
+  display: inline-block;
+  margin-left: 15px;
 }

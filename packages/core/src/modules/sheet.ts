@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { v4 as uuidv4 } from "uuid";
 import { initSheetData } from "../api/sheet";
 import { Context } from "../context";
 import { locale } from "../locale";
@@ -89,8 +90,8 @@ export function changeSheet(
 
 export function addSheet(
   ctx: Context,
-  settings: Required<Settings>,
-  newSheetID?: string, // if action is from websocket, there will be a new sheetID
+  settings?: Required<Settings>,
+  newSheetID: string | undefined = undefined, // if action is from websocket, there will be a new sheetID
   isPivotTable = false,
   sheetName: string | undefined = undefined,
   sheetData: Sheet | undefined = undefined
@@ -101,14 +102,11 @@ export function addSheet(
   }
   const order = ctx.luckysheetfile.length;
   const id = newSheetID ?? (settings?.generateSheetId() as string);
-  const sheetname = generateRandomSheetName(
-    ctx.luckysheetfile,
-    isPivotTable,
-    ctx
-  );
+  const sheetname =
+    sheetName || generateRandomSheetName(ctx.luckysheetfile, isPivotTable, ctx);
   if (!_.isNil(sheetData)) {
     delete sheetData.data;
-    ctx.luckysheetfile = ctx.luckysheetfile.map((sheet) => {
+    ctx.luckysheetfile.forEach((sheet) => {
       sheet.order =
         (sheet.order as number) < sheetData.order!
           ? sheet.order
@@ -129,7 +127,8 @@ export function addSheet(
         isPivotTable: !!isPivotTable,
       }
     : sheetData;
-
+  if (sheetName !== undefined) sheetconfig.name = sheetName;
+  if (sheetconfig.id === undefined) sheetconfig.id = uuidv4();
   if (ctx.hooks.beforeAddSheet?.(sheetconfig) === false) {
     return;
   }

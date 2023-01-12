@@ -9,8 +9,22 @@ import { Settings } from "../settings";
 import { CommonOptions, getSheet } from "./common";
 import { INVALID_PARAMS } from "./errors";
 
-export function addSheet(ctx: Context, settings: Required<Settings>) {
-  addSheetInternal(ctx, settings);
+export function addSheet(
+  ctx: Context,
+  settings?: Required<Settings>,
+  newSheetID?: string,
+  isPivotTable: boolean = false,
+  sheetname: string | undefined = undefined,
+  sheetData: Sheet | undefined = undefined
+) {
+  addSheetInternal(
+    ctx,
+    settings,
+    newSheetID,
+    isPivotTable,
+    sheetname,
+    sheetData
+  );
 }
 
 export function deleteSheet(ctx: Context, options: CommonOptions = {}) {
