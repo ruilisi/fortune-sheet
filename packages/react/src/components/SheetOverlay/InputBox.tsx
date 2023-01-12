@@ -12,6 +12,7 @@ import {
   valueShowEs,
   updateCell,
   createRangeHightlight,
+  isShowHidenCR,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -20,6 +21,7 @@ import React, {
   useRef,
   useCallback,
   useLayoutEffect,
+  useState,
 } from "react";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -34,6 +36,7 @@ const InputBox: React.FC = () => {
   const lastKeyDownEventRef = useRef<KeyboardEvent>();
   const prevCellUpdate = usePrevious<any[]>(context.luckysheetCellUpdate);
   const prevSheetId = usePrevious<string>(context.currentSheetId);
+  const [isHidenRC, setIsHidenRC] = useState<boolean>(false);
   const firstSelection = context.luckysheet_select_save?.[0];
   const row_index = firstSelection?.row_focus!;
   const col_index = firstSelection?.column_focus!;
@@ -112,6 +115,12 @@ const InputBox: React.FC = () => {
       }
     }
   }, [context.luckysheetCellUpdate]);
+
+  // 当选中行列是处于隐藏状态的话则不允许编辑
+  useEffect(() => {
+    setIsHidenRC(isShowHidenCR(context));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [context.luckysheet_select_save]);
 
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -318,7 +327,7 @@ const InputBox: React.FC = () => {
           onChange={onChange}
           onKeyDown={onKeyDown}
           onPaste={onPaste}
-          allowEdit={edit}
+          allowEdit={edit ? !isHidenRC : edit}
         />
       </div>
       {document.activeElement === inputRef.current && (

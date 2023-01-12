@@ -1544,7 +1544,6 @@ export function getdatabyselection(
   }
 
   const data = [];
-
   for (let r = range.row[0]; r <= range.row[1]; r += 1) {
     if (d?.[r] == null) {
       continue;
@@ -1556,12 +1555,14 @@ export function getdatabyselection(
     const row = [];
 
     for (let c = range.column[0]; c <= range.column[1]; c += 1) {
+      if (cfg?.colhidden != null && cfg.colhidden[c] != null) {
+        continue;
+      }
       row.push(d[r][c]);
     }
 
     data.push(row);
   }
-
   return data;
 }
 
