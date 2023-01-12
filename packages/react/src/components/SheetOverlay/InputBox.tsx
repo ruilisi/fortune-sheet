@@ -71,8 +71,6 @@ const InputBox: React.FC = () => {
         return;
       }
       const flowdata = getFlowdata(context);
-      //const row_index = firstSelection.row_focus!;
-      //const col_index = firstSelection.column_focus!;
       const cell = flowdata?.[row_index]?.[col_index];
       let value = "";
       if (cell && !refs.globalCache.overwriteCell) {
@@ -261,26 +259,28 @@ const InputBox: React.FC = () => {
     },
     [context.luckysheetCellUpdate]
   );
-  
-  const sheetIndex =  Number(context.currentSheetId);
-  const sheet = context.luckysheetfile[sheetIndex];
-  const cfg = sheet.config || {};
+
+  const cfg = context.config || {};
   let rowReadOnly: number[] = [];
   let colReadOnly: number[] = [];
 
-  if (! _.isNil(cfg.rowReadOnly)) {
-      rowReadOnly = cfg.rowReadOnly
+  if (!_.isNil(cfg.rowReadOnly)) {
+    rowReadOnly = cfg.rowReadOnly;
   }
-  
-  if (! _.isNil(cfg.colReadOnly)) {
-      colReadOnly = cfg.colReadOnly
+
+  if (!_.isNil(cfg.colReadOnly)) {
+    colReadOnly = cfg.colReadOnly;
   }
-  
+
   let edit = context.allowEdit;
-  if((colReadOnly.indexOf(col_index) !== -1 || rowReadOnly.indexOf(row_index) !== -1) && context.allowEdit === true){
+  if (
+    (colReadOnly.indexOf(col_index) !== -1 ||
+      rowReadOnly.indexOf(row_index) !== -1) &&
+    context.allowEdit === true
+  ) {
     edit = false;
   }
-  
+
   return (
     <div
       className="luckysheet-input-box"
