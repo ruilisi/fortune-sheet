@@ -94,12 +94,12 @@ const SheetTab: React.FC = () => {
                     );
                   }
                   addSheet(draftCtx, settings);
-                  const tabCurrent = tabContainerRef.current;
-                  setIsShowScrollBtn(
-                    tabCurrent!.scrollWidth > tabCurrent!.clientWidth
-                  );
                 },
                 { addSheetOp: true }
+              );
+              const tabCurrent = tabContainerRef.current;
+              setIsShowScrollBtn(
+                tabCurrent!.scrollWidth > tabCurrent!.clientWidth
               );
             }}
           >
@@ -112,7 +112,8 @@ const SheetTab: React.FC = () => {
               id="all-sheets"
               className="fortune-sheettab-button"
               ref={tabContainerRef}
-              onMouseDown={() => {
+              onMouseDown={(e) => {
+                e.stopPropagation();
                 setContext((ctx) => {
                   ctx.showSheetList = _.isUndefined(ctx.showSheetList)
                     ? true

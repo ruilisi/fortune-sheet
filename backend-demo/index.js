@@ -38,6 +38,9 @@ const port = process.env.PORT || 8081;
 async function getData() {
   const db = client.db(dbName);
   const data = await db.collection(collectionName).find().toArray();
+  data.forEach((sheet) => {
+    if (!_.isUndefined(sheet._id)) delete sheet._id;
+  });
   return data;
 }
 

@@ -70,6 +70,17 @@ const SheetTabContextMenu: React.FC = () => {
     });
   }, [context.allowEdit, setContext, sheet, showAlert, sheetconfig]);
 
+  const copySheet = useCallback(() => {
+    if (context.allowEdit === false) return;
+    if (!sheet?.id) return;
+    setContext(
+      (ctx) => {
+        api.copySheet(ctx, sheet.id!);
+      },
+      { addSheetOp: true }
+    );
+  }, [context.allowEdit, setContext, sheet?.id]);
+
   if (!sheet || x == null || y == null) return null;
 
   return (
@@ -161,6 +172,19 @@ const SheetTabContextMenu: React.FC = () => {
               }}
             >
               {sheetconfig.hide}
+            </Menu>
+          );
+        }
+        if (name === "copy") {
+          return (
+            <Menu
+              key={name}
+              onClick={() => {
+                copySheet();
+                close();
+              }}
+            >
+              {sheetconfig.copy}
             </Menu>
           );
         }

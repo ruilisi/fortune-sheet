@@ -248,12 +248,10 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               globalCache.current.redoList = [];
               emitOp(result, filteredPatches, options);
             }
-          }
-          if (
-            patches?.[0]?.value?.luckysheetfile?.length <
-            ctx_?.luckysheetfile?.length
-          ) {
-            reduceUndoList(result, ctx_);
+          } else {
+            if (patches?.[0]?.value?.length < ctx_?.luckysheetfile?.length) {
+              reduceUndoList(result, ctx_);
+            }
           }
           return result;
         });

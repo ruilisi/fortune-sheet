@@ -256,6 +256,7 @@ export function patchToOp(
       ops,
       (op) => op.path.length === 0 && op.op === "add"
     );
+    options.id = options.addSheet!.id as string;
     if (undo) {
       // 撤消增表
       const index = getSheetIndex(
@@ -294,6 +295,7 @@ export function patchToOp(
       });
     }
   } else if (options?.deleteSheetOp) {
+    options.id = options.deleteSheetOp!.id as string;
     if (undo) {
       // 撤销删表
       ops = [
@@ -335,7 +337,7 @@ export function patchToOp(
         },
       ];
       const order = options.deletedSheet?.value?.order as number;
-      if (options.deletedSheet?.index !== ctx.luckysheetfile.length) {
+      if (options.deletedSheet?.order !== ctx.luckysheetfile.length) {
         const sheetsRight = ctx.luckysheetfile.filter(
           (sheet) => (sheet?.order as number) >= (order as number)
         );
