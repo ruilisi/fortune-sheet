@@ -5,6 +5,7 @@ module.exports = {
   },
   extends: [
     "plugin:react/recommended",
+    "plugin:jsonc/base",
     "airbnb",
     "plugin:prettier/recommended",
     "plugin:jest/recommended",
@@ -22,6 +23,7 @@ module.exports = {
     quotes: 0,
     camelcase: 0,
     "class-methods-use-this": 0,
+    "eol-last": ["error", "always"],
     "no-continue": 0,
     "no-param-reassign": 0,
     "no-unused-vars": 0,
@@ -57,4 +59,10 @@ module.exports = {
     "react-hooks/exhaustive-deps": 1,
     "@typescript-eslint/no-unused-vars": [2],
   },
+  overrides: [
+    {
+      parser: "jsonc-eslint-parser",
+      files: ["**/*.json", "**/*.json5", "**/*.jsonc"],
+    },
+  ],
 };

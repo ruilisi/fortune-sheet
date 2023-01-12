@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import _ from "lodash";
 
 type ContentEditableProps = Omit<
@@ -13,70 +13,68 @@ type ContentEditableProps = Omit<
   allowEdit?: boolean;
 };
 
-class ContentEditable extends React.Component<ContentEditableProps> {
-  lastHtml?: string = undefined;
+const ContentEditable: React.FC<ContentEditableProps> = ({ ...props }) => {
+  const [lastHtml, setLastHTML] = useState("");
+  const root = useRef<HTMLDivElement | null>(null);
+  const { autoFocus, initialContent, onChange } = props;
 
-  root: HTMLDivElement | null = null;
-
-  componentDidMount() {
-    const { autoFocus, initialContent } = this.props;
+  useEffect(() => {
     if (autoFocus) {
-      this.root?.focus();
+      root.current?.focus();
     }
-    if (initialContent && this.root) {
-      this.root.innerHTML = initialContent;
-    }
-  }
+  }, [autoFocus, initialContent]);
 
-  UNSAFE_componentWillUpdate() {
-    const { initialContent } = this.props;
-    if (initialContent && this.root) {
-      this.root.innerHTML = initialContent;
+  // UNSAFE_componentWillUpdate
+  useEffect(() => {
+    if (initialContent && root.current != null) {
+      root.current.innerHTML = initialContent;
     }
-  }
+  }, [initialContent]);
 
-  emitChange() {
-    const { onChange } = this.props;
-    const html = this.root?.innerHTML;
-    if (onChange && html !== this.lastHtml) {
+  const fnEmitChange = useCallback(() => {
+    let html;
+
+    if (root.current != null) {
+      html = root.current.innerHTML;
+    }
+    if (onChange && html !== lastHtml) {
       onChange(html || "");
     }
-    this.lastHtml = html;
-  }
+    setLastHTML(html || "");
+  }, [root, lastHtml, onChange]);
 
-  render() {
-    const { innerRef, onBlur } = this.props;
-    let { allowEdit } = this.props;
-    if (_.isNil(allowEdit)) allowEdit = true;
-    return (
-      <div
-        onMouseDown={(e) => e.stopPropagation()}
-        onDoubleClick={(e) => e.stopPropagation()}
-        onClick={(e) => e.stopPropagation()}
-        {..._.omit(
-          this.props,
-          "innerRef",
-          "onChange",
-          "html",
-          "onBlur",
-          "autoFocus",
-          "allowEdit",
-          "initialContent"
-        )}
-        ref={(e) => {
-          this.root = e;
-          innerRef?.(e);
-        }}
-        tabIndex={0}
-        onInput={this.emitChange.bind(this)}
-        onBlur={(e) => {
-          this.emitChange.bind(this)();
-          onBlur?.(e);
-        }}
-        contentEditable={allowEdit}
-      />
-    );
-  }
-}
+  const { innerRef, onBlur } = props;
+  let { allowEdit } = props;
+  if (_.isNil(allowEdit)) allowEdit = true;
+
+  return (
+    <div
+      onMouseDown={(e) => e.stopPropagation()}
+      onDoubleClick={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
+      {..._.omit(
+        props,
+        "innerRef",
+        "onChange",
+        "html",
+        "onBlur",
+        "autoFocus",
+        "allowEdit",
+        "initialContent"
+      )}
+      ref={(e) => {
+        root.current = e;
+        innerRef?.(e);
+      }}
+      tabIndex={0}
+      onInput={fnEmitChange}
+      onBlur={(e) => {
+        fnEmitChange();
+        onBlur?.(e);
+      }}
+      contentEditable={allowEdit}
+    />
+  );
+};
 
 export default ContentEditable;
