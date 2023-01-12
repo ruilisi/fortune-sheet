@@ -7,10 +7,13 @@ const pkgList = readdirSync(join(__dirname, "./packages")).filter(
 
 const moduleNameMapper = {
   "\\.(css|less|sass|scss)$": require.resolve("identity-obj-proxy"),
+  uuid: require.resolve("uuid"),
 };
 
 pkgList.forEach((shortName) => {
   const name = `@fortune-sheet/${shortName}`;
+  // Workaround for Jest not having ESM support yet
+  // See: https://github.com/uuidjs/uuid/issues/451
   moduleNameMapper[name] = join(__dirname, `./packages/${shortName}/src`);
 });
 
