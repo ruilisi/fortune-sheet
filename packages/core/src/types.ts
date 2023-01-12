@@ -121,6 +121,7 @@ export type Sheet = {
   name: string;
   config?: SheetConfig;
   order?: number;
+  color?: string;
   data?: CellMatrix;
   celldata?: CellWithRowAndCol[];
   id?: string;

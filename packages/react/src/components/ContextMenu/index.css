@@ -74,7 +74,7 @@
 .fortune-menuitem-row {
   display: flex;
   padding: 7px 24px;
-  white-space:pre;
+  white-space: pre;
   align-items: center;
 }
 
@@ -127,7 +127,7 @@
 
 .fortune-filter-menu .button-danger {
   color: white;
-  background-color: #d9534f; 
+  background-color: #d9534f;
   margin-left: 10px;
 }
 
@@ -163,8 +163,9 @@
 }
 
 .filtermenu-input-container input.luckysheet-mousedown-cancel {
-  border:1px solid #A1A1A1;
+  border: 1px solid #A1A1A1;
 }
+
 .filtermenu-input-container input.luckysheet-mousedown-cancel:focus {
   border: 1px solid rgb(1, 136, 251);
   outline: none;
@@ -209,8 +210,8 @@
 
 #luckysheet-filter-byvalue-select .count,
 #luckysheet-pivotTableFilter-byvalue-select .count {
-    color: gray;
-    margin-left: 5px;
+  color: gray;
+  margin-left: 5px;
 }
 
 #luckysheet-filter-byvalue-select .select-item {
@@ -241,7 +242,7 @@
   text-align: center;
 }
 
-.luckysheet-filter-bycolor-submenu .color-list{
+.luckysheet-filter-bycolor-submenu .color-list {
   max-height: 128px;
   overflow: auto;
 }
@@ -268,4 +269,10 @@
   position: absolute;
   right: 10px;
   top: 6px;
+}
+
+.change-color-triangle {
+  position: absolute;
+  top: 3px;
+  right: -18px;
 }
