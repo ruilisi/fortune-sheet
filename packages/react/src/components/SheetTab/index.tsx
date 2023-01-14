@@ -83,20 +83,22 @@ const SheetTab: React.FC = () => {
           <div
             className="fortune-sheettab-button"
             onClick={() => {
-              setContext(
-                (draftCtx) => {
-                  if (draftCtx.luckysheetCellUpdate.length > 0) {
-                    updateCell(
-                      draftCtx,
-                      draftCtx.luckysheetCellUpdate[0],
-                      draftCtx.luckysheetCellUpdate[1],
-                      refs.cellInput.current!
-                    );
-                  }
-                  addSheet(draftCtx, settings);
-                },
-                { addSheetOp: true }
-              );
+              _.debounce(() => {
+                setContext(
+                  (draftCtx) => {
+                    if (draftCtx.luckysheetCellUpdate.length > 0) {
+                      updateCell(
+                        draftCtx,
+                        draftCtx.luckysheetCellUpdate[0],
+                        draftCtx.luckysheetCellUpdate[1],
+                        refs.cellInput.current!
+                      );
+                    }
+                    addSheet(draftCtx, settings);
+                  },
+                  { addSheetOp: true }
+                );
+              }, 300)();
               const tabCurrent = tabContainerRef.current;
               setIsShowScrollBtn(
                 tabCurrent!.scrollWidth > tabCurrent!.clientWidth
