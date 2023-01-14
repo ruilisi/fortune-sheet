@@ -118,6 +118,7 @@ const SheetTab: React.FC = () => {
                   ctx.showSheetList = _.isUndefined(ctx.showSheetList)
                     ? true
                     : !ctx.showSheetList;
+                  ctx.sheetTabContextMenu = {};
                 });
               }}
             >
