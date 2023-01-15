@@ -407,10 +407,10 @@ function checkSpecialFunctionRange(
   cellRangeFunction?: any
 ) {
   if (
-    function_str.substring(0, 30) === "luckysheet_getSpecialReference" ||
-    function_str.substring(0, 20) === "luckysheet_function."
+    function_str.startsWith("luckysheet_getSpecialReference") ||
+    function_str.startsWith("luckysheet_function.")
   ) {
-    if (function_str.substring(0, 20) === "luckysheet_function.") {
+    if (function_str.startsWith("luckysheet_function.")) {
       let funcName = function_str.split(".")[1];
       if (!_.isNil(funcName)) {
         funcName = funcName.toUpperCase();
@@ -452,7 +452,7 @@ function isFunctionRange(
   dynamicArray_compute: any,
   cellRangeFunction: any
 ) {
-  if (txt.substring(0, 1) === "=") {
+  if (txt.startsWith("=")) {
     txt = txt.substring(1);
   }
 
@@ -719,10 +719,10 @@ function isFunctionRange(
     if (i === funcstack.length - 1) {
       let endstr = "";
       let str_nb = _.trim(str).replace(/'/g, "\\'");
-      if (iscelldata(str_nb) && str_nb.substring(0, 1) !== ":") {
+      if (iscelldata(str_nb) && !str_nb.startsWith(":")) {
         // endstr = "luckysheet_getcelldata('" + _.trim(str) + "')";
         endstr = `luckysheet_getcelldata('${str_nb}')`;
-      } else if (str_nb.substring(0, 1) === ":") {
+      } else if (str_nb.startsWith(":")) {
         str_nb = str_nb.substring(1);
         if (iscelldata(str_nb)) {
           endstr = `luckysheet_getSpecialReference(false,${function_str},'${str_nb}')`;
@@ -733,7 +733,7 @@ function isFunctionRange(
         const regx = /{.*?}/;
         if (
           regx.test(str) &&
-          str.substring(0, 1) !== '"' &&
+          !str.startsWith('"') &&
           str.substring(str.length - 1, 1) !== '"'
         ) {
           const arraytxt = regx.exec(str)?.[0];
@@ -1412,7 +1412,7 @@ export function execFunctionGroup(
       );
     } else if (
       !(
-        calc_funcStr.substring(0, 2) === '="' &&
+        calc_funcStr.startsWith('="') &&
         calc_funcStr.substring(calc_funcStr.length - 1, 1) === '"'
       )
     ) {
@@ -1722,7 +1722,7 @@ function findrangeindex(ctx: Context, v: string, vp: string) {
       if (
         !_.isNil(p) &&
         !_.isNil(v_a[i + 1]) &&
-        v_a[i + 1].substring(0, 1) === '"' &&
+        v_a[i + 1].startsWith('"') &&
         (p.indexOf("{") > -1 || p.indexOf("}") > -1)
       ) {
         pfri[0] += 1;
@@ -1757,16 +1757,16 @@ function findrangeindex(ctx: Context, v: string, vp: string) {
     } else if (p.length === n.length) {
       if (
         !_.isNil(v_a[i + 1]) &&
-        (v_a[i + 1].substring(0, 1) === '"' ||
-          v_a[i + 1].substring(0, 1) === "{" ||
-          v_a[i + 1].substring(0, 1) === "}")
+        (v_a[i + 1].startsWith('"') ||
+          v_a[i + 1].startsWith("{") ||
+          v_a[i + 1].startsWith("}"))
       ) {
         pfri[0] += 1;
         pfri[1] = 1;
       } else if (
         !_.isNil(p) &&
         p.length > 2 &&
-        p.substring(0, 1) === '"' &&
+        p.startsWith('"') &&
         p.substring(p.length - 1, 1) === '"'
       ) {
         // pfri[1] = n.length-1;
@@ -1784,9 +1784,9 @@ function findrangeindex(ctx: Context, v: string, vp: string) {
     } else if (p.length > n.length) {
       if (
         !_.isNil(v_a[i + 1]) &&
-        (v_a[i + 1].substring(0, 1) === '"' ||
-          v_a[i + 1].substring(0, 1) === "{" ||
-          v_a[i + 1].substring(0, 1) === "}")
+        (v_a[i + 1].startsWith('"') ||
+          v_a[i + 1].startsWith("{") ||
+          v_a[i + 1].startsWith("}"))
       ) {
         pfri[0] += 1;
         pfri[1] = 1;
@@ -1816,32 +1816,31 @@ function findrangeindex(ctx: Context, v: string, vp: string) {
     } else if (p.length === n.length) {
       if (
         _.isNil(vp_a[i + 1]) &&
-        (vp_a[i + 1].substring(0, 1) === '"' ||
-          vp_a[i + 1].substring(0, 1) === "{" ||
-          vp_a[i + 1].substring(0, 1) === "}")
+        (vp_a[i + 1].startsWith('"') ||
+          vp_a[i + 1].startsWith("{") ||
+          vp_a[i + 1].startsWith("}"))
       ) {
         pfri[1] = n.length;
       } else if (
         !_.isNil(v_a[i + 1]) &&
-        v_a[i + 1].substring(0, 1) === '"' &&
-        (v_a[i + 1].substring(0, 1) === "{" ||
-          v_a[i + 1].substring(0, 1) === "}")
+        v_a[i + 1].startsWith('"') &&
+        (v_a[i + 1].startsWith("{") || v_a[i + 1].startsWith("}"))
       ) {
         pfri[0] += 1;
         pfri[1] = 1;
       } else if (
         !_.isNil(n) &&
-        n.substring(0, 1) === '"' &&
+        n.startsWith('"') &&
         n.substring(n.length - 1, 1) === '"' &&
-        p.substring(0, 1) === '"' &&
+        p.startsWith('"') &&
         p.substring(p.length - 1, 1) === ")"
       ) {
         pfri[1] = n.length;
       } else if (
         !_.isNil(n) &&
-        n.substring(0, 1) === "{" &&
+        n.startsWith("{") &&
         n.substring(n.length - 1, 1) === "}" &&
-        p.substring(0, 1) === "{" &&
+        p.startsWith("(") &&
         p.substring(p.length - 1, 1) === ")"
       ) {
         pfri[1] = n.length;
@@ -1856,14 +1855,14 @@ function findrangeindex(ctx: Context, v: string, vp: string) {
 
       return pfri;
     } else if (p.length > n.length) {
-      if (!_.isNil(p) && p.substring(0, 1) === '"') {
+      if (!_.isNil(p) && p.startsWith('"')) {
         pfri[1] = n.length;
       } else if (_.isNil(v_a[i + 1]) && /{.*?}/.test(v_a[i + 1])) {
         pfri[0] += 1;
         pfri[1] = v_a[i + 1].length;
       } else if (
         !_.isNil(p) &&
-        v_a[i + 1].substring(0, 1) === '"' &&
+        v_a[i + 1].startsWith('"') &&
         (p.indexOf("{") > -1 || p.indexOf("}") > -1)
       ) {
         pfri[0] += 1;
@@ -2478,7 +2477,7 @@ function functionHTML(txt: string) {
 }
 
 export function functionHTMLGenerate(txt: string) {
-  if (txt.length === 0 || txt.substring(0, 1) !== "=") {
+  if (txt.length === 0 || !txt.startsWith("=")) {
     return txt;
   }
 
@@ -2507,7 +2506,7 @@ export function handleFormulaInput(
   value = escapeHTML(value);
   if (
     value.length > 0 &&
-    value.substring(0, 1) === "=" &&
+    value.startsWith("=") &&
     (kcode !== 229 || value.length === 1)
   ) {
     value = functionHTMLGenerate(value);
@@ -2558,7 +2557,7 @@ export function handleFormulaInput(
     // rangedrag_row_start = false;
 
     rangeHightlightselected(ctx, $editor);
-  } else if (value1txt.substring(0, 1) !== "=") {
+  } else if (!value1txt.startsWith("=")) {
     if (!$copyTo) return;
     if ($copyTo.id === "luckysheet-rich-text-editor") {
       if (!$copyTo.innerHTML.startsWith("<span")) {
@@ -2907,7 +2906,7 @@ export function functionStrChange(
   if (!txt) {
     return "";
   }
-  if (txt.substring(0, 1) === "=") {
+  if (txt.startsWith("=")) {
     txt = txt.substring(1);
   }
 
@@ -3527,7 +3526,7 @@ export function functionCopy(
     step = 1;
   }
 
-  if (txt.substring(0, 1) === "=") {
+  if (txt.startsWith("=")) {
     txt = txt.substring(1);
   }
 
