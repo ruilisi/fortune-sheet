@@ -80,7 +80,7 @@ const SheetTab: React.FC = () => {
   useEffect(() => {
     const tabCurrent = tabContainerRef.current;
     setIsShowScrollBtn(tabCurrent!.scrollWidth > tabCurrent!.clientWidth);
-  }, []);
+  }, [context.luckysheetfile]);
 
   // 计算选区的信息
   useEffect(() => {
