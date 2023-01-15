@@ -214,10 +214,10 @@ const SheetTab: React.FC = () => {
                 return <SheetItem key={sheet.id} sheet={sheet} />;
               }
             )}
-            <SheetItem
+            {/* <SheetItem
               isDropPlaceholder
               sheet={{ name: "", id: "drop-placeholder" }}
-            />
+            /> */}
           </div>
           {isShowBoundary && isShowScrollBtn && (
             <div className="boundary boundary-right" />
