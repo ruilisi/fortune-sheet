@@ -265,3 +265,11 @@
   margin-right: 2px;
   text-align: center;
 }
+
+.luckysheet-sheets-item-function {
+  width: 12px;
+  height: 24px;
+  position: absolute;
+  top: 4px;
+  right: 2px;
+}
