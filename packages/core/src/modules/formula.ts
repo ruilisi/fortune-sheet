@@ -1519,8 +1519,7 @@ export function execFunctionGroup(
         }
 
         if (
-          t.substring(0, 1) === '"' &&
-          t.substring(t.length - 1, 1) === '"' &&
+          (t.substring(0, 1) === '"' && t.substring(t.length - 1, 1) === '"') ||
           !iscelldata(t)
         ) {
           continue;
