@@ -6,6 +6,7 @@
   background: white;
   box-shadow: rgb(0 0 0 / 10%) 5px 5px 30px;
   box-sizing: border-box;
+  overflow: auto;
 }
 
 .fortune-dialog-box-button-container {
