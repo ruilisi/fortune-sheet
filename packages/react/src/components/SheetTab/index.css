@@ -143,6 +143,14 @@
   padding: 0px 3px;
 }
 
+.luckysheet-sheets-item-name .luckysheet-sheets-item-color {
+  width: 100%;
+  height: 10%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
 .luckysheet-sheet-area div.luckysheet-sheets-item .luckysheet-sheets-item-name[contenteditable="true"] {
   border: 1px solid #d9d9d9;
   display: inline-block;

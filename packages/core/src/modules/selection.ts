@@ -18,6 +18,29 @@ export const selectionCache = {
   isPasteAction: false,
 };
 
+export function scrollToHighlightCell(ctx: Context, r: number, c: number) {
+  const { scrollLeft, scrollTop } = ctx;
+  const winH = ctx.cellmainHeight;
+  const winW = ctx.cellmainWidth;
+
+  const row = ctx.visibledatarow[r];
+  const row_pre = r - 1 === -1 ? 0 : ctx.visibledatarow[r - 1];
+  const col = ctx.visibledatacolumn[c];
+  const col_pre = c - 1 === -1 ? 0 : ctx.visibledatacolumn[c - 1];
+
+  if (col - scrollLeft - winW + 20 > 0) {
+    ctx.scrollLeft = col - winW + 20;
+  } else if (col_pre - scrollLeft < 0) {
+    ctx.scrollLeft = col_pre - 20;
+  }
+
+  if (row - scrollTop - winH + 20 > 0) {
+    ctx.scrollTop = row - winH + 20;
+  } else if (row_pre - scrollTop < 0) {
+    ctx.scrollTop = row_pre - 20;
+  }
+}
+
 // 公式函数 选区实体框
 export function seletedHighlistByindex(
   ctx: Context,
@@ -695,6 +718,7 @@ export function moveHighlightCell(
     normalizeSelection(ctx, ctx.luckysheet_select_save);
     // TODO pivotTable.pivotclick(row_index, col_index);
     // TODO formula.fucntionboxshow(row_index, col_index);
+    scrollToHighlightCell(ctx, row_index, col_index);
   } else if (type === "rangeOfFormula") {
     const last = ctx.formulaCache.func_selectedrange;
     if (!last) return;

@@ -15,6 +15,7 @@ import { hasPartMC } from "../modules/validation";
 import { GlobalCache } from "../types";
 import { getNowDateTime } from "../utils";
 import { handleCopy } from "./copy";
+import { jfrefreshgrid } from "../modules/refresh";
 
 export function handleGlobalEnter(
   ctx: Context,
@@ -591,6 +592,7 @@ export function handleGlobalKeyDown(
         deleteSelectedCellText(ctx);
       }
 
+      jfrefreshgrid(ctx, null, undefined);
       e.preventDefault();
       // } else if (kstr === "Backspace" && imageCtrl.currentImgId != null) {
       //   imageCtrl.removeImgItem();

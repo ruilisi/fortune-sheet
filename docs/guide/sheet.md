@@ -18,6 +18,7 @@ example of `data`:
         "defaultRowHeight": 19, //Customized default row height
         "defaultColWidth": 73, //Customized default column width
         "celldata": [], //Initial the cell data
+        "addRows": 10, //Set the add defult number to add click on add button. 
         "config": {
             "merge":{}, //merged cells
             "rowlen":{}, //Table row height
@@ -26,6 +27,8 @@ example of `data`:
             "colhidden":{}, //hidden columns
             "borderInfo":{}, //borders
             "authority":{}, //Worksheet protection
+            "rowReadOnly": [], //to make rows as readonly
+            "colReadOnly": [], //to make cols as readonly
         },
         "scrollLeft": 0, //Left and right scroll bar position
         "scrollTop": 315, //Up and down scroll bar position
@@ -393,7 +396,22 @@ example of `data`:
         }],
     },
     ```
-
+#### config.rowReadOnly
+- type：Array
+- default：[]
+- usage： To make rows as ReadOnly
+- example：
+    ```js
+    "rowReadOnly": [3, 7, 9]
+    ```
+#### config.colReadOnly
+- type：Array
+- default：[]
+- usage： To make col as ReadOnly
+- example：
+    ```js
+    "colReadOnly": [2, 5, 6]
+    ```
 ------------
 ### scrollLeft
 - type：Number

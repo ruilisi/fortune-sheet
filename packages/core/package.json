@@ -1,6 +1,6 @@
 {
   "name": "@fortune-sheet/core",
-  "version": "0.12.3",
+  "version": "0.13.0",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
