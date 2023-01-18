@@ -84,6 +84,7 @@ const Toolbar: React.FC<{
     splitText,
     findAndReplace,
     comment,
+    fontarray,
   } = locale(context);
   const sheetWidth = context.luckysheetTableContentHW[0];
 
@@ -238,6 +239,33 @@ const Toolbar: React.FC<{
                       <MenuDivider key={ii} />
                     )
                   )}
+              </Select>
+            )}
+          </Combo>
+        );
+      }
+      if (name === "font") {
+        let current = cell?.ff?.toString() ?? fontarray[0];
+        return (
+          <Combo text={current} key={name} tooltip={tooltip}>
+            {(setOpen) => (
+              <Select>
+                {fontarray.map((o) => (
+                  <Option
+                    key={o}
+                    onClick={() => {
+                      setContext((ctx) => {
+                        current = o;
+                        const d = getFlowdata(ctx);
+                        if (!d) return;
+                        updateFormat(ctx, refs.cellInput.current!, d, "ff", o);
+                      });
+                      setOpen(false);
+                    }}
+                  >
+                    {o}
+                  </Option>
+                ))}
               </Select>
             )}
           </Combo>
@@ -1237,6 +1265,7 @@ const Toolbar: React.FC<{
       context.defaultFontSize,
       context.allowEdit,
       comment,
+      fontarray,
     ]
   );
 
