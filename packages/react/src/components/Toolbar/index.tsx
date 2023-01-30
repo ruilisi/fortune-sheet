@@ -245,7 +245,14 @@ const Toolbar: React.FC<{
         );
       }
       if (name === "font") {
-        let current = cell?.ff?.toString() ?? fontarray[0];
+        let current = fontarray[0];
+        if (cell?.ff != null) {
+          if (_.isNumber(cell.ff)) {
+            current = fontarray[cell.ff];
+          } else {
+            current = cell.ff;
+          }
+        }
         return (
           <Combo text={current} key={name} tooltip={tooltip}>
             {(setOpen) => (
