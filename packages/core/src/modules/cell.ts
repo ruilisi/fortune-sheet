@@ -1573,3 +1573,30 @@ export function luckysheetUpdateCell(
 ) {
   ctx.luckysheetCellUpdate = [row_index, col_index];
 }
+
+export function getDataBySelectionNoCopy(ctx: Context, range: Selection) {
+  if (!range || !range.row || range.row.length === 0) return [];
+  const data = [];
+  const flowData = getFlowdata(ctx);
+  if (!flowData) return [];
+  for (let r = range.row[0]; r <= range.row[1]; r += 1) {
+    const row = [];
+    if (ctx.config.rowhidden != null && ctx.config.rowhidden[r] != null) {
+      continue;
+    }
+    for (let c = range.column[0]; c <= range.column[1]; c += 1) {
+      let value = null;
+      if (ctx.config.colhidden != null && ctx.config.colhidden[c] != null) {
+        continue;
+      }
+      if (flowData[r] != null && flowData[r][c] != null) {
+        value = flowData[r][c];
+      }
+
+      row.push(value);
+    }
+
+    data.push(row);
+  }
+  return data;
+}
