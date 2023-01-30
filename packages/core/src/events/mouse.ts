@@ -279,24 +279,16 @@ export function handleCellAreaMouseDown(
     // $("#luckysheet-dataVerification-showHintBox").hide();
 
     // 如果右键在选区内, 停止mousedown处理
-    let isInSelection = false;
-    _.forEach(ctx.luckysheet_select_save, (obj_s) => {
-      if (
+    const isInSelection = _.some(
+      ctx.luckysheet_select_save,
+      (obj_s) =>
         obj_s.row != null &&
         row_index >= obj_s.row[0] &&
         row_index <= obj_s.row[1] &&
         col_index >= obj_s.column[0] &&
         col_index <= obj_s.column[1]
-      ) {
-        isInSelection = true;
-        return false;
-      }
-      return true;
-    });
-
-    if (isInSelection) {
-      return;
-    }
+    );
+    if (isInSelection) return;
   }
 
   // //单元格数据下钻
@@ -1436,24 +1428,34 @@ export function handleContextMenu(
     const col_pre = col_location[0];
     const col_index = col_location[2];
     // 如果右键点击在选区内则不做选区处理
-    let isInSelection = false;
-    ctx.luckysheet_select_save?.some((obj_s) => {
-      if (
+    const isInSelection = _.some(
+      ctx.luckysheet_select_save,
+      (obj_s) =>
         obj_s.row != null &&
         row_index >= obj_s.row[0] &&
         row_index <= obj_s.row[1] &&
         col_index >= obj_s.column[0] &&
         col_index <= obj_s.column[1]
-      ) {
-        isInSelection = true;
-        return false;
-      }
-      return true;
-    });
-
-    if (isInSelection) {
+    );
+    if (!isInSelection && (e.metaKey || e.ctrlKey)) {
+      // 选区添加
+      ctx.luckysheet_select_save?.push({
+        left: col_pre,
+        width: col - col_pre - 1,
+        top: row_pre,
+        height: row - row_pre - 1,
+        left_move: col_pre,
+        width_move: col - col_pre - 1,
+        top_move: row_pre,
+        height_move: row - row_pre - 1,
+        row: [row_index, row_index],
+        column: [col_index, col_index],
+        row_focus: row_index,
+        column_focus: col_index,
+      });
       return;
     }
+    if (isInSelection) return;
     const row_index_ed = row_index;
     const col_index_ed = col_index;
     ctx.luckysheet_select_save = [
@@ -1480,22 +1482,15 @@ export function handleContextMenu(
     const row_pre = row_location[0];
     const row_index = row_location[2];
     // 如果右键点击在选区内则不做选区处理
-    let isInSelection = false;
-    ctx.luckysheet_select_save?.some((obj_s) => {
-      if (
+    const isInSelection = _.some(
+      ctx.luckysheet_select_save,
+      (obj_s) =>
         obj_s.row != null &&
         row_index >= obj_s.row[0] &&
         row_index <= obj_s.row[1]
-      ) {
-        isInSelection = true;
-        return false;
-      }
-      return true;
-    });
+    );
 
-    if (isInSelection) {
-      return;
-    }
+    if (isInSelection) return;
     const col_index = ctx.visibledatacolumn.length - 1;
     const col = ctx.visibledatacolumn[col_index];
     const col_pre = 0;
@@ -1532,22 +1527,15 @@ export function handleContextMenu(
     const col_pre = col_location[0];
     const col_index = col_location[2];
     // 如果右键点击在选区内则不做选区处理
-    let isInSelection = false;
-    ctx.luckysheet_select_save?.some((obj_s) => {
-      if (
+    const isInSelection = _.some(
+      ctx.luckysheet_select_save,
+      (obj_s) =>
         obj_s.row != null &&
         col_index >= obj_s.column[0] &&
         col_index <= obj_s.column[1]
-      ) {
-        isInSelection = true;
-        return false;
-      }
-      return true;
-    });
+    );
 
-    if (isInSelection) {
-      return;
-    }
+    if (isInSelection) return;
     const left = col_pre;
     const width = col - col_pre - 1;
     const columnseleted = [col_index, col_index];
@@ -4355,25 +4343,17 @@ export function handleRowHeaderMouseDown(
   // mousedown是右键
   if (e.button === 2) {
     // 如果右键在选区内, 停止mousedown处理
-    let isInSelection = false;
-
     const flowdata = getFlowdata(ctx);
-    _.forEach(ctx.luckysheet_select_save, (obj_s) => {
-      if (
+    const isInSelection = _.some(
+      ctx.luckysheet_select_save,
+      (obj_s) =>
         obj_s.row != null &&
         row_index >= obj_s.row[0] &&
         row_index <= obj_s.row[1] &&
         obj_s.column[0] === 0 &&
         obj_s.column[1] === (flowdata?.[0]?.length ?? 0) - 1
-      ) {
-        isInSelection = true;
-        return false;
-      }
-      return true;
-    });
-    if (isInSelection) {
-      return;
-    }
+    );
+    if (isInSelection) return;
   }
 
   let top = row_pre;
@@ -4687,7 +4667,7 @@ export function handleRowHeaderMouseDown(
 
       ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1] =
         last;
-    } else if (e.ctrlKey) {
+    } else if (e.ctrlKey || e.metaKey) {
       ctx.luckysheet_select_save?.push({
         left: colLocationByIndex(0, ctx.visibledatacolumn)[0],
         width:
@@ -4781,27 +4761,17 @@ export function handleColumnHeaderMouseDown(
 
   // mousedown是右键
   if (e.button === 2) {
-    let isInSelection = false;
-
     const flowdata = getFlowdata(ctx);
-    _.forEach(ctx.luckysheet_select_save, (obj_s) => {
-      // 如果右键在选区内, 停止mousedown处理
-      if (
+    const isInSelection = _.some(
+      ctx.luckysheet_select_save,
+      (obj_s) =>
         obj_s.column != null &&
         col_index >= obj_s.column[0] &&
         col_index <= obj_s.column[1] &&
         obj_s.row[0] === 0 &&
         obj_s.row[1] === (flowdata?.length ?? 0) - 1
-      ) {
-        isInSelection = true;
-        return false;
-      }
-      return true;
-    });
-
-    if (isInSelection) {
-      return;
-    }
+    );
+    if (isInSelection) return;
   }
 
   let left = col_pre;
@@ -5093,7 +5063,7 @@ export function handleColumnHeaderMouseDown(
 
       ctx.luckysheet_select_save![ctx.luckysheet_select_save!.length - 1] =
         last;
-    } else if (e.ctrlKey) {
+    } else if (e.ctrlKey || e.metaKey) {
       // 选区添加
       ctx.luckysheet_select_save?.push({
         left,

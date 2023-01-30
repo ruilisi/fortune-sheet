@@ -11498,6 +11498,7 @@ export default {
     byRow: "按行",
     byCol: "按列",
     generateNewMatrix: "生成新矩陣",
+    noMulti: "無法對多重選擇區域執行此操作,請選擇單個區域",
   },
   comment: {
     insert: "新建批註",

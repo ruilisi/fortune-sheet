@@ -53,16 +53,19 @@ const SheetOverlay: React.FC = () => {
   const cellAreaMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       const { nativeEvent } = e;
-      setContext((draftCtx) => {
-        handleCellAreaMouseDown(
-          draftCtx,
-          refs.globalCache,
-          nativeEvent,
-          refs.cellInput.current!,
-          refs.cellArea.current!,
-          refs.fxInput.current!
-        );
-      });
+      if (e.button !== 2) {
+        // onContextMenu event will not call onMouseDown
+        setContext((draftCtx) => {
+          handleCellAreaMouseDown(
+            draftCtx,
+            refs.globalCache,
+            nativeEvent,
+            refs.cellInput.current!,
+            refs.cellArea.current!,
+            refs.fxInput.current!
+          );
+        });
+      }
     },
     [refs.cellArea, refs.cellInput, refs.globalCache, refs.fxInput, setContext]
   );

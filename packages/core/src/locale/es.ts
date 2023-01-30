@@ -11467,6 +11467,8 @@ export default {
     byRow: "Por fila",
     byCol: "Por columna",
     generateNewMatrix: "Generar nueva matriz",
+    noMulti:
+      "No se puede realizar esta operación en varias áreas de selección, selecciona una sola área",
   },
   comment: {
     insert: "Insertar",
