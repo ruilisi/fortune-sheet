@@ -1,3 +1,4 @@
-import Workbook, { WorkbookInstance } from "./Workbook";
+import Workbook from "./Workbook";
 
-export { Workbook, WorkbookInstance };
+export { Workbook };
+export type { WorkbookInstance } from "./Workbook";
