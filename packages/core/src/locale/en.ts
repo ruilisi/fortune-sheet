@@ -11493,6 +11493,8 @@ export default {
     byRow: "By row",
     byCol: "By column",
     generateNewMatrix: "Generate new matrix",
+    noMulti:
+      "Cannot perform this operation on multiple selection areas, please select a single area",
   },
   comment: {
     insert: "Insert",

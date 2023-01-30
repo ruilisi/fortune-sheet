@@ -41,6 +41,11 @@ const ContextMenu: React.FC = () => {
             key={name}
             onClick={() => {
               setContext((draftCtx) => {
+                if (draftCtx.luckysheet_select_save?.length! > 1) {
+                  showAlert(rightclick.noMulti, "ok");
+                  draftCtx.contextMenu = undefined;
+                  return;
+                }
                 handleCopy(draftCtx);
                 draftCtx.contextMenu = undefined;
               });
@@ -214,6 +219,11 @@ const ContextMenu: React.FC = () => {
               };
               setContext(
                 (draftCtx) => {
+                  if (draftCtx.luckysheet_select_save?.length! > 1) {
+                    showAlert(rightclick.noMulti, "ok");
+                    draftCtx.contextMenu = undefined;
+                    return;
+                  }
                   deleteRowCol(draftCtx, deleteRowColOp);
                   draftCtx.contextMenu = undefined;
                 },
@@ -241,6 +251,11 @@ const ContextMenu: React.FC = () => {
               };
               setContext(
                 (draftCtx) => {
+                  if (draftCtx.luckysheet_select_save?.length! > 1) {
+                    showAlert(rightclick.noMulti, "ok");
+                    draftCtx.contextMenu = undefined;
+                    return;
+                  }
                   deleteRowCol(draftCtx, deleteRowColOp);
                   draftCtx.contextMenu = undefined;
                 },
