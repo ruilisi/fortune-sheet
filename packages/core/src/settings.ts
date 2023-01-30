@@ -217,6 +217,9 @@ export const defaultSettings: Required<Settings> = {
     "delete-row", // 删除选中行
     "delete-column", // 删除选中列
     "delete-cell", // 删除单元格
+    "set-row-height", // 设置行高
+    "set-column-width", // 设置列宽
+    "|",
     "hide-row", // 隐藏选中行和显示选中行
     "hide-column", // 隐藏选中列和显示选中列
     "|",
@@ -242,6 +245,7 @@ export const defaultSettings: Required<Settings> = {
     "delete-cell", // 删除单元格
     "hide-row", // 隐藏选中行和显示选中行
     "hide-column", // 隐藏选中列和显示选中列
+    "set-column-width", // 设置列宽
     "|",
     "clear", // 清除内容
     "sort", // 排序选区
