@@ -458,7 +458,11 @@ const ContextMenu: React.FC = () => {
     if (hasOverflow) {
       setContext((draftCtx) => {
         draftCtx.contextMenu.x = left;
-        draftCtx.contextMenu.y = top;
+        if (draftCtx.contextMenu.headerMenu === true) {
+          draftCtx.contextMenu.y = 90;
+        } else {
+          draftCtx.contextMenu.y = top;
+        }
       });
     }
   }, [contextMenu, setContext]);
@@ -472,7 +476,9 @@ const ContextMenu: React.FC = () => {
       onContextMenu={(e) => e.stopPropagation()}
       style={{ left: contextMenu.x, top: contextMenu.y }}
     >
-      {settings.cellContextMenu.map((menu, i) => getMenuElement(menu, i))}
+      {context.contextMenu.headerMenu === true
+        ? settings.colContextMenu.map((menu, i) => getMenuElement(menu, i))
+        : settings.cellContextMenu.map((menu, i) => getMenuElement(menu, i))}
     </div>
   );
 };

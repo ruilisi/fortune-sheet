@@ -16,6 +16,7 @@ import React, {
   useEffect,
 } from "react";
 import WorkbookContext from "../../context";
+import SVGIcon from "../SVGIcon";
 
 const ColumnHeader: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
@@ -171,7 +172,22 @@ const ColumnHeader: React.FC = () => {
             width: hoverLocation.col - hoverLocation.col_pre - 1,
             display: "block",
           }}
-        />
+        >
+          <span
+            className="header-arrow"
+            onClick={(e) => {
+              setContext((ctx) => {
+                ctx.contextMenu = {
+                  x: e.pageX,
+                  y: 90,
+                  headerMenu: true,
+                };
+              });
+            }}
+          >
+            <SVGIcon name="headDownArrow" width={12} />
+          </span>
+        </div>
       ) : null}
       {selectedLocation.map(({ col, col_pre }, i) => (
         <div
