@@ -83,6 +83,13 @@
   background-color: rgba(194, 194, 194, 0.4);
 }
 
+.fortune-col-header-hover .header-arrow {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translate(0%, -44%);
+}
+
 .fortune-col-header-selected {
   color: #5e5e5e;
   cursor: default;

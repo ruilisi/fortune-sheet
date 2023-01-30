@@ -141,6 +141,7 @@ export type Settings = {
   defaultFontSize?: number;
   toolbarItems?: string[];
   cellContextMenu?: string[];
+  colContextMenu?: string[];
   sheetTabContextMenu?: string[];
   filterContextMenu?: string[];
   generateSheetId?: () => string;
@@ -230,6 +231,23 @@ export const defaultSettings: Required<Settings> = {
     "data", // 数据验证
     "cell-format", // 设置单元格格式
   ], // 自定义单元格右键菜单
+  colContextMenu: [
+    "copy", // 复制
+    "paste", // 粘贴
+    "|",
+    "insert-row", // 插入行
+    "insert-column", // 插入列
+    "delete-row", // 删除选中行
+    "delete-column", // 删除选中列
+    "delete-cell", // 删除单元格
+    "hide-row", // 隐藏选中行和显示选中行
+    "hide-column", // 隐藏选中列和显示选中列
+    "|",
+    "clear", // 清除内容
+    "sort", // 排序选区
+    "orderAZ", // 升序
+    "orderZA", // 降序
+  ], // header菜单
   sheetTabContextMenu: [
     "delete",
     "copy",
