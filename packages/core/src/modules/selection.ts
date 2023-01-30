@@ -13,6 +13,8 @@ import { getBorderInfoCompute } from "./border";
 import { getSheetIndex, replaceHtml } from "../utils";
 import { hasPartMC } from "./validation";
 import { update } from "./format";
+// @ts-ignore
+import SSF from "./ssf";
 
 export const selectionCache = {
   isPasteAction: false,
@@ -1762,4 +1764,62 @@ export function getSelectionStyle(
     ret.display = "none";
   }
   return ret;
+}
+
+export function calcSelectionInfo(ctx: Context) {
+  const selection = ctx.luckysheet_select_save!;
+  const data = getFlowdata(ctx, ctx.currentSheetId);
+  const res: {
+    count?: string;
+    sum?: string;
+    average?: string;
+    max?: string;
+    min?: string;
+    showCalInfo: boolean;
+    numberC: number;
+  } = {
+    showCalInfo: false,
+    numberC: 0,
+  };
+  if (data == null) return res;
+  const row = selection[0].row ?? [];
+  const column = selection[0].column ?? [];
+  if (row[0] !== row[1] || column[0] !== column[1]) {
+    let numberC = 0;
+    let count = 0;
+    let sum = 0;
+    let max = Number.MIN_VALUE;
+    let min = Number.MAX_VALUE;
+    for (let r = row[0]; r <= row[1]; r += 1) {
+      for (let c = column[0]; c <= column[1]; c += 1) {
+        if (r >= data.length || c >= data[0].length) break;
+        const value = data![r][c]?.m as string;
+        // 判断是不是数字
+        if (parseFloat(value).toString() !== "NaN") {
+          const valueNumber = parseFloat(value);
+          count += 1;
+          sum += valueNumber;
+          max = Math.max(valueNumber, max);
+          min = Math.min(valueNumber, min);
+          numberC += 1;
+        } else if (value != null) {
+          count += 1;
+        }
+      }
+    }
+    res.count = count.toString();
+    res.average = SSF.format("w0.00", sum / numberC).toString();
+    res.sum = SSF.format("w0.00", sum).toString();
+    res.max = SSF.format(
+      "w0.00",
+      max === Number.MIN_VALUE ? 0 : max
+    ).toString();
+    res.min = SSF.format(
+      "w0.00",
+      min === Number.MAX_VALUE ? 0 : min
+    ).toString();
+    res.numberC = numberC;
+    res.showCalInfo = true;
+  }
+  return res;
 }

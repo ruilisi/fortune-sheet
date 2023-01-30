@@ -6,9 +6,12 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { updateCell, addSheet, locale, getFlowdata } from "@fortune-sheet/core";
-// @ts-ignore
-import SSF from "@fortune-sheet/core/src/modules/ssf.js";
+import {
+  updateCell,
+  addSheet,
+  locale,
+  calcSelectionInfo,
+} from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
 import "./index.css";
@@ -86,53 +89,14 @@ const SheetTab: React.FC = () => {
   useEffect(() => {
     const selection = context.luckysheet_select_save;
     if (selection) {
-      const data = getFlowdata(context, context.currentSheetId);
-      if (data == null) return;
-      const row = selection[0].row ?? [];
-      const column = selection[0].column ?? [];
-      if (row[0] !== row[1] || column[0] !== column[1]) {
-        let numberC = 0;
-        let count = 0;
-        let sum = 0;
-        let max = Number.MIN_VALUE;
-        let min = Number.MAX_VALUE;
-        for (let r = row[0]; r <= row[1]; r += 1) {
-          for (let c = column[0]; c <= column[1]; c += 1) {
-            if (r >= data.length || c >= data[0].length) break;
-            const value = data![r][c]?.m as string;
-            // 判断是不是数字
-            if (parseFloat(value).toString() !== "NaN") {
-              const valueNumber = parseFloat(value);
-              count += 1;
-              sum += valueNumber;
-              max = Math.max(valueNumber, max);
-              min = Math.min(valueNumber, min);
-              numberC += 1;
-            } else if (value != null) {
-              count += 1;
-            }
-          }
-        }
-        const average = SSF.format("w0.00", sum / numberC);
-        sum = SSF.format("w0.00", sum);
-        max = SSF.format("w0.00", max === Number.MIN_VALUE ? 0 : max);
-        min = SSF.format("w0.00", min === Number.MAX_VALUE ? 0 : min);
-        setCountInfo(count.toString());
-        setSumInfo(sum.toString());
-        setAverageInfo(average.toString());
-        setMaxInfo(max.toString());
-        setMinInfo(min.toString());
-        setShowCalInfo(true);
-        setNumberCount(numberC);
-      } else {
-        setCountInfo(undefined);
-        setSumInfo(undefined);
-        setAverageInfo(undefined);
-        setMaxInfo(undefined);
-        setMinInfo(undefined);
-        setShowCalInfo(false);
-        setNumberCount(0);
-      }
+      const res = calcSelectionInfo(context);
+      setCountInfo(res.count);
+      setSumInfo(res.sum);
+      setAverageInfo(res.average);
+      setMaxInfo(res.max);
+      setMinInfo(res.min);
+      setShowCalInfo(res.showCalInfo);
+      setNumberCount(res.numberC);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [context.luckysheet_select_save]);
