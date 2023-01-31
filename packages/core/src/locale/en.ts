@@ -1,4 +1,9 @@
 export default {
+  generalDialog: {
+    partiallyError: "Cannot perform this operation on partially merged cells",
+    readOnlyError: "Cannot perform this operation in read-only mode",
+    dataNullError: "Cannot perform this operation on data that does not exist",
+  },
   functionlist: [
     {
       n: "SUMIF",

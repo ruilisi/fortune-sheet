@@ -1,4 +1,10 @@
 export default {
+  generalDialog: {
+    partiallyError:
+      "No se puede realizar esta operación en celdas parcialmente unidas",
+    readOnlyError: "No se puede realizar esto en modo de solo lectura",
+    dataNullError: "No se puede hacer esto con datos que no existen",
+  },
   functionlist: [
     {
       n: "SUMIF",

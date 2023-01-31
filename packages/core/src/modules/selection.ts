@@ -1503,7 +1503,7 @@ export function copy(ctx: Context) {
   }
 }
 
-export function deleteSelectedCellText(ctx: Context) {
+export function deleteSelectedCellText(ctx: Context): string {
   // if (
   //   !checkProtectionLockedRangeList(
   //     ctx.luckysheet_select_save,
@@ -1517,13 +1517,13 @@ export function deleteSelectedCellText(ctx: Context) {
   // luckysheetContainerFocus();
 
   if (ctx.allowEdit === false) {
-    return;
+    return "allowEdit";
   }
 
   const selection = ctx.luckysheet_select_save;
   if (selection && !_.isEmpty(selection)) {
     const d = getFlowdata(ctx);
-    if (!d) return;
+    if (!d) return "dataNullError";
 
     let has_PartMC = false;
 
@@ -1538,7 +1538,6 @@ export function deleteSelectedCellText(ctx: Context) {
         break;
       }
     }
-
     if (has_PartMC) {
       // const locale_drag = locale().drag;
 
@@ -1548,7 +1547,7 @@ export function deleteSelectedCellText(ctx: Context) {
       //   tooltip.info(locale_drag.noPartMerge, "");
       // }
 
-      return;
+      return "partMC";
     }
     const hyperlinkMap =
       ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!].hyperlink;
@@ -1590,13 +1589,13 @@ export function deleteSelectedCellText(ctx: Context) {
         }
       }
     }
-
     // jfrefreshgrid(d, ctx.luckysheet_select_save);
 
     // // 清空编辑框的内容
     // // 备注：在functionInputHanddler方法中会把该标签的内容拷贝到 #luckysheet-functionbox-cell
     // $("#luckysheet-rich-text-editor").html("");
   }
+  return "success";
 }
 
 // 选区是否重叠

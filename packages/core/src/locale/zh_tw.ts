@@ -1,4 +1,9 @@
 export default {
+  generalDialog: {
+    partiallyError: "無法對部分合併儲存格執行此操作",
+    readOnlyError: "無法對只讀模式執行此操作",
+    dataNullError: "無法對不存在的數據執行此操作",
+  },
   functionlist: [
     {
       n: "SUMIF",
