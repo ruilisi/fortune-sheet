@@ -28,7 +28,7 @@ const ContextMenu: React.FC = () => {
   const { context, setContext, settings } = useContext(WorkbookContext);
   const { contextMenu } = context;
   const { showAlert } = useAlert();
-  const { rightclick, drag } = locale(context);
+  const { rightclick, drag, generalDialog } = locale(context);
   const getMenuElement = useCallback(
     (name: string, i: number) => {
       const selection = context.luckysheet_select_save?.[0];
@@ -330,7 +330,14 @@ const ContextMenu: React.FC = () => {
                 if (draftCtx.activeImg?.id != null) {
                   removeActiveImage(draftCtx);
                 } else {
-                  deleteSelectedCellText(draftCtx);
+                  const msg = deleteSelectedCellText(draftCtx);
+                  if (msg === "partMC") {
+                    showDialog(generalDialog.partiallyError, "ok");
+                  } else if (msg === "allowEdit") {
+                    showDialog(generalDialog.readOnlyError, "ok");
+                  } else if (msg === "dataNullError") {
+                    showDialog(generalDialog.dataNullError, "ok");
+                  }
                 }
                 draftCtx.contextMenu = undefined;
               });
@@ -441,6 +448,7 @@ const ContextMenu: React.FC = () => {
       showAlert,
       showDialog,
       drag,
+      generalDialog,
     ]
   );
 
