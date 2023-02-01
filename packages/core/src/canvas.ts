@@ -2183,14 +2183,20 @@ export class Canvas {
       renderCtx.scale(this.sheetCtx.zoomRatio, this.sheetCtx.zoomRatio);
 
       const textInfo = cell
-        ? getCellTextInfo(cell, renderCtx, this.sheetCtx, {
-            cellWidth,
-            cellHeight,
-            space_width,
-            space_height,
-            r,
-            c,
-          })
+        ? getCellTextInfo(
+            cell,
+            renderCtx,
+            this.sheetCtx,
+            {
+              cellWidth,
+              cellHeight,
+              space_width,
+              space_height,
+              r,
+              c,
+            },
+            this.sheetCtx
+          )
         : undefined;
 
       // 若单元格有条件格式图标集
@@ -2354,7 +2360,11 @@ export class Canvas {
     const pos_x = startX + offsetLeft;
     const pos_y = startY + offsetTop + 1;
 
-    const fontset = getFontSet(cell, this.sheetCtx.defaultFontSize);
+    const fontset = getFontSet(
+      cell,
+      this.sheetCtx.defaultFontSize,
+      this.sheetCtx
+    );
     renderCtx.font = fontset;
 
     renderCtx.save();
@@ -2364,14 +2374,20 @@ export class Canvas {
     renderCtx.scale(this.sheetCtx.zoomRatio, this.sheetCtx.zoomRatio);
 
     const textInfo = cell
-      ? getCellTextInfo(cell, renderCtx, this.sheetCtx, {
-          cellWidth,
-          cellHeight,
-          space_width,
-          space_height,
-          r,
-          c,
-        })
+      ? getCellTextInfo(
+          cell,
+          renderCtx,
+          this.sheetCtx,
+          {
+            cellWidth,
+            cellHeight,
+            space_width,
+            space_height,
+            r,
+            c,
+          },
+          this.sheetCtx
+        )
       : undefined;
 
     // 交替颜色

@@ -39,7 +39,7 @@ export function normalizedCellAttr(
     if (value?.indexOf("rgba") > -1) {
       value = rgbToHex(value);
     }
-  } else if (attr.substring(0, 2) === "bs") {
+  } else if (attr.startsWith("bs")) {
     value ||= "none";
   } else if (attr === "ht" || attr === "vt") {
     const defaultValue = attr === "ht" ? "1" : "0";
@@ -696,7 +696,7 @@ export function updateCell(
 
   const isPrevInline = isInlineStringCell(curv);
   let isCurInline =
-    inputText?.slice(0, 1) !== "=" && inputHtml?.substring(0, 5) === "<span";
+    inputText?.slice(0, 1) !== "=" && inputHtml?.startsWith("<span");
 
   let isCopyVal = false;
   if (!isCurInline && inputText && inputText.length > 0) {
@@ -870,7 +870,7 @@ export function updateCell(
         delete curv.f;
         delete curv.spl;
 
-        if (curv.qp === 1 && `${value}`.substring(0, 1) !== "'") {
+        if (curv.qp === 1 && !`${value}`.startsWith("'")) {
           // if quotePrefix is 1, cell is force string, cell clear quotePrefix when it is updated
           curv.qp = 0;
           if (curv.ct) {
@@ -1544,7 +1544,6 @@ export function getdatabyselection(
   }
 
   const data = [];
-
   for (let r = range.row[0]; r <= range.row[1]; r += 1) {
     if (d?.[r] == null) {
       continue;
@@ -1556,12 +1555,14 @@ export function getdatabyselection(
     const row = [];
 
     for (let c = range.column[0]; c <= range.column[1]; c += 1) {
+      if (cfg?.colhidden != null && cfg.colhidden[c] != null) {
+        continue;
+      }
       row.push(d[r][c]);
     }
 
     data.push(row);
   }
-
   return data;
 }
 

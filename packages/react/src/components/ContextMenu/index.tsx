@@ -10,21 +10,25 @@ import {
   createFilter,
   showImgChooser,
   handleLink,
+  hideSelected,
+  showSelected,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, { useContext, useRef, useLayoutEffect, useCallback } from "react";
 import WorkbookContext, { SetContextOptions } from "../../context";
 import { useAlert } from "../../hooks/useAlert";
+import { useDialog } from "../../hooks/useDialog";
 import Divider from "./Divider";
 import "./index.css";
 import Menu from "./Menu";
 
 const ContextMenu: React.FC = () => {
+  const { showDialog } = useDialog();
   const containerRef = useRef<HTMLDivElement>(null);
   const { context, setContext, settings } = useContext(WorkbookContext);
   const { contextMenu } = context;
   const { showAlert } = useAlert();
-  const { rightclick } = locale(context);
+  const { rightclick, drag } = locale(context);
   const getMenuElement = useCallback(
     (name: string, i: number) => {
       const selection = context.luckysheet_select_save?.[0];
@@ -249,6 +253,58 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
+      if (name === "hide-row") {
+        return (
+          selection?.row_select === true &&
+          ["hideSelected", "showHide"].map((item) => (
+            <Menu
+              key={item}
+              onClick={() => {
+                setContext((draftCtx) => {
+                  let msg = "";
+                  if (item === "hideSelected") {
+                    msg = hideSelected(draftCtx, "row");
+                  } else if (item === "showHide") {
+                    showSelected(draftCtx, "row");
+                  }
+                  if (msg === "noMulti") {
+                    showDialog(drag.noMulti);
+                  }
+                  draftCtx.contextMenu = undefined;
+                });
+              }}
+            >
+              {(rightclick as any)[item] + rightclick.row}
+            </Menu>
+          ))
+        );
+      }
+      if (name === "hide-column") {
+        return (
+          selection?.column_select === true &&
+          ["hideSelected", "showHide"].map((item) => (
+            <Menu
+              key={item}
+              onClick={() => {
+                setContext((draftCtx) => {
+                  let msg = "";
+                  if (item === "hideSelected") {
+                    msg = hideSelected(draftCtx, "column");
+                  } else if (item === "showHide") {
+                    showSelected(draftCtx, "column");
+                  }
+                  if (msg === "noMulti") {
+                    showDialog(drag.noMulti);
+                  }
+                  draftCtx.contextMenu = undefined;
+                });
+              }}
+            >
+              {(rightclick as any)[item] + rightclick.column}
+            </Menu>
+          ))
+        );
+      }
       if (name === "clear") {
         return (
           <Menu
@@ -368,6 +424,8 @@ const ContextMenu: React.FC = () => {
       rightclick,
       setContext,
       showAlert,
+      showDialog,
+      drag,
     ]
   );
 

@@ -98,6 +98,7 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
       // wait for it to be refreshed
       return;
     }
+
     const tableCanvas = new Canvas(refs.canvas.current!, context);
     if (tableCanvas == null) return;
     const freeze = refs.globalCache.freezen?.[sheet.id!];

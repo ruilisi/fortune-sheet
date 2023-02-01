@@ -10,6 +10,7 @@ import {
   handleFormulaInput,
   rangeHightlightselected,
   valueShowEs,
+  isShowHidenCR,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -33,11 +34,14 @@ const FxEditor: React.FC = () => {
   const [focused, setFocused] = useState(false);
   const lastKeyDownEventRef = useRef<KeyboardEvent>();
   const inputContainerRef = useRef<HTMLDivElement>(null);
+  const [isHidenRC, setIsHidenRC] = useState<boolean>(false);
   const firstSelection = context.luckysheet_select_save?.[0];
   const prevFirstSelection = usePrevious(firstSelection);
   const prevSheetId = usePrevious(context.currentSheetId);
 
   useEffect(() => {
+    // 当选中行列是处于隐藏状态的话则不允许编辑
+    setIsHidenRC(isShowHidenCR(context));
     if (
       _.isEqual(prevFirstSelection, firstSelection) &&
       context.currentSheetId === prevSheetId
@@ -276,7 +280,9 @@ const FxEditor: React.FC = () => {
           onChange={onChange}
           onBlur={() => setFocused(false)}
           tabIndex={0}
-          allowEdit={context.allowEdit}
+          allowEdit={
+            context.allowEdit === true ? !isHidenRC : context.allowEdit
+          }
         />
         {focused && (
           <>

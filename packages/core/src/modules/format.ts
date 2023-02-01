@@ -86,7 +86,7 @@ export function genarate(value: string | number | boolean) {
       }
     }
     ct = { fa, t: "n" };
-  } else if (value.toString().substring(0, 1) === "'") {
+  } else if (value.toString().startsWith("'")) {
     m = value.toString().substring(1);
     ct = { fa: "@", t: "s" };
   } else if (value.toString().toUpperCase() === "TRUE") {

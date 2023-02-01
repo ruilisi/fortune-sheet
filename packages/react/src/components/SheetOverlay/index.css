@@ -542,9 +542,7 @@
   top: 0;
 }
 
-.luckysheet-postil-show-active
-  .luckysheet-postil-dialog-move
-  .luckysheet-postil-dialog-move-item {
+.luckysheet-postil-show-active .luckysheet-postil-dialog-move .luckysheet-postil-dialog-move-item {
   border-color: #0188fb;
 }
 
@@ -662,6 +660,7 @@
   border: 2px dashed #12a5ff;
   z-index: 8;
 }
+
 .luckysheet-modal-dialog-resize {
   position: absolute;
   border: 2px solid #0188fb;
@@ -870,7 +869,7 @@
   border: 4px solid transparent;
 }
 
-.caret.down{
+.caret.down {
   border-top-color: #897BFF;
 }
 
