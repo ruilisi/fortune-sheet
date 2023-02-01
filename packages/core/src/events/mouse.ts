@@ -24,6 +24,7 @@ import {
   createRangeHightlight,
   onCellsMoveEnd,
   onCellsMove,
+  cellFocus,
 } from "../modules";
 import { scrollToFrozenRowCol } from "../modules/freeze";
 import {
@@ -268,7 +269,7 @@ export function handleCellAreaMouseDown(
   }
 
   // //数据验证 单元格聚焦
-  // dataVerificationCtrl.cellFocus(row_index, col_index, true);
+  cellFocus(ctx, row_index, col_index, true);
 
   // //若点击单元格部分不在视图内
   if (col_pre < ctx.scrollLeft) {
@@ -1252,6 +1253,15 @@ export function handleCellAreaDoubleClick(
 
   const col_location = colLocation(x, ctx.visibledatacolumn);
   let col_index = col_location[2];
+
+  // 如果当前单元格是复选框则取消双击事件不让编辑
+  const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
+  const { dataVerification } = ctx.luckysheetfile[index];
+
+  if (dataVerification) {
+    const item = dataVerification[`${row_index}_${col_index}`];
+    if (item && item.type === "checkbox") return;
+  }
 
   const margeset = mergeBorder(ctx, flowdata, row_index, col_index);
   if (margeset) {

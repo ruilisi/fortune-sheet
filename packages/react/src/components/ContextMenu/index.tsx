@@ -224,6 +224,7 @@ const ContextMenu: React.FC = () => {
                   if (draftCtx.luckysheet_select_save?.length! > 1) {
                     showAlert(rightclick.noMulti, "ok");
                     draftCtx.contextMenu = undefined;
+                    draftCtx.dataVerificationDropDownList = false;
                     return;
                   }
                   const slen = ed_index - st_index + 1;
@@ -236,6 +237,7 @@ const ContextMenu: React.FC = () => {
                   ) {
                     showAlert(rightclick.cannotDeleteAllColumn, "ok");
                     draftCtx.contextMenu = undefined;
+
                     return;
                   }
                   deleteRowCol(draftCtx, deleteRowColOp);

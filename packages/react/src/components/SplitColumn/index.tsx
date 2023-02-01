@@ -144,7 +144,7 @@ export const SplitColumn: React.FC<{}> = () => {
                 return (
                   <tr key={index}>
                     {o.map((o1: string) => (
-                      <td>{o1}</td>
+                      <td key={o + o1}>{o1}</td>
                     ))}
                   </tr>
                 );

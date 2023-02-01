@@ -203,9 +203,10 @@ export const defaultSettings: Required<Settings> = {
     "image",
     "comment",
     "quick-formula",
-    "screenshot",
+    "dataVerification",
     "splitColumn",
     "locationCondition",
+    "screenshot",
     "search",
   ], // 自定义工具栏
   cellContextMenu: [

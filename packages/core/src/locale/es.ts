@@ -4,6 +4,8 @@ export default {
       "No se puede realizar esta operación en celdas parcialmente unidas",
     readOnlyError: "No se puede realizar esto en modo de solo lectura",
     dataNullError: "No se puede hacer esto con datos que no existen",
+    noSeletionError:
+      "The selection operation has not been performed yetLa operación de selección aún no se ha realizado",
   },
   functionlist: [
     {
