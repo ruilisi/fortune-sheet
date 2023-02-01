@@ -4,7 +4,7 @@ import { dataToCelldata, getSheet } from "./common";
 import { Context } from "../context";
 import { CellMatrix, CellWithRowAndCol, Sheet } from "../types";
 import { getSheetIndex } from "../utils";
-import { api, locale } from "..";
+import { api, execfunction, insertUpdateFunctionGroup, locale } from "..";
 
 export function getAllSheets(ctx: Context) {
   return ctx.luckysheetfile;
@@ -134,4 +134,25 @@ export function copySheet(ctx: Context, sheetId: string) {
     ctx.luckysheetfile[ctx.luckysheetfile.length - 1].id as string
   ] = order;
   api.setSheetOrder(ctx, sheetOrderList);
+}
+
+export function calculateSheetFromula(ctx: Context, id: string) {
+  const index = getSheetIndex(ctx, id) as number;
+  if (!ctx.luckysheetfile[index].data) return;
+  for (let r = 0; r < ctx.luckysheetfile[index].data!.length; r += 1) {
+    for (let c = 0; c < ctx.luckysheetfile[index].data![r].length; c += 1) {
+      if (!ctx.luckysheetfile[index].data![r][c]?.f) {
+        continue;
+      }
+      const result = execfunction(
+        ctx,
+        ctx.luckysheetfile[index].data![r][c]?.f!,
+        r,
+        c,
+        id
+      );
+      api.setCellValue(ctx, r, c, result[1], null);
+      insertUpdateFunctionGroup(ctx, r, c, id);
+    }
+  }
 }

@@ -1,7 +1,7 @@
 const data = {
   name: "Cell",
   config: {
-    rowReadOnly: [2,3,4],
+    rowReadOnly: [2, 3, 4],
     merge: {
       "13_5": {
         r: 13,
