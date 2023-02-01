@@ -48,8 +48,10 @@ export const GetCellValue: ComponentStory<typeof Workbook> = () => {
   const [data, setData] = useState<Sheet[]>([
     {
       name: "Sheet1",
-      data: [[{ v: "fortune" }]],
+      celldata: [{ r: 0, c: 0, v: { v: "fortune" } }],
       order: 0,
+      row: 1,
+      column: 1,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -102,8 +104,12 @@ export const ClearCell: ComponentStory<typeof Workbook> = () => {
   const [data, setData] = useState<Sheet[]>([
     {
       name: "Sheet1",
-      data: [[{ bg: "green", v: "fortune", m: "fortune" }]],
+      celldata: [
+        { r: 0, c: 0, v: { bg: "green", v: "fortune", m: "fortune" } },
+      ],
       order: 0,
+      row: 1,
+      column: 1,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -125,8 +131,11 @@ export const SetCellFormat: ComponentStory<typeof Workbook> = () => {
   const [data, setData] = useState<Sheet[]>([
     {
       name: "Sheet1",
-      data: [[{ v: "set bg = green" }]],
+      celldata: [{ r: 0, c: 0, v: { v: "set bg = green" } }],
       order: 0,
+      row: 1,
+      column: 1,
+      config: { columnlen: { "0": 120 } },
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -148,26 +157,15 @@ export const AutoFillCell: ComponentStory<typeof Workbook> = () => {
   const [data, setData] = useState<Sheet[]>([
     {
       name: "Sheet1",
-      data: [
-        [
-          { m: "1", v: 1, ct: { t: "n", fa: "General" } },
-          { m: "2", v: 2, ct: { t: "n", fa: "General" } },
-        ],
-        [
-          { m: "2", v: 2, ct: { t: "n", fa: "General" } },
-          { m: "4", v: 4, ct: { t: "n", fa: "General" } },
-        ],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
-        [null, null],
+      celldata: [
+        { r: 0, c: 0, v: { m: "1", v: 1, ct: { t: "n", fa: "General" } } },
+        { r: 0, c: 1, v: { m: "2", v: 2, ct: { t: "n", fa: "General" } } },
+        { r: 1, c: 0, v: { m: "2", v: 2, ct: { t: "n", fa: "General" } } },
+        { r: 1, c: 1, v: { m: "4", v: 4, ct: { t: "n", fa: "General" } } },
       ],
       order: 0,
+      row: 10,
+      column: 2,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -215,8 +213,10 @@ export const InsertRowCol: ComponentStory<typeof Workbook> = () => {
   const [data, setData] = useState<Sheet[]>([
     {
       name: "Sheet1",
-      data: [[{ v: "original" }]],
+      celldata: [{ r: 0, c: 0, v: { v: "original" } }],
       order: 0,
+      row: 1,
+      column: 1,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -241,14 +241,16 @@ export const DeleteRowCol: ComponentStory<typeof Workbook> = () => {
   const [data, setData] = useState<Sheet[]>([
     {
       name: "Sheet1",
-      data: [
-        [{ v: "0" }],
-        [{ v: "1" }],
-        [{ v: "2" }],
-        [{ v: "3" }],
-        [{ v: "4" }],
+      celldata: [
+        { r: 0, c: 0, v: { v: "0" } },
+        { r: 1, c: 0, v: { v: "1" } },
+        { r: 2, c: 0, v: { v: "2" } },
+        { r: 3, c: 0, v: { v: "3" } },
+        { r: 4, c: 0, v: { v: "4" } },
       ],
       order: 0,
+      row: 5,
+      column: 1,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -271,14 +273,16 @@ export const GetRowHeight: ComponentStory<typeof Workbook> = () => {
     {
       name: "Sheet1",
       config: { rowlen: { 2: 200 } },
-      data: [
-        [{ v: "0" }],
-        [{ v: "1" }],
-        [{ v: "2" }],
-        [{ v: "3" }],
-        [{ v: "4" }],
+      celldata: [
+        { r: 0, c: 0, v: { v: "0" } },
+        { r: 1, c: 0, v: { v: "1" } },
+        { r: 2, c: 0, v: { v: "2" } },
+        { r: 3, c: 0, v: { v: "3" } },
+        { r: 4, c: 0, v: { v: "4" } },
       ],
       order: 0,
+      row: 5,
+      column: 1,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -301,8 +305,16 @@ export const GetColumnWidth: ComponentStory<typeof Workbook> = () => {
     {
       name: "Sheet1",
       config: { columnlen: { 2: 200 } },
-      data: [[{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }]],
+      celldata: [
+        { r: 0, c: 0, v: { v: "0" } },
+        { r: 0, c: 1, v: { v: "1" } },
+        { r: 0, c: 2, v: { v: "2" } },
+        { r: 0, c: 3, v: { v: "3" } },
+        { r: 0, c: 4, v: { v: "4" } },
+      ],
       order: 0,
+      row: 1,
+      column: 5,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -324,14 +336,16 @@ export const SetRowHeight: ComponentStory<typeof Workbook> = () => {
   const [data, setData] = useState<Sheet[]>([
     {
       name: "Sheet1",
-      data: [
-        [{ v: "0" }],
-        [{ v: "1" }],
-        [{ v: "height = 100" }],
-        [{ v: "3" }],
-        [{ v: "4" }],
+      celldata: [
+        { r: 0, c: 0, v: { v: "0" } },
+        { r: 1, c: 0, v: { v: "1" } },
+        { r: 2, c: 0, v: { v: "height = 100" } },
+        { r: 3, c: 0, v: { v: "3" } },
+        { r: 4, c: 0, v: { v: "4" } },
       ],
       order: 0,
+      row: 5,
+      column: 1,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -353,10 +367,16 @@ export const SetColumnWidth: ComponentStory<typeof Workbook> = () => {
   const [data, setData] = useState<Sheet[]>([
     {
       name: "Sheet1",
-      data: [
-        [{ v: "0" }, { v: "1" }, { v: "width = 200" }, { v: "3" }, { v: "4" }],
+      celldata: [
+        { r: 0, c: 0, v: { v: "0" } },
+        { r: 0, c: 1, v: { v: "1" } },
+        { r: 0, c: 2, v: { v: "width = 200" } },
+        { r: 0, c: 3, v: { v: "3" } },
+        { r: 0, c: 4, v: { v: "4" } },
       ],
       order: 0,
+      row: 1,
+      column: 5,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -379,11 +399,21 @@ export const GetSelection: ComponentStory<typeof Workbook> = () => {
     {
       name: "Sheet1",
       luckysheet_select_save: [{ row: [0, 1], column: [1, 2] }],
-      data: [
-        [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
-        [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
+      celldata: [
+        { r: 0, c: 0, v: { v: "0" } },
+        { r: 0, c: 1, v: { v: "1" } },
+        { r: 0, c: 2, v: { v: "2" } },
+        { r: 0, c: 3, v: { v: "3" } },
+        { r: 0, c: 4, v: { v: "4" } },
+        { r: 1, c: 0, v: { v: "0" } },
+        { r: 1, c: 1, v: { v: "1" } },
+        { r: 1, c: 2, v: { v: "2" } },
+        { r: 1, c: 3, v: { v: "3" } },
+        { r: 1, c: 4, v: { v: "4" } },
       ],
       order: 0,
+      row: 2,
+      column: 5,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -405,11 +435,21 @@ export const SetSelection: ComponentStory<typeof Workbook> = () => {
   const [data, setData] = useState<Sheet[]>([
     {
       name: "Sheet1",
-      data: [
-        [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
-        [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
+      celldata: [
+        { r: 0, c: 0, v: { v: "0" } },
+        { r: 0, c: 1, v: { v: "1" } },
+        { r: 0, c: 2, v: { v: "2" } },
+        { r: 0, c: 3, v: { v: "3" } },
+        { r: 0, c: 4, v: { v: "4" } },
+        { r: 1, c: 0, v: { v: "0" } },
+        { r: 1, c: 1, v: { v: "1" } },
+        { r: 1, c: 2, v: { v: "2" } },
+        { r: 1, c: 3, v: { v: "3" } },
+        { r: 1, c: 4, v: { v: "4" } },
       ],
       order: 0,
+      row: 2,
+      column: 5,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -431,11 +471,21 @@ export const MergeCells: ComponentStory<typeof Workbook> = () => {
   const [data, setData] = useState<Sheet[]>([
     {
       name: "Sheet1",
-      data: [
-        [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
-        [{ v: "0" }, { v: "1" }, { v: "2" }, { v: "3" }, { v: "4" }],
+      celldata: [
+        { r: 0, c: 0, v: { v: "0" } },
+        { r: 0, c: 1, v: { v: "1" } },
+        { r: 0, c: 2, v: { v: "2" } },
+        { r: 0, c: 3, v: { v: "3" } },
+        { r: 0, c: 4, v: { v: "4" } },
+        { r: 1, c: 0, v: { v: "0" } },
+        { r: 1, c: 1, v: { v: "1" } },
+        { r: 1, c: 2, v: { v: "2" } },
+        { r: 1, c: 3, v: { v: "3" } },
+        { r: 1, c: 4, v: { v: "4" } },
       ],
       order: 0,
+      row: 2,
+      column: 5,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -457,13 +507,23 @@ export const GetAllSheets: ComponentStory<typeof Workbook> = () => {
   const [data, setData] = useState<Sheet[]>([
     {
       name: "Sheet1",
-      data: [[{ v: "0" }, { v: "1" }]],
+      celldata: [
+        { r: 0, c: 0, v: { v: "0" } },
+        { r: 0, c: 1, v: { v: "1" } },
+      ],
       order: 0,
+      row: 1,
+      column: 2,
     },
     {
       name: "Sheet2",
-      data: [[{ v: "0" }], [{ v: "1" }]],
+      celldata: [
+        { r: 0, c: 0, v: { v: "0" } },
+        { r: 1, c: 0, v: { v: "1" } },
+      ],
       order: 1,
+      row: 2,
+      column: 1,
     },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
@@ -483,7 +543,14 @@ export const GetAllSheets: ComponentStory<typeof Workbook> = () => {
 export const AddSheet: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
   const [data, setData] = useState<Sheet[]>([
-    { id: "1", name: "Sheet1", data: [[{ v: "1" }]], order: 0 },
+    {
+      id: "1",
+      name: "Sheet1",
+      celldata: [{ r: 0, c: 0, v: { v: "1" } }],
+      order: 0,
+      row: 1,
+      column: 1,
+    },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
     setData(d);
@@ -502,8 +569,22 @@ export const AddSheet: ComponentStory<typeof Workbook> = () => {
 export const DeleteSheet: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
   const [data, setData] = useState<Sheet[]>([
-    { id: "1", name: "Sheet1", data: [[{ v: "1" }]], order: 0 },
-    { id: "2", name: "Sheet2", data: [[{ v: "2" }]], order: 1 },
+    {
+      id: "1",
+      name: "Sheet1",
+      celldata: [{ r: 0, c: 0, v: { v: "1" } }],
+      order: 0,
+      row: 1,
+      column: 1,
+    },
+    {
+      id: "2",
+      name: "Sheet2",
+      celldata: [{ r: 0, c: 0, v: { v: "2" } }],
+      order: 1,
+      row: 1,
+      column: 1,
+    },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
     setData(d);
@@ -522,7 +603,12 @@ export const DeleteSheet: ComponentStory<typeof Workbook> = () => {
 export const UpdateSheet: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
   const [data, setData] = useState<Sheet[]>([
-    { id: "1", name: "sheet1", data: [[{ v: "1" }]], order: 0 },
+    {
+      id: "1",
+      name: "sheet1",
+      celldata: [{ r: 0, c: 0, v: { v: "1" } }],
+      order: 0,
+    },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
     setData(d);
@@ -636,8 +722,22 @@ export const UpdateSheet: ComponentStory<typeof Workbook> = () => {
 export const ActivateSheet: ComponentStory<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
   const [data, setData] = useState<Sheet[]>([
-    { id: "1", name: "Sheet1", data: [[{ v: "1" }]], order: 0 },
-    { id: "2", name: "Sheet2", data: [[{ v: "2" }]], order: 1 },
+    {
+      id: "1",
+      name: "Sheet1",
+      celldata: [{ r: 0, c: 0, v: { v: "1" } }],
+      order: 0,
+      row: 1,
+      column: 1,
+    },
+    {
+      id: "2",
+      name: "Sheet2",
+      celldata: [{ r: 0, c: 0, v: { v: "2" } }],
+      order: 1,
+      row: 1,
+      column: 1,
+    },
   ]);
   const onChange = useCallback((d: Sheet[]) => {
     setData(d);

@@ -29,7 +29,6 @@ export function initSheetData(
     lastRowNum = Math.max(lastRowNum, draftCtx.defaultrowNum);
     lastColNum = Math.max(lastColNum, draftCtx.defaultcolumnNum);
   }
-  delete draftCtx.luckysheetfile[index]?.celldata;
   if (lastRowNum && lastColNum) {
     const expandedData: Sheet["data"] = _.times(lastRowNum, () =>
       _.times(lastColNum, () => null)
@@ -39,9 +38,11 @@ export function initSheetData(
     });
     if (draftCtx.luckysheetfile[index] == null) {
       newData.data = expandedData;
+      delete newData.celldata;
       draftCtx.luckysheetfile.push(newData);
     } else {
       draftCtx.luckysheetfile[index].data = expandedData;
+      delete draftCtx.luckysheetfile[index].celldata;
     }
     return expandedData;
   }
