@@ -663,6 +663,16 @@ const SheetOverlay: React.FC = () => {
                   <span style={{ fontSize: 14, color: "#9c9c9c" }}>
                     ({info.addLast})
                   </span>
+                  <span
+                    className="fortune-add-row-button"
+                    onClick={() => {
+                      setContext((ctx) => {
+                        ctx.scrollTop = 0;
+                      });
+                    }}
+                  >
+                    {info.backTop}
+                  </span>
                 </div>
               </div>
             </div>
