@@ -105,6 +105,8 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           });
           draftCtx.luckysheetfile = produce(draftCtx.luckysheetfile, (d) => {
             d[index!].data = expandedData;
+            delete d[index!].celldata;
+            return d;
           });
           return expandedData;
         }
