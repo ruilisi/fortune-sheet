@@ -29,3 +29,4 @@ export * from "./moveCells";
 export * from "./conditionalFormat";
 export * from "./splitColumn";
 export * from "./locationCondition";
+export * from "./dataVerification";

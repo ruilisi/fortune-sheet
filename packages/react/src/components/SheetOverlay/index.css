@@ -887,3 +887,27 @@
 .luckysheet-filter-selected {
   background: #ffffff00;
 }
+
+#luckysheet-dataVerification-showHintBox {
+  display: none;
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  z-index: 1000;
+  user-select: none;
+  cursor: default;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+#luckysheet-dataVerification-dropdown-btn {
+  display: none;
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff;
+  position: absolute;
+  z-index: 10;
+  overflow: hidden;
+}

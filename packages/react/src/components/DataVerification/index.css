@@ -1,0 +1,194 @@
+#fortunesheet-data-verification {
+  min-width: 500px;
+  padding: 10px 0px;
+  user-select: none;
+}
+
+#fortunesheet-data-verification .title {
+  font-size: 16px;
+}
+
+#fortunesheet-data-verification .box {
+  font-size: 14px;
+}
+
+#fortunesheet-data-verification .box .box-item {
+  padding: 10px;
+  border-bottom: 1px solid #E1E4E8;
+}
+
+#fortunesheet-data-verification .box .box-item .box-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+#fortunesheet-data-verification .box .box-item .data-verification-range {
+  width: 100%;
+  height: 30px;
+  border: 1px solid #d4d4d4;
+}
+
+#fortunesheet-data-verification .box .box-item .show-box-item {
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+#fortunesheet-data-verification .box .box-item .show-box-item .check-box {
+  height: 30px;
+  line-height: 30px;
+  margin-bottom: 10px;
+
+}
+
+#fortunesheet-data-verification .box .box-item .show-box-item .check-box input {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid #d4d4d4;
+  box-sizing: border-box;
+}
+
+#fortunesheet-data-verification .input-box input {
+  height: 30px;
+  padding: 4px 10px 4px 10px;
+  border: 1px solid #d4d4d4;
+  box-sizing: border-box;
+  margin-top: 6px;
+}
+
+#fortunesheet-data-verification .input-box span {
+  margin: 0px 16px;
+}
+
+.data-verification-range .formulaInputFocus {
+  width: calc(100% - 30px);
+  height: 30px;
+  padding: 0 10px px;
+  float: left;
+  border: none;
+  outline-style: none;
+  box-sizing: border-box;
+}
+
+.data-verification-range .icon {
+  float: right;
+  margin-top: 4px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+#fortunesheet-data-verification .box .box-item .data-verification-type-select {
+  width: 100%;
+  height: 30px;
+  border-color: #d4d4d4;
+  outline-style: none;
+}
+
+#fortunesheet-data-verification .box .box-item .check {
+  font-size: 12px;
+  line-height: 24px;
+}
+
+#fortunesheet-data-verification .box .box-item .check input {
+  vertical-align: text-top;
+}
+
+#fortunesheet-data-verification .button-basic {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 2px;
+  user-select: none;
+  margin-top: 10px;
+}
+
+#fortunesheet-data-verification .button-primary {
+  background: #0188fb;
+  border: 1px solid #0188fb;
+  color: #fff;
+  margin-right: 10px;
+}
+
+#fortunesheet-data-verification .button-close {
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+
+#range-dialog {
+  box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
+  background: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, .333);
+  outline: 0;
+  position: absolute;
+  color: #000;
+  padding: 30px 42px;
+  z-index: 100003;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -90%);
+  user-select: none;
+}
+
+#range-dialog .dialog-title {
+  background-color: #fff;
+  color: #000;
+  cursor: default;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 24px;
+  margin: 0 0 16px;
+}
+
+#range-dialog input {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid #d4d4d4;
+  outline-style: none;
+  user-select: none;
+}
+
+#range-dialog .button-primary {
+  background: #0188fb;
+  border: 1px solid #0188fb;
+  color: #fff;
+  margin-right: 10px;
+}
+
+#range-dialog .button-close {
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+#luckysheet-dataVerification-dropdown-List {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  z-index: 10000;
+  box-sizing: border-box;
+  font-size: 12px;
+}
+
+#luckysheet-dataVerification-dropdown-List .dropdown-List-item {
+  padding: 5px 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+#luckysheet-dataVerification-dropdown-List .dropdown-List-item:hover {
+  background-color: #E1E1E1;
+}

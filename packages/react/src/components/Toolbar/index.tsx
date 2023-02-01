@@ -48,6 +48,7 @@ import { useDialog } from "../../hooks/useDialog";
 import { FormulaSearch } from "../FormulaSearch";
 import { SplitColumn } from "../SplitColumn";
 import { LocationCondition } from "../LocationCondition";
+import DataVerification from "../DataVerification";
 
 const Toolbar: React.FC<{
   setMoreItems: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -492,6 +493,19 @@ const Toolbar: React.FC<{
                   showDialog(<SplitColumn />);
                 }
               }
+            }}
+          />
+        );
+      }
+      if (name === "dataVerification") {
+        return (
+          <Button
+            iconId={name}
+            tooltip={tooltip}
+            key={name}
+            onClick={() => {
+              if (context.allowEdit === false) return;
+              showDialog(<DataVerification />);
             }}
           />
         );

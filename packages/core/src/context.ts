@@ -13,6 +13,8 @@ import {
   Presence,
   LinkCardProps,
   FilterOptions,
+  RangeDialogProps,
+  DataRegulationProps,
 } from "./types";
 import { getSheetIndex } from "./utils";
 
@@ -32,6 +34,20 @@ export type Context = {
   presences?: Presence[];
   showSearchReplace?: boolean;
   linkCard?: LinkCardProps;
+  rangeDialog?: RangeDialogProps; // 坐标选区鼠标选择
+  // 提醒弹窗
+  warnDialog?: string;
+  dataVerification?: {
+    selectStatus: boolean;
+    selectRange: [];
+    optionLabel_en: any; // 英文提示消息
+    optionLabel_zh: any; // 中文提示消息
+    optionLabel_zh_tw: any; // 中文提示消息
+    optionLabel_es: any; // 中文提示消息
+    dataRegulation?: DataRegulationProps; // 数据验证规则
+  };
+  // 数据验证下拉列表
+  dataVerificationDropDownList?: boolean;
 
   contextMenu: any;
   sheetTabContextMenu: {
@@ -188,6 +204,116 @@ export function defaultContext(): Context {
     currentSheetId: "",
     calculateSheetId: "",
     config: {},
+    // 提醒弹窗
+    warnDialog: undefined,
+    rangeDialog: {
+      show: false,
+      rangeTxt: "",
+      type: "",
+    },
+
+    dataVerification: {
+      selectStatus: false,
+      selectRange: [],
+      optionLabel_en: {
+        number: "numeric",
+        number_integer: "integer",
+        number_decimal: "decimal",
+        between: "between",
+        notBetween: "not between",
+        equal: "equal to",
+        notEqualTo: "not equal to",
+        moreThanThe: "greater",
+        lessThan: "less than",
+        greaterOrEqualTo: "greater or equal to",
+        lessThanOrEqualTo: "less than or equal to",
+        include: "include",
+        exclude: "not include",
+        earlierThan: "earlier than",
+        noEarlierThan: "not earlier than",
+        laterThan: "later than",
+        noLaterThan: "not later than",
+        identificationNumber: "identification number",
+        phoneNumber: "phone number",
+      },
+      optionLabel_zh: {
+        number: "数值",
+        number_integer: "整数",
+        number_decimal: "小数",
+        between: "介于",
+        notBetween: "不介于",
+        equal: "等于",
+        notEqualTo: "不等于",
+        moreThanThe: "大于",
+        lessThan: "小于",
+        greaterOrEqualTo: "大于等于",
+        lessThanOrEqualTo: "小于等于",
+        include: "包括",
+        exclude: "不包括",
+        earlierThan: "早于",
+        noEarlierThan: "不早于",
+        laterThan: "晚于",
+        noLaterThan: "不晚于",
+        identificationNumber: "身份证号码",
+        phoneNumber: "手机号",
+      },
+      optionLabel_zh_tw: {
+        number: "數位",
+        number_integer: "數位-整數",
+        number_decimal: "數位-小數",
+        between: "介於",
+        notBetween: "不介於",
+        equal: "等於",
+        notEqualTo: "不等於",
+        moreThanThe: "大於",
+        lessThan: "小於",
+        greaterOrEqualTo: "大於等於",
+        lessThanOrEqualTo: "小於等於",
+        include: "包括",
+        exclude: "不包括",
+        earlierThan: "早於",
+        noEarlierThan: "不早於",
+        laterThan: "晚於",
+        noLaterThan: "不晚於",
+        identificationNumber: "身份證號碼",
+        phoneNumber: "手機號",
+      },
+      optionLabel_es: {
+        number: "Número",
+        number_integer: "Número entero",
+        number_decimal: "Número decimal",
+        between: "Entre",
+        notBetween: "No entre",
+        equal: "Iqual",
+        notEqualTo: "No iqual a",
+        moreThanThe: "Más que el",
+        lessThan: "Menos que",
+        greaterOrEqualTo: "Mayor o igual a",
+        lessThanOrEqualTo: "Menor o igual a",
+        include: "Incluir",
+        exclude: "Excluir",
+        earlierThan: "Antes de",
+        noEarlierThan: "No antes de",
+        laterThan: "Después de",
+        noLaterThan: "No después de",
+        identificationNumber: "Número de identificación",
+        phoneNumber: "Número de teléfono",
+      },
+      dataRegulation: {
+        type: "",
+        type2: "",
+        rangeTxt: "",
+        value1: "",
+        value2: "",
+        validity: "",
+        remote: false,
+        prohibitInput: false,
+        hintShow: false,
+        hintValue: "",
+      },
+    },
+
+    dataVerificationDropDownList: false,
 
     visibledatarow: [],
     visibledatacolumn: [],

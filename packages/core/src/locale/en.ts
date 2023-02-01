@@ -3,6 +3,7 @@ export default {
     partiallyError: "Cannot perform this operation on partially merged cells",
     readOnlyError: "Cannot perform this operation in read-only mode",
     dataNullError: "Cannot perform this operation on data that does not exist",
+    noSeletionError: "The selection operation has not been performed yet",
   },
   functionlist: [
     {
