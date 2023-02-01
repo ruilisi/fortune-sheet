@@ -939,7 +939,7 @@ function checkBracketNum(fp: string) {
   return true;
 }
 
-function insertUpdateFunctionGroup(
+export function insertUpdateFunctionGroup(
   ctx: Context,
   r: number,
   c: number,
