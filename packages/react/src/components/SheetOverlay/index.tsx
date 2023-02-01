@@ -265,7 +265,13 @@ const SheetOverlay: React.FC = () => {
   useEffect(() => {
     refs.cellArea.current!.scrollLeft = context.scrollLeft;
     refs.cellArea.current!.scrollTop = context.scrollTop;
-  }, [context.scrollLeft, context.scrollTop, refs.cellArea]);
+  }, [
+    context.scrollLeft,
+    context.scrollTop,
+    refs.cellArea,
+    refs.cellArea.current?.scrollLeft,
+    refs.cellArea.current?.scrollTop,
+  ]);
 
   useEffect(() => {
     // ensure cell input is always focused to accept first key stroke on cell
