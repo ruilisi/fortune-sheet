@@ -525,7 +525,10 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     const onPaste = useCallback(
       (e: ClipboardEvent) => {
         // deal with multi instance case, only the focused sheet handles the paste
-        if (cellInput.current === document.activeElement) {
+        if (
+          cellInput.current === document.activeElement ||
+          document.activeElement?.className === "fortune-sheet-overlay"
+        ) {
           setContextWithProduce((draftCtx) => {
             try {
               handlePaste(draftCtx, e);

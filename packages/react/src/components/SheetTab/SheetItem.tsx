@@ -14,6 +14,7 @@ import React, {
 } from "react";
 import WorkbookContext from "../../context";
 import { useAlert } from "../../hooks/useAlert";
+import SVGIcon from "../SVGIcon";
 
 type Props = {
   sheet: Sheet;
@@ -26,6 +27,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const editable = useRef<HTMLSpanElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [svgColor, setSvgColor] = useState<string>("#c3c3c3");
   const { showAlert } = useAlert();
 
   useEffect(() => {
@@ -212,6 +214,29 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
         style={dragOver ? { pointerEvents: "none" } : {}}
       >
         {sheet.name}
+        <div
+          className="luckysheet-sheets-item-function"
+          onMouseEnter={() => setSvgColor("#5c5c5c")}
+          onMouseLeave={() => setSvgColor("#c3c3c3")}
+          onClick={(e) => {
+            if (isDropPlaceholder || context.allowEdit === false) return;
+            const rect =
+              refs.workbookContainer.current!.getBoundingClientRect();
+            const { pageX, pageY } = e;
+            setContext((ctx) => {
+              // 右击的时候先进行跳转
+              ctx.currentSheetId = sheet.id!;
+              ctx.sheetTabContextMenu = {
+                x: pageX - rect.left,
+                y: pageY - rect.top,
+                sheet,
+                onRename: () => setEditing(true),
+              };
+            });
+          }}
+        >
+          <SVGIcon name="downArrow" width={12} style={{ fill: svgColor }} />
+        </div>
         {!!sheet.color && (
           <div
             className="luckysheet-sheets-item-color"

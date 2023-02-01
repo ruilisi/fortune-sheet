@@ -119,14 +119,18 @@ export function normalizeSelection(
     selection[i].column_focus = cf;
 
     selection[i].left = col_pre_f;
-    selection[i].width = col_f - col_pre_f - 1;
+    // selection[i].width = col_f - col_pre_f - 1;
+    selection[i].width = col_f - col_pre_f <= 0 ? 0 : col_f - col_pre_f - 1;
     selection[i].top = row_pre_f;
-    selection[i].height = row_f - row_pre_f - 1;
+    // selection[i].height = row_f - row_pre_f - 1;
+    selection[i].height = row_f - row_pre_f <= 0 ? 0 : row_f - row_pre_f - 1;
 
     selection[i].left_move = col_pre;
-    selection[i].width_move = col - col_pre - 1;
+    // selection[i].width_move = col - col_pre - 1;
+    selection[i].width_move = col - col_pre <= 0 ? 0 : col - col_pre - 1;
     selection[i].top_move = row_pre;
-    selection[i].height_move = row - row_pre - 1;
+    // selection[i].height_move = row - row_pre - 1;
+    selection[i].height_move = row - row_pre <= 0 ? 0 : row - row_pre - 1;
   }
   return selection;
 }

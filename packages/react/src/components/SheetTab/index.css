@@ -44,7 +44,7 @@
   padding: 0px 0px;
   margin-left: 0px;
   position: relative;
-  max-width: 70%;
+  max-width: 54%;
   vertical-align: bottom;
   display: inline-block;
 }
@@ -244,4 +244,32 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+}
+
+.luckysheet-sheet-selection-calInfo {
+  max-width: 280%;
+  display: flex;
+  font-size: 12px;
+  justify-content: space-between;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  transform: translate(0px, 50%);
+}
+
+.luckysheet-sheet-selection-calInfo div {
+  width: 90px;
+  height: 18px;
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-right: 2px;
+  text-align: center;
+}
+
+.luckysheet-sheets-item-function {
+  width: 12px;
+  height: 24px;
+  position: absolute;
+  top: 4px;
+  right: 2px;
 }

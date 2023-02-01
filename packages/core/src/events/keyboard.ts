@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { removeActiveImage } from "..";
+import { hideCRCount, removeActiveImage } from "..";
 import { Context, getFlowdata } from "../context";
 import { updateCell, cancelNormalSelected } from "../modules/cell";
 import { handleFormulaInput } from "../modules/formula";
@@ -407,18 +407,19 @@ export function handleArrowKey(ctx: Context, e: KeyboardEvent) {
     return;
   }
 
+  const moveCount = hideCRCount(ctx, e.key);
   switch (e.key) {
     case "ArrowUp":
-      moveHighlightCell(ctx, "down", -1, "rangeOfSelect");
+      moveHighlightCell(ctx, "down", -moveCount, "rangeOfSelect");
       break;
     case "ArrowDown":
-      moveHighlightCell(ctx, "down", 1, "rangeOfSelect");
+      moveHighlightCell(ctx, "down", moveCount, "rangeOfSelect");
       break;
     case "ArrowLeft":
-      moveHighlightCell(ctx, "right", -1, "rangeOfSelect");
+      moveHighlightCell(ctx, "right", -moveCount, "rangeOfSelect");
       break;
     case "ArrowRight":
-      moveHighlightCell(ctx, "right", 1, "rangeOfSelect");
+      moveHighlightCell(ctx, "right", moveCount, "rangeOfSelect");
       break;
     default:
       break;
