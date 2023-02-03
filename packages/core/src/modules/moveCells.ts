@@ -311,8 +311,16 @@ export function onCellsMoveEnd(
 
   const borderInfoCompute = getBorderInfoCompute(ctx, ctx.currentSheetId);
 
+  const hyperLinkList: Record<
+    string,
+    {
+      linkType: string;
+      linkAddress: string;
+    }
+  > = {};
   // 删除原本位置的数据
   // const RowlChange = null;
+  const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
   for (let r = last.row[0]; r <= last.row[1]; r += 1) {
     // if (r in cfg.rowlen) {
     //   RowlChange = true;
@@ -329,9 +337,15 @@ export function onCellsMoveEnd(
       }
 
       d[r][c] = null;
+      if (ctx.luckysheetfile[index].hyperlink?.[`${r}_${c}`]) {
+        hyperLinkList[`${r}_${c}`] =
+          ctx.luckysheetfile[index].hyperlink?.[`${r}_${c}`]!;
+        delete ctx.luckysheetfile[
+          getSheetIndex(ctx, ctx.currentSheetId) as number
+        ].hyperlink?.[`${r}_${c}`];
+      }
     }
   }
-
   // 边框
   if (cfg.borderInfo && cfg.borderInfo.length > 0) {
     const borderInfo = [];
@@ -418,6 +432,13 @@ export function onCellsMoveEnd(
         }
       }
       d[r + row_s][c + col_s] = value;
+      if (hyperLinkList?.[`${r + last.row[0]}_${c + last.column[0]}`]) {
+        ctx.luckysheetfile[index].hyperlink![`${r + row_s}_${c + col_s}`] =
+          hyperLinkList?.[`${r + last.row[0]}_${c + last.column[0]}`] as {
+            linkType: string;
+            linkAddress: string;
+          };
+      }
     }
   }
 
