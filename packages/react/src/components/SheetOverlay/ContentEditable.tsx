@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import _ from "lodash";
 
 type ContentEditableProps = Omit<
@@ -7,14 +7,14 @@ type ContentEditableProps = Omit<
 > & {
   initialContent?: string;
   innerRef?: (e: HTMLDivElement | null) => void;
-  onChange?: (html: string) => void;
+  onChange?: (html: string, isBlur?: boolean) => void;
   onBlur?: (e: React.FocusEvent<HTMLDivElement, Element>) => void;
   autoFocus?: boolean;
   allowEdit?: boolean;
 };
 
 const ContentEditable: React.FC<ContentEditableProps> = ({ ...props }) => {
-  const [lastHtml, setLastHTML] = useState("");
+  const lastHtml = useRef("");
   const root = useRef<HTMLDivElement | null>(null);
   const { autoFocus, initialContent, onChange } = props;
 
@@ -22,7 +22,7 @@ const ContentEditable: React.FC<ContentEditableProps> = ({ ...props }) => {
     if (autoFocus) {
       root.current?.focus();
     }
-  }, [autoFocus, initialContent]);
+  }, [autoFocus]);
 
   // UNSAFE_componentWillUpdate
   useEffect(() => {
@@ -31,17 +31,20 @@ const ContentEditable: React.FC<ContentEditableProps> = ({ ...props }) => {
     }
   }, [initialContent]);
 
-  const fnEmitChange = useCallback(() => {
-    let html;
+  const fnEmitChange = useCallback(
+    (__: any, isBlur?: boolean) => {
+      let html;
 
-    if (root.current != null) {
-      html = root.current.innerHTML;
-    }
-    if (onChange && html !== lastHtml) {
-      onChange(html || "");
-    }
-    setLastHTML(html || "");
-  }, [root, lastHtml, onChange]);
+      if (root.current != null) {
+        html = root.current.innerHTML;
+      }
+      if (onChange && html !== lastHtml.current) {
+        onChange(html || "", isBlur);
+      }
+      lastHtml.current = html || "";
+    },
+    [root, onChange]
+  );
 
   const { innerRef, onBlur } = props;
   let { allowEdit } = props;
@@ -69,7 +72,7 @@ const ContentEditable: React.FC<ContentEditableProps> = ({ ...props }) => {
       tabIndex={0}
       onInput={fnEmitChange}
       onBlur={(e) => {
-        fnEmitChange();
+        fnEmitChange(null, true);
         onBlur?.(e);
       }}
       contentEditable={allowEdit}

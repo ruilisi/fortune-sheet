@@ -811,7 +811,12 @@ const Toolbar: React.FC<{
             tooltip={toolbar.autoSum}
             onClick={() =>
               setContext((ctx) => {
-                handleSum(ctx, refs.cellInput.current!, refs.globalCache!);
+                handleSum(
+                  ctx,
+                  refs.cellInput.current!,
+                  refs.fxInput.current,
+                  refs.globalCache!
+                );
               })
             }
           >
@@ -825,6 +830,7 @@ const Toolbar: React.FC<{
                         autoSelectionFormula(
                           ctx,
                           refs.cellInput.current!,
+                          refs.fxInput.current,
                           value,
                           refs.globalCache
                         );
@@ -1249,6 +1255,7 @@ const Toolbar: React.FC<{
       cell,
       setContext,
       refs.cellInput,
+      refs.fxInput,
       refs.globalCache,
       defaultFmt,
       align,
