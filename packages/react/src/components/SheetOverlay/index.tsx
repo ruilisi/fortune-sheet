@@ -276,16 +276,16 @@ const SheetOverlay: React.FC = () => {
     refs.cellArea.current?.scrollTop,
   ]);
 
-  useEffect(() => {
-    // ensure cell input is always focused to accept first key stroke on cell
-    if (!context.editingCommentBox) {
-      refs.cellInput.current?.focus({ preventScroll: true });
-    }
-  }, [
-    context.editingCommentBox,
-    context.luckysheet_select_save,
-    refs.cellInput,
-  ]);
+  // useEffect(() => {
+  //   // ensure cell input is always focused to accept first key stroke on cell
+  //   if (!context.editingCommentBox) {
+  //     refs.cellInput.current?.focus({ preventScroll: true });
+  //   }
+  // }, [
+  //   context.editingCommentBox,
+  //   context.luckysheet_select_save,
+  //   refs.cellInput,
+  // ]);
 
   useLayoutEffect(() => {
     if (
