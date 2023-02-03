@@ -1713,14 +1713,8 @@ export function deleteRowCol(
     // 删除选中行
     d.splice(start, slen);
 
-    // 删除多少行，增加多少行空白行
-    for (let r = 0; r < slen; r += 1) {
-      const row = [];
-      for (let c = 0; c < d[0].length; c += 1) {
-        row.push(null);
-      }
-      d.push(row);
-    }
+    // 删除行后，调整行数
+    file.row! -= slen;
   } else {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type1 = "c";
@@ -1818,20 +1812,13 @@ export function deleteRowCol(
       cfg.borderInfo = borderInfo;
     }
 
-    // 空白列模板
-    const addcol = [];
-    for (let r = 0; r < slen; r += 1) {
-      addcol.push(null);
-    }
-
     for (let r = 0; r < d.length; r += 1) {
-      const row = _.clone(d[r]);
-
       // 删除选中列
-      row.splice(start, slen);
-
-      d[r] = row.concat(addcol);
+      d[r].splice(start, slen);
     }
+
+    // 删除列后，调整列数
+    file.column! -= slen;
   }
 
   // 修改当前sheet页时刷新

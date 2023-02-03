@@ -11475,6 +11475,8 @@ export default {
     generateNewMatrix: "Generar nueva matriz",
     noMulti:
       "No se puede realizar esta operación en varias áreas de selección, selecciona una sola área",
+    cannotDeleteAllRow: "No se pueden eliminar todas las filas",
+    cannotDeleteAllColumn: "No se pueden eliminar todas las columnas",
   },
   comment: {
     insert: "Insertar",
