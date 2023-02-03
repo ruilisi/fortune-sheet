@@ -66,6 +66,7 @@ export function saveHyperlink(
     cell.un = 1;
     cell.v = linkText || linkAddress;
     cell.m = linkText || linkAddress;
+    cell.hl = { r, c, id: ctx.currentSheetId };
     flowdata[r][c] = cell;
     ctx.linkCard = undefined;
   }
