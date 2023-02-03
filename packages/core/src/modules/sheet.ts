@@ -202,8 +202,8 @@ export function updateSheet(ctx: Context, newData: Sheet[]) {
     const index = getSheetIndex(ctx, newDatum.id!) as number;
     if (data != null) {
       // 如果row和column存在的话则进行row和column和data进行比较，如果row和column不存在的话则进行data和default进行比较。
-      let lastRowNum = data[0].length;
-      let lastColNum = data.length;
+      let lastRowNum = data.length;
+      let lastColNum = data[0].length;
       if (row != null && column != null && row > 0 && column > 0) {
         lastRowNum = Math.max(lastRowNum, row);
         lastColNum = Math.max(lastColNum, column);
