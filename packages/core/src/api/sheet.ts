@@ -4,7 +4,7 @@ import { dataToCelldata, getSheet } from "./common";
 import { Context } from "../context";
 import { CellMatrix, CellWithRowAndCol, Sheet } from "../types";
 import { getSheetIndex } from "../utils";
-import { api, locale } from "..";
+import { api, execfunction, insertUpdateFunctionGroup, locale } from "..";
 
 export function getAllSheets(ctx: Context) {
   return ctx.luckysheetfile;
@@ -29,7 +29,6 @@ export function initSheetData(
     lastRowNum = Math.max(lastRowNum, draftCtx.defaultrowNum);
     lastColNum = Math.max(lastColNum, draftCtx.defaultcolumnNum);
   }
-  delete draftCtx.luckysheetfile[index]?.celldata;
   if (lastRowNum && lastColNum) {
     const expandedData: Sheet["data"] = _.times(lastRowNum, () =>
       _.times(lastColNum, () => null)
@@ -39,9 +38,11 @@ export function initSheetData(
     });
     if (draftCtx.luckysheetfile[index] == null) {
       newData.data = expandedData;
+      delete newData.celldata;
       draftCtx.luckysheetfile.push(newData);
     } else {
       draftCtx.luckysheetfile[index].data = expandedData;
+      delete draftCtx.luckysheetfile[index].celldata;
     }
     return expandedData;
   }
@@ -134,4 +135,25 @@ export function copySheet(ctx: Context, sheetId: string) {
     ctx.luckysheetfile[ctx.luckysheetfile.length - 1].id as string
   ] = order;
   api.setSheetOrder(ctx, sheetOrderList);
+}
+
+export function calculateSheetFromula(ctx: Context, id: string) {
+  const index = getSheetIndex(ctx, id) as number;
+  if (!ctx.luckysheetfile[index].data) return;
+  for (let r = 0; r < ctx.luckysheetfile[index].data!.length; r += 1) {
+    for (let c = 0; c < ctx.luckysheetfile[index].data![r].length; c += 1) {
+      if (!ctx.luckysheetfile[index].data![r][c]?.f) {
+        continue;
+      }
+      const result = execfunction(
+        ctx,
+        ctx.luckysheetfile[index].data![r][c]?.f!,
+        r,
+        c,
+        id
+      );
+      api.setCellValue(ctx, r, c, result[1], null);
+      insertUpdateFunctionGroup(ctx, r, c, id);
+    }
+  }
 }

@@ -46,9 +46,11 @@ describe("keyboard", () => {
     const fxInput = document.createElement("div");
     const ctx = getContext();
     ctx.luckysheetCellUpdate = [];
+    let cache;
 
     handleWithCtrlOrMetaKey(
       ctx,
+      cache,
       keypressWithCtrlPressed("b"),
       cellInput,
       fxInput,
@@ -63,9 +65,11 @@ describe("keyboard", () => {
     const fxInput = document.createElement("div");
     const ctx = getContext();
     const undo = jest.fn();
+    let cache;
     // const redo = jest.fn();
     handleWithCtrlOrMetaKey(
       ctx,
+      cache,
       keypressWithCtrlPressed("z"),
       cellInput,
       fxInput,
@@ -88,8 +92,10 @@ describe("keyboard", () => {
     const cellInput = document.createElement("div");
     const fxInput = document.createElement("div");
     const ctx = getContext();
+    let cache;
     handleWithCtrlOrMetaKey(
       ctx,
+      cache,
       keypressWithCtrlPressed("a"),
       cellInput,
       fxInput,

@@ -338,6 +338,7 @@ function getNoNullValue(d: CellMatrix, st_x: number, ed: number, type: string) {
 
 function activeFormulaInput(
   cellInput: HTMLDivElement,
+  fxInput: HTMLDivElement | null | undefined,
   ctx: Context,
   row_index: number,
   col_index: number,
@@ -384,7 +385,7 @@ function activeFormulaInput(
   ctx.formulaCache.rangedrag_column_start = false;
   ctx.formulaCache.rangedrag_row_start = false;
   ctx.formulaCache.rangechangeindex = 0;
-  rangeSetValue(ctx, cellInput, { row: rowh, column: columnh });
+  rangeSetValue(ctx, cellInput, { row: rowh, column: columnh }, fxInput);
   ctx.formulaCache.func_selectedrange = {
     left: col_pre,
     width: col - col_pre - 1,
@@ -450,6 +451,7 @@ function backFormulaInput(
 
 function singleFormulaInput(
   cellInput: HTMLDivElement,
+  fxInput: HTMLDivElement | null | undefined,
   ctx: Context,
   d: CellMatrix,
   _index: number,
@@ -501,6 +503,7 @@ function singleFormulaInput(
       if (type === "c") {
         activeFormulaInput(
           cellInput,
+          fxInput,
           ctx,
           _index,
           fix,
@@ -513,6 +516,7 @@ function singleFormulaInput(
       } else {
         activeFormulaInput(
           cellInput,
+          fxInput,
           ctx,
           fix,
           _index,
@@ -664,6 +668,7 @@ function singleFormulaInput(
 export function autoSelectionFormula(
   ctx: Context,
   cellInput: HTMLDivElement,
+  fxInput: HTMLDivElement | null | undefined,
   formula: string,
   cache: GlobalCache
 ) {
@@ -687,6 +692,7 @@ export function autoSelectionFormula(
     if (st_c_c == null) {
       activeFormulaInput(
         cellInput,
+        fxInput,
         ctx,
         st_r,
         st_c,
@@ -699,6 +705,7 @@ export function autoSelectionFormula(
     } else {
       activeFormulaInput(
         cellInput,
+        fxInput,
         ctx,
         st_r,
         st_c,
@@ -725,6 +732,7 @@ export function autoSelectionFormula(
     } else {
       activeFormulaInput(
         cellInput,
+        fxInput,
         ctx,
         st_r,
         st_c,
@@ -747,6 +755,7 @@ export function autoSelectionFormula(
       if (ed_r - 1 < 0 && ed_c - 1 < 0) {
         activeFormulaInput(
           cellInput,
+          fxInput,
           ctx,
           st_r,
           st_c,
@@ -769,6 +778,7 @@ export function autoSelectionFormula(
     } else if (st_r === ed_r) {
       isfalse = singleFormulaInput(
         cellInput,
+        fxInput,
         ctx,
         flowdata,
         col_index!,
@@ -782,6 +792,7 @@ export function autoSelectionFormula(
     } else if (st_c === ed_c) {
       isfalse = singleFormulaInput(
         cellInput,
+        fxInput,
         ctx,
         flowdata,
         row_index!,
@@ -798,6 +809,7 @@ export function autoSelectionFormula(
         r_false =
           singleFormulaInput(
             cellInput,
+            fxInput,
             ctx,
             flowdata,
             col_index!,
@@ -817,6 +829,7 @@ export function autoSelectionFormula(
         c_false =
           singleFormulaInput(
             cellInput,
+            fxInput,
             ctx,
             flowdata,
             row_index!,
@@ -1469,9 +1482,10 @@ export function handleTextSize(
 export function handleSum(
   ctx: Context,
   cellInput: HTMLDivElement,
+  fxInput: HTMLDivElement | null | undefined,
   cache?: GlobalCache
 ) {
-  autoSelectionFormula(ctx, cellInput, "SUM", cache!);
+  autoSelectionFormula(ctx, cellInput, fxInput, "SUM", cache!);
 }
 
 export function handleLink(ctx: Context) {

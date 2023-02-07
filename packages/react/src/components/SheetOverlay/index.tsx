@@ -169,13 +169,15 @@ const SheetOverlay: React.FC = () => {
           refs.cellInput.current!,
           refs.scrollbarX.current!,
           refs.scrollbarY.current!,
-          containerRef.current!
+          containerRef.current!,
+          refs.fxInput.current
         );
       });
     },
     [
       overShowLinkCard,
       refs.cellInput,
+      refs.fxInput,
       refs.globalCache,
       refs.scrollbarX,
       refs.scrollbarY,
@@ -194,7 +196,9 @@ const SheetOverlay: React.FC = () => {
             nativeEvent,
             refs.scrollbarX.current!,
             refs.scrollbarY.current!,
-            containerRef.current!
+            containerRef.current!,
+            refs.cellInput.current,
+            refs.fxInput.current
           );
         } catch (e: any) {
           showAlert(e.message);
@@ -202,6 +206,8 @@ const SheetOverlay: React.FC = () => {
       });
     },
     [
+      refs.cellInput,
+      refs.fxInput,
       refs.globalCache,
       refs.scrollbarX,
       refs.scrollbarY,
@@ -268,18 +274,24 @@ const SheetOverlay: React.FC = () => {
   useEffect(() => {
     refs.cellArea.current!.scrollLeft = context.scrollLeft;
     refs.cellArea.current!.scrollTop = context.scrollTop;
-  }, [context.scrollLeft, context.scrollTop, refs.cellArea]);
-
-  useEffect(() => {
-    // ensure cell input is always focused to accept first key stroke on cell
-    if (!context.editingCommentBox) {
-      refs.cellInput.current?.focus({ preventScroll: true });
-    }
   }, [
-    context.editingCommentBox,
-    context.luckysheet_select_save,
-    refs.cellInput,
+    context.scrollLeft,
+    context.scrollTop,
+    refs.cellArea,
+    refs.cellArea.current?.scrollLeft,
+    refs.cellArea.current?.scrollTop,
   ]);
+
+  // useEffect(() => {
+  //   // ensure cell input is always focused to accept first key stroke on cell
+  //   if (!context.editingCommentBox) {
+  //     refs.cellInput.current?.focus({ preventScroll: true });
+  //   }
+  // }, [
+  //   context.editingCommentBox,
+  //   context.luckysheet_select_save,
+  //   refs.cellInput,
+  // ]);
 
   useLayoutEffect(() => {
     if (
@@ -665,6 +677,16 @@ const SheetOverlay: React.FC = () => {
                   <span style={{ fontSize: 14 }}>{info.row}</span>{" "}
                   <span style={{ fontSize: 14, color: "#9c9c9c" }}>
                     ({info.addLast})
+                  </span>
+                  <span
+                    className="fortune-add-row-button"
+                    onClick={() => {
+                      setContext((ctx) => {
+                        ctx.scrollTop = 0;
+                      });
+                    }}
+                  >
+                    {info.backTop}
                   </span>
                 </div>
               </div>

@@ -76,7 +76,7 @@ export function columnIndexToLabel(column) {
 const simpleSheetName = '[A-Za-z0-9_\u00C0-\u02AF]+';
 const quotedSheetName = "'(?:(?!').|'')*'";
 const sheetNameRegexp = `(${simpleSheetName}|${quotedSheetName})!`;
-const LABEL_EXTRACT_REGEXP = new RegExp(`^(?:${sheetNameRegexp})?([$])?([A-Za-z]+)([$])?([0-9]+)$`);
+const LABEL_EXTRACT_REGEXP = new RegExp(`^(?:${sheetNameRegexp})?([$])?([A-Za-z]*)([$])?([0-9]*)$`);
 
 /**
  * Extract cell coordinates.
@@ -89,6 +89,7 @@ export function extractLabel(label) {
     return [];
   }
   const [, sheetNameStr, columnAbs, column, rowAbs, row] = label.toUpperCase().match(LABEL_EXTRACT_REGEXP);
+  if (column == null && row == null) return [];
   const sheetName = sheetNameStr == null ? null : label.slice(0, sheetNameStr.length).replace(/^'|'$/g, "").replace(/''/g, "'");
 
   return [

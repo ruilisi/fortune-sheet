@@ -38,6 +38,7 @@ const FxEditor: React.FC = () => {
   const firstSelection = context.luckysheet_select_save?.[0];
   const prevFirstSelection = usePrevious(firstSelection);
   const prevSheetId = usePrevious(context.currentSheetId);
+  const recentText = useRef("");
 
   useEffect(() => {
     // 当选中行列是处于隐藏状态的话则不允许编辑
@@ -115,6 +116,10 @@ const FxEditor: React.FC = () => {
       }
       lastKeyDownEventRef.current = new KeyboardEvent(e.type, e.nativeEvent);
       const { key } = e;
+      recentText.current = refs.fxInput.current!.innerText;
+      if (key === "ArrowLeft" || key === "ArrowRight") {
+        e.stopPropagation();
+      }
       setContext((draftCtx) => {
         if (context.luckysheetCellUpdate.length > 0) {
           switch (key) {
@@ -255,7 +260,8 @@ const FxEditor: React.FC = () => {
           draftCtx,
           refs.cellInput.current!,
           refs.fxInput.current!,
-          kcode
+          kcode,
+          recentText.current
         );
       });
     }

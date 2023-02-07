@@ -11534,6 +11534,8 @@ export default {
     byCol: "按列",
     generateNewMatrix: "生成新矩阵",
     noMulti: "无法对多重选择区域执行此操作,请选择单个区域",
+    cannotDeleteAllRow: "无法删除所有行",
+    cannotDeleteAllColumn: "无法删除所有列",
   },
   comment: {
     insert: "新建批注",

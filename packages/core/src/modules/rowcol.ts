@@ -156,17 +156,28 @@ export function insertRowCol(
   cfg.merge = merge_new;
 
   // 公式配置变动
-  const { calcChain } = file;
   const newCalcChain = [];
-  if (calcChain != null && calcChain.length > 0) {
-    for (let i = 0; i < calcChain.length; i += 1) {
-      const calc: any = _.cloneDeep(calcChain[i]);
+  for (
+    let SheetIndex = 0;
+    SheetIndex < ctx.luckysheetfile.length;
+    SheetIndex += 1
+  ) {
+    if (
+      _.isNil(ctx.luckysheetfile[SheetIndex].calcChain) ||
+      ctx.luckysheetfile.length === 0
+    ) {
+      continue;
+    }
+    const { calcChain } = ctx.luckysheetfile[SheetIndex];
+    const { data } = ctx.luckysheetfile[SheetIndex];
+    for (let i = 0; i < calcChain!.length; i += 1) {
+      const calc: any = _.cloneDeep(calcChain![i]);
       const calc_r = calc.r;
       const calc_c = calc.c;
       const calc_i = calc.id;
       const calc_funcStr = getcellFormula(ctx, calc_r, calc_c, calc_i);
 
-      if (type === "row") {
+      if (type === "row" && SheetIndex === curOrder) {
         const functionStr = `=${functionStrChange(
           calc_funcStr,
           "add",
@@ -191,7 +202,20 @@ export function insertRowCol(
         }
 
         newCalcChain.push(calc);
-      } else if (type === "column") {
+      } else if (type === "row") {
+        const functionStr = `=${functionStrChange(
+          calc_funcStr,
+          "add",
+          "row",
+          direction,
+          index,
+          count
+        )}`;
+
+        if (data![calc_r]?.[calc_c]?.f === calc_funcStr) {
+          data![calc_r]![calc_c]!.f = functionStr;
+        }
+      } else if (type === "column" && SheetIndex === curOrder) {
         const functionStr = `=${functionStrChange(
           calc_funcStr,
           "add",
@@ -216,6 +240,19 @@ export function insertRowCol(
         }
 
         newCalcChain.push(calc);
+      } else if (type === "column") {
+        const functionStr = `=${functionStrChange(
+          calc_funcStr,
+          "add",
+          "col",
+          direction,
+          index,
+          count
+        )}`;
+
+        if (data![calc_r]?.[calc_c]?.f === calc_funcStr) {
+          data![calc_r]![calc_c]!.f = functionStr;
+        }
       }
     }
   }
@@ -1126,17 +1163,28 @@ export function deleteRowCol(
   cfg.merge = merge_new;
 
   // 公式配置变动
-  const { calcChain } = file;
   const newCalcChain = [];
-  if (calcChain != null && calcChain.length > 0) {
-    for (let i = 0; i < calcChain.length; i += 1) {
-      const calc: any = _.cloneDeep(calcChain[i]);
+  for (
+    let SheetIndex = 0;
+    SheetIndex < ctx.luckysheetfile.length;
+    SheetIndex += 1
+  ) {
+    if (
+      _.isNil(ctx.luckysheetfile[SheetIndex].calcChain) ||
+      ctx.luckysheetfile.length === 0
+    ) {
+      continue;
+    }
+    const { calcChain } = ctx.luckysheetfile[SheetIndex];
+    const { data } = ctx.luckysheetfile[SheetIndex];
+    for (let i = 0; i < calcChain!.length; i += 1) {
+      const calc: any = _.cloneDeep(calcChain![i]);
       const calc_r = calc.r;
       const calc_c = calc.c;
       const calc_i = calc.id;
       const calc_funcStr = getcellFormula(ctx, calc_r, calc_c, calc_i);
 
-      if (type === "row") {
+      if (type === "row" && SheetIndex === curOrder) {
         if (calc_r < start || calc_r > end) {
           const functionStr = `=${functionStrChange(
             calc_funcStr,
@@ -1147,8 +1195,8 @@ export function deleteRowCol(
             slen
           )}`;
 
-          if (d[calc_r]?.[calc_c]?.f === calc_funcStr) {
-            d[calc_r]![calc_c]!.f = functionStr;
+          if (data![calc_r]?.[calc_c]?.f === calc_funcStr) {
+            data![calc_r]![calc_c]!.f = functionStr;
           }
 
           if (calc_r > end) {
@@ -1157,7 +1205,20 @@ export function deleteRowCol(
 
           newCalcChain.push(calc);
         }
-      } else if (type === "column") {
+      } else if (type === "row") {
+        const functionStr = `=${functionStrChange(
+          calc_funcStr,
+          "del",
+          "row",
+          null,
+          start,
+          slen
+        )}`;
+
+        if (data![calc_r]?.[calc_c]?.f === calc_funcStr) {
+          data![calc_r]![calc_c]!.f = functionStr;
+        }
+      } else if (type === "column" && SheetIndex === curOrder) {
         if (calc_c < start || calc_c > end) {
           const functionStr = `=${functionStrChange(
             calc_funcStr,
@@ -1168,8 +1229,8 @@ export function deleteRowCol(
             slen
           )}`;
 
-          if (d[calc_r]?.[calc_c]?.f === calc_funcStr) {
-            d[calc_r]![calc_c]!.f = functionStr;
+          if (data![calc_r]?.[calc_c]?.f === calc_funcStr) {
+            data![calc_r]![calc_c]!.f = functionStr;
           }
 
           if (calc_c > end) {
@@ -1177,6 +1238,19 @@ export function deleteRowCol(
           }
 
           newCalcChain.push(calc);
+        }
+      } else if (type === "column") {
+        const functionStr = `=${functionStrChange(
+          calc_funcStr,
+          "del",
+          "col",
+          null,
+          start,
+          slen
+        )}`;
+
+        if (data![calc_r]?.[calc_c]?.f === calc_funcStr) {
+          data![calc_r]![calc_c]!.f = functionStr;
         }
       }
     }
@@ -1639,14 +1713,8 @@ export function deleteRowCol(
     // 删除选中行
     d.splice(start, slen);
 
-    // 删除多少行，增加多少行空白行
-    for (let r = 0; r < slen; r += 1) {
-      const row = [];
-      for (let c = 0; c < d[0].length; c += 1) {
-        row.push(null);
-      }
-      d.push(row);
-    }
+    // 删除行后，调整行数
+    file.row! -= slen;
   } else {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type1 = "c";
@@ -1744,20 +1812,13 @@ export function deleteRowCol(
       cfg.borderInfo = borderInfo;
     }
 
-    // 空白列模板
-    const addcol = [];
-    for (let r = 0; r < slen; r += 1) {
-      addcol.push(null);
-    }
-
     for (let r = 0; r < d.length; r += 1) {
-      const row = _.clone(d[r]);
-
       // 删除选中列
-      row.splice(start, slen);
-
-      d[r] = row.concat(addcol);
+      d[r].splice(start, slen);
     }
+
+    // 删除列后，调整列数
+    file.column! -= slen;
   }
 
   // 修改当前sheet页时刷新

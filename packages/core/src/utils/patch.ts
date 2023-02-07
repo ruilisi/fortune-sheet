@@ -156,6 +156,8 @@ export function extractFormulaCellOps(ops: Op[]) {
       }
     } else if (op.path.length === 3 && op.value?.f) {
       formulaOps.push(op);
+    } else if (op.path.length === 4 && op.path[3] === "f") {
+      formulaOps.push(op);
     }
   });
   return formulaOps;

@@ -12,9 +12,11 @@ import {
   handleLink,
   hideSelected,
   showSelected,
+  getSheetIndex,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, { useContext, useRef, useLayoutEffect, useCallback } from "react";
+import { setColumnWidth, setRowHeight } from "../../../../core/src/api";
 import WorkbookContext, { SetContextOptions } from "../../context";
 import { useAlert } from "../../hooks/useAlert";
 import { useDialog } from "../../hooks/useDialog";
@@ -28,7 +30,7 @@ const ContextMenu: React.FC = () => {
   const { context, setContext, settings } = useContext(WorkbookContext);
   const { contextMenu } = context;
   const { showAlert } = useAlert();
-  const { rightclick, drag, generalDialog } = locale(context);
+  const { rightclick, drag, generalDialog, info } = locale(context);
   const getMenuElement = useCallback(
     (name: string, i: number) => {
       const selection = context.luckysheet_select_save?.[0];
@@ -224,6 +226,18 @@ const ContextMenu: React.FC = () => {
                     draftCtx.contextMenu = undefined;
                     return;
                   }
+                  const slen = ed_index - st_index + 1;
+                  const index = getSheetIndex(
+                    draftCtx,
+                    context.currentSheetId
+                  ) as number;
+                  if (
+                    draftCtx.luckysheetfile[index].data?.[0]?.length! <= slen
+                  ) {
+                    showAlert(rightclick.cannotDeleteAllColumn, "ok");
+                    draftCtx.contextMenu = undefined;
+                    return;
+                  }
                   deleteRowCol(draftCtx, deleteRowColOp);
                   draftCtx.contextMenu = undefined;
                 },
@@ -253,6 +267,16 @@ const ContextMenu: React.FC = () => {
                 (draftCtx) => {
                   if (draftCtx.luckysheet_select_save?.length! > 1) {
                     showAlert(rightclick.noMulti, "ok");
+                    draftCtx.contextMenu = undefined;
+                    return;
+                  }
+                  const slen = ed_index - st_index + 1;
+                  const index = getSheetIndex(
+                    draftCtx,
+                    context.currentSheetId
+                  ) as number;
+                  if (draftCtx.luckysheetfile[index].data?.length! <= slen) {
+                    showAlert(rightclick.cannotDeleteAllRow, "ok");
                     draftCtx.contextMenu = undefined;
                     return;
                   }
@@ -319,6 +343,126 @@ const ContextMenu: React.FC = () => {
             </Menu>
           ))
         );
+      }
+      if (name === "set-row-height") {
+        const rowHeight = selection?.height || context.defaultrowlen;
+        const shownRowHeight = context.luckysheet_select_save?.some(
+          (section) =>
+            section.height_move !==
+            (rowHeight + 1) * (section.row[1] - section.row[0] + 1) - 1
+        )
+          ? ""
+          : rowHeight;
+        return context.luckysheet_select_save?.some(
+          (section) => section.row_select
+        ) ? (
+          <Menu
+            key="set-row-height"
+            onClick={(e, container) => {
+              const targetRowHeight = container.querySelector("input")?.value;
+              setContext((draftCtx) => {
+                if (
+                  _.isUndefined(targetRowHeight) ||
+                  targetRowHeight === "" ||
+                  parseInt(targetRowHeight, 10) <= 0 ||
+                  parseInt(targetRowHeight, 10) > 545
+                ) {
+                  showAlert(info.tipRowHeightLimit, "ok");
+                  draftCtx.contextMenu = undefined;
+                  return;
+                }
+                const numRowHeight = parseInt(targetRowHeight, 10);
+                const rowHeightList: Record<string, number> = {};
+                _.forEach(draftCtx.luckysheet_select_save, (section) => {
+                  for (
+                    let rowNum = section.row[0];
+                    rowNum <= section.row[1];
+                    rowNum += 1
+                  ) {
+                    rowHeightList[rowNum] = numRowHeight;
+                  }
+                });
+                setRowHeight(draftCtx, rowHeightList);
+                draftCtx.contextMenu = undefined;
+              });
+            }}
+          >
+            {rightclick.row}
+            {rightclick.height}
+            <input
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+              type="number"
+              min={1}
+              max={545}
+              className="luckysheet-mousedown-cancel"
+              placeholder={rightclick.number}
+              defaultValue={shownRowHeight}
+              style={{ width: "40px" }}
+            />
+            px
+          </Menu>
+        ) : null;
+      }
+      if (name === "set-column-width") {
+        const colWidth = selection?.width || context.defaultcollen;
+        const shownColWidth = context.luckysheet_select_save?.some(
+          (section) =>
+            section.width_move !==
+            (colWidth + 1) * (section.column[1] - section.column[0] + 1) - 1
+        )
+          ? ""
+          : colWidth;
+        return context.luckysheet_select_save?.some(
+          (section) => section.column_select
+        ) ? (
+          <Menu
+            key="set-column-width"
+            onClick={(e, container) => {
+              const targetColWidth = container.querySelector("input")?.value;
+              setContext((draftCtx) => {
+                if (
+                  _.isUndefined(targetColWidth) ||
+                  targetColWidth === "" ||
+                  parseInt(targetColWidth, 10) <= 0 ||
+                  parseInt(targetColWidth, 10) > 2038
+                ) {
+                  showAlert(info.tipColumnWidthLimit, "ok");
+                  draftCtx.contextMenu = undefined;
+                  return;
+                }
+                const numColWidth = parseInt(targetColWidth, 10);
+                const colWidthList: Record<string, number> = {};
+                _.forEach(draftCtx.luckysheet_select_save, (section) => {
+                  for (
+                    let colNum = section.column[0];
+                    colNum <= section.column[1];
+                    colNum += 1
+                  ) {
+                    colWidthList[colNum] = numColWidth;
+                  }
+                });
+                setColumnWidth(draftCtx, colWidthList);
+                draftCtx.contextMenu = undefined;
+              });
+            }}
+          >
+            {rightclick.column}
+            {rightclick.width}
+            <input
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+              type="number"
+              min={1}
+              max={545}
+              className="luckysheet-mousedown-cancel"
+              placeholder={rightclick.number}
+              defaultValue={shownColWidth}
+              style={{ width: "40px" }}
+            />
+            px
+          </Menu>
+        ) : null;
       }
       if (name === "clear") {
         return (
@@ -443,7 +587,10 @@ const ContextMenu: React.FC = () => {
       context.currentSheetId,
       context.lang,
       context.luckysheet_select_save,
+      context.defaultrowlen,
+      context.defaultcollen,
       rightclick,
+      info,
       setContext,
       showAlert,
       showDialog,

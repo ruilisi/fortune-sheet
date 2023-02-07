@@ -13,6 +13,7 @@ import {
   updateCell,
   createRangeHightlight,
   isShowHidenCR,
+  israngeseleciton,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -40,6 +41,7 @@ const InputBox: React.FC = () => {
   const firstSelection = context.luckysheet_select_save?.[0];
   const row_index = firstSelection?.row_focus!;
   const col_index = firstSelection?.column_focus!;
+  const preText = useRef("");
 
   const inputBoxStyle = useMemo(() => {
     if (firstSelection && context.luckysheetCellUpdate.length > 0) {
@@ -92,7 +94,9 @@ const InputBox: React.FC = () => {
         }
       }
       refs.globalCache.overwriteCell = false;
-      inputRef.current!.innerHTML = escapeScriptTag(value);
+      if (!refs.globalCache.ignoreWriteCell)
+        inputRef.current!.innerHTML = escapeScriptTag(value);
+      refs.globalCache.ignoreWriteCell = false;
       if (!refs.globalCache.doNotFocus) {
         setTimeout(() => {
           moveToEnd(inputRef.current!);
@@ -125,6 +129,7 @@ const InputBox: React.FC = () => {
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       lastKeyDownEventRef.current = new KeyboardEvent(e.type, e.nativeEvent);
+      preText.current = inputRef.current!.innerText;
       // if (
       //   $("#luckysheet-modal-dialog-mask").is(":visible") ||
       //   $(event.target).hasClass("luckysheet-mousedown-cancel") ||
@@ -209,56 +214,68 @@ const InputBox: React.FC = () => {
     [context.luckysheetCellUpdate.length, refs.cellInput, setContext]
   );
 
-  const onChange = useCallback(() => {
-    // setInputHTML(html);
-    const e = lastKeyDownEventRef.current;
-    if (!e) return;
-    const kcode = e.keyCode;
-    if (!kcode) return;
+  const onChange = useCallback(
+    (__: any, isBlur?: boolean) => {
+      // setInputHTML(html);
+      const e = lastKeyDownEventRef.current;
+      if (!e) return;
+      const kcode = e.keyCode;
+      if (!kcode) return;
 
-    if (
-      !(
-        (
-          (kcode >= 112 && kcode <= 123) ||
-          kcode <= 46 ||
-          kcode === 144 ||
-          kcode === 108 ||
-          e.ctrlKey ||
-          e.altKey ||
-          (e.shiftKey &&
-            (kcode === 37 || kcode === 38 || kcode === 39 || kcode === 40))
-        )
-        // kcode === keycode.WIN ||
-        // kcode === keycode.WIN_R ||
-        // kcode === keycode.MENU))
-      ) ||
-      kcode === 8 ||
-      kcode === 32 ||
-      kcode === 46 ||
-      (e.ctrlKey && kcode === 86)
-    ) {
-      setContext((draftCtx) => {
-        // if(event.target.id!="luckysheet-input-box" && event.target.id!="luckysheet-rich-text-editor"){
-        handleFormulaInput(
-          draftCtx,
-          refs.fxInput.current!,
-          refs.cellInput.current!,
-          kcode
-        );
-        // formula.functionInputHanddler(
-        //   $("#luckysheet-functionbox-cell"),
-        //   $("#luckysheet-rich-text-editor"),
-        //   kcode
-        // );
-        // setCenterInputPosition(
-        //   draftCtx.luckysheetCellUpdate[0],
-        //   draftCtx.luckysheetCellUpdate[1],
-        //   draftCtx.flowdata
-        // );
-        // }
-      });
-    }
-  }, [refs.cellInput, refs.fxInput, setContext]);
+      if (
+        !(
+          (
+            (kcode >= 112 && kcode <= 123) ||
+            kcode <= 46 ||
+            kcode === 144 ||
+            kcode === 108 ||
+            e.ctrlKey ||
+            e.altKey ||
+            (e.shiftKey &&
+              (kcode === 37 || kcode === 38 || kcode === 39 || kcode === 40))
+          )
+          // kcode === keycode.WIN ||
+          // kcode === keycode.WIN_R ||
+          // kcode === keycode.MENU))
+        ) ||
+        kcode === 8 ||
+        kcode === 32 ||
+        kcode === 46 ||
+        (e.ctrlKey && kcode === 86)
+      ) {
+        setContext((draftCtx) => {
+          if (
+            (draftCtx.formulaCache.rangestart ||
+              draftCtx.formulaCache.rangedrag_column_start ||
+              draftCtx.formulaCache.rangedrag_row_start ||
+              israngeseleciton(draftCtx)) &&
+            isBlur
+          )
+            return;
+          // if(event.target.id!="luckysheet-input-box" && event.target.id!="luckysheet-rich-text-editor"){
+          handleFormulaInput(
+            draftCtx,
+            refs.fxInput.current,
+            refs.cellInput.current!,
+            kcode,
+            preText.current
+          );
+          // formula.functionInputHanddler(
+          //   $("#luckysheet-functionbox-cell"),
+          //   $("#luckysheet-rich-text-editor"),
+          //   kcode
+          // );
+          // setCenterInputPosition(
+          //   draftCtx.luckysheetCellUpdate[0],
+          //   draftCtx.luckysheetCellUpdate[1],
+          //   draftCtx.flowdata
+          // );
+          // }
+        });
+      }
+    },
+    [refs.cellInput, refs.fxInput, setContext]
+  );
 
   const onPaste = useCallback(
     (e: React.ClipboardEvent<HTMLDivElement>) => {
@@ -302,6 +319,8 @@ const InputBox: React.FC = () => {
             }
           : { left: -10000, top: -10000, display: "block" }
       }
+      onMouseDown={(e) => e.stopPropagation()}
+      onMouseUp={(e) => e.stopPropagation()}
     >
       <div
         className="luckysheet-input-box-inner"

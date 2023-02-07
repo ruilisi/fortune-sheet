@@ -121,9 +121,10 @@ function handleBatchSelectionWithArrowKey(ctx: Context, e: KeyboardEvent) {
 
 export function handleWithCtrlOrMetaKey(
   ctx: Context,
+  cache: GlobalCache,
   e: KeyboardEvent,
   cellInput: HTMLDivElement,
-  fxInput: HTMLDivElement,
+  fxInput: HTMLDivElement | null | undefined,
   handleUndo: () => void,
   handleRedo: () => void
 ) {
@@ -139,17 +140,19 @@ export function handleWithCtrlOrMetaKey(
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
       // Ctrl + Shift + 方向键  调整选区
       handleBatchSelectionWithArrowKey(ctx, e);
-    } else if (e.key === ":" || e.key === "'") {
+    } else if (_.includes([";", '"', ":", "'"], e.key)) {
       const last =
         ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1];
       if (!last) return;
 
       const row_index = last.row_focus!;
       const col_index = last.column_focus!;
-      updateCell(ctx, row_index, col_index, cellInput, flowdata);
+      updateCell(ctx, row_index, col_index, cellInput);
+      ctx.luckysheetCellUpdate = [row_index, col_index];
 
+      cache.ignoreWriteCell = true;
       const value = getNowDateTime(2);
-      cellInput.innerHTML = value;
+      cellInput.innerText = value;
       // $("#luckysheet-rich-text-editor").html(value);
       // luckysheetRangeLast($("#luckysheet-rich-text-editor")[0]);
       handleFormulaInput(ctx, fxInput, cellInput, e.keyCode);
@@ -429,7 +432,7 @@ export function handleArrowKey(ctx: Context, e: KeyboardEvent) {
 export function handleGlobalKeyDown(
   ctx: Context,
   cellInput: HTMLDivElement,
-  fxInput: HTMLDivElement,
+  fxInput: HTMLDivElement | null | undefined,
   e: KeyboardEvent,
   cache: GlobalCache,
   handleUndo: () => void,
@@ -559,6 +562,7 @@ export function handleGlobalKeyDown(
     if (e.ctrlKey || e.metaKey) {
       handleWithCtrlOrMetaKey(
         ctx,
+        cache,
         e,
         cellInput,
         fxInput,

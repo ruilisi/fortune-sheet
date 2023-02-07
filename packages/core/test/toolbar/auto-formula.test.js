@@ -41,7 +41,7 @@ describe("auto formula", () => {
   test("sum", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
-    autoSelectionFormula(ctx, cellInput, "SUM");
+    autoSelectionFormula(ctx, cellInput, null, "SUM");
     expectValuesInPositions(
       getFlowdata(ctx),
       [70, 80, 60, 90],
@@ -52,7 +52,7 @@ describe("auto formula", () => {
   test("min", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
-    autoSelectionFormula(ctx, cellInput, "MIN");
+    autoSelectionFormula(ctx, cellInput, null, "MIN");
     expectValuesInPositions(
       getFlowdata(ctx),
       [30, 30, 30, 40],
@@ -63,7 +63,7 @@ describe("auto formula", () => {
   test("max", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
-    autoSelectionFormula(ctx, cellInput, "max");
+    autoSelectionFormula(ctx, cellInput, null, "max");
     expectValuesInPositions(
       getFlowdata(ctx),
       [40, 50, 30, 50],
@@ -74,7 +74,7 @@ describe("auto formula", () => {
   test("average", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
-    autoSelectionFormula(ctx, cellInput, "AVERAGE");
+    autoSelectionFormula(ctx, cellInput, null, "AVERAGE");
     expectValuesInPositions(
       getFlowdata(ctx),
       [35, 40, 30, 45],
@@ -85,7 +85,7 @@ describe("auto formula", () => {
   test("count", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
-    autoSelectionFormula(ctx, cellInput, "COUNT");
+    autoSelectionFormula(ctx, cellInput, null, "COUNT");
     expectValuesInPositions(getFlowdata(ctx), [2, 2, 2, 2], expectPositions);
   });
 });

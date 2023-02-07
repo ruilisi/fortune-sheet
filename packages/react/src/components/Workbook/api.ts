@@ -331,5 +331,13 @@ export function generateAPIs(
         });
       }
     },
+
+    calculateFormula: () => {
+      setContext((draftCtx) => {
+        _.forEach(draftCtx.luckysheetfile, (sheet_obj) => {
+          api.calculateSheetFromula(draftCtx, sheet_obj.id as string);
+        });
+      });
+    },
   };
 }
