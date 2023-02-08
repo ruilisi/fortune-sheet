@@ -251,6 +251,7 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
           refs.scrollbarY.current!
         );
       });
+      e.preventDefault();
     },
     [refs.globalCache, refs.scrollbarX, refs.scrollbarY, setContext]
   );

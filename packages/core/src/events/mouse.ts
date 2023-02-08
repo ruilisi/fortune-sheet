@@ -224,8 +224,8 @@ export function handleCellAreaMouseDown(
   // );
   cancelActiveImgItem(ctx, globalCache);
   const rect = container.getBoundingClientRect();
-  const mouseX = e.pageX - rect.left;
-  const mouseY = e.pageY - rect.top;
+  const mouseX = e.pageX - rect.left - window.scrollX;
+  const mouseY = e.pageY - rect.top - window.scrollY;
   let x = mouseX + ctx.scrollLeft;
   let y = mouseY + ctx.scrollTop;
   if (x >= rect.width + ctx.scrollLeft || y >= rect.height + ctx.scrollTop) {
@@ -1424,8 +1424,8 @@ export function handleContextMenu(
   e.preventDefault();
   if (area === "cell") {
     const rect = container.getBoundingClientRect();
-    const mouseX = e.pageX - rect.left;
-    const mouseY = e.pageY - rect.top;
+    const mouseX = e.pageX - rect.left - window.scrollX;
+    const mouseY = e.pageY - rect.top - window.scrollY;
     let selected_x = mouseX + ctx.scrollLeft;
     let selected_y = mouseY + ctx.scrollTop;
     [selected_x, selected_y] = fixPositionOnFrozenCells(
@@ -1596,8 +1596,8 @@ function mouseRender(
   ) {
     const left = ctx.scrollLeft;
     const top = ctx.scrollTop;
-    const x = e.pageX - rect.left;
-    const y = e.pageY - rect.top;
+    const x = e.pageX - rect.left - window.scrollX;
+    const y = e.pageY - rect.top - window.scrollY;
     const winH = rect.height - 20 * ctx.zoomRatio;
     const winW = rect.width - 60 * ctx.zoomRatio;
 
@@ -1624,8 +1624,18 @@ function mouseRender(
   }
   // 拖动选择
   if (ctx.luckysheet_select_status) {
-    const x = e.pageX - rect.left - ctx.rowHeaderWidth + ctx.scrollLeft;
-    const y = e.pageY - rect.top - ctx.columnHeaderHeight + ctx.scrollTop;
+    const x =
+      e.pageX -
+      rect.left -
+      window.scrollX -
+      ctx.rowHeaderWidth +
+      ctx.scrollLeft;
+    const y =
+      e.pageY -
+      rect.top -
+      window.scrollY -
+      ctx.columnHeaderHeight +
+      ctx.scrollTop;
 
     const row_location = rowLocation(y, ctx.visibledatarow);
     const row = row_location[1];
