@@ -13,10 +13,10 @@ import {
   hideSelected,
   showSelected,
   getSheetIndex,
+  api,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, { useContext, useRef, useLayoutEffect, useCallback } from "react";
-import { setColumnWidth, setRowHeight } from "../../../../core/src/api";
 import WorkbookContext, { SetContextOptions } from "../../context";
 import { useAlert } from "../../hooks/useAlert";
 import { useDialog } from "../../hooks/useDialog";
@@ -382,7 +382,7 @@ const ContextMenu: React.FC = () => {
                     rowHeightList[rowNum] = numRowHeight;
                   }
                 });
-                setRowHeight(draftCtx, rowHeightList);
+                api.setRowHeight(draftCtx, rowHeightList);
                 draftCtx.contextMenu = undefined;
               });
             }}
@@ -442,7 +442,7 @@ const ContextMenu: React.FC = () => {
                     colWidthList[colNum] = numColWidth;
                   }
                 });
-                setColumnWidth(draftCtx, colWidthList);
+                api.setColumnWidth(draftCtx, colWidthList);
                 draftCtx.contextMenu = undefined;
               });
             }}
