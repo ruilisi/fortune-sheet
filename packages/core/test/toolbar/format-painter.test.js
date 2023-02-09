@@ -1,7 +1,7 @@
+import { contextFactory, selectionFactory } from "../factories/context";
 import { getFlowdata } from "../../src/context";
 import { handleFormatPainter } from "../../src/modules/toolbar";
 import { pasteHandlerOfPaintModel } from "../../src/modules/selection";
-import { contextFactory, selectionFactory } from "../factories/context";
 
 describe("format painter", () => {
   const getContext = (cell) =>
