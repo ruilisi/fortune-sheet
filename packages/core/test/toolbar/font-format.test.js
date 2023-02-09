@@ -1,5 +1,5 @@
-import { getFlowdata } from "../../src/context";
 import { contextFactory, selectionFactory } from "../factories/context";
+import { getFlowdata } from "../../src/context";
 import {
   handleBold,
   handleItalic,

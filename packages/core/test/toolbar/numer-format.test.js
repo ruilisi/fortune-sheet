@@ -1,10 +1,10 @@
+import { contextFactory, selectionFactory } from "../factories/context";
 import {
   handleCurrencyFormat,
   handleNumberDecrease,
   handleNumberIncrease,
   handlePercentageFormat,
 } from "../../src/modules/toolbar";
-import { contextFactory, selectionFactory } from "../factories/context";
 import { getFlowdata } from "../../src/context";
 
 describe("number format", () => {
