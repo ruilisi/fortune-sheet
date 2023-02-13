@@ -246,7 +246,7 @@ export function genarate(value: string | number | boolean) {
       ct = { fa: "@", t: "s" };
     }
   } else if (isRealNum(value)) {
-    m = value.toString();
+    m = parseFloat(value as string).toString();
     ct = { fa: "General", t: "n" };
     v = parseFloat(value as string);
   } else if (
