@@ -317,6 +317,7 @@ export function setCellValue(
           const mask = genarate(cell.v as string);
           if (mask) {
             cell.m = mask[0].toString();
+            [, , cell.v] = mask;
           }
         }
       } else {
