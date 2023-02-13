@@ -17,6 +17,7 @@ import { getSheetIndex } from "../utils";
 import { cfSplitRange } from "./conditionalFormat";
 import { GlobalCache } from "../types";
 import { jfrefreshgrid } from "./refresh";
+import { CFSplitRange } from "./ConditionFormat";
 
 const dragCellThreshold = 8;
 
@@ -490,30 +491,26 @@ export function onCellsMoveEnd(
   //   cfg = rowlenByRange(d, last.row[0], last.row[1], cfg);
   //   cfg = rowlenByRange(d, row_s, row_e, cfg);
   // }
-
   // 条件格式
-  // const cdformat = $.extend(
-  //   true,
-  //   [],
-  //   ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetIndex)]
-  //     .luckysheet_conditionformat_save
-  // );
-  // if (cdformat != null && cdformat.length > 0) {
-  //   for (let i = 0; i < cdformat.length; i += 1) {
-  //     const cdformat_cellrange = cdformat[i].cellrange;
-  //     let emptyRange = [];
-  //     for (let j = 0; j < cdformat_cellrange.length; j += 1) {
-  //       const range = conditionformat.CFSplitRange(
-  //         cdformat_cellrange[j],
-  //         { row: last.row, column: last.column },
-  //         { row: [row_s, row_e], column: [col_s, col_e] },
-  //         "allPart"
-  //       );
-  //       emptyRange = emptyRange.concat(range);
-  //     }
-  //     cdformat[i].cellrange = emptyRange;
-  //   }
-  // }
+  const cdformat =
+    ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId) as number]
+      .luckysheet_conditionformat_save ?? [];
+  if (cdformat != null && cdformat.length > 0) {
+    for (let i = 0; i < cdformat.length; i += 1) {
+      const cdformat_cellrange = cdformat[i].cellrange;
+      let emptyRange: any = [];
+      for (let j = 0; j < cdformat_cellrange.length; j += 1) {
+        const range = CFSplitRange(
+          cdformat_cellrange[j],
+          { row: last.row, column: last.column },
+          { row: [row_s, row_e], column: [col_s, col_e] },
+          "allPart"
+        );
+        emptyRange = emptyRange.concat(range);
+      }
+      cdformat[i].cellrange = emptyRange;
+    }
+  }
 
   let rf;
   if (

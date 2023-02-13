@@ -9,6 +9,7 @@ import { getBorderInfoCompute } from "./border";
 import { genarate, update } from "./format";
 import * as formula from "./formula";
 import { isRealNum } from "./validation";
+import { CFSplitRange } from "./ConditionFormat";
 
 function toPx(v: number) {
   return `${v}px`;
@@ -2779,30 +2780,30 @@ export function updateDropCell(ctx: Context) {
   }
 
   // 条件格式
-  // const cdformat = file.luckysheet_conditionformat_save;
-  // if (cdformat != null && cdformat.length > 0) {
-  //   for (let i = 0; i < cdformat.length; i += 1) {
-  //     const cdformat_cellrange = cdformat[i].cellrange;
+  const cdformat = file.luckysheet_conditionformat_save;
+  if (cdformat != null && cdformat.length > 0) {
+    for (let i = 0; i < cdformat.length; i += 1) {
+      const cdformat_cellrange = cdformat[i].cellrange;
 
-  //     let emptyRange = [];
+      let emptyRange: any = [];
 
-  //     for (let j = 0; j < cdformat_cellrange.length; j += 1) {
-  //       const range = conditionformat.CFSplitRange(
-  //         cdformat_cellrange[j],
-  //         { row: copyRange.row, column: copyRange.column },
-  //         { row: applyRange.row, column: applyRange.column },
-  //         "operatePart"
-  //       );
-  //       if (range.length > 0) {
-  //         emptyRange = emptyRange.concat(range);
-  //       }
-  //     }
+      for (let j = 0; j < cdformat_cellrange.length; j += 1) {
+        const range = CFSplitRange(
+          cdformat_cellrange[j],
+          { row: copyRange.row, column: copyRange.column },
+          { row: applyRange.row, column: applyRange.column },
+          "operatePart"
+        );
+        if (range.length > 0) {
+          emptyRange = emptyRange.concat(range);
+        }
+      }
 
-  //     if (emptyRange.length > 0) {
-  //       cdformat[i].cellrange.push(applyRange);
-  //     }
-  //   }
-  // }
+      if (emptyRange.length > 0) {
+        cdformat[i].cellrange.push(applyRange);
+      }
+    }
+  }
 
   // 刷新一次表格
   // const allParam = {

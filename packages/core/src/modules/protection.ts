@@ -90,3 +90,28 @@ export function checkProtectionAllSelected(ctx: Context, sheetId: string) {
 
   return false;
 }
+
+// formatCells authority, bl cl fc fz ff ct  border etc.
+export function checkProtectionFormatCells(ctx: Context) {
+  const sheetFile = getSheetByIndex(ctx, ctx.currentSheetId);
+
+  if (_.isNil(sheetFile)) {
+    return true;
+  }
+  if (_.isNil(sheetFile.config) || _.isNil(sheetFile.config.authority)) {
+    return true;
+  }
+  const aut = sheetFile.config.authority;
+  if (_.isNil(aut) || _.isNil(aut.sheet) || aut.sheet === 0) {
+    return true;
+  }
+
+  let ht = "";
+  if (!_.isNil(aut.hintText) && aut.hintText.length > 0) {
+    ht = aut.hintText;
+  } else {
+    ht = aut.defaultSheetHintText;
+  }
+  ctx.warnDialog = ht;
+  return false;
+}

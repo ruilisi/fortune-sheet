@@ -17,6 +17,7 @@ import { getBorderInfoCompute } from "../modules/border";
 import { expandRowsAndColumns, storeSheetParamALL } from "../modules/sheet";
 import { jfrefreshgrid } from "../modules/refresh";
 import { setRowHeight } from "../api";
+import { CFSplitRange } from "../modules";
 
 function postPasteCut(
   ctx: Context,
@@ -135,7 +136,6 @@ function postPasteCut(
     // 有选区时，刷新一下选区
     // selectHightlightShow();
   }
-
   // 条件格式
   ctx.luckysheetfile[
     getSheetIndex(ctx, source.sheetId)!
@@ -669,21 +669,21 @@ function pasteHandlerOfCutPaste(
         const bd_rangeType = cfg.borderInfo[i].rangeType;
 
         if (bd_rangeType === "range") {
-          // const bd_range = cfg.borderInfo[i].range;
-          // let bd_emptyRange: any = [];
+          const bd_range = cfg.borderInfo[i].range;
+          let bd_emptyRange: any = [];
 
-          // for (let j = 0; j < bd_range.length; j += 1) {
-          //   bd_emptyRange = bd_emptyRange.concat(
-          //     conditionformat.CFSplitRange(
-          //       bd_range[j],
-          //       { row: [c_r1, c_r2], column: [c_c1, c_c2] },
-          //       { row: [minh, maxh], column: [minc, maxc] },
-          //       "restPart"
-          //     )
-          //   );
-          // }
+          for (let j = 0; j < bd_range.length; j += 1) {
+            bd_emptyRange = bd_emptyRange.concat(
+              CFSplitRange(
+                bd_range[j],
+                { row: [c_r1, c_r2], column: [c_c1, c_c2] },
+                { row: [minh, maxh], column: [minc, maxc] },
+                "restPart"
+              )
+            );
+          }
 
-          // cfg.borderInfo[i].range = bd_emptyRange;
+          cfg.borderInfo[i].range = bd_emptyRange;
 
           source_borderInfo.push(cfg.borderInfo[i]);
         } else if (bd_rangeType === "cell") {
@@ -850,21 +850,21 @@ function pasteHandlerOfCutPaste(
         const bd_rangeType = sourceCurConfig.borderInfo[i].rangeType;
 
         if (bd_rangeType === "range") {
-          // const bd_range = sourceCurConfig.borderInfo[i].range;
-          // let bd_emptyRange = [];
+          const bd_range = sourceCurConfig.borderInfo[i].range;
+          let bd_emptyRange: any = [];
 
-          // for (let j = 0; j < bd_range.length; j+= 1) {
-          //   bd_emptyRange = bd_emptyRange.concat(
-          //     conditionformat.CFSplitRange(
-          //       bd_range[j],
-          //       { row: [c_r1, c_r2], column: [c_c1, c_c2] },
-          //       { row: [minh, maxh], column: [minc, maxc] },
-          //       "restPart"
-          //     )
-          //   );
-          // }
+          for (let j = 0; j < bd_range.length; j += 1) {
+            bd_emptyRange = bd_emptyRange.concat(
+              CFSplitRange(
+                bd_range[j],
+                { row: [c_r1, c_r2], column: [c_c1, c_c2] },
+                { row: [minh, maxh], column: [minc, maxc] },
+                "restPart"
+              )
+            );
+          }
 
-          // sourceCurConfig.borderInfo[i].range = bd_emptyRange;
+          sourceCurConfig.borderInfo[i].range = bd_emptyRange;
 
           source_borderInfo.push(sourceCurConfig.borderInfo[i]);
         } else if (bd_rangeType === "cell") {
@@ -887,15 +887,15 @@ function pasteHandlerOfCutPaste(
     );
     const source_curCdformat = _.cloneDeep(source_cdformat);
     const ruleArr: any[] = [];
-    /*
-    if (source_curCdformat != null && source_curCdformat.length > 0) {
-      for (let i = 0; i < source_curCdformat.length; i+= 1) {
-        const source_curCdformat_cellrange = source_curCdformat[i].cellrange;
-        let emptyRange = [];
-        let emptyRange2 = [];
 
-        for (let j = 0; j < source_curCdformat_cellrange.length; j+= 1) {
-          const range = conditionformat.CFSplitRange(
+    if (source_curCdformat != null && source_curCdformat.length > 0) {
+      for (let i = 0; i < source_curCdformat.length; i += 1) {
+        const source_curCdformat_cellrange = source_curCdformat[i].cellrange;
+        let emptyRange: any = [];
+        let emptyRange2: any = [];
+
+        for (let j = 0; j < source_curCdformat_cellrange.length; j += 1) {
+          const range = CFSplitRange(
             source_curCdformat_cellrange[j],
             { row: [c_r1, c_r2], column: [c_c1, c_c2] },
             { row: [minh, maxh], column: [minc, maxc] },
@@ -904,7 +904,7 @@ function pasteHandlerOfCutPaste(
 
           emptyRange = emptyRange.concat(range);
 
-          const range2 = conditionformat.CFSplitRange(
+          const range2 = CFSplitRange(
             source_curCdformat_cellrange[j],
             { row: [c_r1, c_r2], column: [c_c1, c_c2] },
             { row: [minh, maxh], column: [minc, maxc] },
@@ -919,13 +919,12 @@ function pasteHandlerOfCutPaste(
         source_curCdformat[i].cellrange = emptyRange;
 
         if (emptyRange2.length > 0) {
-          const ruleObj = $.extend(true, {}, source_curCdformat[i]);
+          const ruleObj = source_curCdformat[i] ?? {};
           ruleObj.cellrange = emptyRange2;
           ruleArr.push(ruleObj);
         }
       }
     }
-    */
 
     const target_cdformat = _.cloneDeep(
       ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!]
@@ -986,20 +985,20 @@ function pasteHandlerOfCutPaste(
     );
     const curCdformat = _.cloneDeep(cdformat);
     if (curCdformat != null && curCdformat.length > 0) {
-      // for (let i = 0; i < curCdformat.length; i += 1) {
-      //   const { cellrange } = curCdformat[i];
-      //   let emptyRange = [];
-      //   for (let j = 0; j < cellrange.length; j += 1) {
-      //     const range = conditionformat.CFSplitRange(
-      //       cellrange[j],
-      //       { row: [c_r1, c_r2], column: [c_c1, c_c2] },
-      //       { row: [minh, maxh], column: [minc, maxc] },
-      //       "allPart"
-      //     );
-      //     emptyRange = emptyRange.concat(range);
-      //   }
-      //   curCdformat[i].cellrange = emptyRange;
-      // }
+      for (let i = 0; i < curCdformat.length; i += 1) {
+        const { cellrange } = curCdformat[i];
+        let emptyRange: any = [];
+        for (let j = 0; j < cellrange.length; j += 1) {
+          const range = CFSplitRange(
+            cellrange[j],
+            { row: [c_r1, c_r2], column: [c_c1, c_c2] },
+            { row: [minh, maxh], column: [minc, maxc] },
+            "allPart"
+          );
+          emptyRange = emptyRange.concat(range);
+        }
+        curCdformat[i].cellrange = emptyRange;
+      }
     }
 
     // 当前表操作
@@ -1341,29 +1340,28 @@ function pasteHandlerOfCopyPaste(
             }
           }
         }
-
         d[h] = x;
       }
     }
   }
 
   // 复制范围 是否有 条件格式和数据验证
-  const cdformat = undefined;
-  /*
+  let cdformat: any = null;
   if (copyRange.copyRange.length === 1) {
-    const c_file = ctx.luckysheetfile[getSheetIndex(ctx, copySheetIndex)];
+    const c_file =
+      ctx.luckysheetfile[getSheetIndex(ctx, copySheetIndex) as number];
     const a_file =
-      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)];
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId) as number];
 
     const ruleArr_cf = _.cloneDeep(c_file.luckysheet_conditionformat_save);
 
     if (!_.isNil(ruleArr_cf) && ruleArr_cf.length > 0) {
-      cdformat = _.cloneDeep(a_file.luckysheet_conditionformat_save);
+      cdformat = _.cloneDeep(a_file.luckysheet_conditionformat_save) ?? [];
 
       for (let i = 0; i < ruleArr_cf.length; i += 1) {
         const cf_range = ruleArr_cf[i].cellrange;
 
-        let emptyRange = [];
+        let emptyRange: any = [];
 
         for (let th = 1; th <= timesH; th += 1) {
           for (let tc = 1; tc <= timesC; tc += 1) {
@@ -1373,7 +1371,7 @@ function pasteHandlerOfCopyPaste(
             maxcellCahe = minc + tc * copyc;
 
             for (let j = 0; j < cf_range.length; j += 1) {
-              const range = conditionformat.CFSplitRange(
+              const range = CFSplitRange(
                 cf_range[j],
                 { row: [c_r1, c_r2], column: [c_c1, c_c2] },
                 { row: [mth, maxrowCache - 1], column: [mtc, maxcellCahe - 1] },
@@ -1394,7 +1392,6 @@ function pasteHandlerOfCopyPaste(
       }
     }
   }
-  */
 
   last.row = [minh, maxh];
   last.column = [minc, maxc];

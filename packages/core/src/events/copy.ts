@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { cancelPaintModel } from "..";
+import { cancelPaintModel, checkCF, getComputeMap, getSheetIndex } from "..";
 import { Context } from "../context";
 import { copy, selectIsOverlap } from "../modules/selection";
 import { hasPartMC } from "../modules/validation";
@@ -48,47 +48,51 @@ export function handleCopy(ctx: Context) {
   }
 
   // 多重选区 有条件格式时 提示
-  // const cdformat =
-  //   ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)]
-  //     .luckysheet_conditionformat_save;
-  // if (
-  //   ctx.luckysheet_select_save.length > 1 &&
-  //   cdformat != null &&
-  //   cdformat.length > 0
-  // ) {
-  //   let hasCF = false;
+  const cdformat =
+    ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId) as number]
+      .luckysheet_conditionformat_save;
+  if (
+    !_.isNil(ctx.luckysheet_select_save) &&
+    ctx.luckysheet_select_save.length > 1 &&
+    !_.isNil(cdformat) &&
+    cdformat.length > 0
+  ) {
+    let hasCF = false;
 
-  //   const cf_compute = conditionformat.getComputeMap();
+    const cf_compute = getComputeMap(ctx);
 
-  //   label: for (let s = 0; s < ctx.luckysheet_select_save.length; s++) {
-  //     if (hasCF) {
-  //       break;
-  //     }
+    for (let s = 0; s < ctx.luckysheet_select_save.length; s += 1) {
+      if (hasCF) {
+        break;
+      }
 
-  //     const r1 = ctx.luckysheet_select_save[s].row[0];
-  //     const r2 = ctx.luckysheet_select_save[s].row[1];
-  //     const c1 = ctx.luckysheet_select_save[s].column[0];
-  //     const c2 = ctx.luckysheet_select_save[s].column[1];
+      const r1 = ctx.luckysheet_select_save[s].row[0];
+      const r2 = ctx.luckysheet_select_save[s].row[1];
+      const c1 = ctx.luckysheet_select_save[s].column[0];
+      const c2 = ctx.luckysheet_select_save[s].column[1];
 
-  //     for (let r = r1; r <= r2; r++) {
-  //       for (let c = c1; c <= c2; c++) {
-  //         if (conditionformat.checksCF(r, c, cf_compute) != null) {
-  //           hasCF = true;
-  //           continue label;
-  //         }
-  //       }
-  //     }
-  //   }
+      for (let r = r1; r <= r2; r += 1) {
+        if (hasCF) {
+          break;
+        }
+        for (let c = c1; c <= c2; c += 1) {
+          if (!_.isNil(checkCF(r, c, cf_compute))) {
+            hasCF = true;
+            break;
+          }
+        }
+      }
+    }
 
-  //   if (hasCF) {
-  //     if (isEditMode()) {
-  //       alert(locale_drag.noMulti);
-  //     } else {
-  //       tooltip.info(locale_drag.noMulti, "");
-  //     }
-  //     return;
-  //   }
-  // }
+    if (hasCF) {
+      // if (isEditMode()) {
+      //   alert(locale_drag.noMulti);
+      // } else {
+      //   tooltip.info(locale_drag.noMulti, "");
+      // }
+      return;
+    }
+  }
 
   // 多重选区 行不一样且列不一样时 提示
   if (selection.length > 1) {

@@ -60,7 +60,7 @@ const DropDownList: React.FC = () => {
     const cellValue = getCellValue(rowIndex, colIndex, d);
 
     if (cellValue) {
-      setSelected(cellValue.split(","));
+      setSelected(cellValue.toString().split(","));
     }
     setList(dropdownList);
     setPosition({
@@ -87,7 +87,7 @@ const DropDownList: React.FC = () => {
     if (!d) return;
     const cellValue = getCellValue(rowIndex, colIndex, d);
     if (cellValue) {
-      setSelected(cellValue.split(","));
+      setSelected(cellValue.toString().split(","));
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

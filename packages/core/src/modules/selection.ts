@@ -16,6 +16,7 @@ import { hasPartMC } from "./validation";
 import { update } from "./format";
 // @ts-ignore
 import SSF from "./ssf";
+import { CFSplitRange } from "./ConditionFormat";
 
 export const selectionCache = {
   isPasteAction: false,
@@ -487,38 +488,44 @@ export function pasteHandlerOfPaintModel(
   currFile.dataVerification = dataVerification;
 
   // 复制范围 是否有 条件格式
-  // let cdformat = null;
-  // const copyIndex = getSheetIndex(ctx, copySheetIndex)
-  // if (!copyIndex) return;
-  // let ruleArr = _.cloneDeep(ctx.luckysheetfile[copyIndex]["luckysheet_conditionformat_save"]);
+  let cdformat: any = null;
+  const copyIndex = getSheetIndex(ctx, copySheetIndex);
+  if (!copyIndex) return;
+  const ruleArr = _.cloneDeep(
+    ctx.luckysheetfile[copyIndex].luckysheet_conditionformat_save
+  );
 
-  // if (ruleArr != null && ruleArr.length > 0) {
-  //   const currentIndex = getSheetIndex(ctx, ctx.currentSheetId)
-  //   if (!currentIndex) return;
-  //   cdformat = _.cloneDeep(ctx.luckysheetfile[currentIndex]["luckysheet_conditionformat_save"]);
+  if (!_.isNil(ruleArr) && ruleArr.length > 0) {
+    const currentIndex = getSheetIndex(ctx, ctx.currentSheetId) as number;
+    cdformat = _.cloneDeep(
+      ctx.luckysheetfile[currentIndex].luckysheet_conditionformat_save
+    );
 
-  //   for (let i = 0; i < ruleArr.length; i++) {
-  //     let cdformat_cellrange = ruleArr[i].cellrange;
-  //     let emptyRange: any[] = [];
+    for (let i = 0; i < ruleArr.length; i += 1) {
+      const cdformat_cellrange = ruleArr[i].cellrange;
+      let emptyRange: any[] = [];
 
-  // for (let j = 0; j < cdformat_cellrange.length; j++) {
-  //   let range = conditionformat.CFSplitRange(
-  //     cdformat_cellrange[j],
-  //     { "row": [c_r1, c_r2], "column": [c_c1, c_c2] },
-  //     { "row": [minh, maxh], "column": [minc, maxc] },
-  //     "operatePart"
-  //   );
+      for (let j = 0; j < cdformat_cellrange.length; j += 1) {
+        const range = CFSplitRange(
+          cdformat_cellrange[j],
+          { row: [c_r1, c_r2], column: [c_c1, c_c2] },
+          { row: [minh, maxh], column: [minc, maxc] },
+          "operatePart"
+        );
 
-  //   if (range.length > 0) {
-  //     emptyRange = emptyRange.concat(range);
-  //   }
-  // }
+        if (range.length > 0) {
+          emptyRange = emptyRange.concat(range);
+        }
+      }
 
-  // if (emptyRange.length > 0) {
-  //   ruleArr[i].cellrange = [{ "row": [minh, maxh], "column": [minc, maxc] }];
-  //   cdformat.push(ruleArr[i]);
-  // }
+      if (emptyRange.length > 0) {
+        ruleArr[i].cellrange = [{ row: [minh, maxh], column: [minc, maxc] }];
+        cdformat.push(ruleArr[i]);
+      }
+    }
+  }
 }
+
 // }
 
 // last["row"] = [minh, maxh];
@@ -1082,7 +1089,7 @@ export function rangeValueToHtml(
           c_value = getCellValue(r, c, d, "m");
         }
 
-        const styleObj = getStyleByCell(d, r, c);
+        const styleObj = getStyleByCell(ctx, d, r, c);
         style += _.map(styleObj, (v, key) => {
           return `${_.kebabCase(key)}:${_.isNumber(v) ? `${v}px` : v};`;
         }).join("");

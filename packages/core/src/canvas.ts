@@ -11,7 +11,7 @@ import {
 import { isInlineStringCell } from "./modules/inline-string";
 import { getSheetIndex, indexToColumnChar } from "./utils";
 import { getBorderInfoComputeRange } from "./modules/border";
-import { validateCellData } from "./modules";
+import { checkCF, getComputeMap, validateCellData } from "./modules";
 
 export const defaultStyle = {
   fillStyle: "#000000",
@@ -789,7 +789,7 @@ export class Canvas {
 
     // 条件格式计算
     // const cfCompute = conditionformat.getComputeMap();
-    const cfCompute: any = {};
+    const cfCompute: any = getComputeMap(this.sheetCtx);
 
     // 表格渲染区域 溢出单元格配置保存
     const cellOverflowMap = this.getCellOverflowMap(
@@ -1616,24 +1616,24 @@ export class Canvas {
     isMerge = false
   ) {
     // const checksAF = alternateformat.checksAF(r, c, afCompute); // 交替颜色
-    // const checksCF = conditionformat.checksCF(r, c, cfCompute); // 条件格式
+    const checksCF = checkCF(r, c, cfCompute); // 条件格式
     const flowdata = getFlowdata(this.sheetCtx);
     if (!flowdata) return;
 
     const borderfix = getBorderFix(flowdata, r, c);
 
     // // 背景色
-    const fillStyle = normalizedAttr(flowdata, r, c, "bg");
+    let fillStyle = normalizedAttr(flowdata, r, c, "bg");
 
     // if (checksAF?.[1] {
     //   // 交替颜色
     //   fillStyle = checksAF[1];
     // }
 
-    // if (checksCF?.cellColor) {
-    //   // 条件格式
-    //   fillStyle = checksCF.cellColor;
-    // }
+    if (!_.isNil(checksCF) && !_.isNil(checksCF.cellColor)) {
+      // 条件格式
+      fillStyle = checksCF.cellColor;
+    }
 
     // if (flowdata?.[r]?.[c]?.tc) {
     //   // 标题色
@@ -1836,19 +1836,18 @@ export class Canvas {
     // const checksAF = alternateformat.checksAF(r, c, afCompute);
     const checksAF: any = {};
     // 条件格式
-    // const checksCF = conditionformat.checksCF(r, c, cfCompute);
-    const checksCF: any = {};
+    const checksCF = checkCF(r, c, cfCompute);
 
     // 单元格 背景颜色
-    const fillStyle = normalizedAttr(flowdata, r, c, "bg");
+    let fillStyle = normalizedAttr(flowdata, r, c, "bg");
     // if (checksAF?.[1]) {
     //   // 若单元格有交替颜色 背景颜色
     //   fillStyle = checksAF[1];
     // }
-    // if (checksCF?.cellColor) {
-    //   // 若单元格有条件格式 背景颜色
-    //   fillStyle = checksCF.cellColor;
-    // }
+    if (!_.isNil(checksCF) && !_.isNil(checksCF.cellColor)) {
+      // 若单元格有条件格式 背景颜色
+      fillStyle = checksCF.cellColor;
+    }
     if (!fillStyle) {
       renderCtx.fillStyle = "#FFFFFF";
     } else {
@@ -2397,7 +2396,7 @@ export class Canvas {
     const checksAF: any = {};
     // 条件格式
     // const checksCF = conditionformat.checksCF(r, c, cfCompute);
-    const checksCF: any = {};
+    const checksCF: any = checkCF(r, c, cfCompute);
 
     // 单元格 文本颜色
     renderCtx.fillStyle = normalizedAttr(flowdata, r, c, "fc");

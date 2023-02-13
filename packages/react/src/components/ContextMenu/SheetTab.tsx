@@ -210,7 +210,7 @@ const SheetTabContextMenu: React.FC = () => {
             >
               {sheetconfig.changeColor}
               <span className="change-color-triangle">
-                <SVGIcon name="changeColor" width={18} />
+                <SVGIcon name="rightArrow" width={18} />
               </span>
               {isShowChangeColor && context.allowEdit && (
                 <ChangeColor triggerParentUpdate={updateShowInputColor} />
