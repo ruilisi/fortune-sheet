@@ -1257,7 +1257,7 @@ export function handleClearFormat(ctx: Context) {
     const [colSt, colEd] = selection.column;
     for (let r = rowSt; r <= rowEd; r += 1) {
       if (!_.isNil(ctx.config.rowhidden) && !_.isNil(ctx.config.rowhidden[r])) {
-        return true;
+        continue;
       }
       for (let c = colSt; c <= colEd; c += 1) {
         const cell = flowdata[r][c];
