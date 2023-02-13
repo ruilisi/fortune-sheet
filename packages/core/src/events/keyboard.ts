@@ -438,6 +438,7 @@ export function handleGlobalKeyDown(
   handleUndo: () => void,
   handleRedo: () => void
 ) {
+  ctx.luckysheet_select_status = false;
   const kcode = e.keyCode;
   const kstr = e.key;
   if (ctx.contextMenu || ctx.filterContextMenu) {
