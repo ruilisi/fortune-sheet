@@ -154,9 +154,12 @@ export function validateCellData(ctx: Context, item: any, cellValue: any) {
 
     // 多选的情况 检查每个都在下拉列表中
     if (type2 && cellValue) {
-      return cellValue.split(",").every((i: any) => {
-        return list.indexOf(i) !== -1;
-      });
+      return cellValue
+        .toString()
+        .split(",")
+        .every((i: any) => {
+          return list.indexOf(i) !== -1;
+        });
     }
 
     let result = false;

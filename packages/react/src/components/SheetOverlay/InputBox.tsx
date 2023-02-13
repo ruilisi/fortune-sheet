@@ -48,6 +48,7 @@ const InputBox: React.FC = () => {
       const flowdata = getFlowdata(context);
       if (!flowdata) return {};
       return getStyleByCell(
+        context,
         flowdata,
         firstSelection.row_focus!,
         firstSelection.column_focus!

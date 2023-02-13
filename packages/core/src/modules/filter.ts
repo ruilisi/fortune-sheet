@@ -8,6 +8,7 @@ import { normalizeSelection } from "./selection";
 import { isRealNull } from "./validation";
 import { normalizedAttr } from "./cell";
 import { orderbydata } from "./sort";
+import { checkCF, getComputeMap } from "./ConditionFormat";
 
 // 筛选配置状态
 export function labelFilterOptionState(
@@ -519,7 +520,7 @@ export function getFilterColumnColors(
   const fcMap: Map<string, FilterColor> = new Map(); // 字体颜色
 
   // const af_compute = alternateformat.getComputeMap();
-  // const cf_compute = conditionformat.getComputeMap();
+  const cf_compute: any = getComputeMap(ctx);
   const flowdata = getFlowdata(ctx);
   if (flowdata == null) return { bgColors: [], fcColors: [] };
 
@@ -540,8 +541,7 @@ export function getFilterColumnColors(
       [, bg] = checksAF;
     }
 
-    // const checksCF = conditionformat.checksCF(r, col, cf_compute);
-    const checksCF: any = {};
+    const checksCF = checkCF(r, col, cf_compute);
     if (checksCF != null && checksCF.cellColor != null) {
       // 若单元格有条件格式
       bg = checksCF.cellColor;

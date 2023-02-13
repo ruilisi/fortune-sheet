@@ -6,6 +6,8 @@ export default {
     dataNullError: "No se puede hacer esto con datos que no existen",
     noSeletionError:
       "The selection operation has not been performed yetLa operación de selección aún no se ha realizado",
+    cannotSelectMultiple:
+      "No se puede seleccionar la zona de selección múltiple",
   },
   functionlist: [
     {
@@ -11633,8 +11635,8 @@ export default {
     conditionformat_greaterThan_title: "Dar formato a celdas mayores que",
     conditionformat_lessThan: "Conditionformat-LessThan",
     conditionformat_lessThan_title: "Dar formato a celdas más pequeñas que",
-    conditionformat_betweenness: "Conditionformat-Betweenness",
-    conditionformat_betweenness_title: "Dar formato a celdas con valores entre",
+    conditionformat_between: "Conditionformat-Betweenness",
+    conditionformat_between_title: "Dar formato a celdas con valores entre",
     conditionformat_equal: "Conditionformat-Equal",
     conditionformat_equal_title: "Dar formato a celdas iguales a",
     conditionformat_textContains: "Conditionformat-TextContains",
@@ -11653,11 +11655,11 @@ export default {
     conditionformat_last10_percent: "Conditionformat-Last10%",
     conditionformat_last10_title:
       "Formatea las celdas con el valor más pequeño",
-    conditionformat_AboveAverage: "Conditionformat-AboveAverage",
-    conditionformat_AboveAverage_title:
+    conditionformat_aboveAverage: "Conditionformat-AboveAverage",
+    conditionformat_aboveAverage_title:
       "Dar formato a celdas por encima del promedio",
-    conditionformat_SubAverage: "Conditionformat-SubAverage",
-    conditionformat_SubAverage_title:
+    conditionformat_belowAverage: "Conditionformat-SubAverage",
+    conditionformat_belowAverage_title:
       "Dar formato a celdas por debajo del promedio",
     rule: "Regla",
     newRule: "Nueva regla",
@@ -11742,7 +11744,7 @@ export default {
     pleaseSelectIcon: "Haz clic para seleccionar un grupo de iconos:",
     cellValue: "Valor de celda",
     specificText: "Texto específico",
-    occurrence: "Fecha",
+    occurrenceDate: "Fecha",
     greaterThan: "Mayor que",
     lessThan: "Menor que",
     between: "Entre",

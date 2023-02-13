@@ -4,6 +4,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import DataVerification from ".";
 import WorkbookContext from "../../context";
 import { useDialog } from "../../hooks/useDialog";
+import ConditionRules from "../ConditionFormat/ConditionRules";
 import "./index.css";
 
 const RangeDialog: React.FC = () => {
@@ -24,9 +25,24 @@ const RangeDialog: React.FC = () => {
       // ctx.luckysheetCellUpdate = [];
       // ctx.formulaRangeSelect = undefined;
       ctx.rangeDialog!.show = false;
+      ctx.rangeDialog!.singleSelect = false;
     });
+    if (!context.rangeDialog) return;
+    const rangeDialogType = context.rangeDialog.type;
+    if (rangeDialogType.indexOf("between") >= 0) {
+      showDialog(<ConditionRules type="between" />);
+      return;
+    }
+    if (rangeDialogType.indexOf("conditionRules") >= 0) {
+      const rulesType = rangeDialogType.substring(
+        "conditionRules".length,
+        rangeDialogType.length
+      );
+      showDialog(<ConditionRules type={rulesType} />);
+      return;
+    }
     showDialog(<DataVerification />);
-  }, [setContext, showDialog]);
+  }, [context.rangeDialog, setContext, showDialog]);
 
   // 得到选区坐标
   useEffect(() => {

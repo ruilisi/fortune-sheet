@@ -8,15 +8,24 @@ const Select: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
 type OptionProps = {
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   iconId?: string;
+  onMouseLeave?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onMouseEnter?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 };
 
 const Option: React.FC<React.PropsWithChildren<OptionProps>> = ({
   iconId,
   onClick,
   children,
+  onMouseLeave,
+  onMouseEnter,
 }) => {
   return (
-    <div onClick={onClick} className="fortune-toolbar-select-option">
+    <div
+      onClick={onClick}
+      className="fortune-toolbar-select-option"
+      onMouseLeave={(e) => onMouseLeave?.(e)}
+      onMouseEnter={(e) => onMouseEnter?.(e)}
+    >
       {iconId && <SVGIcon name={iconId} />}
       <div className="fortuen-toolbar-text">{children}</div>
     </div>

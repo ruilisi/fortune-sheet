@@ -198,6 +198,7 @@ export type RangeDialogProps = {
   show: boolean;
   rangeTxt: string;
   type: string;
+  singleSelect: boolean;
 };
 
 export type DataRegulationProps = {
@@ -211,6 +212,17 @@ export type DataRegulationProps = {
   prohibitInput: boolean;
   hintShow: boolean;
   hintValue: string;
+};
+
+export type ConditionRulesProps = {
+  rulesType: string;
+  rulesValue: string;
+  textColor: { check: boolean; color: string };
+  cellColor: { check: boolean; color: string };
+  betweenValue: { value1: string; value2: string };
+  dateValue: string;
+  repeatValue: string;
+  projectValue: string;
 };
 
 export type FilterOptions = {

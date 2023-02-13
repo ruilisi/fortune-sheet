@@ -49,6 +49,7 @@ import { FormulaSearch } from "../FormulaSearch";
 import { SplitColumn } from "../SplitColumn";
 import { LocationCondition } from "../LocationCondition";
 import DataVerification from "../DataVerification";
+import ConditionalFormat from "../ConditionFormat";
 
 const Toolbar: React.FC<{
   setMoreItems: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -696,6 +697,28 @@ const Toolbar: React.FC<{
                 ))}
               </Select>
             )}
+          </Combo>
+        );
+      }
+      if (name === "conditionFormat") {
+        const items = [
+          "highlightCellRules",
+          "itemSelectionRules",
+          // "dataBar",
+          // "colorGradation",
+          // "icons",
+          "-",
+          // "newFormatRule",
+          "deleteRule",
+          // "manageRules",
+        ];
+        return (
+          <Combo
+            iconId="conditionFormat"
+            key={name}
+            tooltip={toolbar.conditionalFormat}
+          >
+            {(setOpen) => <ConditionalFormat items={items} setOpen={setOpen} />}
           </Combo>
         );
       }

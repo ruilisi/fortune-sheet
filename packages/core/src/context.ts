@@ -15,6 +15,7 @@ import {
   FilterOptions,
   RangeDialogProps,
   DataRegulationProps,
+  ConditionRulesProps,
 } from "./types";
 import { getSheetIndex } from "./utils";
 
@@ -48,6 +49,7 @@ export type Context = {
   };
   // 数据验证下拉列表
   dataVerificationDropDownList?: boolean;
+  conditionRules: ConditionRulesProps; // 条件格式
 
   contextMenu: any;
   sheetTabContextMenu: {
@@ -210,6 +212,7 @@ export function defaultContext(): Context {
       show: false,
       rangeTxt: "",
       type: "",
+      singleSelect: false,
     },
 
     dataVerification: {
@@ -314,6 +317,17 @@ export function defaultContext(): Context {
     },
 
     dataVerificationDropDownList: false,
+
+    conditionRules: {
+      rulesType: "",
+      rulesValue: "",
+      textColor: { check: true, color: "#000000" },
+      cellColor: { check: true, color: "#000000" },
+      betweenValue: { value1: "", value2: "" },
+      dateValue: "",
+      repeatValue: "0",
+      projectValue: "10",
+    },
 
     visibledatarow: [],
     visibledatacolumn: [],

@@ -1,0 +1,202 @@
+.fortune-toolbar-menu-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 0px 16px;
+}
+
+.right-arrow {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(20%, -50%);
+}
+
+.condition-format-sub-menu {
+  width: 100%;
+  position: absolute;
+  top: -8px;
+  right: -144px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, .2);
+  cursor: default;
+  font-size: 12px;
+  z-index: 1004;
+  box-sizing: border-box;
+  user-select: none;
+  outline: none;
+}
+
+.condition-format-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 18px;
+  z-index: 1005;
+}
+
+.condition-format-item:hover {
+  background: #efefef;
+}
+
+.condition-format-item span {
+  font-size: 10px;
+  color: #afafaf;
+}
+
+.horizontal-line {
+  border-top: 1px solid #ebebeb;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+
+
+.condition-rules .button-basic {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 2px;
+  user-select: none;
+  margin-top: 10px;
+}
+
+.condition-rules .button-primary {
+  background: #0188fb;
+  border: 1px solid #0188fb;
+  color: #fff;
+  margin-right: 10px;
+}
+
+.condition-rules .button-close {
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+
+.condition-rules {
+  padding: 0px 42px 34px 42px;
+  font-size: 12px;
+}
+
+.condition-rules-title {
+  color: #000;
+  cursor: default;
+  font-size: 16px;
+  margin-bottom: 18px;
+}
+
+.conditin-rules-value {
+  margin: 5px 0;
+  font-weight: 600;
+}
+
+.condition-rules-inpbox {
+  width: 198px;
+  height: 28px;
+  border: 1px solid #d4d4d4;
+}
+
+.condition-rules-input {
+  width: 150px;
+  height: 28px;
+  padding: 0 10px;
+  border: none;
+  outline-style: none;
+  float: left;
+}
+
+.condition-relues-inputicon {
+  float: right;
+  margin-top: 2px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.condition-rules-set-title {
+  margin: 6px 0px;
+}
+
+.condition-rules-setbox {
+  border: 1px solid #d4d4d4;
+}
+
+.condition-rules-set {
+  padding: 5px 10px;
+}
+
+.condition-rules-color {
+  height: 30px;
+  line-height: 30px;
+  position: relative;
+}
+
+.condition-rules-check {
+  float: left;
+  margin-top: 10px;
+}
+
+.condition-rules-label {
+  display: inline-block;
+  width: 80px;
+  user-select: none;
+}
+
+.condition-rules-select-color {
+  padding: 2px;
+  border: solid 1px #E5E5E5;
+  background: #F5F5F5;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(20%, -50%);
+}
+
+.condition-rules-between-box {
+  display: flex;
+  align-items: center;
+}
+
+.condition-rules-between-inpbox {
+  width: 108px;
+  height: 28px;
+  border: 1px solid #d4d4d4;
+}
+
+.condition-rules-between-input {
+  width: 60px;
+  height: 28px;
+  padding: 0 10px;
+  border: none;
+  outline-style: none;
+  float: left;
+}
+
+.condition-rules-date {
+  width: 98%;
+  border: none;
+  line-height: 26px;
+}
+
+.condition-rules-select {
+  width: 150px;
+  height: 30px;
+}
+
+.condition-rules-project-box {
+  display: flex;
+  align-items: center;
+}
+
+.condition-rules-project-input {
+  margin: 0px 6px;
+}

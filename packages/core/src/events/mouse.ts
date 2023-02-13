@@ -1632,6 +1632,11 @@ function mouseRender(
       scrollX.scrollLeft = sleft;
     }
   }
+
+  // 判断选区坐标功能是否为单选模式
+  if (ctx.rangeDialog?.singleSelect) {
+    return;
+  }
   // 拖动选择
   if (ctx.luckysheet_select_status) {
     const x =

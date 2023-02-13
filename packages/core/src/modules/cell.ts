@@ -2,6 +2,7 @@ import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { Cell, CellMatrix, Range, Selection, SingleRange } from "../types";
 import { getSheetIndex, indexToColumnChar, rgbToHex } from "../utils";
+import { checkCF, getComputeMap } from "./ConditionFormat";
 import { getFailureText, validateCellData } from "./dataVerification";
 import { escapeHTML, genarate, update } from "./format";
 import {
@@ -1316,18 +1317,21 @@ export function getFontStyleByCell(
   return style;
 }
 
-export function getStyleByCell(d: CellMatrix, r: number, c: number) {
+export function getStyleByCell(
+  ctx: Context,
+  d: CellMatrix,
+  r: number,
+  c: number
+) {
   let style: any = {};
 
   // 交替颜色
   //   const af_compute = alternateformat.getComputeMap();
   //   const checksAF = alternateformat.checksAF(r, c, af_compute);
   const checksAF: any = [];
-
   // 条件格式
-  //   const cf_compute = conditionformat.getComputeMap();
-  //   const checksCF = conditionformat.checksCF(r, c, cf_compute);
-  const checksCF: any = {};
+  const cf_compute = getComputeMap(ctx);
+  const checksCF = checkCF(r, c, cf_compute);
 
   const cell = d[r][c];
   if (!cell) return {};
