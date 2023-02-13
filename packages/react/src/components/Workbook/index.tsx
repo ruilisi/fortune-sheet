@@ -262,6 +262,11 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     );
 
     const handleUndo = useCallback(() => {
+      // eslint-disable-next-line no-console
+      console.info(
+        ">>>>undo history >>>>",
+        _.cloneDeep(globalCache.current.undoList)
+      );
       const history = globalCache.current.undoList.pop();
       if (history) {
         setContext((ctx_) => {
@@ -313,6 +318,11 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     }, [emitOp]);
 
     const handleRedo = useCallback(() => {
+      // eslint-disable-next-line no-console
+      console.info(
+        ">>>>redo history >>>>",
+        _.cloneDeep(globalCache.current.redoList)
+      );
       const history = globalCache.current.redoList.pop();
       if (history) {
         setContext((ctx_) => {
@@ -509,19 +519,49 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     const onKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
         const { nativeEvent } = e;
-        setContextWithProduce((draftCtx) => {
-          handleGlobalKeyDown(
-            draftCtx,
-            cellInput.current!,
-            fxInput.current!,
-            nativeEvent,
-            globalCache.current!,
-            handleUndo,
-            handleRedo
-          );
-        });
+        if (
+          !mergedSettings.callRedoUndoInCore &&
+          (e.ctrlKey || e.metaKey) &&
+          e.key === "z"
+        ) {
+          // eslint-disable-next-line no-console
+          console.info("+++ handle redo/undo +++");
+          if (e.shiftKey) {
+            handleRedo();
+          } else {
+            handleUndo();
+          }
+          e.stopPropagation();
+          if (mergedSettings.preventEventDefault) {
+            // eslint-disable-next-line no-console
+            console.info("preventDefault");
+            e.preventDefault();
+          }
+        } else {
+          if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+            // eslint-disable-next-line no-console
+            console.info("*** onRedo/Undo ***");
+          }
+          setContextWithProduce((draftCtx) => {
+            handleGlobalKeyDown(
+              draftCtx,
+              cellInput.current!,
+              fxInput.current!,
+              nativeEvent,
+              globalCache.current!,
+              handleUndo,
+              handleRedo
+            );
+          });
+        }
       },
-      [handleRedo, handleUndo, setContextWithProduce]
+      [
+        handleRedo,
+        handleUndo,
+        mergedSettings.callRedoUndoInCore,
+        mergedSettings.preventEventDefault,
+        setContextWithProduce,
+      ]
     );
 
     const onPaste = useCallback(

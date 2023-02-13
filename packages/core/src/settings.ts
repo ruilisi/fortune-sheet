@@ -146,6 +146,8 @@ export type Settings = {
   filterContextMenu?: string[];
   generateSheetId?: () => string;
   hooks?: Hooks;
+  callRedoUndoInCore?: boolean;
+  preventEventDefault?: boolean;
 };
 
 export const defaultSettings: Required<Settings> = {
@@ -161,6 +163,8 @@ export const defaultSettings: Required<Settings> = {
   allowEdit: true, // 是否允许前台编辑
   lang: null, // language
   forceCalculation: false, // 强制刷新公式，公式较多会有性能问题，慎用
+  callRedoUndoInCore: true,
+  preventEventDefault: false,
   rowHeaderWidth: 46,
   columnHeaderHeight: 20,
   defaultColWidth: 73,

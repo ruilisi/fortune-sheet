@@ -158,6 +158,8 @@ export function handleWithCtrlOrMetaKey(
       handleFormulaInput(ctx, fxInput, cellInput, e.keyCode);
     } else if (e.key === "z") {
       // Ctrl + shift + z 重做
+      // eslint-disable-next-line no-console
+      console.info("handleRedo in globalKeyDown");
       setTimeout(handleRedo);
       e.stopPropagation();
       return;
@@ -267,6 +269,8 @@ export function handleWithCtrlOrMetaKey(
     return;
   } else if (e.key === "z") {
     // Ctrl + Z  撤销
+    // eslint-disable-next-line no-console
+    console.info("handleUndo in globalKeyDown");
     setTimeout(handleUndo);
     e.stopPropagation();
     return;
