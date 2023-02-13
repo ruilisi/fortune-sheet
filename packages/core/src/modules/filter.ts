@@ -159,11 +159,10 @@ export function createFilterOptions(
   const c1 = luckysheet_filter_save.column[0];
   const c2 = luckysheet_filter_save.column[1];
 
-  const row = ctx.visibledatarow[r2];
-  const row_pre = r1 - 1 === -1 ? 0 : ctx.visibledatarow[r1 - 1];
-  const col = ctx.visibledatacolumn[c2];
-  const col_pre = c1 - 1 === -1 ? 0 : ctx.visibledatacolumn[c1 - 1];
-
+  const row = ctx.visibledatarow[r2] ?? 0;
+  const row_pre = r1 - 1 === -1 ? 0 : ctx.visibledatarow[r1 - 1] ?? 0;
+  const col = ctx.visibledatacolumn[c2] ?? 0;
+  const col_pre = c1 - 1 === -1 ? 0 : ctx.visibledatacolumn[c1 - 1] ?? 0;
   const options = {
     startRow: r1,
     endRow: r2,
@@ -181,9 +180,13 @@ export function createFilterOptions(
     if (filterObj == null || filterObj?.[c - c1] == null) {
     } else {
     }
+    let left = 0;
+    if (ctx.visibledatacolumn[c]) {
+      left = ctx.visibledatacolumn[c] - 20;
+    }
     options.items.push({
       col: c,
-      left: ctx.visibledatacolumn[c] - 20,
+      left,
       top: row_pre,
     });
   }

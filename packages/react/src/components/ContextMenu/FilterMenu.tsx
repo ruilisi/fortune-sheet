@@ -26,6 +26,7 @@ import Divider from "./Divider";
 import Menu from "./Menu";
 import SVGIcon from "../SVGIcon";
 import { useAlert } from "../../hooks/useAlert";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 const SelectItem: React.FC<{
   item: FilterValue;
@@ -189,6 +190,15 @@ const FilterMenu: React.FC = () => {
   const { showAlert } = useAlert();
   const mouseHoverSubMenu = useRef<boolean>(false);
 
+  // 点击其他区域的时候关闭FilterMenu
+  const close = useCallback(() => {
+    setContext((ctx) => {
+      ctx.filterContextMenu = undefined;
+    });
+  }, [setContext]);
+
+  useOutsideClick(containerRef, close, [close]);
+
   const initialExpand = useCallback((key: string) => {
     const expand = dateTreeExpandState.current[key];
     if (expand == null) {
@@ -343,6 +353,14 @@ const FilterMenu: React.FC = () => {
       containerH = 100;
     }
     setContext((draftCtx) => {
+      // 防止Maximum update depth exceeded错误，如果当前值和前一个filterContextMenu值一样则不进行赋值
+      if (
+        filterContextMenu.x === left ||
+        filterContextMenu.y === top ||
+        filterContextMenu.listBoxMaxHeight === containerH
+      ) {
+        return;
+      }
       if (hasOverflow) {
         _.set(draftCtx, "filterContextMenu.x", left);
         _.set(draftCtx, "filterContextMenu.y", top);
