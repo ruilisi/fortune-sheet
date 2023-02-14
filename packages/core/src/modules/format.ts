@@ -315,7 +315,11 @@ function fuzzynum(s: string | number) {
 
 export function escapeHTML(preValue: string) {
   let resultValue = preValue;
-  if (!resultValue && typeof resultValue !== "string") return preValue;
+  if (
+    (!resultValue && typeof resultValue !== "string") ||
+    preValue.startsWith("=")
+  )
+    return preValue;
   try {
     resultValue = resultValue.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   } catch {
