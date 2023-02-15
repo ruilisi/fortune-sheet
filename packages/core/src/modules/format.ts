@@ -317,7 +317,7 @@ export function escapeHTML(preValue: string) {
   let resultValue = preValue;
   if (
     (!resultValue && typeof resultValue !== "string") ||
-    preValue.startsWith("=")
+    (typeof preValue === "string" && preValue.startsWith("="))
   )
     return preValue;
   try {
