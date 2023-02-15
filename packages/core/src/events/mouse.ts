@@ -24,6 +24,7 @@ import {
   createRangeHightlight,
   onCellsMoveEnd,
   onCellsMove,
+  cellFocus,
 } from "../modules";
 import { scrollToFrozenRowCol } from "../modules/freeze";
 import {
@@ -224,8 +225,8 @@ export function handleCellAreaMouseDown(
   // );
   cancelActiveImgItem(ctx, globalCache);
   const rect = container.getBoundingClientRect();
-  const mouseX = e.pageX - rect.left;
-  const mouseY = e.pageY - rect.top;
+  const mouseX = e.pageX - rect.left - window.scrollX;
+  const mouseY = e.pageY - rect.top - window.scrollY;
   let x = mouseX + ctx.scrollLeft;
   let y = mouseY + ctx.scrollTop;
   if (x >= rect.width + ctx.scrollLeft || y >= rect.height + ctx.scrollTop) {
@@ -268,7 +269,7 @@ export function handleCellAreaMouseDown(
   }
 
   // //数据验证 单元格聚焦
-  // dataVerificationCtrl.cellFocus(row_index, col_index, true);
+  cellFocus(ctx, row_index, col_index, true);
 
   // //若点击单元格部分不在视图内
   if (col_pre < ctx.scrollLeft) {
@@ -1253,6 +1254,15 @@ export function handleCellAreaDoubleClick(
   const col_location = colLocation(x, ctx.visibledatacolumn);
   let col_index = col_location[2];
 
+  // 如果当前单元格是复选框则取消双击事件不让编辑
+  const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
+  const { dataVerification } = ctx.luckysheetfile[index];
+
+  if (dataVerification) {
+    const item = dataVerification[`${row_index}_${col_index}`];
+    if (item && item.type === "checkbox") return;
+  }
+
   const margeset = mergeBorder(ctx, flowdata, row_index, col_index);
   if (margeset) {
     [, , row_index] = margeset.row;
@@ -1424,8 +1434,8 @@ export function handleContextMenu(
   e.preventDefault();
   if (area === "cell") {
     const rect = container.getBoundingClientRect();
-    const mouseX = e.pageX - rect.left;
-    const mouseY = e.pageY - rect.top;
+    const mouseX = e.pageX - rect.left - window.scrollX;
+    const mouseY = e.pageY - rect.top - window.scrollY;
     let selected_x = mouseX + ctx.scrollLeft;
     let selected_y = mouseY + ctx.scrollTop;
     [selected_x, selected_y] = fixPositionOnFrozenCells(
@@ -1596,8 +1606,8 @@ function mouseRender(
   ) {
     const left = ctx.scrollLeft;
     const top = ctx.scrollTop;
-    const x = e.pageX - rect.left;
-    const y = e.pageY - rect.top;
+    const x = e.pageX - rect.left - window.scrollX;
+    const y = e.pageY - rect.top - window.scrollY;
     const winH = rect.height - 20 * ctx.zoomRatio;
     const winW = rect.width - 60 * ctx.zoomRatio;
 
@@ -1624,8 +1634,18 @@ function mouseRender(
   }
   // 拖动选择
   if (ctx.luckysheet_select_status) {
-    const x = e.pageX - rect.left - ctx.rowHeaderWidth + ctx.scrollLeft;
-    const y = e.pageY - rect.top - ctx.columnHeaderHeight + ctx.scrollTop;
+    const x =
+      e.pageX -
+      rect.left -
+      window.scrollX -
+      ctx.rowHeaderWidth +
+      ctx.scrollLeft;
+    const y =
+      e.pageY -
+      rect.top -
+      window.scrollY -
+      ctx.columnHeaderHeight +
+      ctx.scrollTop;
 
     const row_location = rowLocation(y, ctx.visibledatarow);
     const row = row_location[1];

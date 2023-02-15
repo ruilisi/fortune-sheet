@@ -42,12 +42,18 @@ import FilterOptions from "../FilterOption";
 import { useAlert } from "../../hooks/useAlert";
 import ImgBoxs from "../ImgBoxs";
 import NotationBoxes from "../NotationBoxes";
+import RangeDialog from "../DataVerification/RangeDialog";
+import { useDialog } from "../../hooks/useDialog";
+import SVGIcon from "../SVGIcon";
+import DropDownList from "../DataVerification/DropdownList";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
   const { info } = locale(context);
+  const { showDialog } = useDialog();
   const containerRef = useRef<HTMLDivElement>(null);
   const bottomAddRowInputRef = useRef<HTMLInputElement>(null);
+  const dataVerificationHintBoxRef = useRef<HTMLDivElement>(null);
   const { showAlert } = useAlert();
   // const isMobile = browser.mobilecheck();
   const cellAreaMouseDown = useCallback(
@@ -270,6 +276,16 @@ const SheetOverlay: React.FC = () => {
       }
     });
   }, [setContext, showAlert]);
+
+  // 提醒弹窗
+  useEffect(() => {
+    if (context.warnDialog) {
+      setTimeout(() => {
+        showDialog(context.warnDialog, "ok");
+      }, 240);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [context.warnDialog]);
 
   useEffect(() => {
     refs.cellArea.current!.scrollLeft = context.scrollLeft;
@@ -609,20 +625,33 @@ const SheetOverlay: React.FC = () => {
           {context.linkCard?.sheetId === context.currentSheetId && (
             <LinkEditCard {...context.linkCard} />
           )}
+          {context.rangeDialog?.show && <RangeDialog />}
           <FilterOptions getContainer={() => containerRef.current!} />
           <InputBox />
           <NotationBoxes />
           <div id="luckysheet-multipleRange-show" />
           <div id="luckysheet-dynamicArray-hightShow" />
           <ImgBoxs />
-          <div id="luckysheet-dataVerification-dropdown-btn" />
           <div
+            id="luckysheet-dataVerification-dropdown-btn"
+            onClick={() => {
+              setContext((ctx) => {
+                ctx.dataVerificationDropDownList = true;
+                dataVerificationHintBoxRef.current!.style.display = "none";
+              });
+            }}
+          >
+            <SVGIcon name="combo-arrow" width={16} />
+          </div>
+          {context.dataVerificationDropDownList && <DropDownList />}
+          {/* <div
             id="luckysheet-dataVerification-dropdown-List"
             className="luckysheet-mousedown-cancel"
-          />
+          /> */}
           <div
             id="luckysheet-dataVerification-showHintBox"
             className="luckysheet-mousedown-cancel"
+            ref={dataVerificationHintBoxRef}
           />
           <div className="luckysheet-cell-copy" />
           <div className="luckysheet-grdblkflowpush" />

@@ -662,6 +662,7 @@ export function insertRowCol(
           templateCell.mc = undefined;
         }
         delete templateCell.ps;
+        delete templateCell.f;
       }
       row.push(templateCell);
     }
@@ -836,6 +837,7 @@ export function insertRowCol(
           templateCell.mc = undefined;
         }
         delete templateCell.ps;
+        delete templateCell.f;
       }
       col.push(templateCell);
     }

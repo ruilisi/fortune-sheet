@@ -2,12 +2,15 @@ import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { Cell, CellMatrix, Range, Selection, SingleRange } from "../types";
 import { getSheetIndex, indexToColumnChar, rgbToHex } from "../utils";
+import { getFailureText, validateCellData } from "./dataVerification";
 import { escapeHTML, genarate, update } from "./format";
 import {
   delFunctionGroup,
   execfunction,
   execFunctionGroup,
   functionHTMLGenerate,
+  getcellrange,
+  iscelldata,
 } from "./formula";
 import {
   attrToCssName,
@@ -317,6 +320,7 @@ export function setCellValue(
           const mask = genarate(cell.v as string);
           if (mask) {
             cell.m = mask[0].toString();
+            [, , cell.v] = mask;
           }
         }
       } else {
@@ -672,22 +676,23 @@ export function updateCell(
   // }
 
   // 数据验证 输入数据无效时禁止输入
-  /*
-  if (!_.isNil(dataVerificationCtrl.dataVerification)) {
-    const dvItem = dataVerificationCtrl.dataVerification[`${r}_${c}`];
-
+  const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
+  const { dataVerification } = ctx.luckysheetfile[index];
+  if (!_.isNil(dataVerification)) {
+    const dvItem = dataVerification[`${r}_${c}`];
     if (
       !_.isNil(dvItem) &&
       dvItem.prohibitInput &&
-      !dataVerificationCtrl.validateCellData(inputText, dvItem)
+      !validateCellData(ctx, dvItem, inputText)
     ) {
-      const failureText = dataVerificationCtrl.getFailureText(dvItem);
-      tooltip.info(failureText, "");
+      const failureText = getFailureText(ctx, dvItem);
+
       cancelNormalSelected(ctx);
+      ctx.warnDialog = failureText;
+
       return;
     }
   }
-  */
 
   let curv = flowdata[r][c];
 
@@ -1107,6 +1112,7 @@ export function getFlattenedRange(ctx: Context, range?: Range) {
   return result;
 }
 
+// 把选区范围数组转为string A1:A2
 export function getRangetxt(
   ctx: Context,
   sheetId: string,
@@ -1158,6 +1164,27 @@ export function getRangetxt(
   return `${
     sheettxt + indexToColumnChar(column0) + (row0 + 1)
   }:${indexToColumnChar(column1)}${row1 + 1}`;
+}
+
+// 把string A1:A2转为选区数组
+export function getRangeByTxt(ctx: Context, txt: string) {
+  let range = [];
+  if (txt.indexOf(",") !== -1) {
+    const arr = txt.split(",");
+    for (let i = 0; i < arr.length; i += 1) {
+      if (iscelldata(arr[i])) {
+        range.push(getcellrange(ctx, arr[i]));
+      } else {
+        range = [];
+        break;
+      }
+    }
+  } else {
+    if (iscelldata(txt)) {
+      range.push(getcellrange(ctx, txt));
+    }
+  }
+  return range;
 }
 
 export function isAllSelectedCellsInStatus(

@@ -55,6 +55,7 @@ export type Cell = {
     value: string;
     isShow: boolean;
   };
+  hl?: { r: number; c: number; id: string };
 } & CellStyle;
 
 export type CellWithRowAndCol = {
@@ -191,6 +192,25 @@ export type LinkCardProps = {
   position: { cellLeft: number; cellBottom: number };
   isEditing: boolean;
   selectingCellRange?: boolean;
+};
+
+export type RangeDialogProps = {
+  show: boolean;
+  rangeTxt: string;
+  type: string;
+};
+
+export type DataRegulationProps = {
+  type: string;
+  type2: string;
+  rangeTxt: string;
+  value1: string;
+  value2: string;
+  validity: string;
+  remote: boolean;
+  prohibitInput: boolean;
+  hintShow: boolean;
+  hintValue: string;
 };
 
 export type FilterOptions = {

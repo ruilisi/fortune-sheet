@@ -9,8 +9,9 @@ import {
   getMeasureText,
 } from "./modules/text";
 import { isInlineStringCell } from "./modules/inline-string";
-import { indexToColumnChar } from "./utils";
+import { getSheetIndex, indexToColumnChar } from "./utils";
 import { getBorderInfoComputeRange } from "./modules/border";
+import { validateCellData } from "./modules";
 
 export const defaultStyle = {
   fillStyle: "#000000",
@@ -1887,15 +1888,17 @@ export class Canvas {
     renderCtx.fillRect(cellsize[0], cellsize[1], cellsize[2], cellsize[3]);
 
     // const { dataVerification } = dataVerificationCtrl;
-    const dataVerification: any = {};
 
-    /*
+    const index = getSheetIndex(
+      this.sheetCtx,
+      this.sheetCtx.currentSheetId
+    ) as number;
+
+    const { dataVerification } = this.sheetCtx.luckysheetfile[index];
+
     if (
       dataVerification?.[`${r}_${c}`] &&
-      !dataVerificationCtrl.validateCellData(
-        value,
-        dataVerification[`${r}_${c}`]
-      )
+      !validateCellData(this.sheetCtx, dataVerification[`${r}_${c}`], value)
     ) {
       // 单元格左上角红色小三角标示
       const dv_w = 5 * this.sheetCtx.zoomRatio;
@@ -1909,7 +1912,6 @@ export class Canvas {
       renderCtx.fill();
       renderCtx.closePath();
     }
-    */
 
     // 若单元格有批注（单元格右上角红色小三角标示）
     if (cell?.ps) {

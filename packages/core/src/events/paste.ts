@@ -499,6 +499,20 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
   }
 }
 
+function setCellHyperlink(
+  ctx: Context,
+  id: string,
+  r: number,
+  c: number,
+  link: { linkType: string; linkAddress: string }
+) {
+  const index = getSheetIndex(ctx, id) as number;
+  if (!ctx.luckysheetfile[index].hyperlink) {
+    ctx.luckysheetfile[index].hyperlink = {};
+  }
+  ctx.luckysheetfile[index]!.hyperlink![`${r}_${c}`] = link;
+}
+
 function pasteHandlerOfCutPaste(
   ctx: Context,
   copyRange: Context["luckysheet_copy_save"]
@@ -592,7 +606,38 @@ function pasteHandlerOfCutPaste(
         .dataVerification
     ) || {};
 
-  // 剪切粘贴在当前表操作，删除剪切范围内数据、合并单元格和数据验证
+  // 若选区内包含超链接
+  if (
+    ctx.luckysheet_select_save?.length === 1 &&
+    ctx.luckysheet_copy_save?.copyRange.length === 1
+  ) {
+    _.forEach(ctx.luckysheet_copy_save?.copyRange, (range) => {
+      for (let r = 0; r <= range.row[1] - range.row[0]; r += 1) {
+        for (let c = 0; c <= range.column[1] - range.column[0]; c += 1) {
+          const index = getSheetIndex(
+            ctx,
+            ctx.luckysheet_copy_save?.dataSheetId as string
+          ) as number;
+          if (
+            ctx.luckysheetfile[index]!.data![r + range.row[0]][
+              c + range.column[0]
+            ]?.hl &&
+            ctx.luckysheetfile[index].hyperlink![`${r}_${c}`]
+          ) {
+            setCellHyperlink(
+              ctx,
+              ctx.luckysheet_copy_save?.dataSheetId as string,
+              r + ctx.luckysheet_select_save![0].row[0],
+              c + ctx.luckysheet_select_save![0].column[0],
+              ctx.luckysheetfile[index].hyperlink![`${r}_${c}`]
+            );
+          }
+        }
+      }
+    });
+  }
+
+  // 剪切粘贴在当前表操作，删除剪切范围内数据、合并单元格、数据验证和超链接
   if (ctx.currentSheetId === copySheetId) {
     for (let i = c_r1; i <= c_r2; i += 1) {
       for (let j = c_c1; j <= c_c2; j += 1) {
@@ -608,6 +653,10 @@ function pasteHandlerOfCutPaste(
         d[i][j] = null;
 
         delete dataVerification[`${i}_${j}`];
+
+        delete ctx.luckysheetfile[
+          getSheetIndex(ctx, ctx.currentSheetId) as number
+        ].hyperlink?.[`${i}_${j}`];
       }
     }
 
@@ -1353,6 +1402,37 @@ function pasteHandlerOfCopyPaste(
   file.config = cfg;
   file.luckysheet_conditionformat_save = cdformat;
   file.dataVerification = dataVerification;
+
+  // 若选区内包含超链接
+  if (
+    ctx.luckysheet_select_save?.length === 1 &&
+    ctx.luckysheet_copy_save?.copyRange.length === 1
+  ) {
+    _.forEach(ctx.luckysheet_copy_save?.copyRange, (range) => {
+      for (let r = 0; r <= range.row[1] - range.row[0]; r += 1) {
+        for (let c = 0; c <= range.column[1] - range.column[0]; c += 1) {
+          const index = getSheetIndex(
+            ctx,
+            ctx.luckysheet_copy_save?.dataSheetId as string
+          ) as number;
+          if (
+            ctx.luckysheetfile[index]!.data![r + range.row[0]][
+              c + range.column[0]
+            ]?.hl &&
+            ctx.luckysheetfile[index].hyperlink![`${r}_${c}`]
+          ) {
+            setCellHyperlink(
+              ctx,
+              ctx.luckysheet_copy_save?.dataSheetId as string,
+              r + ctx.luckysheet_select_save![0].row[0],
+              c + ctx.luckysheet_select_save![0].column[0],
+              ctx.luckysheetfile[index].hyperlink![`${r}_${c}`]
+            );
+          }
+        }
+      }
+    });
+  }
 
   if (copyRowlChange || addr > 0 || addc > 0) {
     // cfg = rowlenByRange(d, minh, maxh, cfg);

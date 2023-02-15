@@ -3,6 +3,7 @@ export default {
     partiallyError: "无法对部分合并单元格执行此操作",
     readOnlyError: "无法对只读模式执行此操作",
     dataNullError: "无法对不存在的数据执行此操作",
+    noSeletionError: "还未进行选区操作",
   },
   functionlist: [
     {

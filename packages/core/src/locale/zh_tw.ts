@@ -3,6 +3,7 @@ export default {
     partiallyError: "無法對部分合併儲存格執行此操作",
     readOnlyError: "無法對只讀模式執行此操作",
     dataNullError: "無法對不存在的數據執行此操作",
+    noSeletionError: "還未進行選區操作",
   },
   functionlist: [
     {

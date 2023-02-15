@@ -246,7 +246,7 @@ export function genarate(value: string | number | boolean) {
       ct = { fa: "@", t: "s" };
     }
   } else if (isRealNum(value)) {
-    m = value.toString();
+    m = parseFloat(value as string).toString();
     ct = { fa: "General", t: "n" };
     v = parseFloat(value as string);
   } else if (
@@ -315,7 +315,11 @@ function fuzzynum(s: string | number) {
 
 export function escapeHTML(preValue: string) {
   let resultValue = preValue;
-  if (!resultValue && typeof resultValue !== "string") return preValue;
+  if (
+    (!resultValue && typeof resultValue !== "string") ||
+    preValue.startsWith("=")
+  )
+    return preValue;
   try {
     resultValue = resultValue.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   } catch {

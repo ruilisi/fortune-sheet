@@ -186,6 +186,25 @@ export function patchToOp(
     }
     return op;
   });
+  _.every(ops, (p) => {
+    if (
+      p.op === "replace" &&
+      !_.isNil(p.value?.hl) &&
+      p.path.length === 3 &&
+      p.path![0] === "data"
+    ) {
+      const index = getSheetIndex(ctx, p.id!) as number;
+      ops.push({
+        id: p!.id!,
+        op: "replace",
+        path: ["hyperlink", `${p.path[1]}_${p.path![2]}`],
+        value:
+          ctx.luckysheetfile[index].hyperlink![
+            `${p.value!.hl!.r!}_${p.value!.hl.c!}`
+          ],
+      });
+    }
+  });
   if (options?.insertRowColOp) {
     const [nonDataOps, dataOps] = _.partition(ops, (p) => p.path[0] !== "data");
     // find out formula cells as their formula range may be changed
