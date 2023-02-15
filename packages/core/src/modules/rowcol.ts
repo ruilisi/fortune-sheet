@@ -1824,6 +1824,10 @@ export function deleteRowCol(
     // 删除列后，调整列数
     file.column! -= slen;
   }
+  // 选中元素被删取消选区
+  if (file.luckysheet_select_save && file.luckysheet_select_save.length > 0) {
+    file.luckysheet_select_save = [];
+  }
 
   // 修改当前sheet页时刷新
   file.data = d;
