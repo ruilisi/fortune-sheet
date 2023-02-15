@@ -20,7 +20,7 @@ import {
   PatchOptions,
   Sheet,
 } from "@fortune-sheet/core";
-import produce, { applyPatches, Patch } from "immer";
+import { applyPatches, Patch } from "immer";
 import _ from "lodash";
 import { SetContextOptions } from "../../context";
 
@@ -50,17 +50,13 @@ export function generateAPIs(
           if (specialOps.length > 0) {
             const [specialOp] = specialOps;
             if (specialOp.op === "insertRowCol") {
-              ctx_ = produce(ctx_, (draftCtx) => {
-                try {
-                  insertRowCol(draftCtx, specialOp.value);
-                } catch (e: any) {
-                  console.error(e);
-                }
-              });
+              try {
+                insertRowCol(ctx_, specialOp.value);
+              } catch (e: any) {
+                console.error(e);
+              }
             } else if (specialOp.op === "deleteRowCol") {
-              ctx_ = produce(ctx_, (draftCtx) => {
-                deleteRowCol(draftCtx, specialOp.value);
-              });
+              deleteRowCol(ctx_, specialOp.value);
             } else if (specialOp.op === "addSheet") {
               const name = patches.filter(
                 (path) => path.path[0] === "name"
