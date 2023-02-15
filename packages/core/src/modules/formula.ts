@@ -433,11 +433,11 @@ function checkSpecialFunctionRange(
     }
     try {
       ctx.calculateSheetId = id;
-      let str = new Function(`return ${function_str}`)();
+      const str = function_str
+        .split(",")
+        [function_str.split(",").length - 1].split("'")[1]
+        .split("'")[0];
 
-      if (str instanceof Object && !_.isNil(str.startCell)) {
-        str = str.startCell;
-      }
       const str_nb = _.trim(str);
       // console.log(function_str, tempFunc,str, this.iscelldata(str_nb),this.isFunctionRangeSave,r,c);
       if (iscelldata(str_nb)) {
@@ -785,7 +785,6 @@ function isFunctionRange(
 
     i += 1;
   }
-  // console.log(function_str);
   checkSpecialFunctionRange(
     ctx,
     function_str,
