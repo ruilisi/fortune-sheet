@@ -205,17 +205,24 @@ export function setCellValue(
     cell.m = vupdateStr;
     cell.ct = { fa: "@", t: "s" };
     cell.v = vupdateStr;
-  } else if (vupdateStr.toUpperCase() === "TRUE") {
+  } else if (
+    vupdateStr.toUpperCase() === "TRUE" &&
+    (_.isNil(cell.ct?.fa) || cell.ct?.fa !== "@")
+  ) {
     cell.m = "TRUE";
     cell.ct = { fa: "General", t: "b" };
     cell.v = true;
-  } else if (vupdateStr.toUpperCase() === "FALSE") {
+  } else if (
+    vupdateStr.toUpperCase() === "FALSE" &&
+    (_.isNil(cell.ct?.fa) || cell.ct?.fa !== "@")
+  ) {
     cell.m = "FALSE";
     cell.ct = { fa: "General", t: "b" };
     cell.v = false;
   } else if (
     vupdateStr.substr(-1) === "%" &&
-    isRealNum(vupdateStr.substring(0, vupdateStr.length - 1))
+    isRealNum(vupdateStr.substring(0, vupdateStr.length - 1)) &&
+    (_.isNil(cell.ct?.fa) || cell.ct?.fa !== "@")
   ) {
     cell.ct = { fa: "0%", t: "n" };
     cell.v = vupdateStr.substring(0, vupdateStr.length - 1) / 100;
