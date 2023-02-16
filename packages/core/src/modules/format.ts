@@ -113,7 +113,7 @@ export function genarate(value: string | number | boolean) {
     (Math.abs(parseFloat(value as string)) >= 1e11 ||
       Math.abs(parseFloat(value as string)) < 1e-9)
   ) {
-    v = numeral(value).value();
+    v = parseFloat(value as string);
     const str = v.toExponential();
     if (str.indexOf(".") > -1) {
       let strlen = str.split(".")[1].split("e")[0].length;
