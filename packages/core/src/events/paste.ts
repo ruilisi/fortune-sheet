@@ -1631,6 +1631,16 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
         let r = 0;
         const borderInfo: any = {};
+        const styleInner = ele.querySelectorAll("style")[0].innerHTML;
+        const patternReg = /{([^}]*)}/g;
+        const patternStyle = styleInner.match(patternReg);
+        const nameReg = /^[^\t].*/gm;
+        const patternName = _.initial(styleInner.match(nameReg));
+        const allStyleList =
+          patternName.length === patternStyle?.length &&
+          typeof patternName === typeof patternStyle
+            ? _.fromPairs(_.zip(patternName, patternStyle))
+            : {};
         _.forEach(trList, (tr) => {
           let c = 0;
           _.forEach(tr.querySelectorAll("td"), (td) => {
@@ -1645,8 +1655,20 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
               // @ts-ignore
               [cell.m, cell.ct, cell.v] = mask;
             }
-
-            let bg: string | undefined = td.style.backgroundColor;
+            const { className } = td;
+            const styleString =
+              typeof allStyleList[`.${className}`] === "string"
+                ? allStyleList[`.${className}`]
+                    .substring(1, allStyleList[`.${className}`].length - 1)
+                    .split("\n\t")
+                : [];
+            const styles: Record<string, string> = {};
+            _.forEach(styleString, (s) => {
+              const styleList = s.split(":");
+              styles[styleList[0]] = styleList?.[1].replace(";", "");
+            });
+            let bg: string | undefined =
+              td.style.backgroundColor || styles.background;
             if (bg === "rgba(0, 0, 0, 0)" || _.isEmpty(bg)) {
               bg = undefined;
             }
@@ -1680,13 +1702,15 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
               }
             }
             const fs = Math.round(
-              (parseInt(td.style.fontSize || "13", 10) * 72) / 96
+              styles["font-size"]
+                ? parseInt(styles["font-size"].replace("pt", ""), 10)
+                : (parseInt(td.style.fontSize || "13", 10) * 72) / 96
             );
             cell.fs = fs;
 
             cell.fc = td.style.color;
 
-            const ht = td.style.textAlign || "left";
+            const ht = td.style.textAlign || styles["text-align"] || "left";
             if (ht === "center") {
               cell.ht = 0;
             } else if (ht === "right") {
@@ -1695,7 +1719,8 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
               cell.ht = 1;
             }
 
-            const vt = td.style.verticalAlign || "top";
+            const vt =
+              td.style.verticalAlign || styles["vertical-align"] || "top";
             if (vt === "middle") {
               cell.vt = 0;
             } else if (vt === "top" || vt === "text-top") {
