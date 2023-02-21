@@ -1677,18 +1677,22 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
             const fontWight = td.style.fontWeight;
             cell.bl =
-              fontWight.toString() === "400" ||
-              fontWight === "normal" ||
-              _.isEmpty(fontWight)
+              (fontWight.toString() === "400" ||
+                fontWight === "normal" ||
+                _.isEmpty(fontWight)) &&
+              !_.includes(styles["font-style"], "bold") &&
+              (!styles["font-weight"] || styles["font-weight"] === "400")
                 ? 0
                 : 1;
 
             cell.it =
-              td.style.fontStyle === "normal" || _.isEmpty(td.style.fontStyle)
+              (td.style.fontStyle === "normal" ||
+                _.isEmpty(td.style.fontStyle)) &&
+              !_.includes(styles["font-style"], "italic")
                 ? 0
                 : 1;
 
-            const ff = td.style.fontFamily || "";
+            const ff = td.style.fontFamily || styles["font-family"] || "";
             const ffs = ff.split(",");
             for (let i = 0; i < ffs.length; i += 1) {
               let fa = _.trim(ffs[i].toLowerCase());
