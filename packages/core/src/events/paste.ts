@@ -1692,6 +1692,12 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
                 ? 0
                 : 1;
 
+            cell.un = !_.includes(styles["text-decoration"], "underline")
+              ? undefined
+              : 1;
+
+            cell.cl = !_.includes(td.innerHTML, "<s>") ? undefined : 1;
+
             const ff = td.style.fontFamily || styles["font-family"] || "";
             const ffs = ff.split(",");
             for (let i = 0; i < ffs.length; i += 1) {
