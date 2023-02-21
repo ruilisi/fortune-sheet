@@ -7,6 +7,7 @@ import {
   getDataBySelectionNoCopy,
   getStyleByCell,
   mergeBorder,
+  mergeMoveMain,
 } from "./cell";
 import { delFunctionGroup } from "./formula";
 import clipboard from "./clipboard";
@@ -581,6 +582,175 @@ export function selectionCopyShow(range: any, ctx: Context) {
   //     }
   // }
 }
+
+// shift + 方向键 / ctrl + shift + 方向键 功能
+export function rowHasMerged(ctx: Context, r: number, c1: number, c2: number) {
+  let hasMerged = false;
+  const flowData = getFlowdata(ctx);
+  if (_.isNil(flowData)) return false;
+  for (let c = c1; c <= c2; c += 1) {
+    const cell = flowData[r][c];
+    if (!_.isNil(cell) && "mc" in cell) {
+      hasMerged = true;
+      break;
+    }
+  }
+
+  return hasMerged;
+}
+export function colHasMerged(ctx: Context, c: number, r1: number, r2: number) {
+  let hasMerged = false;
+  const flowData = getFlowdata(ctx);
+  if (_.isNil(flowData)) return false;
+  for (let r = r1; r <= r2; r += 1) {
+    const cell = flowData[r][c];
+    if (
+      !_.isNil(ctx.config.merge) &&
+      !_.isNil(cell) &&
+      "mc" in cell &&
+      !_.isNil(cell.mc)
+    ) {
+      hasMerged = true;
+      break;
+    }
+  }
+  return hasMerged;
+}
+
+// 得到合并
+export function getRowMerge(
+  ctx: Context,
+  rIndex: number,
+  c1: number,
+  c2: number
+) {
+  const flowData = getFlowdata(ctx);
+  if (_.isNil(flowData)) return [null, null];
+  // const r1 = 0;
+  const r2 = flowData.length - 1;
+  let str = null;
+  if (rIndex > 0) {
+    for (let r = rIndex; r >= 0; r -= 1) {
+      for (let c = c1; c <= c2; c += 1) {
+        const cell = flowData[r][c];
+        if (
+          !_.isNil(cell) &&
+          !_.isNil(cell.mc) &&
+          "mc" in cell &&
+          !_.isNil(ctx.config.merge)
+        ) {
+          const mc = ctx.config.merge[`${cell.mc.r}_${cell.mc.c}`];
+          if (_.isNil(str) || mc.r < str) {
+            str = mc.r;
+          }
+        }
+      }
+      if (!_.isNil(str) && rowHasMerged(ctx, str - 1, c1, c2) && str > 0) {
+        r = str;
+      } else {
+        break;
+      }
+    }
+  } else {
+    str = 0;
+  }
+  let end = null;
+  if (rIndex < r2) {
+    for (let r = rIndex; r <= r2; r += 1) {
+      for (let c = c1; c <= c2; c += 1) {
+        const cell = flowData[r][c];
+        if (
+          !_.isNil(cell) &&
+          !_.isNil(cell.mc) &&
+          "mc" in cell &&
+          !_.isNil(ctx.config.merge)
+        ) {
+          const mc = ctx.config.merge[`${cell.mc.r}_${cell.mc.c}`];
+          if (_.isNil(end) || mc.r + mc.rs - 1 > end) {
+            end = mc.r + mc.rs - 1;
+          }
+        }
+      }
+      if (!_.isNil(end) && rowHasMerged(ctx, end + 1, c1, c2) && end < r2) {
+        r = end;
+      } else {
+        break;
+      }
+    }
+  } else {
+    end = r2;
+  }
+  return [str, end];
+}
+
+export function getColMerge(
+  ctx: Context,
+  cIndex: number,
+  r1: number,
+  r2: number
+) {
+  const flowData = getFlowdata(ctx);
+  if (_.isNil(flowData)) {
+    return [null, null];
+  }
+  // const c1 = 0;
+  const c2 = flowData[0].length - 1;
+  let str = null;
+  if (cIndex > 0) {
+    for (let c = cIndex; c >= 0; c -= 1) {
+      for (let r = r1; r <= r2; r += 1) {
+        const cell = flowData[r][c];
+        if (
+          !_.isNil(ctx.config.merge) &&
+          !_.isNil(cell) &&
+          "mc" in cell &&
+          !_.isNil(cell.mc)
+        ) {
+          const mc = ctx.config.merge[`${cell.mc.r}_${cell.mc.c}`];
+          if (_.isNil(str) || mc.c < str) {
+            str = mc.c;
+          }
+        }
+      }
+      if (!_.isNil(str) && colHasMerged(ctx, str - 1, r1, r2) && str > 0) {
+        c = str;
+      } else {
+        break;
+      }
+    }
+  } else {
+    str = 0;
+  }
+  let end = null;
+  if (cIndex < c2) {
+    for (let c = cIndex; c <= c2; c += 1) {
+      for (let r = r1; r <= r2; r += 1) {
+        const cell = flowData[r][c];
+        if (
+          !_.isNil(ctx.config.merge) &&
+          !_.isNil(cell) &&
+          "mc" in cell &&
+          !_.isNil(cell.mc)
+        ) {
+          const mc = ctx.config.merge[`${cell.mc.r}_${cell.mc.c}`];
+          if (_.isNil(end) || mc.c + mc.cs - 1 > end) {
+            end = mc.c + mc.cs - 1;
+          }
+        }
+      }
+
+      if (!_.isNil(end) && colHasMerged(ctx, end + 1, r1, r2) && end < c2) {
+        c = end;
+      } else {
+        break;
+      }
+    }
+  } else {
+    end = c2;
+  }
+  return [str, end];
+}
+
 export function moveHighlightCell(
   ctx: Context,
   postion: "down" | "right",
@@ -905,6 +1075,382 @@ export function moveHighlightCell(
 
   // 移动单元格通知后台
   // server.saveParam("mv", ctx.currentSheetId, ctx.luckysheet_select_save);
+}
+
+// shift + 方向键  调整选区
+export function moveHighlightRange(
+  ctx: Context,
+  postion: "down" | "right",
+  index: number,
+  type: "rangeOfSelect" | "rangeOfFormula"
+) {
+  let row;
+  let row_pre;
+  let col;
+  let col_pre;
+  const flowData = getFlowdata(ctx);
+  if (_.isNil(flowData)) return;
+  if (_.isNil(ctx.luckysheet_select_save)) return;
+  if (type === "rangeOfSelect") {
+    const last =
+      ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
+    let curR = last.row[0];
+    let endR = last.row[1];
+    let curC = last.column[0];
+    let endC = last.column[1];
+    const rf = last.row_focus;
+    const cf = last.column_focus;
+    if (_.isNil(rf) || _.isNil(cf)) return;
+    const datarowlen = flowData.length;
+    const datacolumnlen = flowData[0].length;
+    if (postion === "down") {
+      // 选区上下变动
+      if (rowHasMerged(ctx, rf, curC, endC)) {
+        // focus单元格所在行有合并单元格
+        const rfMerge = getRowMerge(ctx, rf, curC, endC);
+        const rf_str = rfMerge[0];
+        const rf_end = rfMerge[1];
+        if (!_.isNil(rf_str) && rf_str > curR && rf_end === endR) {
+          if (index > 0 && rowHasMerged(ctx, curR, curC, endC)) {
+            const v = getRowMerge(ctx, curR, curC, endC)[1];
+            if (!_.isNil(v)) {
+              curR = v;
+            }
+          }
+          curR += index;
+        } else if (!_.isNil(rf_end) && rf_end < endR && rf_str === curR) {
+          if (index < 0 && rowHasMerged(ctx, endR, curC, endC)) {
+            const v = getRowMerge(ctx, curR, curC, endC)[0];
+            if (!_.isNil(v)) {
+              endR = v;
+            }
+          }
+          endR += index;
+        } else {
+          if (index > 0) {
+            endR += index;
+          } else {
+            curR += index;
+          }
+        }
+      } else {
+        if (rf > curR && rf === endR) {
+          if (index > 0 && rowHasMerged(ctx, curR, curC, endC)) {
+            const v = getRowMerge(ctx, curR, curC, endC)[1];
+            if (!_.isNil(v)) {
+              curR = v;
+            }
+          }
+          curR += index;
+        } else if (rf < endR && rf === curR) {
+          if (index < 0 && rowHasMerged(ctx, endR, curC, endC)) {
+            const v = getRowMerge(ctx, endR, curC, endC)[0];
+            if (!_.isNil(v)) {
+              endR = v;
+            }
+          }
+          endR += index;
+        } else if (rf === curR && rf === endR) {
+          if (index > 0) {
+            endR += index;
+          } else {
+            curR += index;
+          }
+        }
+      }
+      if (endR >= datarowlen) {
+        endR = datarowlen - 1;
+      }
+      if (endR < 0) {
+        endR = 0;
+      }
+      if (curR >= datarowlen) {
+        curR = datarowlen - 1;
+      }
+      if (curR < 0) {
+        curR = 0;
+      }
+    } else {
+      if (colHasMerged(ctx, cf, curR, endR)) {
+        const cfMerge = getColMerge(ctx, cf, curR, endR);
+        const cf_str = cfMerge[0];
+        const cf_end = cfMerge[1];
+        if (!_.isNil(cf_str) && cf_str > curC && cf_end === endC) {
+          if (index > 0 && colHasMerged(ctx, curC, curR, endR)) {
+            const v = getColMerge(ctx, curC, curR, endR)[1];
+            if (!_.isNil(v)) {
+              curC = v;
+            }
+            curC += index;
+          }
+          curC += index;
+        } else if (!_.isNil(cf_end) && cf_end < endC && cf_str === curC) {
+          if (index < 0 && colHasMerged(ctx, endC, curR, endR)) {
+            const v = getColMerge(ctx, endC, curR, endR)[0];
+            if (!_.isNil(v)) {
+              endC = v;
+            }
+          }
+          endC += index;
+        } else {
+          if (index > 0) {
+            endC += index;
+          } else {
+            curC += index;
+          }
+        }
+      } else {
+        if (cf > curC && cf === endC) {
+          if (index > 0 && colHasMerged(ctx, curC, curR, endR)) {
+            const v = getColMerge(ctx, curC, curR, endR)[1];
+            if (!_.isNil(v)) {
+              curC = v;
+            }
+            curC += index;
+          }
+          curC += index;
+        } else if (cf < endC && cf === curC) {
+          if (index < 0 && colHasMerged(ctx, endC, curR, endR)) {
+            const v = getColMerge(ctx, endC, curR, endR)[0];
+            if (!_.isNil(v)) {
+              endC = v;
+            }
+          }
+          endC += index;
+        } else if (cf === curC && cf === endC) {
+          if (index > 0) {
+            endC += index;
+          } else {
+            curC += index;
+          }
+        }
+      }
+      if (endC >= datacolumnlen) {
+        endC = datacolumnlen - 1;
+      }
+      if (endC < 0) {
+        endC = 0;
+      }
+      if (curC >= datacolumnlen) {
+        curC = datacolumnlen - 1;
+      }
+      if (curC < 0) {
+        curC = 0;
+      }
+    }
+    let rowseleted: any = [curR, endR];
+    let columnseleted: any = [curC, endC];
+    row = ctx.visibledatarow[endR];
+    row_pre = curR - 1 === -1 ? 0 : ctx.visibledatarow[curR - 1];
+    col = ctx.visibledatacolumn[endC];
+    col_pre = curC - 1 === -1 ? 0 : ctx.visibledatacolumn[curC - 1];
+    const changeparam = mergeMoveMain(
+      ctx,
+      columnseleted,
+      rowseleted,
+      last,
+      row_pre,
+      row - row_pre - 1,
+      col_pre,
+      col - col_pre - 1
+    );
+    if (!_.isNil(changeparam)) {
+      [columnseleted, rowseleted] = changeparam;
+    }
+    last.row = rowseleted;
+    last.column = columnseleted;
+    normalizeSelection(ctx, ctx.luckysheet_select_save);
+    scrollToHighlightCell(ctx, last.row[0], last.column[0]);
+  } else if (type === "rangeOfFormula") {
+    const last = ctx.formulaCache.func_selectedrange;
+    if (_.isNil(last)) return;
+    let curR = last.row[0];
+    let endR = last.row[1];
+    let curC = last.column[0];
+    let endC = last.column[1];
+    const rf = last.row_focus;
+    const cf = last.column_focus;
+
+    const datarowlen = flowData.length;
+    const datacolumnlen = flowData[0].length;
+
+    if (postion === "down") {
+      if (!_.isNil(rf) && rowHasMerged(ctx, rf, curC, endC)) {
+        const rfMerge = getRowMerge(ctx, rf, curC, endC);
+        const rf_str = rfMerge[0];
+        const rf_end = rfMerge[1];
+        if (!_.isNil(rf_str) && rf_str > curR && rf_end === endR) {
+          if (index > 0 && rowHasMerged(ctx, curR, curC, endC)) {
+            const v = getRowMerge(ctx, curR, curC, endC)[1];
+            if (!_.isNil(v)) {
+              curR = v;
+            }
+          }
+          curR += index;
+        } else if (!_.isNil(rf_end) && rf_end < endR && rf_str === curR) {
+          if (index < 0 && rowHasMerged(ctx, endR, curC, endC)) {
+            const v = getRowMerge(ctx, endR, curC, endC)[0];
+            if (!_.isNil(v)) {
+              endR = v;
+            }
+            endR += index;
+          }
+        } else {
+          if (index > 0) {
+            endR += index;
+          } else {
+            curR += index;
+          }
+        }
+      } else {
+        if (!_.isNil(rf) && rf > curR && rf === endR) {
+          if (index > 0 && rowHasMerged(ctx, curR, curC, endC)) {
+            const v = getRowMerge(ctx, curR, curC, endC)[1];
+            if (!_.isNil(v)) {
+              curR = v;
+            }
+          }
+          curR += index;
+        } else if (!_.isNil(rf) && rf < endR && rf === curR) {
+          if (index < 0 && rowHasMerged(ctx, endR, curC, endC)) {
+            const v = getRowMerge(ctx, endR, curC, endC)[0];
+            if (!_.isNil(v)) {
+              endR = v;
+            }
+          }
+          endR += index;
+        } else if (rf === curR && rf === endR) {
+          if (index > 0) {
+            endR += index;
+          } else {
+            curR += index;
+          }
+        }
+      }
+      if (endR >= datarowlen) {
+        endR = datarowlen - 1;
+      }
+      if (endR < 0) {
+        endR = 0;
+      }
+      if (curR >= datarowlen) {
+        curR = datarowlen - 1;
+      }
+      if (curR < 0) {
+        curR = 0;
+      }
+    } else {
+      if (!_.isNil(cf) && colHasMerged(ctx, cf, curR, endR)) {
+        const cfMerge = getColMerge(ctx, cf, curR, endR);
+        const cf_str = cfMerge[0];
+        const cf_end = cfMerge[1];
+        if (!_.isNil(cf_str) && cf_str > curC && cf_end === endC) {
+          if (index > 0 && colHasMerged(ctx, curC, curR, endR)) {
+            const v = getColMerge(ctx, curC, curR, endR)[1];
+            if (!_.isNil(v)) {
+              curC = v;
+            }
+          }
+
+          curC += index;
+        } else if (!_.isNil(cf_end) && cf_end < endC && cf_str === curC) {
+          if (index < 0 && colHasMerged(ctx, endC, curR, endR)) {
+            const v = getColMerge(ctx, endC, curR, endR)[0];
+            if (!_.isNil(v)) {
+              endC = v;
+            }
+          }
+
+          endC += index;
+        } else {
+          if (index > 0) {
+            endC += index;
+          } else {
+            curC += index;
+          }
+        }
+      } else {
+        if (!_.isNil(cf) && cf > curC && cf === endC) {
+          if (index > 0 && colHasMerged(ctx, curC, curR, endR)) {
+            const v = getColMerge(ctx, curC, curR, endR)[1];
+            if (!_.isNil(v)) {
+              curC = v;
+            }
+          }
+
+          curC += index;
+        } else if (!_.isNil(cf) && cf < endC && cf === curC) {
+          if (index < 0 && colHasMerged(ctx, endC, curR, endR)) {
+            const v = getColMerge(ctx, endC, curR, endR)[0];
+            if (!_.isNil(v)) {
+              endC = v;
+            }
+          }
+
+          endC += index;
+        } else if (cf === curC && cf === endC) {
+          if (index > 0) {
+            endC += index;
+          } else {
+            curC += index;
+          }
+        }
+      }
+      if (endC >= datacolumnlen) {
+        endC = datacolumnlen - 1;
+      }
+      if (endC < 0) {
+        endC = 0;
+      }
+      if (curC >= datacolumnlen) {
+        curC = datacolumnlen - 1;
+      }
+      if (curC < 0) {
+        curC = 0;
+      }
+    }
+    let rowseleted = [curR, endR];
+    let columnseleted = [curC, endC];
+
+    row = ctx.visibledatarow[endR];
+    row_pre = curR - 1 === -1 ? 0 : ctx.visibledatarow[curR - 1];
+    col = ctx.visibledatacolumn[endC];
+    col_pre = curC - 1 === -1 ? 0 : ctx.visibledatacolumn[curC - 1];
+
+    let top = row_pre;
+    let height = row - row_pre - 1;
+    let left = col_pre;
+    let width = col - col_pre - 1;
+
+    const changeparam = mergeMoveMain(
+      ctx,
+      columnseleted,
+      rowseleted,
+      last,
+      top,
+      height,
+      left,
+      width
+    );
+    if (!_.isNil(changeparam)) {
+      // @ts-ignore
+      [columnseleted, rowseleted, top, height, left, width] = changeparam;
+    }
+    ctx.formulaCache.func_selectedrange = {
+      left,
+      width,
+      top,
+      height,
+      left_move: left,
+      width_move: width,
+      top_move: top,
+      height_move: height,
+      row: rowseleted,
+      column: columnseleted,
+      row_focus: rf,
+      column_focus: cf,
+    };
+  }
 }
 
 function getHtmlBorderStyle(type: string, color: string) {
