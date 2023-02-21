@@ -7,6 +7,7 @@ import {
   copy,
   deleteSelectedCellText,
   moveHighlightCell,
+  moveHighlightRange,
   selectAll,
   selectionCache,
 } from "../modules/selection";
@@ -368,7 +369,6 @@ function handleShiftWithArrowKey(ctx: Context, e: KeyboardEvent) {
     ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1]
   );
   ctx.luckysheet_shiftkeydown = true;
-
   /*
   if (
     $("#luckysheet-singleRange-dialog").is(":visible") ||
@@ -376,25 +376,26 @@ function handleShiftWithArrowKey(ctx: Context, e: KeyboardEvent) {
   ) {
     return;
   }
+  */
 
   // shift + 方向键 调整选区
   switch (e.key) {
     case "ArrowUp":
-      luckysheetMoveHighlightRange("down", -1, "rangeOfSelect");
+      moveHighlightRange(ctx, "down", -1, "rangeOfSelect");
       break;
     case "ArrowDown":
-      luckysheetMoveHighlightRange("down", 1, "rangeOfSelect");
+      moveHighlightRange(ctx, "down", 1, "rangeOfSelect");
       break;
     case "ArrowLeft":
-      luckysheetMoveHighlightRange("right", -1, "rangeOfSelect");
+      moveHighlightRange(ctx, "right", -1, "rangeOfSelect");
       break;
     case "ArrowRight":
-      luckysheetMoveHighlightRange("right", 1, "rangeOfSelect");
+      moveHighlightRange(ctx, "right", 1, "rangeOfSelect");
       break;
     default:
       break;
   }
-  */
+
   e.preventDefault();
 }
 
