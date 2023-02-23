@@ -16,6 +16,7 @@ import { hasPartMC, isRealNum } from "../modules/validation";
 import { getBorderInfoCompute } from "../modules/border";
 import { expandRowsAndColumns, storeSheetParamALL } from "../modules/sheet";
 import { jfrefreshgrid } from "../modules/refresh";
+import { setRowHeight } from "../api";
 
 function postPasteCut(
   ctx: Context,
@@ -1643,6 +1644,35 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
             : {};
         _.forEach(trList, (tr) => {
           let c = 0;
+          const targetR = ctx.luckysheet_select_save![0].row[0] + r;
+
+          const index = getSheetIndex(ctx, ctx.currentSheetId);
+          if (!_.isNil(index)) {
+            if (_.isNil(ctx.luckysheetfile[index].config)) {
+              ctx.luckysheetfile[index].config = {};
+            }
+            if (_.isNil(ctx.luckysheetfile[index].config!.rowlen)) {
+              ctx.luckysheetfile[index].config!.rowlen = {} as Record<
+                number,
+                number
+              >;
+            }
+            const targetRowHeight = !_.isNil(tr.getAttribute("height"))
+              ? parseInt(tr.getAttribute("height") as string, 10)
+              : null;
+            if (
+              (_.has(ctx.luckysheetfile[index].config!.rowlen, targetR) &&
+                ctx.luckysheetfile[index].config!.rowlen![targetR] !==
+                  targetRowHeight) ||
+              (!_.has(ctx.luckysheetfile[index].config!.rowlen, targetR) &&
+                ctx.luckysheetfile[index].defaultRowHeight !== targetRowHeight)
+            ) {
+              const rowHeightList = ctx.luckysheetfile[index].config!.rowlen!;
+              rowHeightList[targetR] = targetRowHeight as number;
+              setRowHeight(ctx, rowHeightList);
+            }
+          }
+
           _.forEach(tr.querySelectorAll("td"), (td) => {
             // build cell from td
             const cell: Cell = {};
@@ -1718,7 +1748,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
             );
             cell.fs = fs;
 
-            cell.fc = td.style.color;
+            cell.fc = td.style.color || styles.color;
 
             const ht = td.style.textAlign || styles["text-align"] || "left";
             if (ht === "center") {
