@@ -1632,6 +1632,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
         let r = 0;
         const borderInfo: any = {};
+        if (!ele.querySelectorAll("style")[0].innerHTML) return;
         const styleInner = ele.querySelectorAll("style")[0].innerHTML;
         const patternReg = /{([^}]*)}/g;
         const patternStyle = styleInner.match(patternReg);
@@ -1675,6 +1676,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
           _.forEach(tr.querySelectorAll("td"), (td) => {
             // build cell from td
+            const { className } = td;
             const cell: Cell = {};
             const txt = td.innerText || td.innerHTML;
             if (_.trim(txt).length === 0) {
@@ -1685,7 +1687,6 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
               // @ts-ignore
               [cell.m, cell.ct, cell.v] = mask;
             }
-            const { className } = td;
             const styleString =
               typeof allStyleList[`.${className}`] === "string"
                 ? allStyleList[`.${className}`]
@@ -1697,6 +1698,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
               const styleList = s.split(":");
               styles[styleList[0]] = styleList?.[1].replace(";", "");
             });
+            if (!_.isNil(styles.border)) td.style.border = styles.border;
             let bg: string | undefined =
               td.style.backgroundColor || styles.background;
             if (bg === "rgba(0, 0, 0, 0)" || _.isEmpty(bg)) {
@@ -1759,14 +1761,25 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
               cell.ht = 1;
             }
 
+            const regex = /vertical-align:\s*(.*?);/;
             const vt =
-              td.style.verticalAlign || styles["vertical-align"] || "top";
+              td.style.verticalAlign ||
+              styles["vertical-align"] ||
+              (!_.isNil(allStyleList.td) &&
+                allStyleList.td.match(regex).length > 0 &&
+                allStyleList.td.match(regex)[1]) ||
+              "top";
             if (vt === "middle") {
               cell.vt = 0;
             } else if (vt === "top" || vt === "text-top") {
               cell.vt = 1;
             } else {
               cell.vt = 2;
+            }
+
+            if ("mso-rotate" in styles) {
+              const rt = styles["mso-rotate"];
+              cell.rt = parseFloat(rt);
             }
 
             while (c < colLen && !_.isNil(data[r][c])) {
