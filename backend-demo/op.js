@@ -6,6 +6,7 @@ const _ = require("lodash");
  * @param {any[]} ops op list
  */
 async function applyOp(collection, ops) {
+  const operations = [];
   // eslint-disable-next-line no-restricted-syntax
   for (const op of ops) {
     const { path, id } = op;
@@ -19,51 +20,66 @@ async function applyOp(collection, ops) {
       if (op.value.direction === "rightbottom") {
         insertPos += 1;
       }
-      await collection.updateOne(
-        filter,
-        {
-          $inc: {
-            [`celldata.$[e].${field}`]: op.value.count,
+      operations.push({
+        updateOne: {
+          filter,
+          update: {
+            $inc: {
+              [`celldata.$[e].${field}`]: op.value.count,
+            },
           },
+          arrayFilters: [{ [`e.${field}`]: { $gte: insertPos } }],
         },
-        { arrayFilters: [{ [`e.${field}`]: { $gte: insertPos } }] }
-      );
+      });
     } else if (op.op === "deleteRowCol") {
       /**
        * special op: deleteRowCol
        */
       const field = op.value.type === "row" ? "r" : "c";
-      // delete cells
-      await collection.updateOne(filter, {
-        $pull: {
-          celldata: {
-            [field]: {
-              $gte: op.value.start,
-              $lte: op.value.end,
+      operations.push(
+        // delete cells
+        {
+          updateOne: {
+            filter,
+            update: {
+              $pull: {
+                celldata: {
+                  [field]: {
+                    $gte: op.value.start,
+                    $lte: op.value.end,
+                  },
+                },
+              },
             },
           },
         },
-      });
-      // decr indexes
-      await collection.updateOne(
-        filter,
+        // decr indexes
         {
-          $inc: {
-            [`celldata.$[e].${field}`]: -(op.value.end - op.value.start + 1),
+          updateOne: {
+            filter,
+            update: {
+              $inc: {
+                [`celldata.$[e].${field}`]: -(
+                  op.value.end -
+                  op.value.start +
+                  1
+                ),
+              },
+            },
+            arrayFilters: [{ [`e.${field}`]: { $gte: op.value.start } }],
           },
-        },
-        { arrayFilters: [{ [`e.${field}`]: { $gte: op.value.start } }] }
+        }
       );
     } else if (op.op === "addSheet") {
       /**
        * special op: addSheet
        */
-      collection.insertOne(op.value);
+      operations.push({ insertOne: { document: op.value } });
     } else if (op.op === "deleteSheet") {
       /**
        * special op: deleteSheet
        */
-      collection.deleteOne(filter);
+      operations.push({ deleteOne: { filter } });
     } else if (
       path.length >= 3 &&
       path[0] === "data" &&
@@ -89,49 +105,71 @@ async function applyOp(collection, ops) {
               },
             };
       if (path.length === 3) {
-        const cellExists = await collection.findOne({
-          ...filter,
-          celldata: {
-            $elemMatch: {
-              r,
-              c,
-            },
-          },
-        });
-        if (cellExists) {
-          await collection.updateOne(filter, updater, options);
-        } else {
-          await collection.updateOne(filter, {
-            $addToSet: {
-              celldata: {
+        const cellExists = await collection.countDocuments(
+          {
+            ...filter,
+            celldata: {
+              $elemMatch: {
                 r,
                 c,
-                v: op.value,
+              },
+            },
+          },
+          { limit: 1 }
+        );
+        if (cellExists) {
+          operations.push({
+            updateOne: { filter, update: updater, ...options },
+          });
+        } else {
+          operations.push({
+            updateOne: {
+              filter,
+              update: {
+                $addToSet: {
+                  celldata: {
+                    r,
+                    c,
+                    v: op.value,
+                  },
+                },
               },
             },
           });
         }
       } else {
-        await collection.updateOne(filter, updater, options);
+        operations.push({
+          updateOne: { filter, update: updater, ...options },
+        });
       }
     } else if (path.length === 2 && path[0] === "data" && _.isNumber(path[1])) {
       // entire row operation
       console.error("row assigning not supported");
     } else if (path.length === 0 && op.op === "add") {
       // add new sheet
-      await collection.insertOne(op.value);
+      operations.push({ insertOne: { document: op.value } });
     } else if (path[0] !== "data") {
       // other config update
       if (op.op === "remove") {
-        await collection.updateOne(filter, {
-          $unset: {
-            [op.path.join(".")]: "",
+        operations.push({
+          updateOne: {
+            filter,
+            update: {
+              $unset: {
+                [op.path.join(".")]: "",
+              },
+            },
           },
         });
       } else {
-        await collection.updateOne(filter, {
-          $set: {
-            [op.path.join(".")]: op.value,
+        operations.push({
+          updateOne: {
+            filter,
+            update: {
+              $set: {
+                [op.path.join(".")]: op.value,
+              },
+            },
           },
         });
       }
@@ -139,6 +177,7 @@ async function applyOp(collection, ops) {
       console.error("unprocessable op", op);
     }
   }
+  collection.bulkWrite(operations);
 }
 
 module.exports = {
