@@ -15,9 +15,9 @@ jobs:
       - uses: borales/actions-yarn@v4.2.0
         with:
           cmd: tsc # will run `yarn tsc` command
-      - uses: borales/actions-yarn@v3.0.0
+      - uses: borales/actions-yarn@v4.2.0
         with:
           cmd: lint # will run `yarn lint` command
-      - uses: borales/actions-yarn@v3.0.0
+      - uses: borales/actions-yarn@v4.2.0
         with:
           cmd: test # will run `yarn test` command
