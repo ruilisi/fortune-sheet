@@ -353,7 +353,10 @@ export function onCellsMoveEnd(
     for (let i = 0; i < cfg.borderInfo.length; i += 1) {
       const bd_rangeType = cfg.borderInfo[i].rangeType;
 
-      if (bd_rangeType === "range") {
+      if (
+        bd_rangeType === "range" &&
+        cfg.borderInfo[i].borderType !== "border-slash"
+      ) {
         const bd_range = cfg.borderInfo[i].range;
         let bd_emptyRange: any[] = [];
         for (let j = 0; j < bd_range.length; j += 1) {
@@ -383,6 +386,17 @@ export function onCellsMoveEnd(
         ) {
           borderInfo.push(cfg.borderInfo[i]);
         }
+      } else if (
+        bd_rangeType === "range" &&
+        cfg.borderInfo[i].borderType === "border-slash" &&
+        !(
+          cfg.borderInfo[i].range[0].row[0] >= last.row[0] &&
+          cfg.borderInfo[i].range[0].row[0] <= last.row[1] &&
+          cfg.borderInfo[i].range[0].column[0] >= last.column[0] &&
+          cfg.borderInfo[i].range[0].column[0] <= last.column[1]
+        )
+      ) {
+        borderInfo.push(cfg.borderInfo[i]);
       }
     }
 
@@ -392,7 +406,10 @@ export function onCellsMoveEnd(
   const offsetMC: Record<string, any> = {};
   for (let r = 0; r < data.length; r += 1) {
     for (let c = 0; c < data[0].length; c += 1) {
-      if (borderInfoCompute[`${r + last.row[0]}_${c + last.column[0]}`]) {
+      if (
+        borderInfoCompute[`${r + last.row[0]}_${c + last.column[0]}`] &&
+        !borderInfoCompute[`${r + last.row[0]}_${c + last.column[0]}`].s
+      ) {
         const bd_obj = {
           rangeType: "cell",
           value: {
@@ -403,6 +420,33 @@ export function onCellsMoveEnd(
             t: borderInfoCompute[`${r + last.row[0]}_${c + last.column[0]}`].t,
             b: borderInfoCompute[`${r + last.row[0]}_${c + last.column[0]}`].b,
           },
+        };
+
+        if (cfg.borderInfo == null) {
+          cfg.borderInfo = [];
+        }
+
+        cfg.borderInfo.push(bd_obj);
+      } else if (
+        borderInfoCompute[`${r + last.row[0]}_${c + last.column[0]}`]
+      ) {
+        const bd_obj = {
+          rangeType: "range",
+          borderType: "border-slash",
+          color:
+            borderInfoCompute[`${r + last.row[0]}_${c + last.column[0]}`].s
+              .color!,
+          style:
+            borderInfoCompute[`${r + last.row[0]}_${c + last.column[0]}`].s
+              .style!,
+          range: [
+            {
+              row_focus: r + row_s,
+              column_focus: c + col_s,
+              row: [r + row_s, r + row_s],
+              column: [c + col_s, c + col_s],
+            },
+          ],
         };
 
         if (cfg.borderInfo == null) {
