@@ -11674,6 +11674,7 @@ export default {
     resetColor: "重置颜色",
     cancelText: "取消",
     chooseText: "确定颜色",
+    focus: "聚焦",
 
     tipNameRepeat: "标签页的名称不能重复！请重新修改",
     noMoreSheet:

@@ -55,14 +55,6 @@ export function changeSheet(
 
   storeSheetParamALL(ctx);
 
-  for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
-    if (ctx.luckysheetfile[i].id === id) {
-      ctx.luckysheetfile[i].status = 1;
-    } else {
-      ctx.luckysheetfile[i].status = 0;
-    }
-  }
-
   ctx.currentSheetId = id;
 
   if (file.isPivotTable) {

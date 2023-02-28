@@ -11643,6 +11643,7 @@ export default {
     resetColor: "Reset color",
     cancelText: "Cancel",
     chooseText: "Confirm color",
+    focus: "Focus",
 
     tipNameRepeat: "The name of the tab page cannot be repeated! Please revise",
     noMoreSheet:
