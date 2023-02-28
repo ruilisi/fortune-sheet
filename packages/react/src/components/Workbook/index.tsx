@@ -16,6 +16,7 @@ import {
   inverseRowColOptions,
   ensureSheetIndex,
   CellMatrix,
+  insertRowCol,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -531,6 +532,54 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           cellInput.current === document.activeElement ||
           document.activeElement?.className === "fortune-sheet-overlay"
         ) {
+          let { clipboardData } = e;
+          if (!clipboardData) {
+            // @ts-ignore
+            // for IE
+            clipboardData = window.clipboardData;
+          }
+          const txtdata =
+            clipboardData!.getData("text/html") ||
+            clipboardData!.getData("text/plain");
+          const ele = document.createElement("div");
+          ele.innerHTML = txtdata;
+
+          const trList = ele.querySelectorAll("table tr");
+          const maxRow =
+            trList.length + context.luckysheet_select_save![0].row[0];
+          const rowToBeAdded =
+            maxRow -
+            context.luckysheetfile[
+              getSheetIndex(
+                context,
+                context!.currentSheetId! as string
+              ) as number
+            ].data!.length;
+          const range = context.luckysheet_select_save;
+          if (rowToBeAdded > 0) {
+            const insertRowColOp: SetContextOptions["insertRowColOp"] = {
+              type: "row",
+              index:
+                context.luckysheetfile[
+                  getSheetIndex(
+                    context,
+                    context!.currentSheetId! as string
+                  ) as number
+                ].data!.length - 1,
+              count: rowToBeAdded,
+              direction: "rightbottom",
+              id: context.currentSheetId,
+            };
+            setContextWithProduce(
+              (draftCtx) => {
+                insertRowCol(draftCtx, insertRowColOp);
+                draftCtx.luckysheet_select_save = range;
+              },
+              {
+                insertRowColOp,
+              }
+            );
+          }
           setContextWithProduce((draftCtx) => {
             try {
               handlePaste(draftCtx, e);
@@ -540,7 +589,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           });
         }
       },
-      [setContextWithProduce]
+      [context, setContextWithProduce]
     );
 
     const onMoreToolbarItemsClose = useCallback(() => {

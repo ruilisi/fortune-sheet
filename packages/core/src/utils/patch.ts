@@ -169,39 +169,13 @@ export function patchToOp(
   options?: PatchOptions,
   undo: boolean = false
 ): Op[] {
-  let ops: Op[] = [];
-  const maxRow: Record<string, number> = {};
-  _.forEach(patches, (p) => {
+  let ops = patches.map((p) => {
     const op: Op = {
       op: p.op,
       value: p.value,
       path: p.path,
     };
-    if (
-      p.path[0] === "luckysheetfile" &&
-      _.isNumber(p.path[1]) &&
-      op.op === "add" &&
-      op.path.length === 4 &&
-      op.path[2] === "data" &&
-      _.isNumber(p.path[3])
-    ) {
-      const id = ctx.luckysheetfile[p.path[1]].id!;
-      if (_.isNil(maxRow[id])) {
-        maxRow[id] = ctx.luckysheetfile[getSheetIndex(ctx, id) as number]
-          .row as number;
-      }
-      maxRow[id] = maxRow[id] > p.path[3] + 1 ? maxRow[id] : p.path[3] + 1;
-      for (let c = 0; c < op.value.length!; c += 1) {
-        if (op.value[c] !== null) {
-          ops.push({
-            op: "replace",
-            id,
-            path: ["data", op.path[3], c],
-            value: op.value[c],
-          });
-        }
-      }
-    } else if (p.path[0] === "luckysheetfile" && _.isNumber(p.path[1])) {
+    if (p.path[0] === "luckysheetfile" && _.isNumber(p.path[1])) {
       const id = ctx.luckysheetfile[p.path[1]].id!;
       op.id = id;
       op.path = p.path.slice(2);
@@ -209,22 +183,8 @@ export function patchToOp(
         op.path = ["calcChain"];
         op.value = ctx.luckysheetfile[p.path[1]].calcChain;
       }
-      ops.push(op);
-    } else {
-      ops.push(op);
     }
-  });
-  _.forEach(_.keys(maxRow), (id) => {
-    if (
-      ctx.luckysheetfile[getSheetIndex(ctx, id) as number].row !== maxRow[id]
-    ) {
-      ops.push({
-        op: "replace",
-        id,
-        path: ["row"],
-        value: maxRow[id],
-      });
-    }
+    return op;
   });
   _.every(ops, (p) => {
     if (
