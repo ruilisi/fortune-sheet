@@ -261,6 +261,7 @@ export const defaultSettings: Required<Settings> = {
     "hide",
     "|",
     "move",
+    "focus",
   ], // 自定义底部sheet页右击菜单
   filterContextMenu: [
     "sort-by-asc",

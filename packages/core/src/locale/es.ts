@@ -11614,6 +11614,7 @@ export default {
     resetColor: "Reiniciar color",
     cancelText: "Cancelar",
     chooseText: "Confirmar color",
+    focus: "Enfocar",
 
     tipNameRepeat:
       "¡El nombre de la página de la pestaña no se puede repetir! Revísalo",

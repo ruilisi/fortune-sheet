@@ -11644,6 +11644,7 @@ export default {
     resetColor: "重置顏色",
     cancelText: "取消",
     chooseText: "確定顏色",
+    focus: "聚焦",
 
     tipNameRepeat: "籤頁的名稱不能重複！請重新修改",
     noMoreSheet:
