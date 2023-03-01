@@ -16,11 +16,13 @@
   background-color: #e0e0e0;
   flex-shrink: 0;
 }
+
 .fortune-toolbar-menu-line {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
+
 .fortune-toolbar-menu-divider {
   width: "100%";
   height: 1px;
@@ -80,7 +82,7 @@
   white-space: nowrap;
   top: 32px;
   left: 0;
-  z-index: 1002;
+  z-index: 1004;
 }
 
 .fortune-toolbar-select,
@@ -94,6 +96,8 @@
 .fortune-toolbar-select {
   padding-left: 0;
   padding-right: 0;
+  overflow: auto;
+  max-height: 75vh;
 }
 
 .fortune-toolbar-combo-button {
