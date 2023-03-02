@@ -440,14 +440,9 @@ export function onCellsMoveEnd(
           style:
             borderInfoCompute[`${r + last.row[0]}_${c + last.column[0]}`].s
               .style!,
-          range: [
-            {
-              row_focus: r + row_s,
-              column_focus: c + col_s,
-              row: [r + row_s, r + row_s],
-              column: [c + col_s, c + col_s],
-            },
-          ],
+          range: normalizeSelection(ctx, [
+            { row: [r + row_s, r + row_s], column: [c + col_s, c + col_s] },
+          ]),
         };
 
         if (cfg.borderInfo == null) {

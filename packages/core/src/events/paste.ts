@@ -9,7 +9,7 @@ import {
 } from "../modules/formula";
 import { getdatabyselection, getQKBorder } from "../modules/cell";
 import { genarate, update } from "../modules/format";
-import { selectionCache } from "../modules/selection";
+import { normalizeSelection, selectionCache } from "../modules/selection";
 import { Cell, CellMatrix } from "../types";
 import { getSheetIndex } from "../utils";
 import { hasPartMC, isRealNum } from "../modules/validation";
@@ -705,7 +705,10 @@ function pasteHandlerOfCutPaste(
     const x = d[h];
 
     for (let c = minc; c <= maxc; c += 1) {
-      if (borderInfoCompute[`${c_r1 + h - minh}_${c_c1 + c - minc}`]) {
+      if (
+        borderInfoCompute[`${c_r1 + h - minh}_${c_c1 + c - minc}`] &&
+        !borderInfoCompute[`${c_r1 + h - minh}_${c_c1 + c - minc}`].s
+      ) {
         const bd_obj = {
           rangeType: "cell",
           value: {
@@ -734,6 +737,22 @@ function pasteHandlerOfCutPaste(
             t: null,
             b: null,
           },
+        };
+
+        if (cfg.borderInfo == null) {
+          cfg.borderInfo = [];
+        }
+
+        cfg.borderInfo.push(bd_obj);
+      } else if (borderInfoCompute[`${c_r1 + h - minh}_${c_c1 + c - minc}`]) {
+        const bd_obj = {
+          rangeType: "range",
+          borderType: "border-slash",
+          color:
+            borderInfoCompute[`${c_r1 + h - minh}_${c_c1 + c - minc}`].s.color!,
+          style:
+            borderInfoCompute[`${c_r1 + h - minh}_${c_c1 + c - minc}`].s.style!,
+          range: normalizeSelection(ctx, [{ row: [h, h], column: [c, c] }]),
         };
 
         if (cfg.borderInfo == null) {
@@ -1219,7 +1238,10 @@ function pasteHandlerOfCopyPaste(
         const x = d[h];
 
         for (let c = mtc; c < maxcellCahe; c += 1) {
-          if (borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`]) {
+          if (
+            borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`] &&
+            !borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`].s
+          ) {
             const bd_obj = {
               rangeType: "cell",
               value: {
@@ -1251,6 +1273,24 @@ function pasteHandlerOfCopyPaste(
             };
 
             if (_.isNil(cfg.borderInfo)) {
+              cfg.borderInfo = [];
+            }
+
+            cfg.borderInfo.push(bd_obj);
+          } else if (borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`]) {
+            const bd_obj = {
+              rangeType: "range",
+              borderType: "border-slash",
+              color:
+                borderInfoCompute[`${c_r1 + h - minh}_${c_c1 + c - minc}`].s
+                  .color!,
+              style:
+                borderInfoCompute[`${c_r1 + h - minh}_${c_c1 + c - minc}`].s
+                  .style!,
+              range: normalizeSelection(ctx, [{ row: [h, h], column: [c, c] }]),
+            };
+
+            if (cfg.borderInfo == null) {
               cfg.borderInfo = [];
             }
 
