@@ -26,7 +26,11 @@ import {
   updateInlineStringFormatOutside,
 } from "./inline-string";
 import { colLocationByIndex, rowLocationByIndex } from "./location";
-import { selectionCopyShow, selectIsOverlap } from "./selection";
+import {
+  normalizeSelection,
+  selectionCopyShow,
+  selectIsOverlap,
+} from "./selection";
 import { sortSelection } from "./sort";
 import {
   hasPartMC,
@@ -1340,15 +1344,35 @@ export function handleBorder(ctx: Context, type: string) {
     cfg.borderInfo = [];
   }
 
-  const borderInfo = {
-    rangeType: "range",
-    borderType: type,
-    color,
-    style,
-    range: _.cloneDeep(ctx.luckysheet_select_save) || [],
-  };
-
-  cfg.borderInfo.push(borderInfo);
+  if (type !== "border-slash") {
+    const borderInfo = {
+      rangeType: "range",
+      borderType: type,
+      color,
+      style,
+      range: _.cloneDeep(ctx.luckysheet_select_save) || [],
+    };
+    cfg.borderInfo.push(borderInfo);
+  } else {
+    const rangeList: string[] = [];
+    _.forEach(ctx.luckysheet_select_save, (selection) => {
+      for (let r = selection.row[0]; r <= selection.row[1]; r += 1) {
+        for (let c = selection.column[0]; c <= selection.column[1]; c += 1) {
+          const range = `${r}_${c}`;
+          if (_.includes(rangeList, range)) continue;
+          const borderInfo = {
+            rangeType: "range",
+            borderType: type,
+            color,
+            style,
+            range: normalizeSelection(ctx, [{ row: [r, r], column: [c, c] }]),
+          };
+          cfg.borderInfo!.push(borderInfo);
+          rangeList.push(range);
+        }
+      }
+    });
+  }
 
   // server.saveParam("cg", ctx.currentSheetId, cfg.borderInfo, {
   //   k: "borderInfo",
