@@ -104,6 +104,7 @@ describe("clear format", () => {
 
   test("clear border info", async () => {
     const ctx = getContext();
+    ctx.luckysheet_select_save = selectionFactory([0, 0], [0, 0], 0, 0);
     const expectedBorderInfo = [
       {
         rangeType: "range",
@@ -112,7 +113,11 @@ describe("clear format", () => {
         color: "#0000ff",
         range: [
           {
-            row: [0, 3],
+            row: [0, 0],
+            column: [1, 2],
+          },
+          {
+            row: [1, 3],
             column: [0, 2],
           },
         ],
@@ -128,13 +133,6 @@ describe("clear format", () => {
             column: [8, 9],
           },
         ],
-      },
-      {
-        rangeType: "range",
-        borderType: "border-none",
-        color: "#000000",
-        style: "1",
-        range: [{ row: [0, 0], column: [0, 0], row_focus: 0, column_focus: 0 }],
       },
     ];
     handleClearFormat(ctx);
