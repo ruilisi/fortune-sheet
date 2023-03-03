@@ -35,6 +35,7 @@ import {
   isRealNum,
 } from "./validation";
 import { showLinkCard } from "./hyperlink";
+import { cfSplitRange } from "./conditionalFormat";
 
 type ToolbarItemClickHandler = (
   ctx: Context,
@@ -1219,34 +1220,6 @@ export function handleFormatPainter(ctx: Context) {
   ctx.luckysheetPaintSingle = true;
 }
 
-// 求两个数组的交集
-const getIntersection = (
-  section0: Array<number>,
-  section1: Array<number>
-): Array<number> => {
-  const st_max: number = section0[0] <= section1[0] ? section1[0] : section0[0];
-  const ed_min: number =
-    section0[section0.length - 1] >= section1[section1.length - 1]
-      ? section1[section1.length - 1]
-      : section0[section0.length - 1];
-  const intersection: Array<number> = st_max <= ed_min ? [st_max, ed_min] : [];
-  return intersection;
-};
-
-// 覆盖border-none
-function coverBorderNone(ctx: Context) {
-  const index = getSheetIndex(ctx, ctx.currentSheetId)!;
-  const borderInfo = {
-    rangeType: "range",
-    borderType: "border-none",
-    color: "#000000",
-    style: "1",
-    range: ctx.luckysheet_select_save,
-  };
-  ctx.config.borderInfo?.push(borderInfo);
-  ctx.luckysheetfile[index].config = ctx.config;
-}
-
 // 2022-10-10 废弃了handleClearFormat中的foreach写法，改为可跳出的every写法，以防止选区多次覆盖
 export function handleClearFormat(ctx: Context) {
   if (ctx.allowEdit === false) return;
@@ -1270,41 +1243,45 @@ export function handleClearFormat(ctx: Context) {
     if (index == null) return false;
     // 表格边框为空时，不对表格进行操作
     if (ctx.config.borderInfo == null) return false;
-    // 遍历表格边框信息
-    ctx.luckysheetfile[index].config?.borderInfo?.every((border) => {
-      if (border.borderType !== "border-none" && border.rangeType === "range") {
-        if (_.isNil(border.range) || border.range.length <= 0) return false;
-        border.range?.every((borderRange: any) => {
-          const borderRow = borderRange.row;
-          const borderCol = borderRange.column;
-          const targetRow = getIntersection(borderRow, [rowSt, rowEd]);
-          const targetCol = getIntersection(borderCol, [colSt, colEd]);
-          // 当重复的行或者列小于等于0时，不对表格进行操作
-          if (targetRow.length <= 0 || targetCol.length <= 0) {
-            return true;
+    const cfg = ctx.config || {};
+    if (cfg.borderInfo && cfg.borderInfo.length > 0) {
+      const source_borderInfo = [];
+
+      for (let i = 0; i < cfg.borderInfo.length; i += 1) {
+        const bd_rangeType = cfg.borderInfo[i].rangeType;
+
+        if (bd_rangeType === "range") {
+          const bd_range = cfg.borderInfo[i].range;
+          let bd_emptyRange: any = [];
+
+          for (let j = 0; j < bd_range.length; j += 1) {
+            bd_emptyRange = bd_emptyRange.concat(
+              cfSplitRange(
+                bd_range[j],
+                { row: [rowSt, rowEd], column: [colSt, colEd] },
+                { row: [rowSt, rowEd], column: [colSt, colEd] },
+                "restPart"
+              )
+            );
           }
 
-          // 一旦选区内和表格边框信息有交集，则覆盖一层border-none
-          coverBorderNone(ctx);
-          return true;
-        });
-      } else if (
-        !(border.borderType === "border-none") &&
-        border.rangeType === "cell"
-      ) {
-        if (
-          rowSt <= border.value.row_index &&
-          border.value.row_index <= rowEd &&
-          colSt <= border.value.col_index &&
-          border.value.col_index <= colEd
-        ) {
-          // 一旦选区内和表格边框信息有交集，则覆盖一层border-none
-          coverBorderNone(ctx);
-          return true;
+          cfg.borderInfo[i].range = bd_emptyRange;
+
+          source_borderInfo.push(cfg.borderInfo[i]);
+        } else if (bd_rangeType === "cell") {
+          const bd_r = cfg.borderInfo[i].value.row_index;
+          const bd_c = cfg.borderInfo[i].value.col_index;
+
+          if (
+            !(bd_r >= rowSt && bd_r <= rowEd && bd_c >= colSt && bd_c <= colEd)
+          ) {
+            source_borderInfo.push(cfg.borderInfo[i]);
+          }
         }
       }
-      return true;
-    });
+
+      ctx.luckysheetfile[index].config!.borderInfo = source_borderInfo;
+    }
     return true;
   });
 }
