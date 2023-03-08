@@ -352,15 +352,15 @@ const FilterMenu: React.FC = () => {
     if (containerH < 0) {
       containerH = 100;
     }
+    // 防止Maximum update depth exceeded错误，如果当前值和前一个filterContextMenu值一样则不进行赋值
+    if (
+      filterContextMenu.x === left &&
+      filterContextMenu.y === top &&
+      filterContextMenu.listBoxMaxHeight === containerH
+    ) {
+      return;
+    }
     setContext((draftCtx) => {
-      // 防止Maximum update depth exceeded错误，如果当前值和前一个filterContextMenu值一样则不进行赋值
-      if (
-        filterContextMenu.x === left ||
-        filterContextMenu.y === top ||
-        filterContextMenu.listBoxMaxHeight === containerH
-      ) {
-        return;
-      }
       if (hasOverflow) {
         _.set(draftCtx, "filterContextMenu.x", left);
         _.set(draftCtx, "filterContextMenu.y", top);
