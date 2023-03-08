@@ -16,7 +16,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1003; /* should below .fortune-context-menu */
+  z-index: 1003;
+  /* should below .fortune-context-menu */
   height: 100%;
   width: 100%;
 }
@@ -34,4 +35,8 @@
   position: absolute;
   z-index: -1;
   background-color: white;
+}
+
+html::-webkit-scrollbar-button {
+  display: none;
 }
