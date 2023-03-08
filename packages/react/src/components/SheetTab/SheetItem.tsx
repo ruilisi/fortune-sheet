@@ -216,36 +216,35 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
         style={dragOver ? { pointerEvents: "none" } : {}}
       >
         {sheet.name}
-        <div
-          className="luckysheet-sheets-item-function"
-          onMouseEnter={() => setSvgColor("#5c5c5c")}
-          onMouseLeave={() => setSvgColor("#c3c3c3")}
-          onClick={(e) => {
-            if (isDropPlaceholder || context.allowEdit === false) return;
-            const rect =
-              refs.workbookContainer.current!.getBoundingClientRect();
-            const { pageX, pageY } = e;
-            setContext((ctx) => {
-              // 右击的时候先进行跳转
-              ctx.currentSheetId = sheet.id!;
-              ctx.sheetTabContextMenu = {
-                x: pageX - rect.left,
-                y: pageY - rect.top,
-                sheet,
-                onRename: () => setEditing(true),
-              };
-            });
-          }}
-        >
-          <SVGIcon name="downArrow" width={12} style={{ fill: svgColor }} />
-        </div>
-        {!!sheet.color && (
-          <div
-            className="luckysheet-sheets-item-color"
-            style={{ background: sheet.color }}
-          />
-        )}
       </span>
+      <span
+        className="luckysheet-sheets-item-function"
+        onMouseEnter={() => setSvgColor("#5c5c5c")}
+        onMouseLeave={() => setSvgColor("#c3c3c3")}
+        onClick={(e) => {
+          if (isDropPlaceholder || context.allowEdit === false) return;
+          const rect = refs.workbookContainer.current!.getBoundingClientRect();
+          const { pageX, pageY } = e;
+          setContext((ctx) => {
+            // 右击的时候先进行跳转
+            ctx.currentSheetId = sheet.id!;
+            ctx.sheetTabContextMenu = {
+              x: pageX - rect.left,
+              y: pageY - rect.top,
+              sheet,
+              onRename: () => setEditing(true),
+            };
+          });
+        }}
+      >
+        <SVGIcon name="downArrow" width={12} style={{ fill: svgColor }} />
+      </span>
+      {!!sheet.color && (
+        <div
+          className="luckysheet-sheets-item-color"
+          style={{ background: sheet.color }}
+        />
+      )}
     </div>
   );
 };
