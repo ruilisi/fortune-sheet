@@ -659,7 +659,9 @@ export function handleGlobalKeyDown(
     }
   }
 
-  cellInput?.focus();
+  if (cellInput !== document.activeElement) {
+    cellInput?.focus();
+  }
 
   e.stopPropagation();
 }

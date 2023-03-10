@@ -312,12 +312,11 @@ const InputBox: React.FC = () => {
     <div
       className="luckysheet-input-box"
       style={
-        firstSelection &&
-        !_.isEmpty(context.luckysheetCellUpdate) &&
-        !context.rangeDialog?.show
+        firstSelection && !context.rangeDialog?.show
           ? {
               left: firstSelection.left,
               top: firstSelection.top,
+              zIndex: _.isEmpty(context.luckysheetCellUpdate) ? -1 : 19,
               display: "block",
             }
           : { left: -10000, top: -10000, display: "block" }
