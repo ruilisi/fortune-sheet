@@ -70,6 +70,15 @@ const SheetOverlay: React.FC = () => {
             refs.cellArea.current!,
             refs.fxInput.current!
           );
+
+          if (
+            !_.isEmpty(draftCtx.luckysheet_select_save?.[0]) &&
+            refs.cellInput.current
+          ) {
+            setTimeout(() => {
+              refs.cellInput.current?.focus();
+            });
+          }
         });
       }
     },
