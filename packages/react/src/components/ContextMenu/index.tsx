@@ -16,7 +16,7 @@ import {
   api,
 } from "@fortune-sheet/core";
 import _ from "lodash";
-import React, { useContext, useRef, useLayoutEffect, useCallback } from "react";
+import React, { useContext, useRef, useCallback, useLayoutEffect } from "react";
 import WorkbookContext, { SetContextOptions } from "../../context";
 import { useAlert } from "../../hooks/useAlert";
 import { useDialog } from "../../hooks/useDialog";
@@ -45,11 +45,11 @@ const ContextMenu: React.FC = () => {
               setContext((draftCtx) => {
                 if (draftCtx.luckysheet_select_save?.length! > 1) {
                   showAlert(rightclick.noMulti, "ok");
-                  draftCtx.contextMenu = undefined;
+                  draftCtx.contextMenu = {};
                   return;
                 }
                 handleCopy(draftCtx);
-                draftCtx.contextMenu = undefined;
+                draftCtx.contextMenu = {};
               });
             }}
           >
@@ -64,7 +64,7 @@ const ContextMenu: React.FC = () => {
             onClick={() => {
               setContext((draftCtx) => {
                 handlePasteByClick(draftCtx);
-                draftCtx.contextMenu = undefined;
+                draftCtx.contextMenu = {};
               });
             }}
           >
@@ -100,7 +100,7 @@ const ContextMenu: React.FC = () => {
                     (draftCtx) => {
                       try {
                         insertRowCol(draftCtx, insertRowColOp);
-                        draftCtx.contextMenu = undefined;
+                        draftCtx.contextMenu = {};
                       } catch (err: any) {
                         showAlert(err.message);
                       }
@@ -167,7 +167,7 @@ const ContextMenu: React.FC = () => {
                     (draftCtx) => {
                       try {
                         insertRowCol(draftCtx, insertRowColOp);
-                        draftCtx.contextMenu = undefined;
+                        draftCtx.contextMenu = {};
                       } catch (err: any) {
                         showAlert(err.message);
                       }
@@ -207,91 +207,95 @@ const ContextMenu: React.FC = () => {
             ));
       }
       if (name === "delete-column") {
-        return selection?.row_select ? null : (
-          <Menu
-            key="delete-col"
-            onClick={() => {
-              if (!selection) return;
-              const [st_index, ed_index] = selection.column;
-              const deleteRowColOp: SetContextOptions["deleteRowColOp"] = {
-                type: "column",
-                start: st_index,
-                end: ed_index,
-                id: context.currentSheetId,
-              };
-              setContext(
-                (draftCtx) => {
-                  if (draftCtx.luckysheet_select_save?.length! > 1) {
-                    showAlert(rightclick.noMulti, "ok");
-                    draftCtx.contextMenu = undefined;
-                    draftCtx.dataVerificationDropDownList = false;
-                    return;
-                  }
-                  const slen = ed_index - st_index + 1;
-                  const index = getSheetIndex(
-                    draftCtx,
-                    context.currentSheetId
-                  ) as number;
-                  if (
-                    draftCtx.luckysheetfile[index].data?.[0]?.length! <= slen
-                  ) {
-                    showAlert(rightclick.cannotDeleteAllColumn, "ok");
-                    draftCtx.contextMenu = undefined;
+        return (
+          selection?.column_select && (
+            <Menu
+              key="delete-col"
+              onClick={() => {
+                if (!selection) return;
+                const [st_index, ed_index] = selection.column;
+                const deleteRowColOp: SetContextOptions["deleteRowColOp"] = {
+                  type: "column",
+                  start: st_index,
+                  end: ed_index,
+                  id: context.currentSheetId,
+                };
+                setContext(
+                  (draftCtx) => {
+                    if (draftCtx.luckysheet_select_save?.length! > 1) {
+                      showAlert(rightclick.noMulti, "ok");
+                      draftCtx.contextMenu = {};
+                      draftCtx.dataVerificationDropDownList = false;
+                      return;
+                    }
+                    const slen = ed_index - st_index + 1;
+                    const index = getSheetIndex(
+                      draftCtx,
+                      context.currentSheetId
+                    ) as number;
+                    if (
+                      draftCtx.luckysheetfile[index].data?.[0]?.length! <= slen
+                    ) {
+                      showAlert(rightclick.cannotDeleteAllColumn, "ok");
+                      draftCtx.contextMenu = {};
 
-                    return;
-                  }
-                  deleteRowCol(draftCtx, deleteRowColOp);
-                  draftCtx.contextMenu = undefined;
-                },
-                { deleteRowColOp }
-              );
-            }}
-          >
-            {rightclick.deleteSelected}
-            {rightclick.column}
-          </Menu>
+                      return;
+                    }
+                    deleteRowCol(draftCtx, deleteRowColOp);
+                    draftCtx.contextMenu = {};
+                  },
+                  { deleteRowColOp }
+                );
+              }}
+            >
+              {rightclick.deleteSelected}
+              {rightclick.column}
+            </Menu>
+          )
         );
       }
       if (name === "delete-row") {
-        return selection?.column_select ? null : (
-          <Menu
-            key="delete-row"
-            onClick={() => {
-              if (!selection) return;
-              const [st_index, ed_index] = selection.row;
-              const deleteRowColOp: SetContextOptions["deleteRowColOp"] = {
-                type: "row",
-                start: st_index,
-                end: ed_index,
-                id: context.currentSheetId,
-              };
-              setContext(
-                (draftCtx) => {
-                  if (draftCtx.luckysheet_select_save?.length! > 1) {
-                    showAlert(rightclick.noMulti, "ok");
-                    draftCtx.contextMenu = undefined;
-                    return;
-                  }
-                  const slen = ed_index - st_index + 1;
-                  const index = getSheetIndex(
-                    draftCtx,
-                    context.currentSheetId
-                  ) as number;
-                  if (draftCtx.luckysheetfile[index].data?.length! <= slen) {
-                    showAlert(rightclick.cannotDeleteAllRow, "ok");
-                    draftCtx.contextMenu = undefined;
-                    return;
-                  }
-                  deleteRowCol(draftCtx, deleteRowColOp);
-                  draftCtx.contextMenu = undefined;
-                },
-                { deleteRowColOp }
-              );
-            }}
-          >
-            {rightclick.deleteSelected}
-            {rightclick.row}
-          </Menu>
+        return (
+          selection?.row_select && (
+            <Menu
+              key="delete-row"
+              onClick={() => {
+                if (!selection) return;
+                const [st_index, ed_index] = selection.row;
+                const deleteRowColOp: SetContextOptions["deleteRowColOp"] = {
+                  type: "row",
+                  start: st_index,
+                  end: ed_index,
+                  id: context.currentSheetId,
+                };
+                setContext(
+                  (draftCtx) => {
+                    if (draftCtx.luckysheet_select_save?.length! > 1) {
+                      showAlert(rightclick.noMulti, "ok");
+                      draftCtx.contextMenu = {};
+                      return;
+                    }
+                    const slen = ed_index - st_index + 1;
+                    const index = getSheetIndex(
+                      draftCtx,
+                      context.currentSheetId
+                    ) as number;
+                    if (draftCtx.luckysheetfile[index].data?.length! <= slen) {
+                      showAlert(rightclick.cannotDeleteAllRow, "ok");
+                      draftCtx.contextMenu = {};
+                      return;
+                    }
+                    deleteRowCol(draftCtx, deleteRowColOp);
+                    draftCtx.contextMenu = {};
+                  },
+                  { deleteRowColOp }
+                );
+              }}
+            >
+              {rightclick.deleteSelected}
+              {rightclick.row}
+            </Menu>
+          )
         );
       }
       if (name === "hide-row") {
@@ -311,7 +315,7 @@ const ContextMenu: React.FC = () => {
                   if (msg === "noMulti") {
                     showDialog(drag.noMulti);
                   }
-                  draftCtx.contextMenu = undefined;
+                  draftCtx.contextMenu = {};
                 });
               }}
             >
@@ -337,7 +341,7 @@ const ContextMenu: React.FC = () => {
                   if (msg === "noMulti") {
                     showDialog(drag.noMulti);
                   }
-                  draftCtx.contextMenu = undefined;
+                  draftCtx.contextMenu = {};
                 });
               }}
             >
@@ -370,7 +374,7 @@ const ContextMenu: React.FC = () => {
                   parseInt(targetRowHeight, 10) > 545
                 ) {
                   showAlert(info.tipRowHeightLimit, "ok");
-                  draftCtx.contextMenu = undefined;
+                  draftCtx.contextMenu = {};
                   return;
                 }
                 const numRowHeight = parseInt(targetRowHeight, 10);
@@ -385,7 +389,7 @@ const ContextMenu: React.FC = () => {
                   }
                 });
                 api.setRowHeight(draftCtx, rowHeightList);
-                draftCtx.contextMenu = undefined;
+                draftCtx.contextMenu = {};
               });
             }}
           >
@@ -430,7 +434,7 @@ const ContextMenu: React.FC = () => {
                   parseInt(targetColWidth, 10) > 2038
                 ) {
                   showAlert(info.tipColumnWidthLimit, "ok");
-                  draftCtx.contextMenu = undefined;
+                  draftCtx.contextMenu = {};
                   return;
                 }
                 const numColWidth = parseInt(targetColWidth, 10);
@@ -445,7 +449,7 @@ const ContextMenu: React.FC = () => {
                   }
                 });
                 api.setColumnWidth(draftCtx, colWidthList);
-                draftCtx.contextMenu = undefined;
+                draftCtx.contextMenu = {};
               });
             }}
           >
@@ -485,7 +489,7 @@ const ContextMenu: React.FC = () => {
                     showDialog(generalDialog.dataNullError, "ok");
                   }
                 }
-                draftCtx.contextMenu = undefined;
+                draftCtx.contextMenu = {};
               });
             }}
           >
@@ -500,7 +504,7 @@ const ContextMenu: React.FC = () => {
             onClick={() => {
               setContext((draftCtx) => {
                 sortSelection(draftCtx, true);
-                draftCtx.contextMenu = undefined;
+                draftCtx.contextMenu = {};
               });
             }}
           >
@@ -515,7 +519,7 @@ const ContextMenu: React.FC = () => {
             onClick={() => {
               setContext((draftCtx) => {
                 sortSelection(draftCtx, false);
-                draftCtx.contextMenu = undefined;
+                draftCtx.contextMenu = {};
               });
             }}
           >
@@ -530,7 +534,7 @@ const ContextMenu: React.FC = () => {
             onClick={() => {
               setContext((draftCtx) => {
                 sortSelection(draftCtx, false);
-                draftCtx.contextMenu = undefined;
+                draftCtx.contextMenu = {};
               });
             }}
           >
@@ -545,7 +549,7 @@ const ContextMenu: React.FC = () => {
             onClick={() => {
               setContext((draftCtx) => {
                 createFilter(draftCtx);
-                draftCtx.contextMenu = undefined;
+                draftCtx.contextMenu = {};
               });
             }}
           >
@@ -560,7 +564,7 @@ const ContextMenu: React.FC = () => {
             onClick={() => {
               setContext((draftCtx) => {
                 showImgChooser();
-                draftCtx.contextMenu = undefined;
+                draftCtx.contextMenu = {};
               });
             }}
           >
@@ -575,7 +579,7 @@ const ContextMenu: React.FC = () => {
             onClick={() => {
               setContext((draftCtx) => {
                 handleLink(draftCtx);
-                draftCtx.contextMenu = undefined;
+                draftCtx.contextMenu = {};
               });
             }}
           >
@@ -603,7 +607,7 @@ const ContextMenu: React.FC = () => {
 
   useLayoutEffect(() => {
     // re-position the context menu if it overflows the window
-    if (!containerRef.current || !contextMenu) {
+    if (!containerRef.current) {
       return;
     }
     const winH = window.innerHeight;
@@ -611,8 +615,8 @@ const ContextMenu: React.FC = () => {
     const rect = containerRef.current.getBoundingClientRect();
     const menuW = rect.width;
     const menuH = rect.height;
-    let top = contextMenu.y;
-    let left = contextMenu.x;
+    let top = contextMenu.y || 0;
+    let left = contextMenu.x || 0;
 
     let hasOverflow = false;
     if (left + menuW > winW) {
@@ -623,21 +627,17 @@ const ContextMenu: React.FC = () => {
       top -= menuH;
       hasOverflow = true;
     }
-    if (top < 0) {
-      top = 0;
+    if (top < 90) {
+      top = 90;
       hasOverflow = true;
     }
     if (hasOverflow) {
       setContext((draftCtx) => {
         draftCtx.contextMenu.x = left;
-        if (draftCtx.contextMenu.headerMenu === true) {
-          draftCtx.contextMenu.y = 90;
-        } else {
-          draftCtx.contextMenu.y = top;
-        }
+        draftCtx.contextMenu.y = top;
       });
     }
-  }, [contextMenu, setContext]);
+  }, [contextMenu.x, contextMenu.y, setContext]);
 
   if (_.isEmpty(context.contextMenu)) return null;
 
@@ -649,7 +649,7 @@ const ContextMenu: React.FC = () => {
       style={{ left: contextMenu.x, top: contextMenu.y }}
     >
       {context.contextMenu.headerMenu === true
-        ? settings.colContextMenu.map((menu, i) => getMenuElement(menu, i))
+        ? settings.headerContextMenu.map((menu, i) => getMenuElement(menu, i))
         : settings.cellContextMenu.map((menu, i) => getMenuElement(menu, i))}
     </div>
   );
