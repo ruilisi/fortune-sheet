@@ -663,7 +663,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               <div
                 onMouseDown={() => {
                   setContextWithProduce((draftCtx) => {
-                    draftCtx.contextMenu = undefined;
+                    draftCtx.contextMenu = {};
                     draftCtx.filterContextMenu = undefined;
                     draftCtx.showSheetList = undefined;
                   });

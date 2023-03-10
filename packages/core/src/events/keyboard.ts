@@ -582,7 +582,7 @@ export function handleGlobalKeyDown(
     ) {
       handleShiftWithArrowKey(ctx, e);
     } else if (kstr === "Escape") {
-      ctx.contextMenu = undefined;
+      ctx.contextMenu = {};
       // if (menuButton.luckysheetPaintModelOn) {
       //   menuButton.cancelPaintModel();
       // } else {

@@ -211,7 +211,7 @@ export function handleCellAreaMouseDown(
   container: HTMLDivElement,
   fxInput?: HTMLDivElement | null
 ) {
-  ctx.contextMenu = undefined;
+  ctx.contextMenu = {};
   ctx.filterContextMenu = undefined;
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
@@ -1433,6 +1433,7 @@ export function handleContextMenu(
   // select current cell when clicking the right button
   e.preventDefault();
   if (area === "cell") {
+    _.set(ctx.contextMenu, "headerMenu", false);
     const rect = container.getBoundingClientRect();
     const mouseX = e.pageX - rect.left - window.scrollX;
     const mouseY = e.pageY - rect.top - window.scrollY;
@@ -1502,6 +1503,7 @@ export function handleContextMenu(
       },
     ];
   } else if (area === "rowHeader") {
+    _.set(ctx.contextMenu, "headerMenu", true);
     const rect = container.getBoundingClientRect();
     const selected_y = e.pageY - rect.top + ctx.scrollTop;
     const row_location = rowLocation(selected_y, ctx.visibledatarow);
@@ -1514,7 +1516,8 @@ export function handleContextMenu(
       (obj_s) =>
         obj_s.row != null &&
         row_index >= obj_s.row[0] &&
-        row_index <= obj_s.row[1]
+        row_index <= obj_s.row[1] &&
+        !obj_s.column_select
     );
 
     if (isInSelection) return;
@@ -1544,6 +1547,7 @@ export function handleContextMenu(
       row_select: true,
     });
   } else if (area === "columnHeader") {
+    _.set(ctx.contextMenu, "headerMenu", true);
     const rect = container.getBoundingClientRect();
     const selected_x = e.pageX - rect.left + ctx.scrollLeft;
     const row_index = ctx.visibledatarow.length - 1;
@@ -1559,7 +1563,8 @@ export function handleContextMenu(
       (obj_s) =>
         obj_s.row != null &&
         col_index >= obj_s.column[0] &&
-        col_index <= obj_s.column[1]
+        col_index <= obj_s.column[1] &&
+        !obj_s.row_select
     );
 
     if (isInSelection) return;

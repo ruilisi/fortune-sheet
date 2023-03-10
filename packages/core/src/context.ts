@@ -51,7 +51,13 @@ export type Context = {
   dataVerificationDropDownList?: boolean;
   conditionRules: ConditionRulesProps; // 条件格式
 
-  contextMenu: any;
+  contextMenu: {
+    x?: number;
+    y?: number;
+    headerMenu?: boolean;
+    pageX?: number;
+    pageY?: number;
+  };
   sheetTabContextMenu: {
     x?: number;
     y?: number;
