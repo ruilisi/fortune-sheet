@@ -1254,7 +1254,10 @@ export function handleClearFormat(ctx: Context) {
       for (let i = 0; i < cfg.borderInfo.length; i += 1) {
         const bd_rangeType = cfg.borderInfo[i].rangeType;
 
-        if (bd_rangeType === "range") {
+        if (
+          bd_rangeType === "range" &&
+          cfg.borderInfo[i].borderType !== "border-slash"
+        ) {
           const bd_range = cfg.borderInfo[i].range;
           let bd_emptyRange: any = [];
 
@@ -1281,6 +1284,17 @@ export function handleClearFormat(ctx: Context) {
           ) {
             source_borderInfo.push(cfg.borderInfo[i]);
           }
+        } else if (
+          bd_rangeType === "range" &&
+          cfg.borderInfo[i].borderType === "border-slash" &&
+          !(
+            cfg.borderInfo[i].range[0].row[0] >= rowSt &&
+            cfg.borderInfo[i].range[0].row[0] <= rowEd &&
+            cfg.borderInfo[i].range[0].column[0] >= colSt &&
+            cfg.borderInfo[i].range[0].column[0] <= colEd
+          )
+        ) {
+          source_borderInfo.push(cfg.borderInfo[i]);
         }
       }
 
