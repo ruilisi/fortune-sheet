@@ -20,6 +20,7 @@ import {
   isInlineStringCT,
 } from "./inline-string";
 import { isRealNull, isRealNum, valueIsError } from "./validation";
+import { getCellTextInfo } from "./text";
 
 // TODO put these in context ref
 // let rangestart = false;
@@ -667,7 +668,8 @@ export function updateCell(
   r: number,
   c: number,
   $input?: HTMLDivElement | null,
-  value?: any
+  value?: any,
+  canvas?: CanvasRenderingContext2D
 ) {
   let inputText = $input?.innerText;
   const inputHtml = $input?.innerHTML;
@@ -735,6 +737,8 @@ export function updateCell(
       curv = {};
     }
     curv ||= {};
+    const fontSize = curv.fs || 10;
+    delete curv.fs;
     delete curv.f;
     delete curv.v;
     delete curv.m;
@@ -746,10 +750,12 @@ export function updateCell(
 
     curv.ct.t = "inlineStr";
     curv.ct.s = convertSpanToShareString($input!.querySelectorAll("span"));
+    curv.fs = fontSize;
     if (isCopyVal) {
       curv.ct.s = [
         {
           v: inputText,
+          fs: fontSize,
         },
       ];
     }
@@ -975,28 +981,29 @@ export function updateCell(
   }
   */
 
-  /*
-  if ((d[r][c].tb === "2" && d[r][c].v) || isInlineStringCell(d[r][c])) {
+  if ((curv?.tb === "2" && curv.v) || isInlineStringCell(d[r][c])) {
     // 自动换行
     const { defaultrowlen } = ctx;
 
-    const canvas = $("#luckysheetTableContent").get(0).getContext("2d");
+    // const canvas = $("#luckysheetTableContent").get(0).getContext("2d");
     // offlinecanvas.textBaseline = 'top'; //textBaseline以top计算
 
     // let fontset = luckysheetfontformat(d[r][c]);
     // offlinecanvas.font = fontset;
 
-    if (cfg.customHeight && cfg.customHeight[r] === 1) {
-    } else {
+    const cfg =
+      ctx.luckysheetfile[
+        getSheetIndex(ctx, ctx.currentSheetId as string) as number
+      ].config || {};
+    if (!(cfg.columnlen?.[c] && cfg.rowlen?.[r])) {
       // let currentRowLen = defaultrowlen;
       // if(!_.isNil(cfg["rowlen"][r])){
       //     currentRowLen = cfg["rowlen"][r];
       // }
 
-      const colLoc = colLocationByIndex(c, ctx.visibledatacolumn);
-      const cellWidth = colLoc[1] - colLoc[0] - 2;
+      const cellWidth = cfg.columnlen?.[c] || ctx.defaultcollen;
 
-      const textInfo = getCellTextInfo(d[r][c], canvas, ctx, {
+      const textInfo = getCellTextInfo(d[r][c] as Cell, canvas!, ctx, {
         r,
         c,
         cellWidth,
@@ -1008,13 +1015,12 @@ export function updateCell(
         currentRowLen = textInfo.textHeightAll + 2;
       }
 
-      if (currentRowLen > defaultrowlen) {
+      if (currentRowLen > defaultrowlen && !cfg.customHeight?.[r]) {
+        if (_.isNil(cfg.rowlen)) cfg.rowlen = {};
         cfg.rowlen[r] = currentRowLen;
-        RowlChange = true;
       }
     }
   }
-  */
 
   // 动态数组
   /*
@@ -1520,7 +1526,7 @@ export function rowlenByRange(
             2;
         }
 
-        const textInfo = getCellTextInfo(cell, canvas, {
+       const textInfo = getCellTextInfo(cell, canvas, {
           r,
           c,
           cellWidth,
