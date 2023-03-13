@@ -518,7 +518,8 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             nativeEvent,
             globalCache.current!,
             handleUndo,
-            handleRedo
+            handleRedo,
+            canvas.current!.getContext("2d")!
           );
         });
       },

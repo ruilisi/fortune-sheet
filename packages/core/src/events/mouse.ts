@@ -209,7 +209,8 @@ export function handleCellAreaMouseDown(
   e: MouseEvent,
   cellInput: HTMLDivElement,
   container: HTMLDivElement,
-  fxInput?: HTMLDivElement | null
+  fxInput?: HTMLDivElement | null,
+  canvas?: CanvasRenderingContext2D
 ) {
   ctx.contextMenu = {};
   ctx.filterContextMenu = undefined;
@@ -619,7 +620,9 @@ export function handleCellAreaMouseDown(
       ctx,
       ctx.luckysheetCellUpdate[0],
       ctx.luckysheetCellUpdate[1],
-      cellInput
+      cellInput,
+      undefined,
+      canvas
     );
     ctx.luckysheet_select_status = true;
 

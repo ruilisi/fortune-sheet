@@ -68,7 +68,8 @@ const SheetOverlay: React.FC = () => {
             nativeEvent,
             refs.cellInput.current!,
             refs.cellArea.current!,
-            refs.fxInput.current!
+            refs.fxInput.current!,
+            refs.canvas.current!.getContext("2d")!
           );
 
           if (
@@ -82,7 +83,14 @@ const SheetOverlay: React.FC = () => {
         });
       }
     },
-    [refs.cellArea, refs.cellInput, refs.globalCache, refs.fxInput, setContext]
+    [
+      setContext,
+      refs.globalCache,
+      refs.cellInput,
+      refs.cellArea,
+      refs.fxInput,
+      refs.canvas,
+    ]
   );
 
   const cellAreaContextMenu = useCallback(

@@ -21,7 +21,8 @@ import { jfrefreshgrid } from "../modules/refresh";
 export function handleGlobalEnter(
   ctx: Context,
   cellInput: HTMLDivElement,
-  e: KeyboardEvent
+  e: KeyboardEvent,
+  canvas?: CanvasRenderingContext2D
 ) {
   // const flowdata = getFlowdata(ctx);
   if ((e.altKey || e.metaKey) && ctx.luckysheetCellUpdate.length > 0) {
@@ -49,7 +50,9 @@ export function handleGlobalEnter(
       ctx,
       ctx.luckysheetCellUpdate[0],
       ctx.luckysheetCellUpdate[1],
-      cellInput
+      cellInput,
+      undefined,
+      canvas
     );
     ctx.luckysheet_select_save = [
       {
@@ -437,7 +440,8 @@ export function handleGlobalKeyDown(
   e: KeyboardEvent,
   cache: GlobalCache,
   handleUndo: () => void,
-  handleRedo: () => void
+  handleRedo: () => void,
+  canvas?: CanvasRenderingContext2D
 ) {
   ctx.luckysheet_select_status = false;
   const kcode = e.keyCode;
@@ -530,7 +534,7 @@ export function handleGlobalKeyDown(
 
   if (kstr === "Enter") {
     if (!ctx.allowEdit) return;
-    handleGlobalEnter(ctx, cellInput, e);
+    handleGlobalEnter(ctx, cellInput, e, canvas);
   } else if (kstr === "Tab") {
     if (ctx.luckysheetCellUpdate.length > 0) {
       return;
