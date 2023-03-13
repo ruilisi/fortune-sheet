@@ -442,7 +442,7 @@ export function handleGlobalKeyDown(
   ctx.luckysheet_select_status = false;
   const kcode = e.keyCode;
   const kstr = e.key;
-  if (ctx.contextMenu || ctx.filterContextMenu) {
+  if (!_.isEmpty(ctx.contextMenu) || ctx.filterContextMenu) {
     return;
   }
 
