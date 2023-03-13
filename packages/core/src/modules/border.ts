@@ -660,15 +660,18 @@ export function getBorderInfoComputeRange(
                   if (borderInfoCompute[`${bd_r}_${bd_c}`] === undefined) {
                     borderInfoCompute[`${bd_r}_${bd_c}`] = {};
                   }
-
-                  borderInfoCompute[`${bd_r}_${bd_c}`].r = {
-                    color: borderColor,
-                    style: borderStyle,
-                  };
-                  borderInfoCompute[`${bd_r}_${bd_c}`].b = {
-                    color: borderColor,
-                    style: borderStyle,
-                  };
+                  if (!bd_r === bd_r2) {
+                    borderInfoCompute[`${bd_r}_${bd_c}`].r = {
+                      color: borderColor,
+                      style: borderStyle,
+                    };
+                  }
+                  if (!bd_c === bd_c2) {
+                    borderInfoCompute[`${bd_r}_${bd_c}`].b = {
+                      color: borderColor,
+                      style: borderStyle,
+                    };
+                  }
                 }
               } else if (bd_r === bd_r2 && bd_c === bd_c1) {
                 if (!_.isNil(data[bd_r]?.[bd_c]?.mc)) {
@@ -677,10 +680,12 @@ export function getBorderInfoComputeRange(
                     borderInfoCompute[`${bd_r}_${bd_c}`] = {};
                   }
 
-                  borderInfoCompute[`${bd_r}_${bd_c}`].r = {
-                    color: borderColor,
-                    style: borderStyle,
-                  };
+                  if (!bd_r === bd_r2) {
+                    borderInfoCompute[`${bd_r}_${bd_c}`].r = {
+                      color: borderColor,
+                      style: borderStyle,
+                    };
+                  }
                   borderInfoCompute[`${bd_r}_${bd_c}`].t = {
                     color: borderColor,
                     style: borderStyle,
@@ -697,10 +702,12 @@ export function getBorderInfoComputeRange(
                     color: borderColor,
                     style: borderStyle,
                   };
-                  borderInfoCompute[`${bd_r}_${bd_c}`].b = {
-                    color: borderColor,
-                    style: borderStyle,
-                  };
+                  if (!bd_c === bd_c2) {
+                    borderInfoCompute[`${bd_r}_${bd_c}`].b = {
+                      color: borderColor,
+                      style: borderStyle,
+                    };
+                  }
                 }
               } else if (bd_r === bd_r2 && bd_c === bd_c2) {
                 if (!_.isNil(data[bd_r]?.[bd_c]?.mc)) {
@@ -738,10 +745,12 @@ export function getBorderInfoComputeRange(
                       borderInfoCompute[`${bd_r}_${bd_c}`] = {};
                     }
 
-                    borderInfoCompute[`${bd_r}_${bd_c}`].r = {
-                      color: borderColor,
-                      style: borderStyle,
-                    };
+                    if (!bd_r === bd_r2) {
+                      borderInfoCompute[`${bd_r}_${bd_c}`].r = {
+                        color: borderColor,
+                        style: borderStyle,
+                      };
+                    }
                   }
                 } else {
                   if (borderInfoCompute[`${bd_r}_${bd_c}`] === undefined) {
@@ -752,14 +761,18 @@ export function getBorderInfoComputeRange(
                     color: borderColor,
                     style: borderStyle,
                   };
-                  borderInfoCompute[`${bd_r}_${bd_c}`].r = {
-                    color: borderColor,
-                    style: borderStyle,
-                  };
-                  borderInfoCompute[`${bd_r}_${bd_c}`].b = {
-                    color: borderColor,
-                    style: borderStyle,
-                  };
+                  if (!bd_r === bd_r2) {
+                    borderInfoCompute[`${bd_r}_${bd_c}`].r = {
+                      color: borderColor,
+                      style: borderStyle,
+                    };
+                  }
+                  if (!bd_c === bd_c2) {
+                    borderInfoCompute[`${bd_r}_${bd_c}`].b = {
+                      color: borderColor,
+                      style: borderStyle,
+                    };
+                  }
                 }
               } else if (bd_r === bd_r2) {
                 if (!_.isNil(data[bd_r]?.[bd_c]?.mc)) {
@@ -781,10 +794,12 @@ export function getBorderInfoComputeRange(
                       borderInfoCompute[`${bd_r}_${bd_c}`] = {};
                     }
 
-                    borderInfoCompute[`${bd_r}_${bd_c}`].r = {
-                      color: borderColor,
-                      style: borderStyle,
-                    };
+                    if (!bd_r === bd_r2) {
+                      borderInfoCompute[`${bd_r}_${bd_c}`].r = {
+                        color: borderColor,
+                        style: borderStyle,
+                      };
+                    }
                   }
                 } else {
                   if (borderInfoCompute[`${bd_r}_${bd_c}`] === undefined) {
@@ -795,10 +810,12 @@ export function getBorderInfoComputeRange(
                     color: borderColor,
                     style: borderStyle,
                   };
-                  borderInfoCompute[`${bd_r}_${bd_c}`].r = {
-                    color: borderColor,
-                    style: borderStyle,
-                  };
+                  if (!bd_r === bd_r2) {
+                    borderInfoCompute[`${bd_r}_${bd_c}`].r = {
+                      color: borderColor,
+                      style: borderStyle,
+                    };
+                  }
                   borderInfoCompute[`${bd_r}_${bd_c}`].t = {
                     color: borderColor,
                     style: borderStyle,
@@ -824,28 +841,34 @@ export function getBorderInfoComputeRange(
                       borderInfoCompute[`${bd_r}_${bd_c}`] = {};
                     }
 
-                    borderInfoCompute[`${bd_r}_${bd_c}`].b = {
-                      color: borderColor,
-                      style: borderStyle,
-                    };
+                    if (!bd_c === bd_c2) {
+                      borderInfoCompute[`${bd_r}_${bd_c}`].b = {
+                        color: borderColor,
+                        style: borderStyle,
+                      };
+                    }
                   }
                 } else {
                   if (borderInfoCompute[`${bd_r}_${bd_c}`] === undefined) {
                     borderInfoCompute[`${bd_r}_${bd_c}`] = {};
                   }
 
-                  borderInfoCompute[`${bd_r}_${bd_c}`].r = {
-                    color: borderColor,
-                    style: borderStyle,
-                  };
+                  if (!bd_r === bd_r2) {
+                    borderInfoCompute[`${bd_r}_${bd_c}`].r = {
+                      color: borderColor,
+                      style: borderStyle,
+                    };
+                  }
                   borderInfoCompute[`${bd_r}_${bd_c}`].t = {
                     color: borderColor,
                     style: borderStyle,
                   };
-                  borderInfoCompute[`${bd_r}_${bd_c}`].b = {
-                    color: borderColor,
-                    style: borderStyle,
-                  };
+                  if (!bd_c === bd_c2) {
+                    borderInfoCompute[`${bd_r}_${bd_c}`].b = {
+                      color: borderColor,
+                      style: borderStyle,
+                    };
+                  }
                 }
               } else if (bd_c === bd_c2) {
                 if (!_.isNil(data[bd_r]?.[bd_c]?.mc)) {
@@ -867,10 +890,12 @@ export function getBorderInfoComputeRange(
                       borderInfoCompute[`${bd_r}_${bd_c}`] = {};
                     }
 
-                    borderInfoCompute[`${bd_r}_${bd_c}`].b = {
-                      color: borderColor,
-                      style: borderStyle,
-                    };
+                    if (!bd_c === bd_c2) {
+                      borderInfoCompute[`${bd_r}_${bd_c}`].b = {
+                        color: borderColor,
+                        style: borderStyle,
+                      };
+                    }
                   }
                 } else {
                   if (borderInfoCompute[`${bd_r}_${bd_c}`] === undefined) {
@@ -885,10 +910,12 @@ export function getBorderInfoComputeRange(
                     color: borderColor,
                     style: borderStyle,
                   };
-                  borderInfoCompute[`${bd_r}_${bd_c}`].b = {
-                    color: borderColor,
-                    style: borderStyle,
-                  };
+                  if (!bd_c === bd_c2) {
+                    borderInfoCompute[`${bd_r}_${bd_c}`].b = {
+                      color: borderColor,
+                      style: borderStyle,
+                    };
+                  }
                 }
               } else {
                 if (!_.isNil(data[bd_r]?.[bd_c]?.mc)) {
@@ -910,10 +937,12 @@ export function getBorderInfoComputeRange(
                       borderInfoCompute[`${bd_r}_${bd_c}`] = {};
                     }
 
-                    borderInfoCompute[`${bd_r}_${bd_c}`].b = {
-                      color: borderColor,
-                      style: borderStyle,
-                    };
+                    if (!bd_c === bd_c2) {
+                      borderInfoCompute[`${bd_r}_${bd_c}`].b = {
+                        color: borderColor,
+                        style: borderStyle,
+                      };
+                    }
                   }
 
                   if (mc?.c === bd_c) {
@@ -930,10 +959,12 @@ export function getBorderInfoComputeRange(
                       borderInfoCompute[`${bd_r}_${bd_c}`] = {};
                     }
 
-                    borderInfoCompute[`${bd_r}_${bd_c}`].r = {
-                      color: borderColor,
-                      style: borderStyle,
-                    };
+                    if (!bd_r === bd_r2) {
+                      borderInfoCompute[`${bd_r}_${bd_c}`].r = {
+                        color: borderColor,
+                        style: borderStyle,
+                      };
+                    }
                   }
                 } else {
                   if (borderInfoCompute[`${bd_r}_${bd_c}`] === undefined) {
@@ -944,18 +975,22 @@ export function getBorderInfoComputeRange(
                     color: borderColor,
                     style: borderStyle,
                   };
-                  borderInfoCompute[`${bd_r}_${bd_c}`].r = {
-                    color: borderColor,
-                    style: borderStyle,
-                  };
+                  if (!bd_r === bd_r2) {
+                    borderInfoCompute[`${bd_r}_${bd_c}`].r = {
+                      color: borderColor,
+                      style: borderStyle,
+                    };
+                  }
                   borderInfoCompute[`${bd_r}_${bd_c}`].t = {
                     color: borderColor,
                     style: borderStyle,
                   };
-                  borderInfoCompute[`${bd_r}_${bd_c}`].b = {
-                    color: borderColor,
-                    style: borderStyle,
-                  };
+                  if (!bd_c === bd_c2) {
+                    borderInfoCompute[`${bd_r}_${bd_c}`].b = {
+                      color: borderColor,
+                      style: borderStyle,
+                    };
+                  }
                 }
               }
             }
