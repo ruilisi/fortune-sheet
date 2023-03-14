@@ -1,6 +1,6 @@
 {
   "name": "@fortune-sheet/formula-parser",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Formula parser",
   "main": "lib/index.js",
   "module": "es/index.js",
