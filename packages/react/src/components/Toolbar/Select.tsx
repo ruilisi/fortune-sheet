@@ -1,8 +1,15 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import SVGIcon from "../SVGIcon";
 
-const Select: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-  return <div className="fortune-toolbar-select">{children}</div>;
+const Select: React.FC<{
+  children?: React.ReactNode;
+  style?: CSSProperties;
+}> = ({ children, style }) => {
+  return (
+    <div className="fortune-toolbar-select" style={style}>
+      {children}
+    </div>
+  );
 };
 
 type OptionProps = {
