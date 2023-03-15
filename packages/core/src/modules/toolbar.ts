@@ -40,6 +40,7 @@ import {
 } from "./validation";
 import { showLinkCard } from "./hyperlink";
 import { cfSplitRange } from "./conditionalFormat";
+import { getCellTextInfo } from "./text";
 
 type ToolbarItemClickHandler = (
   ctx: Context,
@@ -57,7 +58,8 @@ export function updateFormatCell(
   row_st: number,
   row_ed: number,
   col_st: number,
-  col_ed: number
+  col_ed: number,
+  canvas?: CanvasRenderingContext2D
 ) {
   if (_.isNil(d) || _.isNil(attr)) {
     return;
@@ -181,6 +183,37 @@ export function updateFormatCell(
           // @ts-ignore
           value[attr] = foucsStatus;
           // }
+          const cfg =
+            ctx.luckysheetfile[
+              getSheetIndex(ctx, ctx.currentSheetId as string) as number
+            ].config!;
+          const cellWidth =
+            cfg?.columnlen?.[c] ||
+            ctx.luckysheetfile[
+              getSheetIndex(ctx, ctx.currentSheetId as string) as number
+            ].defaultColWidth;
+          if (attr === "fs" && canvas) {
+            const textInfo = getCellTextInfo(d[r][c]!, canvas, ctx, {
+              r,
+              c,
+              cellWidth,
+            });
+            const rowHeight = _.round(textInfo.textHeightAll);
+            const currentRowHeight =
+              cfg.rowlen?.[r] ||
+              ctx.luckysheetfile[
+                getSheetIndex(ctx, ctx.currentSheetId as string) as number
+              ].defaultRowHeight ||
+              19;
+            if (
+              !_.isUndefined(rowHeight) &&
+              rowHeight > currentRowHeight &&
+              (!cfg.customHeight || cfg.customHeight[r] !== 1)
+            ) {
+              if (_.isUndefined(cfg.rowlen)) cfg.rowlen = {};
+              _.set(cfg, `rowlen.${r}`, rowHeight);
+            }
+          }
         } else {
           // @ts-ignore
           d[r][c] = { v: value };
@@ -201,7 +234,8 @@ export function updateFormat(
   $input: HTMLDivElement,
   d: CellMatrix,
   attr: keyof Cell,
-  foucsStatus: any
+  foucsStatus: any,
+  canvas?: CanvasRenderingContext2D
 ) {
   //   if (!checkProtectionFormatCells(ctx.currentSheetId)) {
   //     return;
@@ -234,7 +268,17 @@ export function updateFormat(
     const [row_st, row_ed] = selection.row;
     const [col_st, col_ed] = selection.column;
 
-    updateFormatCell(ctx, d, attr, foucsStatus, row_st, row_ed, col_st, col_ed);
+    updateFormatCell(
+      ctx,
+      d,
+      attr,
+      foucsStatus,
+      row_st,
+      row_ed,
+      col_st,
+      col_ed,
+      canvas
+    );
 
     // if (attr === "tb" || attr === "tr" || attr === "fs") {
     //   cfg = rowlenByRange(ctx, d, row_st, row_ed, cfg);
@@ -266,12 +310,13 @@ function setAttr(
   ctx: Context,
   cellInput: HTMLDivElement,
   attr: keyof Cell,
-  value: any
+  value: any,
+  canvas?: CanvasRenderingContext2D
 ) {
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
 
-  updateFormat(ctx, cellInput, flowdata, attr, value);
+  updateFormat(ctx, cellInput, flowdata, attr, value, canvas);
 }
 // @ts-ignore
 function checkNoNullValue(cell) {
@@ -1489,9 +1534,10 @@ export function handleFreeze(ctx: Context, type: string) {
 export function handleTextSize(
   ctx: Context,
   cellInput: HTMLDivElement,
-  size: number
+  size: number,
+  canvas?: CanvasRenderingContext2D
 ) {
-  setAttr(ctx, cellInput, "fs", size);
+  setAttr(ctx, cellInput, "fs", size, canvas);
 }
 
 export function handleSum(

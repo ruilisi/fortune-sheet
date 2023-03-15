@@ -178,15 +178,20 @@ export function generateAPIs(
 
     setRowHeight: (
       rowInfo: Record<string, number>,
-      options: api.CommonOptions = {}
-    ) => setContext((draftCtx) => api.setRowHeight(draftCtx, rowInfo, options)),
+      options: api.CommonOptions = {},
+      custom: boolean = false
+    ) =>
+      setContext((draftCtx) =>
+        api.setRowHeight(draftCtx, rowInfo, options, custom)
+      ),
 
     setColumnWidth: (
       columnInfo: Record<string, number>,
-      options: api.CommonOptions = {}
+      options: api.CommonOptions = {},
+      custom: boolean = false
     ) =>
       setContext((draftCtx) =>
-        api.setColumnWidth(draftCtx, columnInfo, options)
+        api.setColumnWidth(draftCtx, columnInfo, options, custom)
       ),
 
     getRowHeight: (rows: number[], options: api.CommonOptions = {}) =>

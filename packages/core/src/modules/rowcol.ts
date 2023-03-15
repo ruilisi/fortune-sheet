@@ -627,6 +627,29 @@ export function insertRowCol(
       cfg.rowlen = rowlen_new;
     }
 
+    // 自定义行高配置变动
+    if (cfg.customHeight != null) {
+      const customHeight_new: any = {};
+
+      _.forEach(cfg.customHeight, (v, rstr) => {
+        const r = parseFloat(rstr);
+
+        if (r < index) {
+          customHeight_new[r] = cfg.customHeight![r];
+        } else if (r === index) {
+          if (direction === "lefttop") {
+            customHeight_new[r + count] = cfg.customHeight![r];
+          } else if (direction === "rightbottom") {
+            customHeight_new[r] = cfg.customHeight![r];
+          }
+        } else {
+          customHeight_new[r + count] = cfg.customHeight![r];
+        }
+      });
+
+      cfg.customHeight = customHeight_new;
+    }
+
     // 隐藏行配置变动
     if (cfg.rowhidden != null) {
       const rowhidden_new: any = {};
@@ -779,7 +802,7 @@ export function insertRowCol(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type1 = "c";
 
-    // 行高配置变动
+    // 列宽配置变动
     if (cfg.columnlen != null) {
       const columnlen_new: any = {};
 
@@ -800,6 +823,29 @@ export function insertRowCol(
       });
 
       cfg.columnlen = columnlen_new;
+    }
+
+    // 自定义列宽配置变动
+    if (cfg.customWidth != null) {
+      const customWidth_new: any = {};
+
+      _.forEach(cfg.customWidth, (v, cstr) => {
+        const c = parseFloat(cstr);
+
+        if (c < index) {
+          customWidth_new[c] = cfg.customWidth![c];
+        } else if (c === index) {
+          if (direction === "lefttop") {
+            customWidth_new[c + count] = cfg.customWidth![c];
+          } else if (direction === "rightbottom") {
+            customWidth_new[c] = cfg.customWidth![c];
+          }
+        } else {
+          customWidth_new[c + count] = cfg.customWidth![c];
+        }
+      });
+
+      cfg.customWidth = customWidth_new;
     }
 
     // 隐藏列配置变动
@@ -1611,6 +1657,7 @@ export function deleteRowCol(
     }
 
     const rowlen_new: any = {};
+    const rowReadOnly_new: any = {};
     _.forEach(cfg.rowlen, (v, rstr) => {
       const r = parseFloat(rstr);
       if (r < start) {
@@ -1619,8 +1666,16 @@ export function deleteRowCol(
         rowlen_new[r - slen] = cfg.rowlen![r];
       }
     });
+    _.forEach(cfg.rowReadOnly, (v, r) => {
+      if (r < start) {
+        rowReadOnly_new[r] = cfg.rowReadOnly![r];
+      } else if (r > end) {
+        rowReadOnly_new[r - slen] = cfg.rowReadOnly![r];
+      }
+    });
 
     cfg.rowlen = rowlen_new;
+    cfg.rowReadOnly = rowReadOnly_new;
 
     // 隐藏行配置变动
     if (cfg.rowhidden == null) {
@@ -1637,7 +1692,22 @@ export function deleteRowCol(
       }
     });
 
-    cfg.rowhidden = rowhidden_new;
+    // 自定义行高配置变动
+    if (cfg.customHeight == null) {
+      cfg.customHeight = {};
+
+      const customHeight_new: any = {};
+      _.forEach(cfg.customHeight, (v, rstr) => {
+        const r = parseFloat(rstr);
+        if (r < start) {
+          customHeight_new[r] = cfg.customHeight![r];
+        } else if (r > end) {
+          customHeight_new[r - slen] = cfg.customHeight![r];
+        }
+      });
+
+      cfg.customHeight = customHeight_new;
+    }
 
     // 边框配置变动
     if (cfg.borderInfo && cfg.borderInfo.length > 0) {
@@ -1729,6 +1799,7 @@ export function deleteRowCol(
     }
 
     const columnlen_new: any = {};
+    const columnReadOnly_new: any = {};
     _.forEach(cfg.columnlen, (v, cstr) => {
       const c = parseFloat(cstr);
       if (c < start) {
@@ -1737,8 +1808,33 @@ export function deleteRowCol(
         columnlen_new[c - slen] = cfg.columnlen![c];
       }
     });
+    _.forEach(cfg.colReadOnly, (v, c) => {
+      if (c < start) {
+        columnReadOnly_new[c] = cfg.colReadOnly![c];
+      } else if (c > end) {
+        columnReadOnly_new[c - slen] = cfg.colReadOnly![c];
+      }
+    });
 
     cfg.columnlen = columnlen_new;
+    cfg.colReadOnly = columnReadOnly_new;
+
+    // 自定义列宽配置变动
+    if (cfg.customWidth == null) {
+      cfg.customWidth = {};
+
+      const customWidth_new: any = {};
+      _.forEach(cfg.customWidth, (v, rstr) => {
+        const r = parseFloat(rstr);
+        if (r < start) {
+          customWidth_new[r] = cfg.customWidth![r];
+        } else if (r > end) {
+          customWidth_new[r - slen] = cfg.customWidth![r];
+        }
+      });
+
+      cfg.customWidth = customWidth_new;
+    }
 
     // 隐藏列配置变动
     if (cfg.colhidden == null) {

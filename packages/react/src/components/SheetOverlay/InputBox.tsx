@@ -301,8 +301,7 @@ const InputBox: React.FC = () => {
 
   let edit = context.allowEdit;
   if (
-    (colReadOnly.indexOf(col_index) !== -1 ||
-      rowReadOnly.indexOf(row_index) !== -1) &&
+    (colReadOnly[col_index] || rowReadOnly[row_index]) &&
     context.allowEdit === true
   ) {
     edit = false;
