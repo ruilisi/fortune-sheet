@@ -222,6 +222,7 @@
 /*颜色筛选 -- pan*/
 .luckysheet-filter-bycolor-submenu {
   position: absolute;
+  min-width: 170px;
   font-size: 12px;
   padding: 5px 0;
   z-index: 1004;

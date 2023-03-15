@@ -1,56 +1,113 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext } from "react";
 import "./index.css";
 import { locale, updateItem } from "@fortune-sheet/core";
+import _ from "lodash";
 import WorkbookContext from "../../context";
 import Select, { Option } from "../Toolbar/Select";
 import SVGIcon from "../SVGIcon";
 import { useDialog } from "../../hooks/useDialog";
 import ConditionRules from "./ConditionRules";
+import { MenuDivider } from "../Toolbar/Divider";
 
 const ConditionalFormat: React.FC<{
   items: string[];
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ items, setOpen }) => {
-  const { context, setContext } = useContext(WorkbookContext);
+  const { context, setContext, refs } = useContext(WorkbookContext);
   const { showDialog } = useDialog();
-  const [showHightlightRules, setShowHightlightRules] =
-    useState<boolean>(false);
-  const [showItemRules, setShowItemRules] = useState<boolean>(false);
-  const [showDeleteRules, setShowDeleteRules] = useState<boolean>(false);
-
   const { conditionformat } = locale(context);
+
+  // 子菜单溢出屏幕时，重新定位子菜单位置
+  // re-position the subMenu if it oveflows the window
+  const showSubMenu = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const target = e.target as HTMLDivElement;
+      const menuItem =
+        target.className === "fortune-toolbar-menu-line"
+          ? target.parentElement!
+          : target;
+      const menuItemRect = menuItem.getBoundingClientRect();
+      const workbookContainerRect =
+        refs.workbookContainer.current!.getBoundingClientRect();
+      const subMenu = menuItem.querySelector(
+        ".condition-format-sub-menu"
+      ) as HTMLDivElement;
+      if (_.isNil(subMenu)) return;
+      const menuItemStyle = window.getComputedStyle(menuItem);
+      const menuItemPaddingRight = parseFloat(
+        menuItemStyle.getPropertyValue("padding-right").replace("px", "")
+      );
+
+      if (
+        workbookContainerRect.right - menuItemRect.right <
+        parseFloat(subMenu.style.width.replace("px", ""))
+      ) {
+        subMenu.style.display = "block";
+        subMenu.style.right = `${menuItemRect.width - menuItemPaddingRight}px`;
+      } else {
+        subMenu.style.display = "block";
+        subMenu.style.right = `${-(
+          parseFloat(subMenu.style.width.replace("px", "")) +
+          menuItemPaddingRight
+        )}px`;
+      }
+    },
+    [refs.workbookContainer]
+  );
+
+  const hideSubMenu = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const target = e.target as HTMLDivElement;
+
+      if (target.className === "condition-format-sub-menu") {
+        target.style.display = "none";
+        return;
+      }
+
+      const subMenu = (
+        target.className === "condition-format-item"
+          ? target.parentElement
+          : target.querySelector(".condition-format-sub-menu")
+      ) as HTMLDivElement;
+      if (_.isNil(subMenu)) return;
+      subMenu.style.display = "none";
+    },
+    []
+  );
 
   // 获得条件格式
   const getConditionFormatItem = useCallback(
     (name: string) => {
       if (name === "-") {
-        return <div className="horizontal-line" />;
+        return <MenuDivider key={name} />;
       }
       if (name === "highlightCellRules") {
         return (
-          <div
-            className="fortune-toolbar-menu-line"
-            key={`div${name}`}
-            onMouseEnter={() => {
-              setShowHightlightRules(true);
-            }}
-            onMouseLeave={() => {
-              setShowHightlightRules(false);
-            }}
+          <Option
+            key={name}
+            onMouseEnter={showSubMenu}
+            onMouseLeave={hideSubMenu}
           >
-            {conditionformat[name]}
-            <span className="right-arrow" key={`span${name}`}>
+            <div className="fortune-toolbar-menu-line" key={`div${name}`}>
+              {conditionformat[name]}
               <SVGIcon name="rightArrow" width={18} />
-            </span>
-            {showHightlightRules && (
-              <div className="condition-format-sub-menu">
+              <div
+                className="condition-format-sub-menu"
+                style={{
+                  display: "none",
+                  width: 150,
+                }}
+              >
                 {[
                   { text: "greaterThan", value: ">" },
                   { text: "lessThan", value: "<" },
                   { text: "between", value: "[]" },
                   { text: "equal", value: "=" },
                   { text: "textContains", value: "()" },
-                  { text: "occurrenceDate", value: conditionformat.yesterday },
+                  {
+                    text: "occurrenceDate",
+                    value: conditionformat.yesterday,
+                  },
                   { text: "duplicateValue", value: "##" },
                 ].map((v) => (
                   <div
@@ -66,28 +123,27 @@ const ConditionalFormat: React.FC<{
                   </div>
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          </Option>
         );
       }
       if (name === "itemSelectionRules") {
         return (
-          <div
-            className="fortune-toolbar-menu-line"
-            key={`div${name}`}
-            onMouseEnter={() => {
-              setShowItemRules(true);
-            }}
-            onMouseLeave={() => {
-              setShowItemRules(false);
-            }}
+          <Option
+            key={name}
+            onMouseEnter={showSubMenu}
+            onMouseLeave={hideSubMenu}
           >
-            {conditionformat[name]}
-            <span className="right-arrow" key={`span${name}`}>
+            <div className="fortune-toolbar-menu-line">
+              {conditionformat[name]}
               <SVGIcon name="rightArrow" width={18} />
-            </span>
-            {showItemRules && (
-              <div className="condition-format-sub-menu">
+              <div
+                className="condition-format-sub-menu"
+                style={{
+                  display: "none",
+                  width: 180,
+                }}
+              >
                 {[
                   { text: "top10", value: conditionformat.top10 },
                   {
@@ -115,17 +171,15 @@ const ConditionalFormat: React.FC<{
                   </div>
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          </Option>
         );
       }
       if (name === "dataBar") {
         return (
           <div className="fortune-toolbar-menu-line" key={`div${name}`}>
             {conditionformat[name]}
-            <span className="right-arrow" key={`span${name}`}>
-              <SVGIcon name="rightArrow" width={18} />
-            </span>
+            <SVGIcon name="rightArrow" width={18} />
           </div>
         );
       }
@@ -133,9 +187,7 @@ const ConditionalFormat: React.FC<{
         return (
           <div className="fortune-toolbar-menu-line" key={`div${name}`}>
             {conditionformat[name]}
-            <span className="right-arrow" key={`span${name}`}>
-              <SVGIcon name="rightArrow" width={18} />
-            </span>
+            <SVGIcon name="rightArrow" width={18} />
           </div>
         );
       }
@@ -155,22 +207,21 @@ const ConditionalFormat: React.FC<{
       }
       if (name === "deleteRule") {
         return (
-          <div
-            className="fortune-toolbar-menu-line"
-            key={`div${name}`}
-            onMouseEnter={() => {
-              setShowDeleteRules(true);
-            }}
-            onMouseLeave={() => {
-              setShowDeleteRules(false);
-            }}
+          <Option
+            key={name}
+            onMouseEnter={showSubMenu}
+            onMouseLeave={hideSubMenu}
           >
-            {conditionformat[name]}
-            <span className="right-arrow" key={`span${name}`}>
+            <div className="fortune-toolbar-menu-line">
+              {conditionformat[name]}
               <SVGIcon name="rightArrow" width={18} />
-            </span>
-            {showDeleteRules && (
-              <div className="condition-format-sub-menu">
+              <div
+                className="condition-format-sub-menu"
+                style={{
+                  display: "none",
+                  width: 150,
+                }}
+              >
                 {["deleteSheetRule"].map((v) => (
                   <div
                     className="condition-format-item"
@@ -186,8 +237,8 @@ const ConditionalFormat: React.FC<{
                   </div>
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          </Option>
         );
       }
       if (name === "manageRules") {
@@ -200,20 +251,12 @@ const ConditionalFormat: React.FC<{
 
       return <div />;
     },
-    [
-      conditionformat,
-      setContext,
-      setOpen,
-      showDeleteRules,
-      showDialog,
-      showHightlightRules,
-      showItemRules,
-    ]
+    [conditionformat, hideSubMenu, setContext, setOpen, showDialog, showSubMenu]
   );
 
   return (
     <div className="condition-format">
-      <Select>
+      <Select style={{ overflow: "visible" }}>
         {items.map((v) => (
           <Option key={`option${v}`}>{getConditionFormatItem(v)}</Option>
         ))}

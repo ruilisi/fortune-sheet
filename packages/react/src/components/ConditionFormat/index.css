@@ -1,23 +1,6 @@
-.fortune-toolbar-menu-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  padding: 0px 16px;
-}
-
-.right-arrow {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translate(20%, -50%);
-}
-
 .condition-format-sub-menu {
-  width: 100%;
   position: absolute;
   top: -8px;
-  right: -144px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
   background: #fff;
   border: 1px solid rgba(0, 0, 0, .2);
