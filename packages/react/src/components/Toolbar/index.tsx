@@ -303,7 +303,8 @@ const Toolbar: React.FC<{
                         handleTextSize(
                           draftContext,
                           refs.cellInput.current!,
-                          num
+                          num,
+                          refs.canvas.current!.getContext("2d")!
                         )
                       );
                       setOpen(false);

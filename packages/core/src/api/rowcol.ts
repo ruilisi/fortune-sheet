@@ -84,7 +84,8 @@ export function deleteRowOrColumn(
 export function setRowHeight(
   ctx: Context,
   rowInfo: Record<string, number>,
-  options: CommonOptions = {}
+  options: CommonOptions = {},
+  custom: boolean = false
 ) {
   if (!_.isPlainObject(rowInfo)) {
     throw INVALID_PARAMS;
@@ -101,6 +102,11 @@ export function setRowHeight(
     if (Number(r) >= 0) {
       if (Number(len) >= 0) {
         cfg.rowlen![Number(r)] = Number(len);
+        if (custom && _.isUndefined(cfg.customHeight)) {
+          cfg.customHeight = { [r]: 1 };
+        } else if (custom) {
+          cfg.customHeight![r] = 1;
+        }
       }
     }
   });
@@ -117,7 +123,8 @@ export function setRowHeight(
 export function setColumnWidth(
   ctx: Context,
   columnInfo: Record<string, number>,
-  options: CommonOptions = {}
+  options: CommonOptions = {},
+  custom: boolean = false
 ) {
   if (!_.isPlainObject(columnInfo)) {
     throw INVALID_PARAMS;
@@ -134,6 +141,11 @@ export function setColumnWidth(
     if (Number(c) >= 0) {
       if (Number(len) >= 0) {
         cfg.columnlen![Number(c)] = Number(len);
+        if (custom && _.isUndefined(cfg.customWidth)) {
+          cfg.customWidth = { [c]: 1 };
+        } else if (custom) {
+          cfg.customWidth![c] = 1;
+        }
       }
     }
   });

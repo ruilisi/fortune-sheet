@@ -388,7 +388,7 @@ const ContextMenu: React.FC = () => {
                     rowHeightList[rowNum] = numRowHeight;
                   }
                 });
-                api.setRowHeight(draftCtx, rowHeightList);
+                api.setRowHeight(draftCtx, rowHeightList, {}, true);
                 draftCtx.contextMenu = {};
               });
             }}
@@ -448,7 +448,7 @@ const ContextMenu: React.FC = () => {
                     colWidthList[colNum] = numColWidth;
                   }
                 });
-                api.setColumnWidth(draftCtx, colWidthList);
+                api.setColumnWidth(draftCtx, colWidthList, {}, true);
                 draftCtx.contextMenu = {};
               });
             }}
