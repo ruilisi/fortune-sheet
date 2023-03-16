@@ -47,19 +47,23 @@ const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
       if (filterOptions == null) return;
       setContext((draftCtx) => {
         const container = getContainer();
+        const workbookRect =
+          refs.workbookContainer.current!.getBoundingClientRect();
         if (draftCtx.filterContextMenu?.col === filterOptions.startCol + i)
           return;
         draftCtx.filterContextMenu = {
           x:
             v.left +
             draftCtx.rowHeaderWidth -
-            refs.scrollbarX.current!.scrollLeft,
+            refs.scrollbarX.current!.scrollLeft +
+            workbookRect.x,
           y:
             v.top +
             20 +
             container.getBoundingClientRect().y +
             draftCtx.columnHeaderHeight -
-            refs.scrollbarY.current!.scrollTop,
+            refs.scrollbarY.current!.scrollTop +
+            workbookRect.y,
           col: filterOptions.startCol + i,
           startRow: filterOptions.startRow,
           endRow: filterOptions.endRow,
@@ -72,7 +76,14 @@ const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
         };
       });
     },
-    [filterOptions, getContainer, refs.scrollbarX, refs.scrollbarY, setContext]
+    [
+      filterOptions,
+      getContainer,
+      refs.scrollbarX,
+      refs.scrollbarY,
+      refs.workbookContainer,
+      setContext,
+    ]
   );
 
   return filterOptions == null ? (

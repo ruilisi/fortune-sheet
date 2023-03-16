@@ -5,7 +5,7 @@
   position: absolute;
   z-index: 10002;
   bottom: 31px;
-  left: 72px;
+  margin-left: 72px;
   max-height: 60%;
 }
 
