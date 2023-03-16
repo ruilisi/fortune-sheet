@@ -192,8 +192,8 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
           ctx.dataVerificationDropDownList = false;
           ctx.currentSheetId = sheet.id!;
           ctx.sheetTabContextMenu = {
-            x: pageX - rect.left,
-            y: pageY - rect.top,
+            x: pageX - rect.left + rect.x,
+            y: pageY - rect.top + rect.y,
             sheet,
             onRename: () => setEditing(true),
           };
@@ -229,8 +229,8 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
             // 右击的时候先进行跳转
             ctx.currentSheetId = sheet.id!;
             ctx.sheetTabContextMenu = {
-              x: pageX - rect.left,
-              y: pageY - rect.top,
+              x: pageX - rect.left + rect.x,
+              y: pageY - rect.top + rect.y,
               sheet,
               onRename: () => setEditing(true),
             };
