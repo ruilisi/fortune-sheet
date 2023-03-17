@@ -1669,8 +1669,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
         let r = 0;
         const borderInfo: any = {};
-        if (!ele.querySelectorAll("style")[0].innerHTML) return;
-        const styleInner = ele.querySelectorAll("style")[0].innerHTML;
+        const styleInner = ele.querySelectorAll("style")[0]?.innerHTML || "";
         const patternReg = /{([^}]*)}/g;
         const patternStyle = styleInner.match(patternReg);
         const nameReg = /^[^\t].*/gm;
