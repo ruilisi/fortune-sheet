@@ -11538,6 +11538,12 @@ export default {
     noMulti: "无法对多重选择区域执行此操作,请选择单个区域",
     cannotDeleteAllRow: "无法删除所有行",
     cannotDeleteAllColumn: "无法删除所有列",
+    cannotDeleteRowReadOnly: "无法删除只读行",
+    cannotDeleteColumnReadOnly: "无法删除只读列",
+    cannotInsertOnRowReadOnly: "无法对只读行插入",
+    cannotInsertOnColumnReadOnly: "无法对只读列插入",
+    rowOverLimit: "超出10000行限制",
+    columnOverLimit: "超出1000列限制",
   },
   comment: {
     insert: "新建批注",

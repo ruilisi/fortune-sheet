@@ -454,6 +454,22 @@ export function handleGlobalKeyDown(
     ctx.luckysheet_selection_range = [];
   }
 
+  const cfg = ctx.config;
+  const allowEdit =
+    _.every(ctx.luckysheet_select_save, (selection) => {
+      for (let r = selection.row[0]; r <= selection.row[1]; r += 1) {
+        if (cfg.rowReadOnly?.[r]) {
+          return false;
+        }
+      }
+      for (let c = selection.column[0]; c <= selection.column[1]; c += 1) {
+        if (cfg.colReadOnly?.[c]) {
+          return false;
+        }
+      }
+      return true;
+    }) && ctx.allowEdit;
+
   if (
     // $("#luckysheet-modal-dialog-mask").is(":visible") ||
     // $(event.target).hasClass("luckysheet-mousedown-cancel") ||
@@ -533,7 +549,7 @@ export function handleGlobalKeyDown(
   // }
 
   if (kstr === "Enter") {
-    if (!ctx.allowEdit) return;
+    if (!allowEdit) return;
     handleGlobalEnter(ctx, cellInput, e, canvas);
   } else if (kstr === "Tab") {
     if (ctx.luckysheetCellUpdate.length > 0) {
@@ -543,7 +559,7 @@ export function handleGlobalKeyDown(
     moveHighlightCell(ctx, "right", 1, "rangeOfSelect");
     e.preventDefault();
   } else if (kstr === "F2") {
-    if (!ctx.allowEdit) return;
+    if (!allowEdit) return;
     if (ctx.luckysheetCellUpdate.length > 0) {
       return;
     }
@@ -596,7 +612,7 @@ export function handleGlobalKeyDown(
 
       // selectHightlightShow();
     } else if (kstr === "Delete" || kstr === "Backspace") {
-      if (!ctx.allowEdit) return;
+      if (!allowEdit) return;
       if (ctx.activeImg?.id != null) {
         removeActiveImage(ctx);
       } else {
@@ -632,7 +648,7 @@ export function handleGlobalKeyDown(
       kcode === 0 ||
       (e.ctrlKey && kcode === 86)
     ) {
-      if (!ctx.allowEdit) return;
+      if (!allowEdit) return;
       if (
         String.fromCharCode(kcode) != null &&
         !_.isEmpty(ctx.luckysheet_select_save) && // $("#luckysheet-cell-selected").is(":visible") &&
