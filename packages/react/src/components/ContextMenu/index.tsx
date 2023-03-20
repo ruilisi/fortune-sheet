@@ -102,7 +102,14 @@ const ContextMenu: React.FC = () => {
                         insertRowCol(draftCtx, insertRowColOp);
                         draftCtx.contextMenu = {};
                       } catch (err: any) {
-                        showAlert(err.message);
+                        if (err.message === "maxExceeded")
+                          showAlert(rightclick.columnOverLimit, "ok");
+                        else if (err.message === "readOnly")
+                          showAlert(
+                            rightclick.cannotInsertOnColumnReadOnly,
+                            "ok"
+                          );
+                        draftCtx.contextMenu = {};
                       }
                     },
                     {
@@ -169,7 +176,11 @@ const ContextMenu: React.FC = () => {
                         insertRowCol(draftCtx, insertRowColOp);
                         draftCtx.contextMenu = {};
                       } catch (err: any) {
-                        showAlert(err.message);
+                        if (err.message === "maxExceeded")
+                          showAlert(rightclick.rowOverLimit, "ok");
+                        else if (err.message === "readOnly")
+                          showAlert(rightclick.cannotInsertOnRowReadOnly, "ok");
+                        draftCtx.contextMenu = {};
                       }
                     },
                     { insertRowColOp }
@@ -238,10 +249,15 @@ const ContextMenu: React.FC = () => {
                     ) {
                       showAlert(rightclick.cannotDeleteAllColumn, "ok");
                       draftCtx.contextMenu = {};
-
                       return;
                     }
-                    deleteRowCol(draftCtx, deleteRowColOp);
+                    try {
+                      deleteRowCol(draftCtx, deleteRowColOp);
+                    } catch (e: any) {
+                      if (e.message === "readOnly") {
+                        showAlert(rightclick.cannotDeleteColumnReadOnly, "ok");
+                      }
+                    }
                     draftCtx.contextMenu = {};
                   },
                   { deleteRowColOp }
@@ -285,7 +301,13 @@ const ContextMenu: React.FC = () => {
                       draftCtx.contextMenu = {};
                       return;
                     }
-                    deleteRowCol(draftCtx, deleteRowColOp);
+                    try {
+                      deleteRowCol(draftCtx, deleteRowColOp);
+                    } catch (e: any) {
+                      if (e.message === "readOnly") {
+                        showAlert(rightclick.cannotDeleteRowReadOnly, "ok");
+                      }
+                    }
                     draftCtx.contextMenu = {};
                   },
                   { deleteRowColOp }

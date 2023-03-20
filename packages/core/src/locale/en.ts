@@ -11504,6 +11504,12 @@ export default {
       "Cannot perform this operation on multiple selection areas, please select a single area",
     cannotDeleteAllRow: "Cannot delete all rows",
     cannotDeleteAllColumn: "Cannot delete all columns",
+    cannotDeleteRowReadOnly: "Cannot delete row readonly",
+    cannotDeleteColumnReadOnly: "Cannot delete column readonly",
+    cannotInsertOnRowReadOnly: "Cannot insert on read-only row",
+    cannotInsertOnColumnReadOnly: "Cannot insert into read-only column",
+    rowOverLimit: "10000 row limit exceeded",
+    columnOverLimit: "1000 column limit exceeded",
   },
   comment: {
     insert: "Insert",

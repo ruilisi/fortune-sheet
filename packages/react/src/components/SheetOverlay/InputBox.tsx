@@ -288,24 +288,13 @@ const InputBox: React.FC = () => {
   );
 
   const cfg = context.config || {};
-  let rowReadOnly: number[] = [];
-  let colReadOnly: number[] = [];
+  const rowReadOnly: Record<number, number> = cfg.rowReadOnly || {};
+  const colReadOnly: Record<number, number> = cfg.colReadOnly || {};
 
-  if (!_.isNil(cfg.rowReadOnly)) {
-    rowReadOnly = cfg.rowReadOnly;
-  }
-
-  if (!_.isNil(cfg.colReadOnly)) {
-    colReadOnly = cfg.colReadOnly;
-  }
-
-  let edit = context.allowEdit;
-  if (
+  const edit = !(
     (colReadOnly[col_index] || rowReadOnly[row_index]) &&
     context.allowEdit === true
-  ) {
-    edit = false;
-  }
+  );
 
   return (
     <div

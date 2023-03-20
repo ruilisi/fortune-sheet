@@ -72,20 +72,26 @@ export function insertRowCol(
   const d = file.data;
   if (!d) return;
 
+  const cfg = file.config || {};
+  if (type === "row") {
+    if (cfg.rowReadOnly?.[index]) {
+      throw new Error("readOnly");
+    }
+  } else {
+    if (cfg.colReadOnly?.[index]) {
+      throw new Error("readOnly");
+    }
+  }
+
   if (type === "row" && d.length + count >= 10000) {
-    throw new Error(
-      "This action would increase the number of rows in the workbook above the limit of 10000."
-    );
+    throw new Error("maxExceeded");
   }
 
   if (type === "column" && d[0] && d[0].length + count >= 1000) {
-    throw new Error(
-      "This action would increase the number of columns in the workbook above the limit of 1000."
-    );
+    throw new Error("maxExceeded");
   }
 
   count = Math.floor(count);
-  const cfg = file.config || {};
 
   // 合并单元格配置变动
   if (cfg.merge == null) {
@@ -607,6 +613,7 @@ export function insertRowCol(
     // 行高配置变动
     if (cfg.rowlen != null) {
       const rowlen_new: any = {};
+      const rowReadOnly_new: Record<number, number> = {};
 
       _.forEach(cfg.rowlen, (v, rstr) => {
         const r = parseFloat(rstr);
@@ -623,8 +630,17 @@ export function insertRowCol(
           rowlen_new[r + count] = cfg.rowlen![r];
         }
       });
+      _.forEach(cfg.rowReadOnly, (v, rstr) => {
+        const r = parseFloat(rstr);
+        if (r < index) {
+          rowReadOnly_new[r] = cfg.rowReadOnly![r];
+        } else if (r > index) {
+          rowReadOnly_new[r + count] = cfg.rowReadOnly![r];
+        }
+      });
 
       cfg.rowlen = rowlen_new;
+      cfg.rowReadOnly = rowReadOnly_new;
     }
 
     // 自定义行高配置变动
@@ -805,6 +821,7 @@ export function insertRowCol(
     // 列宽配置变动
     if (cfg.columnlen != null) {
       const columnlen_new: any = {};
+      const columnReadOnly_new: any = {};
 
       _.forEach(cfg.columnlen, (v, cstr) => {
         const c = parseFloat(cstr);
@@ -822,7 +839,40 @@ export function insertRowCol(
         }
       });
 
+      _.forEach(cfg.colReadOnly, (v, cstr) => {
+        const c = parseFloat(cstr);
+        if (c < index) {
+          columnReadOnly_new[c] = cfg.colReadOnly![c];
+        } else if (c > index) {
+          columnReadOnly_new[c + count] = cfg.colReadOnly![c];
+        }
+      });
+
       cfg.columnlen = columnlen_new;
+      cfg.colReadOnly = columnReadOnly_new;
+    }
+
+    // 自定义列宽配置变动
+    if (cfg.customWidth != null) {
+      const customWidth_new: any = {};
+
+      _.forEach(cfg.customWidth, (v, cstr) => {
+        const c = parseFloat(cstr);
+
+        if (c < index) {
+          customWidth_new[c] = cfg.customWidth![c];
+        } else if (c === index) {
+          if (direction === "lefttop") {
+            customWidth_new[c + count] = cfg.customWidth![c];
+          } else if (direction === "rightbottom") {
+            customWidth_new[c] = cfg.customWidth![c];
+          }
+        } else {
+          customWidth_new[c + count] = cfg.customWidth![c];
+        }
+      });
+
+      cfg.customWidth = customWidth_new;
     }
 
     // 自定义列宽配置变动
@@ -1117,6 +1167,20 @@ export function deleteRowCol(
 
   const file = ctx.luckysheetfile[curOrder];
   if (!file) return;
+  const cfg = file.config || {};
+  if (type === "row") {
+    for (let r = start; r <= end; r += 1) {
+      if (cfg.rowReadOnly?.[r]) {
+        throw new Error("readOnly");
+      }
+    }
+  } else {
+    for (let c = start; c <= end; c += 1) {
+      if (cfg.colReadOnly?.[c]) {
+        throw new Error("readOnly");
+      }
+    }
+  }
 
   const d = file.data;
   if (!d) return;
@@ -1152,7 +1216,6 @@ export function deleteRowCol(
   }
 
   const slen = end - start + 1;
-  const cfg = file.config || {};
 
   // 合并单元格配置变动
   if (cfg.merge == null) {
@@ -1657,7 +1720,7 @@ export function deleteRowCol(
     }
 
     const rowlen_new: any = {};
-    const rowReadOnly_new: any = {};
+    const rowReadOnly_new: Record<number, number> = {};
     _.forEach(cfg.rowlen, (v, rstr) => {
       const r = parseFloat(rstr);
       if (r < start) {
@@ -1666,7 +1729,8 @@ export function deleteRowCol(
         rowlen_new[r - slen] = cfg.rowlen![r];
       }
     });
-    _.forEach(cfg.rowReadOnly, (v, r) => {
+    _.forEach(cfg.rowReadOnly, (v, rstr) => {
+      const r = parseFloat(rstr);
       if (r < start) {
         rowReadOnly_new[r] = cfg.rowReadOnly![r];
       } else if (r > end) {
@@ -1808,7 +1872,8 @@ export function deleteRowCol(
         columnlen_new[c - slen] = cfg.columnlen![c];
       }
     });
-    _.forEach(cfg.colReadOnly, (v, c) => {
+    _.forEach(cfg.colReadOnly, (v, cstr) => {
+      const c = parseFloat(cstr);
       if (c < start) {
         columnReadOnly_new[c] = cfg.colReadOnly![c];
       } else if (c > end) {
@@ -1835,6 +1900,7 @@ export function deleteRowCol(
 
       cfg.customWidth = customWidth_new;
     }
+    cfg.colReadOnly = columnReadOnly_new;
 
     // 隐藏列配置变动
     if (cfg.colhidden == null) {

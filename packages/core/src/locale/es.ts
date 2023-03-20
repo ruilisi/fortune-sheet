@@ -11481,6 +11481,15 @@ export default {
       "No se puede realizar esta operación en varias áreas de selección, selecciona una sola área",
     cannotDeleteAllRow: "No se pueden eliminar todas las filas",
     cannotDeleteAllColumn: "No se pueden eliminar todas las columnas",
+    cannotDeleteRowReadOnly: "No se puede eliminar la fila de solo lectura",
+    cannotDeleteColumnReadOnly:
+      "No se puede eliminar la columna de solo lectura",
+    cannotInsertOnRowReadOnly:
+      "No se puede insertar en una fila de solo lectura",
+    cannotInsertOnColumnReadOnly:
+      "No se puede insertar en la columna de solo lectura",
+    rowOverLimit: "Límite de 10000 filas excedido",
+    columnOverLimit: "Límite de 1000 columnas excedido",
   },
   comment: {
     insert: "Insertar",

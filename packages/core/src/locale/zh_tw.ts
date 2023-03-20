@@ -11508,6 +11508,12 @@ export default {
     noMulti: "無法對多重選擇區域執行此操作,請選擇單個區域",
     cannotDeleteAllRow: "無法刪除所有行",
     cannotDeleteAllColumn: "無法刪除所有列",
+    cannotDeleteRowReadOnly: "無法刪除只讀行",
+    cannotDeleteColumnReadOnly: "無法刪除只讀列",
+    cannotInsertOnRowReadOnly: "無法對只讀行插入",
+    cannotInsertOnColumnReadOnly: "無法對只讀列插入",
+    rowOverLimit: "超出10000行限制",
+    columnOverLimit: "超出1000列限制",
   },
   comment: {
     insert: "新建批註",
