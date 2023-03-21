@@ -10,7 +10,6 @@ import "./index.css";
 import {
   locale,
   drawArrow,
-  getFlowdata,
   handleCellAreaDoubleClick,
   handleCellAreaMouseDown,
   handleContextMenu,
@@ -22,16 +21,17 @@ import {
   handleOverlayTouchMove,
   handleOverlayTouchStart,
   createDropCellRange,
-  expandRowsAndColumns,
   getCellRowColumn,
   getCellHyperlink,
   showLinkCard,
   Context,
   GlobalCache,
   onCellsMoveStart,
+  insertRowCol,
+  getSheetIndex,
 } from "@fortune-sheet/core";
 import _ from "lodash";
-import WorkbookContext from "../../context";
+import WorkbookContext, { SetContextOptions } from "../../context";
 import ColumnHeader from "./ColumnHeader";
 import RowHeader from "./RowHeader";
 import InputBox from "./InputBox";
@@ -49,7 +49,7 @@ import DropDownList from "../DataVerification/DropdownList";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
-  const { info } = locale(context);
+  const { info, rightclick } = locale(context);
   const { showDialog } = useDialog();
   const containerRef = useRef<HTMLDivElement>(null);
   const bottomAddRowInputRef = useRef<HTMLInputElement>(null);
@@ -273,26 +273,36 @@ const SheetOverlay: React.FC = () => {
   }, [refs.globalCache]);
 
   const handleBottomAddRow = useCallback(() => {
-    let valueStr = bottomAddRowInputRef.current?.value || "";
-    setContext((draftCtx) => {
-      const data = getFlowdata(draftCtx);
-      if (valueStr === "") {
-        valueStr = draftCtx.addDefaultRows.toString();
-      }
-      const value = parseInt(valueStr, 10);
-      if (Number.isNaN(value)) {
-        return;
-      }
-      if (value < 1) {
-        return;
-      }
-      try {
-        expandRowsAndColumns(data!, value, 0);
-      } catch (e: any) {
-        showAlert(e.message);
-      }
-    });
-  }, [setContext, showAlert]);
+    const valueStr =
+      bottomAddRowInputRef.current?.value || context.addDefaultRows.toString();
+    const value = parseInt(valueStr, 10);
+    if (Number.isNaN(value)) {
+      return;
+    }
+    if (value < 1) {
+      return;
+    }
+    const insertRowColOp: SetContextOptions["insertRowColOp"] = {
+      type: "row",
+      index:
+        context.luckysheetfile[
+          getSheetIndex(context, context!.currentSheetId! as string) as number
+        ].data!.length - 1,
+      count: value,
+      direction: "rightbottom",
+      id: context.currentSheetId,
+    };
+    setContext(
+      (draftCtx) => {
+        try {
+          insertRowCol(draftCtx, insertRowColOp, false);
+        } catch (err: any) {
+          if (err.message === "maxExceeded") showAlert(rightclick.rowOverLimit);
+        }
+      },
+      { insertRowColOp }
+    );
+  }, [context, rightclick.rowOverLimit, setContext, showAlert]);
 
   // 提醒弹窗
   useEffect(() => {

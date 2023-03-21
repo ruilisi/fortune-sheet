@@ -45,7 +45,8 @@ export function insertRowCol(
     count: number;
     direction: "lefttop" | "rightbottom";
     id: string;
-  }
+  },
+  changeSelection: boolean = true
 ) {
   let { count, id } = op;
   const { type, index, direction } = op;
@@ -73,13 +74,16 @@ export function insertRowCol(
   if (!d) return;
 
   const cfg = file.config || {};
-  if (type === "row") {
-    if (cfg.rowReadOnly?.[index]) {
-      throw new Error("readOnly");
-    }
-  } else {
-    if (cfg.colReadOnly?.[index]) {
-      throw new Error("readOnly");
+
+  if (changeSelection) {
+    if (type === "row") {
+      if (cfg.rowReadOnly?.[index]) {
+        throw new Error("readOnly");
+      }
+    } else {
+      if (cfg.colReadOnly?.[index]) {
+        throw new Error("readOnly");
+      }
     }
   }
 
@@ -666,6 +670,29 @@ export function insertRowCol(
       cfg.customHeight = customHeight_new;
     }
 
+    // 自定义行高配置变动
+    if (cfg.customHeight != null) {
+      const customHeight_new: any = {};
+
+      _.forEach(cfg.customHeight, (v, rstr) => {
+        const r = parseFloat(rstr);
+
+        if (r < index) {
+          customHeight_new[r] = cfg.customHeight![r];
+        } else if (r === index) {
+          if (direction === "lefttop") {
+            customHeight_new[r + count] = cfg.customHeight![r];
+          } else if (direction === "rightbottom") {
+            customHeight_new[r] = cfg.customHeight![r];
+          }
+        } else {
+          customHeight_new[r + count] = cfg.customHeight![r];
+        }
+      });
+
+      cfg.customHeight = customHeight_new;
+    }
+
     // 隐藏行配置变动
     if (cfg.rowhidden != null) {
       const rowhidden_new: any = {};
@@ -1106,10 +1133,12 @@ export function insertRowCol(
     file.column! += count;
   }
 
-  file.luckysheet_select_save = range;
-  if (file.id === ctx.currentSheetId) {
-    ctx.luckysheet_select_save = range;
-    // selectHightlightShow();
+  if (changeSelection) {
+    file.luckysheet_select_save = range;
+    if (file.id === ctx.currentSheetId) {
+      ctx.luckysheet_select_save = range;
+      // selectHightlightShow();
+    }
   }
 
   refreshLocalMergeData(merge_new, file);
@@ -1772,6 +1801,25 @@ export function deleteRowCol(
 
       cfg.customHeight = customHeight_new;
     }
+
+    // 自定义行高配置变动
+    if (cfg.customHeight == null) {
+      cfg.customHeight = {};
+
+      const customHeight_new: any = {};
+      _.forEach(cfg.customHeight, (v, rstr) => {
+        const r = parseFloat(rstr);
+        if (r < start) {
+          customHeight_new[r] = cfg.customHeight![r];
+        } else if (r > end) {
+          customHeight_new[r - slen] = cfg.customHeight![r];
+        }
+      });
+
+      cfg.customHeight = customHeight_new;
+    }
+
+    cfg.rowhidden = rowhidden_new;
 
     // 边框配置变动
     if (cfg.borderInfo && cfg.borderInfo.length > 0) {

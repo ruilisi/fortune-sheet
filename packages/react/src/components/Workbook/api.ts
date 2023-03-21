@@ -51,7 +51,7 @@ export function generateAPIs(
             const [specialOp] = specialOps;
             if (specialOp.op === "insertRowCol") {
               try {
-                insertRowCol(ctx_, specialOp.value);
+                insertRowCol(ctx_, specialOp.value, false);
               } catch (e: any) {
                 console.error(e);
               }
