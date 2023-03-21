@@ -1,11 +1,18 @@
 import {
   getSheetWithLatestCelldata,
   CommonOptions,
+  dataToCelldata,
+  celldataToData,
   isAllowEdit,
 } from "./common";
 
 export type { CommonOptions };
-export { getSheetWithLatestCelldata, isAllowEdit };
+export {
+  getSheetWithLatestCelldata,
+  dataToCelldata,
+  celldataToData,
+  isAllowEdit,
+};
 export * from "./cell";
 export * from "./rowcol";
 export * from "./range";
