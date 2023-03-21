@@ -22,6 +22,31 @@ export const dataToCelldata = (data: CellMatrix | undefined) => {
   return celldata;
 };
 
+export const celldataToData = (
+  celldata: CellWithRowAndCol[],
+  rowCount?: number,
+  colCount?: number
+) => {
+  const lastRow = _.maxBy<CellWithRowAndCol>(celldata, "r");
+  const lastCol = _.maxBy(celldata, "c");
+  let lastRowNum = (lastRow?.r ?? 0) + 1;
+  let lastColNum = (lastCol?.c ?? 0) + 1;
+  if (rowCount != null && colCount != null && rowCount > 0 && colCount > 0) {
+    lastRowNum = Math.max(lastRowNum, rowCount);
+    lastColNum = Math.max(lastColNum, colCount);
+  }
+  if (lastRowNum && lastColNum) {
+    const expandedData: Sheet["data"] = _.times(lastRowNum, () =>
+      _.times(lastColNum, () => null)
+    );
+    celldata?.forEach((d) => {
+      expandedData[d.r][d.c] = d.v;
+    });
+    return expandedData;
+  }
+  return null;
+};
+
 export function getSheet(ctx: Context, options: CommonOptions = {}) {
   const { index = getSheetIndex(ctx, options.id || ctx.currentSheetId) } =
     options;

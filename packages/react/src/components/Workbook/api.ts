@@ -19,6 +19,8 @@ import {
   inverseRowColOptions,
   PatchOptions,
   Sheet,
+  CellMatrix,
+  CellWithRowAndCol,
 } from "@fortune-sheet/core";
 import { applyPatches, Patch } from "immer";
 import _ from "lodash";
@@ -339,6 +341,18 @@ export function generateAPIs(
           api.calculateSheetFromula(draftCtx, sheet_obj.id as string);
         });
       });
+    },
+
+    dataToCelldata: (data: CellMatrix | undefined) => {
+      return api.dataToCelldata(data);
+    },
+
+    celldataToData: (
+      celldata: CellWithRowAndCol[],
+      rowCount?: number,
+      colCount?: number
+    ) => {
+      return api.celldataToData(celldata, rowCount, colCount);
     },
   };
 }
