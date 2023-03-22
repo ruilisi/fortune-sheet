@@ -11,6 +11,7 @@ import * as formula from "./formula";
 import { isRealNum } from "./validation";
 import { CFSplitRange } from "./ConditionFormat";
 import { isAllowEdit } from "../api/common";
+import { normalizeSelection } from "./selection";
 
 function toPx(v: number) {
   return `${v}px`;
@@ -457,9 +458,6 @@ export function onDropCellSelect(
   const x = e.pageX - rect.left - ctx.rowHeaderWidth + scrollLeft;
   const y = e.pageY - rect.top - ctx.columnHeaderHeight + scrollTop;
 
-  const winH = rect.height - 20 * ctx.zoomRatio;
-  const winW = rect.width - 60 * ctx.zoomRatio;
-
   const row_location = rowLocation(y, ctx.visibledatarow);
   const row = row_location[1];
   const row_pre = row_location[0];
@@ -477,41 +475,6 @@ export function onDropCellSelect(
   let row_e = ctx.luckysheet_select_save[0].row[1];
   let col_s = ctx.luckysheet_select_save[0].column[0];
   let col_e = ctx.luckysheet_select_save[0].column[1];
-
-  if (row_s < 0 || y < 0) {
-    row_s = 0;
-    row_e =
-      ctx.luckysheet_select_save[0].row[1] -
-      ctx.luckysheet_select_save[0].row[0];
-  }
-
-  if (col_s < 0 || x < 0) {
-    col_s = 0;
-    col_e =
-      ctx.luckysheet_select_save[0].column[1] -
-      ctx.luckysheet_select_save[0].column[0];
-  }
-
-  if (row_e >= ctx.visibledatarow[ctx.visibledatarow.length - 1] || y > winH) {
-    row_s =
-      ctx.visibledatarow.length -
-      1 -
-      ctx.luckysheet_select_save[0].row[1] +
-      ctx.luckysheet_select_save[0].row[0];
-    row_e = ctx.visibledatarow.length - 1;
-  }
-
-  if (
-    col_e >= ctx.visibledatacolumn[ctx.visibledatacolumn.length - 1] ||
-    x > winW
-  ) {
-    col_s =
-      ctx.visibledatacolumn.length -
-      1 -
-      ctx.luckysheet_select_save[0].column[1] +
-      ctx.luckysheet_select_save[0].column[0];
-    col_e = ctx.visibledatacolumn.length - 1;
-  }
 
   let top = ctx.luckysheet_select_save[0].top_move;
   let height = ctx.luckysheet_select_save[0].height_move;
@@ -541,6 +504,14 @@ export function onDropCellSelect(
       }
     }
   }
+  if (y < 0) {
+    row_s = 0;
+    [row_e] = ctx.luckysheet_select_save[0].row;
+  }
+  if (x < 0) {
+    col_s = 0;
+    [col_e] = ctx.luckysheet_select_save[0].column;
+  }
 
   showDropCellSelection({ left, width, top, height }, container);
 }
@@ -551,7 +522,7 @@ function fillCopy(data: (Cell | null | undefined)[], len: number) {
   for (let i = 1; i <= len; i += 1) {
     const index = (i - 1) % data.length;
     const d = _.cloneDeep(data[index]);
-    if (d != null) {
+    if (!_.isUndefined(d)) {
       applyData.push(d);
     }
   }
@@ -2840,9 +2811,6 @@ export function onDropCellSelectEnd(
   const x = e.pageX - rect.left - ctx.rowHeaderWidth + scrollLeft;
   const y = e.pageY - rect.top - ctx.columnHeaderHeight + scrollTop;
 
-  const winH = rect.height - 20 * ctx.zoomRatio;
-  const winW = rect.width - 60 * ctx.zoomRatio;
-
   const row_location = rowLocation(y, ctx.visibledatarow);
   // const row = row_location[1];
   const row_pre = row_location[0];
@@ -2870,33 +2838,6 @@ export function onDropCellSelectEnd(
     let row_e = last.row[1];
     let col_s = last.column[0];
     let col_e = last.column[1];
-
-    if (row_s < 0 || y < 0) {
-      row_s = 0;
-      row_e = last.row[1] - last.row[0];
-    }
-
-    if (col_s < 0 || x < 0) {
-      col_s = 0;
-      col_e = last.column[1] - last.column[0];
-    }
-
-    if (
-      row_e >= ctx.visibledatarow[ctx.visibledatarow.length - 1] ||
-      y > winH
-    ) {
-      row_s = ctx.visibledatarow.length - 1 - last.row[1] + last.row[0];
-      row_e = ctx.visibledatarow.length - 1;
-    }
-
-    if (
-      col_e >= ctx.visibledatacolumn[ctx.visibledatacolumn.length - 1] ||
-      x > winW
-    ) {
-      col_s =
-        ctx.visibledatacolumn.length - 1 - last.column[1] + last.column[0];
-      col_e = ctx.visibledatacolumn.length - 1;
-    }
 
     // 复制范围
     dropCellCache.copyRange = _.cloneDeep(_.pick(last, ["row", "column"]));
@@ -2996,6 +2937,16 @@ export function onDropCellSelectEnd(
       }
     }
 
+    if (y < 0) {
+      row_s = 0;
+      [row_e] = last.row;
+    }
+
+    if (x < 0) {
+      col_s = 0;
+      [col_e] = last.column;
+    }
+
     const flowdata = getFlowdata(ctx);
     if (flowdata == null) return;
 
@@ -3047,6 +2998,13 @@ export function onDropCellSelectEnd(
 
     last.row = [row_s, row_e];
     last.column = [col_s, col_e];
+
+    ctx.luckysheet_select_save = normalizeSelection(ctx, [
+      {
+        row: [row_s, row_e],
+        column: [col_s, col_e],
+      },
+    ]);
 
     try {
       updateDropCell(ctx);

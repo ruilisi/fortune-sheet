@@ -705,7 +705,10 @@ const SheetOverlay: React.FC = () => {
                   className="luckysheet-bottom-controll-row"
                   onMouseDown={(e) => e.stopPropagation()}
                   onMouseUp={(e) => e.stopPropagation()}
-                  onMouseMove={(e) => e.stopPropagation()}
+                  // onMouseMove={(e) => {
+                  //   e.stopPropagation();
+                  //   e.preventDefault();
+                  // }}
                   onKeyDown={(e) => e.stopPropagation()}
                   onKeyUp={(e) => e.stopPropagation()}
                   onKeyPress={(e) => e.stopPropagation()}
