@@ -9,6 +9,7 @@ import { isRealNull } from "./validation";
 import { normalizedAttr } from "./cell";
 import { orderbydata } from "./sort";
 import { checkCF, getComputeMap } from "./ConditionFormat";
+import { isAllowEdit } from "../api/common";
 
 // 筛选配置状态
 export function labelFilterOptionState(
@@ -146,7 +147,9 @@ export function createFilterOptions(
 ) {
   // $(`#luckysheet-filter-selected-sheet${ctx.currentSheetIndex}`).remove();
   // $(`#luckysheet-filter-options-sheet${ctx.currentSheetIndex}`).remove();
-  if (ctx.allowEdit === false) return;
+  // eslint-disable-next-line no-undef
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
   if (sheetId != null && sheetId !== ctx.currentSheetId) return;
   const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
   if (sheetIndex == null) return;
@@ -200,7 +203,8 @@ export function createFilterOptions(
 }
 
 export function clearFilter(ctx: Context) {
-  if (ctx.allowEdit === false) return;
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
   const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
   const hiddenRows = _.reduce(
     ctx.filter,

@@ -7,6 +7,7 @@ import { chatatABC, getRegExpStr, getSheetIndex, replaceHtml } from "../utils";
 import { setCellValue } from "./cell";
 import { valueShowEs } from "./format";
 import { normalizeSelection, scrollToHighlightCell } from "./selection";
+import { isAllowEdit } from "../api/common";
 
 export function getSearchIndexArr(
   searchText: string,
@@ -384,7 +385,8 @@ export function replace(
   }
 ) {
   const { findAndReplace } = locale(ctx);
-  if (!ctx.allowEdit) {
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) {
     return findAndReplace.modeTip;
   }
 
@@ -502,7 +504,8 @@ export function replaceAll(
   }
 ) {
   const { findAndReplace } = locale(ctx);
-  if (!ctx.allowEdit) {
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) {
     return findAndReplace.modeTip;
   }
 

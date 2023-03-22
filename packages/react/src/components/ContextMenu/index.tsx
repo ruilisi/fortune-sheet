@@ -498,7 +498,8 @@ const ContextMenu: React.FC = () => {
             key={name}
             onClick={() => {
               setContext((draftCtx) => {
-                if (!draftCtx.allowEdit) return;
+                const allowEdit = api.isAllowEdit(draftCtx);
+                if (!allowEdit) return;
                 if (draftCtx.activeImg?.id != null) {
                   removeActiveImage(draftCtx);
                 } else {

@@ -18,6 +18,7 @@ import { expandRowsAndColumns, storeSheetParamALL } from "../modules/sheet";
 import { jfrefreshgrid } from "../modules/refresh";
 import { setRowHeight } from "../api";
 import { CFSplitRange } from "../modules";
+import { isAllowEdit } from "../api/common";
 
 function postPasteCut(
   ctx: Context,
@@ -222,10 +223,9 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
   // ) {
   //   return;
   // }
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
 
-  if (!ctx.allowEdit) {
-    return;
-  }
   if ((ctx.luckysheet_select_save?.length ?? 0) !== 1) {
     // if (isEditMode()) {
     //   alert("不能对多重选择区域执行此操作，请选择单个区域，然后再试");
@@ -526,9 +526,9 @@ function pasteHandlerOfCutPaste(
   // ) {
   //   return;
   // }
-  if (!ctx.allowEdit) {
-    return;
-  }
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
+
   if (!copyRange) return;
 
   const cfg = ctx.config || {};
@@ -1078,9 +1078,9 @@ function pasteHandlerOfCopyPaste(
   // ) {
   //   return;
   // }
-  if (!ctx.allowEdit) {
-    return;
-  }
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
+
   if (!copyRange) return;
 
   const cfg = ctx.config;
@@ -1497,9 +1497,8 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
   //   // 此模式下禁用粘贴
   //   return;
   // }
-  if (!ctx.allowEdit) {
-    return;
-  }
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
 
   if (selectionCache.isPasteAction) {
     ctx.luckysheetCellUpdate = [];
@@ -1981,9 +1980,8 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 }
 
 export function handlePasteByClick(ctx: Context, triggerType?: string) {
-  if (!ctx.allowEdit) {
-    return;
-  }
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
 
   const textarea = document.querySelector("#fortune-copy-content");
   // textarea.focus();

@@ -18,6 +18,7 @@ import { cfSplitRange } from "./conditionalFormat";
 import { GlobalCache } from "../types";
 import { jfrefreshgrid } from "./refresh";
 import { CFSplitRange } from "./ConditionFormat";
+import { isAllowEdit } from "../api/common";
 
 const dragCellThreshold = 8;
 
@@ -47,7 +48,8 @@ export function onCellsMoveStart(
   container: HTMLDivElement
 ) {
   // if (isEditMode() || ctx.allowEdit === false) {
-  if (ctx.allowEdit === false) {
+  const allowEdit = isAllowEdit(ctx);
+  if (allowEdit === false) {
     // 此模式下禁用选区拖动
     return;
   }
@@ -217,6 +219,14 @@ export function onCellsMoveEnd(
     row: [, , row_index],
     column: [, , col_index],
   } = getCellLocationByMouse(ctx, e, scrollbarX, scrollbarY, container);
+
+  const allowEdit = isAllowEdit(ctx, [
+    {
+      row: [row_index, row_index],
+      column: [col_index, col_index],
+    },
+  ]);
+  if (!allowEdit) return;
 
   const row_index_original = ctx.luckysheet_cell_selected_move_index[0];
   const col_index_original = ctx.luckysheet_cell_selected_move_index[1];

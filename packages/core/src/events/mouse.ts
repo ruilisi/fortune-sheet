@@ -66,6 +66,7 @@ import {
   onSearchDialogMove,
   onSearchDialogMoveEnd,
 } from "../modules/searchReplace";
+import { isAllowEdit } from "../api/common";
 
 let mouseWheelUniqueTimeout: ReturnType<typeof setTimeout>;
 
@@ -1222,21 +1223,7 @@ export function handleCellAreaDoubleClick(
     return;
   }
   // 禁止前台编辑(只可 框选单元格、滚动查看表格)
-  const cfg = ctx.config;
-  const allowEdit =
-    _.every(ctx.luckysheet_select_save, (selection) => {
-      for (let r = selection.row[0]; r <= selection.row[1]; r += 1) {
-        if (cfg.rowReadOnly?.[r]) {
-          return false;
-        }
-      }
-      for (let c = selection.column[0]; c <= selection.column[1]; c += 1) {
-        if (cfg.colReadOnly?.[c]) {
-          return false;
-        }
-      }
-      return true;
-    }) && ctx.allowEdit;
+  const allowEdit = isAllowEdit(ctx);
   if (!allowEdit) return;
 
   // if (parseInt($("#luckysheet-input-box").css("top")) > 0) {
@@ -1403,9 +1390,9 @@ export function handleContextMenu(
   container: HTMLDivElement,
   area: "cell" | "rowHeader" | "columnHeader"
 ) {
-  if (!ctx.allowEdit) {
-    return;
-  }
+  e.preventDefault();
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
 
