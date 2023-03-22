@@ -16,6 +16,7 @@ import {
   rowLocationByIndex,
   setCellValue,
 } from "..";
+import { isAllowEdit } from "../api/common";
 
 // TODO: 后期增加鼠标可以选择多个选区
 // 开启范围选区
@@ -675,7 +676,8 @@ export function cellFocus(
   c: number,
   clickMode: boolean
 ) {
-  if (ctx.allowEdit === false) return;
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
   const showHintBox = document.getElementById(
     "luckysheet-dataVerification-showHintBox"
   );

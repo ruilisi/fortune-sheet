@@ -17,6 +17,7 @@ import { GlobalCache } from "../types";
 import { getNowDateTime } from "../utils";
 import { handleCopy } from "./copy";
 import { jfrefreshgrid } from "../modules/refresh";
+import { isAllowEdit } from "../api/common";
 
 export function handleGlobalEnter(
   ctx: Context,
@@ -454,21 +455,7 @@ export function handleGlobalKeyDown(
     ctx.luckysheet_selection_range = [];
   }
 
-  const cfg = ctx.config;
-  const allowEdit =
-    _.every(ctx.luckysheet_select_save, (selection) => {
-      for (let r = selection.row[0]; r <= selection.row[1]; r += 1) {
-        if (cfg.rowReadOnly?.[r]) {
-          return false;
-        }
-      }
-      for (let c = selection.column[0]; c <= selection.column[1]; c += 1) {
-        if (cfg.colReadOnly?.[c]) {
-          return false;
-        }
-      }
-      return true;
-    }) && ctx.allowEdit;
+  const allowEdit = isAllowEdit(ctx);
 
   if (
     // $("#luckysheet-modal-dialog-mask").is(":visible") ||

@@ -18,6 +18,7 @@ import { update } from "./format";
 // @ts-ignore
 import SSF from "./ssf";
 import { CFSplitRange } from "./ConditionFormat";
+import { isAllowEdit } from "../api/common";
 
 export const selectionCache = {
   isPasteAction: false,
@@ -2069,7 +2070,8 @@ export function deleteSelectedCellText(ctx: Context): string {
   // $("#luckysheet-rightclick-menu").hide();
   // luckysheetContainerFocus();
 
-  if (ctx.allowEdit === false) {
+  const allowEdit = isAllowEdit(ctx);
+  if (allowEdit === false) {
     return "allowEdit";
   }
 

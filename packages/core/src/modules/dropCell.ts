@@ -10,6 +10,7 @@ import { genarate, update } from "./format";
 import * as formula from "./formula";
 import { isRealNum } from "./validation";
 import { CFSplitRange } from "./ConditionFormat";
+import { isAllowEdit } from "../api/common";
 
 function toPx(v: number) {
   return `${v}px`;
@@ -2306,7 +2307,8 @@ export function updateDropCell(ctx: Context) {
   // }
 
   const d = getFlowdata(ctx);
-  if (ctx.allowEdit === false || d == null) {
+  const allowEdit = isAllowEdit(ctx);
+  if (allowEdit === false || d == null) {
     return;
   }
 

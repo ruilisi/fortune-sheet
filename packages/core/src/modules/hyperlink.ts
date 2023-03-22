@@ -8,6 +8,7 @@ import { normalizeSelection } from "./selection";
 import { changeSheet } from "./sheet";
 import { locale } from "../locale";
 import { GlobalCache } from "../types";
+import { isAllowEdit } from "../api/common";
 
 export function getCellRowColumn(
   ctx: Context,
@@ -73,7 +74,8 @@ export function saveHyperlink(
 }
 
 export function removeHyperlink(ctx: Context, r: number, c: number) {
-  if (ctx.allowEdit === false) return;
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
   const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
   const flowdata = getFlowdata(ctx);
   if (flowdata != null && sheetIndex != null) {

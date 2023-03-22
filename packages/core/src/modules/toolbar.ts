@@ -40,6 +40,7 @@ import {
 } from "./validation";
 import { showLinkCard } from "./hyperlink";
 import { cfSplitRange } from "./conditionalFormat";
+import { isAllowEdit } from "../api/common";
 import { getCellTextInfo } from "./text";
 
 type ToolbarItemClickHandler = (
@@ -241,9 +242,8 @@ export function updateFormat(
   //     return;
   //   }
 
-  if (!ctx.allowEdit) {
-    return;
-  }
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
 
   if (attr in inlineStyleAffectAttribute) {
     if (ctx.luckysheetCellUpdate.length > 0) {
@@ -722,7 +722,8 @@ export function autoSelectionFormula(
   formula: string,
   cache: GlobalCache
 ) {
-  if (ctx.allowEdit === false) return;
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
   const flowdata = getFlowdata(ctx);
   if (flowdata == null) return;
   // const nullfindnum = 40;
@@ -1168,7 +1169,8 @@ export function handleFormatPainter(ctx: Context) {
 
   // let _locale = locale();
   // let locale_paint = _locale.paint;
-  if (ctx.allowEdit === false) return;
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
   if (
     ctx.luckysheet_select_save == null ||
     ctx.luckysheet_select_save.length === 0
@@ -1378,7 +1380,8 @@ export function handleBorder(ctx: Context, type: string) {
   // const d = editor.deepCopyFlowData(Store.flowdata);
   // let type = $(this).attr("type");
   // let type = "border-all";
-  if (ctx.allowEdit === false) return;
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
   if (type == null) {
     type = "border-all";
   }
@@ -1448,7 +1451,8 @@ export function handleBorder(ctx: Context, type: string) {
 }
 
 export function handleMerge(ctx: Context, type: string) {
-  if (ctx.allowEdit === false) return;
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
   // if (!checkProtectionNotEnable(ctx.currentSheetId)) {
   //   return;
   // }
@@ -1501,7 +1505,8 @@ export function handleSort(ctx: Context, isAsc: boolean) {
 }
 
 export function handleFreeze(ctx: Context, type: string) {
-  if (!ctx.allowEdit) return;
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
 
   const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!];
   if (!file) return;
@@ -1550,7 +1555,8 @@ export function handleSum(
 }
 
 export function handleLink(ctx: Context) {
-  if (ctx.allowEdit === false) return;
+  const allowEdit = isAllowEdit(ctx);
+  if (!allowEdit) return;
   const selection = ctx.luckysheet_select_save?.[0];
   const flowdata = getFlowdata(ctx);
   if (flowdata != null && selection != null) {
