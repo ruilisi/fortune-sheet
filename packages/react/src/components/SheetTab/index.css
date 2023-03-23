@@ -247,23 +247,18 @@
 }
 
 .luckysheet-sheet-selection-calInfo {
-  max-width: 22%;
   display: flex;
   font-size: 12px;
-  justify-content: space-between;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  transform: translate(0px, 50%);
+  align-content: center;
+  padding: 0 0 0 44px;
+  height: 22px;
+  align-self: flex-end;
 }
 
 .luckysheet-sheet-selection-calInfo div {
-  width: 90px;
-  height: 18px;
-  overflow-x: auto;
+  margin: auto 0;
   white-space: nowrap;
-  margin-right: 2px;
-  text-align: center;
+  margin-right: 7px;
 }
 
 .luckysheet-sheets-item-function {
