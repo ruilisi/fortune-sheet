@@ -258,7 +258,7 @@ const ConditionalFormat: React.FC<{
     <div className="condition-format">
       <Select style={{ overflow: "visible" }}>
         {items.map((v) => (
-          <Option key={`option${v}`}>{getConditionFormatItem(v)}</Option>
+          <div key={`option${v}`}>{getConditionFormatItem(v)}</div>
         ))}
       </Select>
     </div>

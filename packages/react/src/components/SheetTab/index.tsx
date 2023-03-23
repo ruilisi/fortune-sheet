@@ -6,12 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  updateCell,
-  addSheet,
-  locale,
-  calcSelectionInfo,
-} from "@fortune-sheet/core";
+import { updateCell, addSheet } from "@fortune-sheet/core";
 // @ts-ignore
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
@@ -23,26 +18,10 @@ const SheetTab: React.FC = () => {
   const tabContainerRef = useRef<HTMLDivElement>(null);
   const leftScrollRef = useRef<HTMLDivElement>(null);
   const rightScrollRef = useRef<HTMLDivElement>(null);
-  const { formula } = locale(context);
   const [sheetScrollAni, setSheetScrollAni] = useState<any>(null);
   const [sheetScrollStep] = useState<number>(150);
   const [isShowScrollBtn, setIsShowScrollBtn] = useState<boolean>(false);
   const [isShowBoundary, setIsShowBoundary] = useState<boolean>(true);
-  const [calInfo, setCalInfo] = useState<{
-    numberC: number;
-    count: number;
-    sum: number;
-    max: number;
-    min: number;
-    average: string;
-  }>({
-    numberC: 0,
-    count: 0,
-    sum: 0,
-    max: 0,
-    min: 0,
-    average: "",
-  });
 
   const scrollToLeft = useCallback(
     (moveType: string) => {
@@ -93,16 +72,6 @@ const SheetTab: React.FC = () => {
     const tabCurrent = tabContainerRef.current;
     setIsShowScrollBtn(tabCurrent!.scrollWidth - 2 > tabCurrent!.clientWidth);
   }, [context.luckysheetfile]);
-
-  // 计算选区的信息
-  useEffect(() => {
-    const selection = context.luckysheet_select_save;
-    if (selection) {
-      const re = calcSelectionInfo(context);
-      setCalInfo(re);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [context.luckysheet_select_save]);
 
   return (
     <div
@@ -216,33 +185,6 @@ const SheetTab: React.FC = () => {
             <SVGIcon name="arrow-doubleright" width={12} height={12} />
           </div>
         )}
-        <div className="luckysheet-sheet-selection-calInfo">
-          {!!calInfo.count && (
-            <div style={{ width: "60px" }}>
-              {formula.count}: {calInfo.count}
-            </div>
-          )}
-          {!!calInfo.numberC && !!calInfo.sum && (
-            <div>
-              {formula.sum}: {calInfo.sum}
-            </div>
-          )}
-          {!!calInfo.numberC && !!calInfo.average && (
-            <div>
-              {formula.average}: {calInfo.average}
-            </div>
-          )}
-          {!!calInfo.numberC && !!calInfo.max && (
-            <div>
-              {formula.max}: {calInfo.max}
-            </div>
-          )}
-          {!!calInfo.numberC && !!calInfo.min && (
-            <div>
-              {formula.min}: {calInfo.min}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

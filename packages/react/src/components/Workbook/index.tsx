@@ -17,6 +17,8 @@ import {
   ensureSheetIndex,
   CellMatrix,
   insertRowCol,
+  locale,
+  calcSelectionInfo,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -60,6 +62,7 @@ type AdditionalProps = {
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
   ({ onChange, onOp, data: originalData, ...props }, ref) => {
     const [context, setContext] = useState(defaultContext());
+    const { formula } = locale(context);
     const cellInput = useRef<HTMLDivElement>(null);
     const fxInput = useRef<HTMLDivElement>(null);
     const canvas = useRef<HTMLCanvasElement>(null);
@@ -71,12 +74,38 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     const [moreToolbarItems, setMoreToolbarItems] =
       useState<React.ReactNode>(null);
 
+    const [calInfo, setCalInfo] = useState<{
+      numberC: number;
+      count: number;
+      sum: number;
+      max: number;
+      min: number;
+      average: string;
+    }>({
+      numberC: 0,
+      count: 0,
+      sum: 0,
+      max: 0,
+      min: 0,
+      average: "",
+    });
+
     const mergedSettings = useMemo(
       () => _.assign(_.cloneDeep(defaultSettings), props) as Required<Settings>,
       // props expect data, onChage, onOp
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [..._.values(props)]
     );
+
+    // 计算选区的信息
+    useEffect(() => {
+      const selection = context.luckysheet_select_save;
+      if (selection) {
+        const re = calcSelectionInfo(context);
+        setCalInfo(re);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [context.luckysheet_select_save]);
 
     const initSheetData = useCallback(
       (
@@ -678,6 +707,33 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                 className="fortune-popover-backdrop"
               />
             )}
+            <div className="luckysheet-sheet-selection-calInfo">
+              {!!calInfo.count && (
+                <div style={{ width: "60px" }}>
+                  {formula.count}: {calInfo.count}
+                </div>
+              )}
+              {!!calInfo.numberC && !!calInfo.sum && (
+                <div>
+                  {formula.sum}: {calInfo.sum}
+                </div>
+              )}
+              {!!calInfo.numberC && !!calInfo.average && (
+                <div>
+                  {formula.average}: {calInfo.average}
+                </div>
+              )}
+              {!!calInfo.numberC && !!calInfo.max && (
+                <div>
+                  {formula.max}: {calInfo.max}
+                </div>
+              )}
+              {!!calInfo.numberC && !!calInfo.min && (
+                <div>
+                  {formula.min}: {calInfo.min}
+                </div>
+              )}
+            </div>
           </div>
         </ModalProvider>
       </WorkbookContext.Provider>
