@@ -652,7 +652,7 @@ export class Canvas {
     const colEndX = this.sheetCtx.visibledatacolumn[colEnd];
 
     // 表格canvas 初始化处理
-    renderCtx.fillStyle = "#ffffff";
+    renderCtx.fillStyle = "rgba(255,255,255,0)";
     renderCtx.fillRect(
       offsetLeft - 1,
       offsetTop - 1,
@@ -1641,7 +1641,7 @@ export class Canvas {
     // }
 
     if (!fillStyle) {
-      renderCtx.fillStyle = "#FFFFFF";
+      renderCtx.fillStyle = "rgba(255,255,255,0)";
     } else {
       renderCtx.fillStyle = fillStyle;
     }
@@ -1849,7 +1849,7 @@ export class Canvas {
       fillStyle = checksCF.cellColor;
     }
     if (!fillStyle) {
-      renderCtx.fillStyle = "#FFFFFF";
+      renderCtx.fillStyle = "rgba(255,255,255,0)";
     } else {
       renderCtx.fillStyle = fillStyle;
     }

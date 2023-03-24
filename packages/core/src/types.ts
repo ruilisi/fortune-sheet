@@ -156,6 +156,11 @@ export type Sheet = {
     type: "row" | "column" | "both" | "rangeRow" | "rangeColumn" | "rangeBoth";
     range?: { row_focus: number; column_focus: number };
   };
+  backgroundPic?: {
+    src?: string;
+    repeat?: "repeat" | "no-repeat";
+    backgroundSize?: string;
+  };
 };
 
 export type CommentBox = {

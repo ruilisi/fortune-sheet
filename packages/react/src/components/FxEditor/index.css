@@ -3,6 +3,7 @@
   flex-direction: row;
   height: 28px;
   border-bottom: 1px solid #d4d4d4;
+  background-color: white;
 }
 
 .fortune-fx-icon {

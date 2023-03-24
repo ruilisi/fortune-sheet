@@ -678,6 +678,18 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               )}
               {mergedSettings.showFormulaBar && <FxEditor />}
             </div>
+            <div
+              className="sheet-background"
+              style={{
+                backgroundImage: `url(${sheet.backgroundPic?.src})`,
+                backgroundSize: sheet.backgroundPic?.backgroundSize,
+                backgroundRepeat: sheet.backgroundPic?.repeat,
+                top: cellArea.current?.getBoundingClientRect().y,
+                left: cellArea.current?.getBoundingClientRect().x,
+                height: cellArea.current?.getBoundingClientRect().height,
+                width: cellArea.current?.getBoundingClientRect().width,
+              }}
+            />
             <Sheet sheet={sheet} />
             {mergedSettings.showSheetTabs && <SheetTab />}
             <ContextMenu />
