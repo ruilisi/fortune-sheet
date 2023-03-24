@@ -107,6 +107,8 @@
 
 .fortune-toolbar-select-option {
   font-size: 12px;
+  height: 24px;
+  line-height: 24px;
   min-width: 60px;
   padding: 8px 12px;
   cursor: pointer;
@@ -183,4 +185,29 @@
   user-select: none;
   font-family: Arial;
   line-height: 100%;
+}
+
+.set-background-sub-menu {
+  position: absolute;
+  top: -8px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, .2);
+  cursor: default;
+  font-size: 12px;
+  z-index: 1004;
+  box-sizing: border-box;
+  user-select: none;
+  outline: none;
+}
+
+.set-background-item {
+  display: flex;
+  justify-content: center;
+  padding: 6px 18px;
+  z-index: 1005;
+}
+
+.set-background-item:hover {
+  background: #efefef;
 }
