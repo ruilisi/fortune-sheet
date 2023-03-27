@@ -34,7 +34,7 @@ describe("rowcol", () => {
 
   test("insertRowOrColumn", () => {
     const cellTmpl = { ct: { fa: "General", t: "g" }, v: 0, m: "0" };
-    const emptyTmpl = { ct: { fa: "General", t: "g" }, v: "", m: "" };
+    const emptyTmpl = null;
     [
       { t: "row", i: 1, c: 1, d: "lefttop" },
       { t: "row", i: 1, c: 2, d: "lefttop" },
