@@ -722,11 +722,16 @@ export function insertRowCol(
     for (let c = 0; c < d[0].length; c += 1) {
       const cell = curRow[c];
       let templateCell = null;
-      if (cell != null) {
-        templateCell = { ...cell, v: "", m: "" };
+      if (cell?.mc && (direction === "rightbottom" || index !== cell.mc.r)) {
+        if (cell.mc.rs) {
+          cell.mc.rs += count;
+        }
+        templateCell = { ...cell };
         if (!d?.[index + 1]?.[c]?.mc) {
           templateCell.mc = undefined;
         }
+        delete templateCell.v;
+        delete templateCell.m;
         delete templateCell.ps;
         delete templateCell.f;
       }
@@ -954,11 +959,16 @@ export function insertRowCol(
     for (let r = 0; r < d.length; r += 1) {
       const cell = curd[r][index];
       let templateCell = null;
-      if (cell != null) {
-        templateCell = { ...cell, v: "", m: "" };
+      if (cell?.mc && (direction === "rightbottom" || index !== cell.mc.c)) {
+        if (cell.mc.cs) {
+          cell.mc.cs += count;
+        }
+        templateCell = { ...cell };
         if (!curd?.[r]?.[index + 1]?.mc) {
           templateCell.mc = undefined;
         }
+        delete templateCell.v;
+        delete templateCell.m;
         delete templateCell.ps;
         delete templateCell.f;
       }
