@@ -21,7 +21,7 @@
         <td><code>{
             "fa": "General",
             "t": "g"
-        }</code><a href="#cellStyle">单元格值格式</a></td>
+        }</code><a href="#单元格值格式">单元格值格式</a></td>
         <td></td>
     </tr>
     <tr>
@@ -98,7 +98,7 @@
         <td>mc</td>
         <td>mergecell</td>
         <td>合并单元格</td>
-        <td>主单元格{ r:0, c:0, rs: 2, cs:2 }，辅单元格{ r:0, c:0 }，<a href="#mergeCell">合并单元格案例</a></td>
+        <td>主单元格{ r:0, c:0, rs: 2, cs:2 }，辅单元格{ r:0, c:0 }，<a href="#合并单元格">合并单元格案例</a></td>
         <td>Merge</td>
     </tr>
     <tr>
@@ -240,7 +240,7 @@ FortuneSheet在存储数字类型的内容时，支持多种格式转换，所�
 }
 ```
 
-## 合并单元格<div id='mergeCell'></div>
+## 合并单元格
 
 设置一个合并单元格，需要处理两个地方，一是单元格对象中设置`mc`属性，二是在`config`中设置`merge`。
 
@@ -297,12 +297,11 @@ FortuneSheet在存储数字类型的内容时，支持多种格式转换，所�
     ```
     对象中的key为 `r + '_' + c` 的拼接值，value同主单元格的`mc`设置: r:行数，c:列数，rs：合并的行数，cs:合并的列数
 
-> merge 详细参考：[表格数据config](/zh/guide/data.html#config)
+> merge 详细参考：[表格数据config](./sheet.md#configmerge)
 
 ## 含边框单元格
 
 单元格的边框设置与合并单元格类似，需要在`config`中设置`borderInfo`，区别在于不需要设置单元格对象。
-加入
 
 比如，将"A1"单元格设置一个黑色细实线的全部边框
 
@@ -337,7 +336,7 @@ FortuneSheet在存储数字类型的内容时，支持多种格式转换，所�
 ]
 ```
 
-> borderInfo 详细参考：[config.borderInfo](/zh/guide/sheet.html#config-borderinfo)
+> borderInfo 详细参考：[config.borderInfo](./sheet.md#configborderinfo)
 
 ## 简化的单元格数据
 
@@ -377,9 +376,9 @@ FortuneSheet在存储数字类型的内容时，支持多种格式转换，所�
     }
 ]
 ```
-> 了解 [celldata的使用](/zh/guide/data.html#celldata)
+> 了解 [celldata的使用](./sheet.md#celldata)
 
-## 单元格值格式<div id='cellStyle'></div>
+## 单元格值格式
 
 值格式即为单元格对象中 `ct` 的设置，
 
@@ -610,5 +609,7 @@ FortuneSheet在存储数字类型的内容时，支持多种格式转换，所�
 | 货币:直布罗陀镑        | "￡" 0.00 | n           | ￡ 123.00 ||     
 | 货币:智利比索        | "$" 0.00 | n           | $ 123.00 ||     
 | 货币:中非金融合作法郎        | "FCFA" 0.00 | n           | FCFA 123.00 || 
+
+注意：导入/导出只考虑用户所见的数据样式。例如，在Excel中处理日期格式的方式是将日期转换为数字：42736代表2017年1月1日。
 
 以上配置参考了[Aspose.Cells](https://docs.aspose.com/display/cellsnet/List+of+Supported+Number+Formats#ListofSupportedNumberFormats-Aspose.Cells)

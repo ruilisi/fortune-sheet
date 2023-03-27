@@ -13,7 +13,7 @@ This project is originated from [Luckysheet](https://github.com/mengshukeji/Luck
 
 ### ️Formatting
 + **Styling** (~~Change font style~~, size, color, or apply effects)
-+ ~~**Conditional formatting**~~ (highlight interesting cells or ranges of cells, emphasize unusual values, and visualize data by using data bars, color scales, and icon sets that correspond to specific variations in the data)
++ **Conditional formatting** (highlight interesting cells or ranges of cells, emphasize unusual values, and visualize data by using data bars, color scales, and icon sets that correspond to specific variations in the data)
 + **Align or rotate text** 
 + **Support text truncation, overflow, automatic line wrapping**
 + **Data types** 
@@ -22,25 +22,25 @@ This project is originated from [Luckysheet](https://github.com/mengshukeji/Luck
 + **Cell segmentation style** (Alt+Enter line break, sub,super, in-cell style)
 
 ### Cells
-+ ~~**Move cells by drag and dropping**~~ (Operate on selection)
-+ ~~**Fill handle**~~ (For a series like 1, 2, 3, 4, 5..., type 1 and 2 in the first two cells. For the series 2, 4, 6, 8..., type 2 and 4. Support arithmetic sequence, geometric sequence,date, week,chinese numbers)
++ **Move cells by drag and dropping** (Operate on selection)
++ **Fill handle** (For a series like 1, 2, 3, 4, 5..., type 1 and 2 in the first two cells. For the series 2, 4, 6, 8..., type 2 and 4. Support arithmetic sequence, geometric sequence,date, week,chinese numbers)
 + ~~**Auto Fill Options**~~ (Fill copy, sequence, only format, no format, day, month, year)
 + **Multiple selection** (Hold Ctrl Selecting multiple cells, copy and paste)
-+ ~~**Find and replace**~~ (Such as a particular number or text string, Support regular expression, whole word, case sensitive)
++ **Find and replace** (Such as a particular number or text string, Support regular expression, whole word, case sensitive)
 + ~~**Location**~~ (Cells can be selected according to the data type)
 + **Merge cells**
-+ ~~**Data validation**~~  (Checkbox, drop-down list, datePicker)
++ **Data validation**  (Checkbox, drop-down list, datePicker)
 
 ### ️Row & columns
-+ **~~Hide~~, Insert, Delete rows and columns** 
-+ ~~**Frozen rows and columns**~~ (First row, first column, Frozen to selection, freeze adjustment lever can be dragged)
-+ ~~**Split text**~~ (Split text into different columns with the Convert Text to Columns Wizard)
++ **Hide, Insert, Delete rows and columns** 
++ **Frozen rows and columns** (First row, first column, Frozen to selection, freeze adjustment lever can be dragged)
++ **Split text** (Split text into different columns with the Convert Text to Columns Wizard)
 
 ### Operation
-+ ~~**Undo/Redo**~~
++ **Undo/Redo**
 + **Copy/Paste/Cut** (Copy from excel to Luckysheet with format, vice versa)
 + **Hot key** (The operating experience is consistent with excel, if there are differences or missing, please feedback to us)
-+ ~~**Format Painter**~~ (Similar to google sheet)
++ **Format Painter** (Similar to google sheet)
 + ~~**Selection by drag and dropping**~~ (Change the parameters of formula and chart through selection)
 
 ### ️Formulas & functions
@@ -56,8 +56,8 @@ This project is originated from [Luckysheet](https://github.com/mengshukeji/Luck
 + ~~**Custom**~~  (Some formula suitable for use in China have been added. AGE_BY_IDCARD, SEX_BY_IDCARD, BIRTHDAY_BY_IDCARD, PROVINCE_BY_IDCARD, CITY_BY_IDCARD, etc. You can define any formula you want)
 
 ### Tables
-+ ~~**Filters**~~ (Support color , numerical, date, text filtering)
-+ ~~**Sort**~~ (Sort multiple fields simultaneously)
++ **Filters** (Support color , numerical, date, text filtering)
++ **Sort** (Sort multiple fields simultaneously)
 
 ### ~~Pivot table~~
 + **Arrange fields** (Add fileds to rows, columns, values, area, it is similar to excel)
@@ -75,12 +75,12 @@ This project is originated from [Luckysheet](https://github.com/mengshukeji/Luck
 + **Comments** (Add, delete, update)
 + **Collaborate** (Simultaneous editing by multiple users)
 
-### ~~Insert object~~
+### Insert object
 + **Insert picture** (JPG,PNG,SVG and so on)
 
-### ~~Misc~~
+### Misc
 + **Screenshot** (Take a screenshot with selection)
-+ **EXCEL import/export** (Specially adapted to Luckysheet, export is under development)
++ **~~EXCEL import/export~~** (Specially adapted to Luckysheet, export is under development)
 
 ## Quick start (react)
 
@@ -138,7 +138,7 @@ yarn build
 
 ## Configuration
 
-Please refer to [Overall configuration](/guide/config.html) for detailed information.
+Please refer to [Overall configuration](./config.md) for detailed information.
 
 ## Keyboard shortcuts
 (~~Cross line~~ means not yet implemented)
@@ -148,16 +148,16 @@ Please refer to [Overall configuration](/guide/config.html) for detailed informa
 |  CTRL + C | Copy cell |
 |  CTRL + V | Paste cell |
 |  CTRL + X | Cut cell |
-|  ~~CTRL + Z~~ | Undo |
-|  ~~CTRL + Y~~ | Redo |
-|  ~~CTRL + A~~ | Select all |
+|  CTRL + Z | Undo |
+|  CTRL + Y | Redo |
+|  CTRL + A | Select all |
 |  CTRL + B | Bold |
-|  ~~CTRL + F~~ | Find |
-|  ~~CTRL + H~~ | Replace |
+|  CTRL + F | Find |
+|  CTRL + H | Replace |
 |  CTRL + I | Italic |
 |  ~~CTRL + UP/DOWN/LEFT/RIGHT~~ | Quickly adjust cell marquee |
 |  ~~SHIFT + UP/DOWN/LEFT/RIGHT~~ | Adjust selection area |
-|  ~~CTRL + Left mouse click~~ | Multiple selection cell |
+|  CTRL + Left mouse click | Multiple selection cell |
 |  ~~SHIFT + Left mouse click~~ | Adjust selection area |
 |  UP/DOWN/LEFT/RIGHT | Move cell selection box |
 |  ENTER | Edit cell |
