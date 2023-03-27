@@ -14,7 +14,7 @@
         <td>ct</td>
         <td>celltype</td>
         <td>Cell value format: text, time, etc.</td>
-        <td><a href="#cellStyle">Cell format</a></td>
+        <td><a href="#Cell Format">Cell format</a></td>
         <td></td>
     </tr>
     <tr>
@@ -67,6 +67,13 @@
         <td>Style.Font object's Underline property</td>
     </tr>
     <tr>
+        <td>un</td>
+        <td>underline</td>
+        <td>underline</td>
+        <td>0 none、 1 underline</td>
+        <td></td>
+    </tr>
+    <tr>
         <td>vt</td>
         <td>verticaltype</td>
         <td>Vertical alignment</td>
@@ -95,12 +102,19 @@
         <td>setRotationAngle</td>
     </tr>
     <tr>
+        <td>rt</td>
+        <td>rotatetext</td>
+        <td>rotatetext</td>
+        <td>An integer between 0 and 180, including 0 and 180</td>
+        <td>setRotationAngle</td>
+    </tr>
+    <tr>
         <td>tb</td>
         <td>textbeak</td>
         <td>Text wrap</td>
         <td>0 truncation, 1 overflow, 2 word wrap</td>
         <td>2: setTextWrapped <br> 0和1: IsTextWrapped =&nbsp;true</td>
-    </tr>
+    </tr> 
     <tr>
         <td>v</td>
         <td>value</td>
@@ -122,8 +136,204 @@
         <td></td>
         <td>setFormula <br> setArrayFormula <br> workbook.calculateFormula();</td>
     </tr>
+    <tr>
+        <td>ps</td>
+        <td>comment</td>
+        <td>comment</td>
+        <td>
+        <code>
+        {<br>
+            height: 140,//height of comment box <br>
+            width: 73,//width of comment box  <br>
+            left: 75,//the distance of the comment box from the left edge of the worksheet <br>
+            top: 22,//the distance of the comment box from the top edge of the worksheet <br>
+            isShow: true,//whether the comment box is shown<br>
+            value: "jhbk"//content of comment<br>
+        }
+        </code>
+        </td>
+        <td></td>
+    </tr>
 </table>
 
+A canonical cell object is as follows:
+
+```json
+{
+    "ct": { //the value format of cell
+        "fa": "General",  //name of format is "General"
+        "t": "n" //type of the value is number
+    },
+    "v": 233, //original value is 233
+    "m": 233, //displayed value 233
+    "bg": "#f6b26b", //background color is "#f6b26b"
+    "ff": 1, // font-family is "Arial"
+    "fc": "#990000", //font-color is "#990000"
+    "bl": 1, //bold
+    "it": 1, //italics
+    "fs": 9, //font size is 9px
+    "cl": 1, //cancel line
+    "ht": 0, //horizontal center
+    "vt": 0, //vertical center
+    "tr": 2, //text rotation is -45°
+    "tb": 2, //text wrapping
+    "ps": { //comment
+        "left": 92, //the distance of the comment box from the left edge of the worksheet
+        "top": 10, //the distance of the comment box from the top edge of the worksheet
+        "width": 91, //width of comment box
+        "height": 48, //height of comment box
+        "value": "I am a comment", //content of comment
+        "isShow": true //whether the comment box is shown
+    },
+    "f": "=SUM(233)" //the cell is a sum formula
+}
+```
+
+### Why there is diffenence between `v` and `m` ?
+
+When FortuneSheet saving data which type is number, there are many formats. So the original value should be saved for subsequent processing. For example, there is a number `1`, when its format is percentage the value displayed should be `100%`, when its format is number with two decimal places the value displayed should be `1.00`.
+
+There is another reason why the content of date and time formats is stored as a number. By default, FortuneSheet stores the original value of `1900-1-1 0:00:00` as `1`, and stores every moment after `1900-1-1 0:00:00` as the difference between that moment and `1900-1-1 0:00:00 `in days. For example, `44127` represents `2020-10-23`.
+
+The following are examples of special formats:
+
+Percentage `100%`
+```json
+{
+    "ct": {
+        "fa": "0%",
+        "t": "n"
+    },
+    "v": 1,
+    "m": "100%"
+}
+```
+
+decimal `1.00`
+```json
+{
+    "ct": {
+        "fa": "##0.00",
+        "t": "n"
+    },
+    "v": 1,
+    "m": "1.00"
+}
+```
+
+date `2020-10-23`
+```json
+{
+    "ct": {
+        "fa": "yyyy-MM-dd",
+        "t": "d"
+    },
+    "v": 44127,
+    "m": "2020-10-23"
+}
+```
+
+## MergeCell
+
+To set a merged cell, you need to make changes in two places. Firstly, set the `mc` attribute in the cell object, and secondly, set `merge` in the `config`.
+
+For example, to merge the cells "A1:B2" into one cell, you can follow these steps:
+
+- Step 1: Set up the parameters for the four cells.
+    ```json
+    [
+        [{
+            "m": "merge cell",
+            "ct": {
+                "fa": "General",
+                "t": "g"
+            },
+            "v": "merge cell",
+            "mc": { //essential properties for merging cells
+                "r": 0, //row number of the main merged cell
+                "c": 0, //column number of the main merged cell
+                "rs": 2, //number of rows that the merged cell occupies
+                "cs": 2 //Number of columns that the merged cell occupies
+            }
+        }, {
+            "mc": {
+                "r": 0, //row number of the main merged cell
+                "c": 0, //column number of the main merged cell
+            }
+        }],
+        [{
+            "mc": {
+                "r": 0, //row number of the main merged cell
+                "c": 0, //column number of the main merged cell
+            }
+        }, {
+            "mc": {
+                "r": 0, //row number of the main merged cell
+                "c": 0, //column number of the main merged cell
+            }
+        }]
+    ]
+    ```
+
+    The key property for merging cells is `mc`. The main merged cell is the top-left cell of the selection range and contains four attributes: r/c/rs/cs, representing row/column/rowspan/columnspan. In this case, it means that the cells from the main cell A1 (row 0, column 0) to the cell two rows below and two columns to the right will be merged. The other cells within the selection range only need to set the position of the main cell.
+
+- Step 2: Set `config.merge`
+    ```json
+    {
+        "0_0": {
+            "r": 0,
+            "c": 0,
+            "rs": 2,
+            "cs": 2
+        }
+    }
+    ```
+    Set config.merge with the key as the concatenated string of `r + '_' + c`, and the value the same as the main merged cell's `mc` settings: r is the row number, c is the column number, rs is the number of rows merged, and cs is the number of columns merged.
+
+> For more details：[config.merge](./sheet.md#configmerge)
+
+## CellWithBorder
+
+Setting the borders of a cell is similar to merging cells. You need to set `borderInfo` in `config`, but you don't need to set the cell object.
+
+For example, set the borderInfo property for cell A1 as border-all with red color:
+
+Set `config.borderInfo` as
+```json
+{
+    "rangeType": "range",
+    "borderType": "border-all",
+    "color": "#000",
+    "style": "1",
+    "range": [
+        {
+            "row": [ 0, 0 ],
+            "column": [0, 0]
+        }
+    ]
+}
+```
+You don't need to add any additional settings to the cell object itself. The following code only includes basic content and format settings:
+```json
+[
+    [
+        {
+            "m": "borderCell",
+            "ct": {
+                "fa": "General",
+                "t": "g"
+            },
+            "v": "borderCell"
+        }
+    ]
+]
+```
+
+> For more details：[config.borderInfo](./sheet.md#configborderinfo)
+
+## Simplified cell data
+
+It is worth noting that when initializing a table, a one-dimensional array format consisting of `r/c/v` objects is used. The value of `v` is generally set to the cell object. To save backend storage space, the value of `v` supports shorthand format, where a string can be directly written instead of a cell object. This is automatically recognized as an automatic format once rendered in FortuneSheet, as indicated by `"ct": { "fa": "General", "t": "n" }`.
 
 The following is the storage of 3 cells:
 ```json
@@ -153,14 +363,14 @@ The following is the storage of 3 cells:
     {
         "r": 10,
         "c": 11,
-        "v": "值2"
+        "v": "value 2"
     }
 ]
 ```
+>  For more details [usage of celldata](./sheet.md#celldata)
 
-## <div id='cellStyle'>Cell format</div>
+## Cell format
 
-Reference[Aspose.Cells](https://docs.aspose.com/display/cellsnet/List+of+Supported+Number+Formats#ListofSupportedNumberFormats-Aspose.Cells)
 
 The format is set to:
 
@@ -174,6 +384,14 @@ The format is set to:
     "v": 2424
 }
 ```
+
+| Param | Description | Value |
+| ------------ | ------------ | ------------ |
+| fa | The format string for defining a format | Such as "General" |
+| t | Type | Such as "g" |
+
+
+### The optional settings are as follows
 
 |Parameter|Explanation|Value|
 | ------------ | ------------ | ------------ |
@@ -389,3 +607,5 @@ The available settings are as follows:
 | Currency: China-Africa Financial Cooperation Franc | "FCFA" 0.00 | n | FCFA 123.00 ||
 
 Notice: Import/export only considers the data style that the user sees. For example, the way to process the date format in excel is to convert the date into a number: 42736 represents 2017-1-1.
+
+Reference[Aspose.Cells](https://docs.aspose.com/display/cellsnet/List+of+Supported+Number+Formats#ListofSupportedNumberFormats-Aspose.Cells)

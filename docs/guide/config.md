@@ -17,7 +17,7 @@ const settings = {
 <Workbook {...settings} />
 ```
 
-`Workbook` props will affect the entire workbook. The configuration of a single worksheet needs to be set in the `settings.data` array to set more detailed parameters. Refer to [Worksheet Configuration](/guide/sheet.html)
+`Workbook` props will affect the entire workbook. The configuration of a single worksheet needs to be set in the `settings.data` array to set more detailed parameters. Refer to [Worksheet Configuration](./sheet.md)
 
 For personalized needs, in addition to allowing configuration information bar toolbar ([showToolbar](#showtoolbar)), formula bar ([showFormulaBar](#showformulabar)) and bottom sheet bar ([showSheetTabs](#showsheettabs)),
 FortuneSheet has opened more detailed custom configuration options, which are as follows:
@@ -55,7 +55,7 @@ The following are all supported setting parameters
 ### data
 - Type: Array
 - Default: undefined
-- For detailed parameter settings, please refer to [worksheet configuration](/guide/sheet.html)
+- For detailed parameter settings, please refer to [worksheet configuration](./sheet.md)
 
 ------------
 ### onChange
@@ -91,37 +91,47 @@ The following are all supported setting parameters
 ```json
 	[
 		"undo",
-		"redo",
-		"format-painter",
-		"clear-format",
-		"|",
-		"currency-format",
-		"percentage-format",
-		"number-decrease",
-		"number-increase",
-		"format",
-		"font-size",
-		"|",
-		"bold",
-		"italic",
-		"strike-through",
-		"underline",
-		"|",
-		"font-color",
-		"background",
-		"border",
-		"merge-cell",
-		"|",
-		"horizontal-align",
-		"vertical-align",
-		"text-wrap",
-		"text-rotation",
-		"|",
-		"freeze",
-		"sort",
-		"image",
-		"comment",
-		"quick-formula",
+    "redo",
+    "format-painter",
+    "clear-format",
+    "|",
+    "currency-format",
+    "percentage-format",
+    "number-decrease",
+    "number-increase",
+    "format",
+    "|",
+    "font",
+    "|",
+    "font-size",
+    "|",
+    "bold",
+    "italic",
+    "strike-through",
+    "underline",
+    "|",
+    "font-color",
+    "background",
+    "border",
+    "merge-cell",
+    "|",
+    "horizontal-align",
+    "vertical-align",
+    "text-wrap",
+    "text-rotation",
+    "|",
+    "freeze",
+    "conditionFormat",
+    "filter",
+    "link",
+    "image",
+    "comment",
+    "quick-formula",
+    "dataVerification",
+    "splitColumn",
+    "locationCondition",
+    "screenshot",
+    "search",
 	]
 ```
 
@@ -146,24 +156,23 @@ The following are all supported setting parameters
 - Format: 	
 	```json
 	[
-		"copy", // 复制
-		"paste", // 粘贴
-		"|",
-		"insert-row", // 插入行
-		"insert-column", // 插入列
-		"delete-row", // 删除选中行
-		"delete-column", // 删除选中列
-		"delete-cell", // 删除单元格
-		"hide-row", // 隐藏选中行和显示选中行
-		"hide-column", // 隐藏选中列和显示选中列
-		"clear", // 清除内容
-		"sort", // 排序选区
-		"filter", // 筛选选区
-		"chart", // 图表生成
-		"image", // 插入图片
-		"link", // 插入链接
-		"data", // 数据验证
-		"cell-format" // 设置单元格格式
+		"copy",
+    "paste",
+    "|",
+    "insert-row",
+    "insert-column",
+    "delete-row",
+    "delete-column",
+    "delete-cell",
+    "hide-row",
+    "hide-column",
+    "set-row-height",
+    "set-column-width",
+    "|",
+    "clear",
+    "sort",
+    "orderAZ", // Ascending order sort
+    "orderZA", // Descending order sort
 	]
 	```
 	
@@ -176,12 +185,13 @@ The following are all supported setting parameters
     ```json
 	[
 		"delete",
-		"copy",
-		"rename",
-		"color",
-		"hide",
-		"|",
-		"move"
+    "copy",
+    "rename",
+    "color",
+    "hide",
+    "|",
+    "move",
+    "focus",
 	]
 
 ------------

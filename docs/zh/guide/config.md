@@ -17,7 +17,7 @@ const settings = {
 <Workbook {...settings} />
 ```
 
-`Workbook`的配置项会作用于整个表格，单个sheet的配置则需要在`settings.data`数组中，分别设置对应更详细的参数，参考[工作表配置](/zh/guide/sheet.html)
+`Workbook`的配置项会作用于整个表格，单个sheet的配置则需要在`settings.data`数组中，分别设置对应更详细的参数，参考[工作表配置](./sheet.md)
 
 针对个性化的需求，除了允许配置工具栏（[showToolbar](#showtoolbar)）、公示栏（[showFormulaBar](#showformulabar)）、底部sheet页（[showSheetTabs](#showsheettabs)）之外，
 FortuneSheet开放了更细致的自定义配置选项，分别有
@@ -55,7 +55,7 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 ### data
 - 类型：Array
 - 默认值：undefined
-- 作用：详细参数设置参见[工作表配置](/zh/guide/sheet.html)
+- 作用：详细参数设置参见[工作表配置](./sheet.md)
 
 ------------
 ### onChange
@@ -92,37 +92,47 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
     ```json
 	[
 		"undo",
-		"redo",
-		"format-painter",
-		"clear-format",
-		"|",
-		"currency-format",
-		"percentage-format",
-		"number-decrease",
-		"number-increase",
-		"format",
-		"font-size",
-		"|",
-		"bold",
-		"italic",
-		"strike-through",
-		"underline",
-		"|",
-		"font-color",
-		"background",
-		"border",
-		"merge-cell",
-		"|",
-		"horizontal-align",
-		"vertical-align",
-		"text-wrap",
-		"text-rotation",
-		"|",
-		"freeze",
-		"sort",
-		"image",
-		"comment",
-		"quick-formula",
+    "redo",
+    "format-painter",
+    "clear-format",
+    "|",
+    "currency-format",
+    "percentage-format",
+    "number-decrease",
+    "number-increase",
+    "format",
+    "|",
+    "font",
+    "|",
+    "font-size",
+    "|",
+    "bold",
+    "italic",
+    "strike-through",
+    "underline",
+    "|",
+    "font-color",
+    "background",
+    "border",
+    "merge-cell",
+    "|",
+    "horizontal-align",
+    "vertical-align",
+    "text-wrap",
+    "text-rotation",
+    "|",
+    "freeze",
+    "conditionFormat",
+    "filter",
+    "link",
+    "image",
+    "comment",
+    "quick-formula",
+    "dataVerification",
+    "splitColumn",
+    "locationCondition",
+    "screenshot",
+    "search",
 	]
 	```
 
@@ -148,23 +158,22 @@ FortuneSheet开放了更细致的自定义配置选项，分别有
 	```json
 	[
 		"copy", // 复制
-		"paste", // 粘贴
-		"|",
-		"insert-row", // 插入行
-		"insert-column", // 插入列
-		"delete-row", // 删除选中行
-		"delete-column", // 删除选中列
-		"delete-cell", // 删除单元格
-		"hide-row", // 隐藏选中行和显示选中行
-		"hide-column", // 隐藏选中列和显示选中列
-		"clear", // 清除内容
-		"sort", // 排序选区
-		"filter", // 筛选选区
-		"chart", // 图表生成
-		"image", // 插入图片
-		"link", // 插入链接
-		"data", // 数据验证
-		"cell-format" // 设置单元格格式
+    "paste", // 粘贴
+    "|",
+    "insert-row", // 插入行
+    "insert-column", // 插入列
+    "delete-row", // 删除选中行
+    "delete-column", // 删除选中列
+    "delete-cell", // 删除单元格
+    "hide-row", // 隐藏选中行和显示选中行
+    "hide-column", // 隐藏选中列和显示选中列
+    "set-row-height", // 设置行高
+    "set-column-width", // 设置列宽
+    "|",
+    "clear", // 清除内容
+    "sort", // 排序选区
+    "orderAZ", // 升序
+    "orderZA", // 降序
 	]
 	```
 

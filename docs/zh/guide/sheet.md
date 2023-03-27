@@ -158,7 +158,7 @@
         }
     }]
     ```
-> 详细了解 [单元格格式](/zh/guide/cell.html)
+> 详细了解 [单元格格式](./cell.md)
 
 ------------
 ### config
@@ -317,7 +317,7 @@
 
     更多模板：
 
-        + ```js
+    + ```js
         {
             "rangeType": "range",
             "borderType": "border-all",
@@ -331,7 +331,7 @@
         ```
         表示设置范围为`{"row": [7, 8],"column": [2, 3]}`的选区，类型为所有边框，边框粗细为`Dotted`，颜色为`"#0000ff"`
 
-        + ```js
+    + ```js
             {
                 "rangeType": "cell",
                 "value": {
@@ -395,7 +395,31 @@
         }],
     },
     ```
-
+-----------
+#### config.rowReadOnly
+- 类型：Object
+- 默认值：{}
+- 作用： 定义只读行
+- 示例：
+    ```js
+    "rowReadOnly": {
+        "3": 1,
+        "7": 1,
+        "9": 1,
+    }
+    ```
+#### config.colReadOnly
+- 类型：Object
+- 默认值：{}
+- 作用： 定义只读列
+- 示例：
+    ```js
+    "colReadOnly": {
+        "2": 1,
+        "5": 1,
+        "6": 1,
+    }
+    ```
 ------------
 ### scrollLeft
 - 类型：Number
@@ -690,7 +714,7 @@
 
     "colorGradation": 色阶
 
-    API中对此设置也有介绍[API setRangeConditionalFormat](/zh/guide/api.html)
+    API中对此设置也有介绍[API setRangeConditionalFormat](./api.md)
 - 示例：
     ```js
     [
@@ -806,7 +830,7 @@
     ```
 
 ------------
-### chart
+### chart (TODO)
 - 类型：Array
 - 默认值：[]
 - 作用： 图表配置，参照chartMix的配置格式，允许只设置想要的图表属性，一个完整的配置案例如下。
@@ -1383,7 +1407,7 @@
   + {String} [hintText]: 提示语文本；`hintShow`为`true`时需配置；
   + {Boolean} [checked]: 是否勾选中复选框；`type`为`checkbox`时需配置；
 
-    一个完整的配置案例请参考源码DEMO示例 [/src/demoData/sheetDataVerification.js](https://github.com/mengshukeji/Luckysheet/blob/master/src/demoData/sheetDataVerification.js)
+    一个完整的配置案例请参考源码DEMO示例 [sheetDataVerification](https://github.com/mengshukeji/Luckysheet/blob/master/src/demoData/sheetDataVerification.js)
 ------------
 ## 调试信息
 

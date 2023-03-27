@@ -159,7 +159,7 @@ example of `data`:
         }
     }]
     ```
-> more detail [cell format](/zh/guide/cell.html)
+> more detail [cell format](./cell.md)
 
 ------------
 ### config
@@ -318,7 +318,7 @@ example of `data`:
 
     templates：
 
-        + ```js
+   + ```js
         {
             "rangeType": "range",
             "borderType": "border-all",
@@ -332,7 +332,7 @@ example of `data`:
         ```
         Represents a selection with a setting range of `{"row": [7, 8], "column": [2, 3]}`, the type is all borders, the border thickness is `Dotted`, and the color is `"#0000ff"`
 
-        + ```js
+    + ```js
             {
                 "rangeType": "cell",
                 "value": {
@@ -396,21 +396,30 @@ example of `data`:
         }],
     },
     ```
+------------
 #### config.rowReadOnly
-- type：Array
-- default：[]
+- type：Object
+- default：{}
 - usage： To make rows as ReadOnly
 - example：
     ```js
-    "rowReadOnly": [3, 7, 9]
+    "rowReadOnly": {
+        "3": 1,
+        "7": 1,
+        "9": 1,
+    }
     ```
 #### config.colReadOnly
-- type：Array
-- default：[]
+- type：Object
+- default：{}
 - usage： To make col as ReadOnly
 - example：
     ```js
-    "colReadOnly": [2, 5, 6]
+    "colReadOnly": {
+        "2": 1,
+        "5": 1,
+        "6": 1,
+    }
     ```
 ------------
 ### scrollLeft
@@ -703,7 +712,7 @@ example of `data`:
 
     "colorGradation": Color scale
 
-    You can get more detail in this API page[API setRangeConditionalFormat](/zh/guide/api.html)
+    You can get more detail in this API page[API setRangeConditionalFormat](./api.md)
 - example：
     ```js
     [
@@ -819,7 +828,7 @@ example of `data`:
     ```
 
 ------------
-### chart
+### chart (TODO)
 - type：Array
 - default：[]
 - usage： Chart configuration, plz refer to chartMix configuration. Allows you to set only the desired chart properties.
@@ -1339,6 +1348,64 @@ example of `data`:
 - Default: 1
 - Usage: Whether to show grid lines, `1` means show, `0` means hidden
 
+### dataVerification
+- Type：Object
+- Default：{}
+- Usage：The configuration information for data validation includes the following detailed fields;
+  + {String} [type]: type, which can be set to
+    + `"dropdown"`
+    + `"checkbox"`
+    + `"number"`
+    + `"number_integer"`
+    + `"number_decimal"`
+    + `"text_content"`
+    + `"text_length"`
+    + `"date"`
+    + `"validity"`
+  + {String | Null} [type2]: condition type;
+    + when `type` is `"checkbox"`, value of `type2`can be set to        
+        + `null`；
+    + when `type` is `"dropdown"`, value of `type2` can be set to
+        + `true` （multiple select） `false` （single select）
+    + when `type` is `"number"/"number_integer"/"number_decimal"/"text_length"`, value of`type2` can be set to
+      + `"bw"`(between)
+      + `"nb"`(not between)
+      + `"eq"`(equal)
+      + `"ne"`(not equal)
+      + `"gt"`(greater than)
+      + `"lt"`(less than)
+      + `"gte"`(greater than or equal to)
+      + `"lte"`(less than or equal to)
+    + when `type` is `"text_content"`, value of `type2`can be set to
+      + `"include"`
+      + `"exclude"`
+      + `"equal"`
+    + when `type` is `"date"`, value of `type2` can be set to
+      + `"bw"`(bewteen)
+      + `"nb"`(not between)
+      + `"eq"`(equal)
+      + `"ne"`(not equal)
+      + `"bf"`(before)
+      + `"nbf"`(not before)
+      + `"af"`(after)
+      + `"naf"`(not after)
+    + when `type` i `"validity"`, `type2` can be set to
+      + `"card"`(ID card number)
+      + `"phone"`(phone number)；
+  + {String | Number} [value1]: Condition Value 1;
+    + when `type` is `"dropdown"`, value of `value1`can be set to either a range or a comma-separated string, such as `"1,2,3"` and `"A1:B2"`;
+    + when `type` is `"validity"`, value of `value1`can be set to null;
+    + `value1` is number or null when `type` is other types;
+  + {String | Number} [value2]: Condition Value 2;
+    + When the `type` value is `"checkbox"` or the `type2` value for condition is `"bw"` or `"nb"`, the `value2` field should be present. If the condition value is a number or a date, the `value2` should be greater than or equal to value. In other cases, `value2` can be empty.
+  + {Boolean} [remote]: Automatically retrieve options remotely, default is `false`;
+  + {Boolean} [prohibitInput]: Disallow input when data is invalid; default is `false`;
+  + {Boolean} [hintShow]: It will be displayed when the cell is selected. By default, it is set to `false`;
+  + {String} [hintText]: Prompt text, required when hintShow is `true`;
+  + {Boolean} [checked]: It needs to configure whether to check the checkbox. This is required when the `type` is set to `"checkbox"`;
+
+    Please refer to the source code DEMO example for a complete configuration case.[sheetDataVerification.js](https://github.com/mengshukeji/Luckysheet/blob/master/src/demoData/sheetDataVerification.js)
+
 ------------
 
 ## debug information
@@ -1428,24 +1495,6 @@ At this point, the lucky sheet file contains many local parameters that are not 
 - type：Number
 - default：[]
 - usage： Position information of all columns, incremental column position data, No need to set up for initialization
-
-------------
-### ch_width
-- type：Number
-- default：2322
-- usage： The width of the entire worksheet area (the gray area including the border), No need to set up for initialization
-
-------------
-### rh_height
-- type：Number
-- default：2322
-- usage： The height of the entire worksheet area (the gray area containing the border), No need to set up for initialization
-
-------------
-### load
-- type：Number
-- default：0
-- usage： Check whether the current sheet has been loaded, internal indicator, initialization does not need to be set
 
 ------------
 ### data
