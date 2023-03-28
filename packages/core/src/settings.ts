@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import React from "react";
 import { Sheet, Selection, CellMatrix, Cell } from "./types";
 
 export type Hooks = {
@@ -146,6 +147,14 @@ export type Settings = {
   filterContextMenu?: string[];
   generateSheetId?: () => string;
   hooks?: Hooks;
+  customToolbarItems?: {
+    key: string;
+    tooltip?: string;
+    children?: React.ReactNode;
+    iconName?: string;
+    icon?: React.ReactNode;
+    onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  }[];
 };
 
 export const defaultSettings: Required<Settings> = {
@@ -276,4 +285,5 @@ export const defaultSettings: Required<Settings> = {
   ], // 筛选菜单
   generateSheetId: () => uuidv4(),
   hooks: {},
+  customToolbarItems: [],
 };
