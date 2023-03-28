@@ -177,14 +177,14 @@ class Parser extends Emitter {
    */
   _callCellValue(label) {
     const [row, column, sheetName] = extractLabel(label);
-    if (row?.index === -1) {
-      throw Error(ERROR_NAME);
-    } else if (column?.index === -1) {
+    if (column?.index === -1) {
       if (row.isAbsolute || column.isAbsolute) {
         throw Error(ERROR_NAME);
       }
       return row.index + 1;
-    }
+    } else if (row?.index === -1) {
+      throw Error(ERROR_NAME);
+    } 
     let value = void 0;
 
     this.emit('callCellValue', {label, row, column, sheetName}, this.options, (_value) => {

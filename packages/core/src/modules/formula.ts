@@ -177,9 +177,9 @@ export class FormulaCache {
   tryGetCellAsNumber(cell: Cell) {
     if (cell?.ct?.t === "n") {
       const n = Number(cell?.v);
-      return Number.isNaN(n) ? cell.v : n;
+      return Number.isNaN(n) ? cell.v || 0 : n;
     }
-    return cell?.v;
+    return cell?.v || 0;
   }
 }
 
