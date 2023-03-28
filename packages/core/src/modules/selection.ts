@@ -2212,22 +2212,48 @@ export function selectAll(ctx: Context) {
 
 export function getSelectionStyle(
   ctx: Context,
-  selection: Selection,
-  freeze: Freezen | undefined
+  freeze: Freezen | undefined,
+  selection?: Selection,
+  mark?: "row" | "col" | "foc",
+  h1?: number,
+  h2?: number
 ): {
   left: number | undefined;
   top: number | undefined;
-  width: number | undefined;
-  height: number | undefined;
+  width: number | undefined | string;
+  height: number | undefined | string;
   display: string;
 } {
-  const ret = {
-    left: selection.left_move,
-    top: selection.top_move,
-    width: selection.width_move,
-    height: selection.height_move,
-    display: "block",
-  };
+  let ret: any = null;
+  if (mark) {
+    if (mark === "foc") {
+      ret = {
+        display: "block",
+        left: _.last(ctx.luckysheet_select_save)?.left,
+        width: _.last(ctx.luckysheet_select_save)?.width,
+        top: _.last(ctx.luckysheet_select_save)?.top,
+        height: _.last(ctx.luckysheet_select_save)?.height,
+      };
+    } else {
+      ret = {
+        left: mark === "col" ? h1 : 0,
+        top: mark === "row" ? h1 : 0,
+        width: mark === "col" ? h2 : "100%",
+        height: mark === "row" ? h2 : "100%",
+        display: "block",
+        backgroundColor: "rgba(76, 76, 76, 0.1)",
+      };
+    }
+  } else {
+    ret = {
+      left: selection?.left_move,
+      top: selection?.top_move,
+      width: selection?.width_move,
+      height: selection?.height_move,
+      display: "block",
+    };
+  }
+
   if (!freeze) return ret;
 
   const { scrollTop } = ctx;
@@ -2240,13 +2266,25 @@ export function getSelectionStyle(
 
   let rangeshow = true;
 
-  if (freezenhorizontaldata != null) {
+  if (freezenhorizontaldata != null && mark !== "col") {
     const freezenTop = freezenhorizontaldata[0];
     const freezen_rowindex = freezenhorizontaldata[1];
     const offTop = scrollTop - freezenhorizontaldata[2];
 
-    const r1 = obj.row[0];
-    const r2 = obj.row[1];
+    let r1: number = 0;
+    let r2: number = 0;
+    if (mark) {
+      if (mark === "foc") {
+        r1 = _.cloneDeep(ctx.luckysheet_select_save?.[0].row_focus!);
+        r2 = r1;
+      } else {
+        r1 = _.cloneDeep(ctx.luckysheet_select_save?.[0].row[0]!);
+        r2 = _.cloneDeep(ctx.luckysheet_select_save?.[0].row[1]!);
+      }
+    } else {
+      [r1] = obj!.row;
+      [, r2] = obj!.row;
+    }
 
     const row = ctx.visibledatarow[r2];
     const row_pre = r1 - 1 === -1 ? 0 : ctx.visibledatarow[r1 - 1];
@@ -2278,13 +2316,26 @@ export function getSelectionStyle(
     }
   }
 
-  if (freezenverticaldata != null) {
+  if (freezenverticaldata != null && mark !== "row") {
     const freezenLeft = freezenverticaldata[0];
     const freezen_colindex = freezenverticaldata[1];
     const offLeft = scrollLeft - freezenverticaldata[2];
 
-    const c1 = obj.column[0];
-    const c2 = obj.column[1];
+    let c1: number = 0;
+    let c2: number = 0;
+
+    if (mark) {
+      if (mark === "foc") {
+        c1 = _.cloneDeep(ctx.luckysheet_select_save?.[0].column_focus!);
+        c2 = c1;
+      } else {
+        c1 = _.cloneDeep(ctx.luckysheet_select_save?.[0].column[0]!);
+        c2 = _.cloneDeep(ctx.luckysheet_select_save?.[0].column[1]!);
+      }
+    } else {
+      [c1] = obj!.column;
+      [, c2] = obj!.column;
+    }
 
     const col = ctx.visibledatacolumn[c2];
     const col_pre = c1 - 1 === -1 ? 0 : ctx.visibledatacolumn[c1 - 1];

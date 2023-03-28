@@ -6,6 +6,7 @@ import {
   handleColSizeHandleMouseDown,
   handleColumnHeaderMouseDown,
   handleContextMenu,
+  getSelectionStyle,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
@@ -193,12 +194,14 @@ const ColumnHeader: React.FC = () => {
         <div
           className="fortune-col-header-selected"
           key={i}
-          style={{
-            left: col_pre,
-            width: col - col_pre - 1,
-            display: "block",
-            backgroundColor: "rgba(76, 76, 76, 0.1)",
-          }}
+          style={getSelectionStyle(
+            context,
+            refs.globalCache.freezen?.[context.currentSheetId],
+            undefined,
+            "col",
+            col_pre,
+            col - col_pre - 1
+          )}
         />
       ))}
       {/* placeholder to overflow the container, making the container scrollable */}

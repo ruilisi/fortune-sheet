@@ -482,13 +482,12 @@ const SheetOverlay: React.FC = () => {
             className="luckysheet-cell-selected-focus"
             style={
               (context.luckysheet_select_save?.length ?? 0) > 0
-                ? {
-                    display: "block",
-                    left: _.last(context.luckysheet_select_save)?.left,
-                    width: _.last(context.luckysheet_select_save)?.width,
-                    top: _.last(context.luckysheet_select_save)?.top,
-                    height: _.last(context.luckysheet_select_save)?.height,
-                  }
+                ? getSelectionStyle(
+                    context,
+                    refs.globalCache.freezen?.[context.currentSheetId],
+                    undefined,
+                    "foc"
+                  )
                 : {}
             }
             onMouseDown={(e) => e.preventDefault()}
@@ -545,8 +544,8 @@ const SheetOverlay: React.FC = () => {
                   className="luckysheet-cell-selected"
                   style={getSelectionStyle(
                     context,
-                    selection,
-                    refs.globalCache.freezen?.[context.currentSheetId]
+                    refs.globalCache.freezen?.[context.currentSheetId],
+                    selection
                   )}
                   onMouseDown={(e) => {
                     e.stopPropagation();
