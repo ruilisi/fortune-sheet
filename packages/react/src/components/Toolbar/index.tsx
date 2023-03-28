@@ -54,6 +54,7 @@ import { SplitColumn } from "../SplitColumn";
 import { LocationCondition } from "../LocationCondition";
 import DataVerification from "../DataVerification";
 import ConditionalFormat from "../ConditionFormat";
+import CustomButton from "./CustomButton";
 
 const Toolbar: React.FC<{
   setMoreItems: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -153,7 +154,7 @@ const Toolbar: React.FC<{
   // rerenders the entire toolbar and trigger recalculation of item locations
   useEffect(() => {
     setToolbarWrapIndex(-1);
-  }, [settings.toolbarItems]);
+  }, [settings.toolbarItems, settings.customToolbarItems]);
 
   // recalculate item locations
   useEffect(() => {
@@ -182,14 +183,16 @@ const Toolbar: React.FC<{
     for (let i = itemLocations.length - 1; i >= 0; i -= 1) {
       const loc = itemLocations[i];
       if (loc + moreButtonWidth < container.clientWidth) {
-        setToolbarWrapIndex(i);
+        setToolbarWrapIndex(
+          i - itemLocations.length + settings.toolbarItems.length
+        );
         if (i === itemLocations.length - 1) {
           setMoreItems(null);
         }
         break;
       }
     }
-  }, [itemLocations, setMoreItems, sheetWidth]);
+  }, [itemLocations, setMoreItems, settings.toolbarItems.length, sheetWidth]);
 
   const getToolbarItem = useCallback(
     (name: string, i: number) => {
@@ -1485,6 +1488,22 @@ const Toolbar: React.FC<{
 
   return (
     <div ref={containerRef} className="fortune-toolbar">
+      {settings.customToolbarItems.map((n) => {
+        return (
+          <CustomButton
+            tooltip={n.tooltip}
+            onClick={n.onClick}
+            key={n.key}
+            icon={n.icon}
+            iconName={n.iconName}
+          >
+            {n.children}
+          </CustomButton>
+        );
+      })}
+      {settings.customToolbarItems?.length > 0 ? (
+        <Divider key="customDivider" />
+      ) : null}
       {(toolbarWrapIndex === -1
         ? settings.toolbarItems
         : settings.toolbarItems.slice(0, toolbarWrapIndex + 1)
