@@ -381,6 +381,7 @@ export function opToPatch(ctx: Context, ops: Op[]): [Patch[], Op[]] {
     ops,
     (op) => op.op === "add" || op.op === "remove" || op.op === "replace"
   );
+  const additionalPatches: Patch[] = [];
   const patches = normalOps.map((op) => {
     const patch: Patch = {
       op: op.op as "add" | "remove" | "replace",
@@ -394,10 +395,13 @@ export function opToPatch(ctx: Context, ops: Op[]): [Patch[], Op[]] {
       } else {
         // throw new Error(`sheet id: ${op.id} not found`);
       }
+      if (op.path[0] === "images" && op.id === ctx.currentSheetId) {
+        additionalPatches.push({ ...patch, path: ["insertedImgs"] });
+      }
     }
     return patch;
   });
-  return [patches, specialOps];
+  return [patches.concat(additionalPatches), specialOps];
 }
 
 export function inverseRowColOptions(
