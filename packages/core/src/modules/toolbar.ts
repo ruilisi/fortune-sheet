@@ -184,6 +184,14 @@ export function updateFormatCell(
           // @ts-ignore
           value[attr] = foucsStatus;
           // }
+          if (
+            !ctx.luckysheetfile[
+              getSheetIndex(ctx, ctx.currentSheetId as string) as number
+            ].config
+          )
+            ctx.luckysheetfile[
+              getSheetIndex(ctx, ctx.currentSheetId as string) as number
+            ].config = {};
           const cfg =
             ctx.luckysheetfile[
               getSheetIndex(ctx, ctx.currentSheetId as string) as number
@@ -199,6 +207,7 @@ export function updateFormatCell(
               c,
               cellWidth,
             });
+            if (!textInfo) continue;
             const rowHeight = _.round(textInfo.textHeightAll);
             const currentRowHeight =
               cfg.rowlen?.[r] ||
