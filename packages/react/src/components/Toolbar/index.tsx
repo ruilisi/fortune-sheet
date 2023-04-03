@@ -45,7 +45,6 @@ import "./index.css";
 import Button from "./Button";
 import Divider, { MenuDivider } from "./Divider";
 import Combo from "./Combo";
-import ColorPicker from "./ColorPicker";
 import Select, { Option } from "./Select";
 import SVGIcon from "../SVGIcon";
 import { useDialog } from "../../hooks/useDialog";
@@ -55,6 +54,7 @@ import { LocationCondition } from "../LocationCondition";
 import DataVerification from "../DataVerification";
 import ConditionalFormat from "../ConditionFormat";
 import CustomButton from "./CustomButton";
+import { CustomColor } from "./CustomColor";
 
 const Toolbar: React.FC<{
   setMoreItems: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -202,12 +202,12 @@ const Toolbar: React.FC<{
         return <Divider key={i} />;
       }
       if (["font-color", "background"].includes(name)) {
-        const pick = (color: string) => {
+        const pick = (color: string | undefined) => {
           setContext((draftCtx) =>
             (name === "font-color" ? handleTextColor : handleTextBackground)(
               draftCtx,
               refs.cellInput.current!,
-              color
+              color as string
             )
           );
           if (name === "font-color") {
@@ -244,11 +244,12 @@ const Toolbar: React.FC<{
               }}
             >
               {(setOpen) => (
-                <ColorPicker
-                  onPick={(color) => {
+                <CustomColor
+                  onCustomPick={(color) => {
                     pick(color);
                     setOpen(false);
                   }}
+                  onColorPick={pick}
                 />
               )}
             </Combo>
