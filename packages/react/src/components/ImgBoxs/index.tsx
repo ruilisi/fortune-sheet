@@ -142,6 +142,7 @@ const ImgBoxs: React.FC = () => {
                 top,
                 zIndex: 200,
               }}
+              onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 setContext((ctx) => {
                   ctx.activeImg = v;
