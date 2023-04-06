@@ -116,7 +116,7 @@ const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
   if (!data) return <div />;
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <div style={{ width: "100%", height: "100vh" }}>
       <Workbook
         ref={workbookRef}
         {...args}
