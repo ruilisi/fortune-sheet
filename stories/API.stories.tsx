@@ -18,7 +18,7 @@ const ApiExecContainer: React.FC<{
         display: "flex",
         flexDirection: "column",
         width: "100%",
-        height: "100%",
+        height: "100vh",
       }}
     >
       <div style={{ flexShrink: 0, padding: 8 }}>

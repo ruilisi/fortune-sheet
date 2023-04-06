@@ -22,7 +22,7 @@ const Template: ComponentStory<typeof Workbook> = ({
     setData(d);
   }, []);
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <div style={{ width: "100%", height: "100vh" }}>
       <Workbook {...args} data={data} onChange={onChange} />
     </div>
   );
