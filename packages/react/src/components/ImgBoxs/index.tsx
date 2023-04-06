@@ -16,12 +16,6 @@ const ImgBoxs: React.FC = () => {
             padding: 0,
             position: "absolute",
             zIndex: 300,
-            // width: 100,
-            // height: 100,
-            // left: 100,
-            // top: 100,
-            // backgroundColor: "red",
-            // backgroundImage: `url(${context.activeImg.src})`,
             ..._.omit(context.activeImg, "src"),
           }}
         >
@@ -60,38 +54,6 @@ const ImgBoxs: React.FC = () => {
                 }}
               />
             ))}
-            {/* <div
-                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lt"
-                    data-type="lt"
-                  />
-                  <div
-                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-mt"
-                    data-type="mt"
-                  />
-                  <div
-                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lm"
-                    data-type="lm"
-                  />
-                  <div
-                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rm"
-                    data-type="rm"
-                  />
-                  <div
-                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rt"
-                    data-type="rt"
-                  />
-                  <div
-                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-lb"
-                    data-type="lb"
-                  />
-                  <div
-                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-mb"
-                    data-type="mb"
-                  />
-                  <div
-                    className="luckysheet-modal-dialog-resize-item luckysheet-modal-dialog-resize-item-rb"
-                    data-type="rb"
-                  /> */}
           </div>
           <div className="luckysheet-modal-dialog-controll">
             <span
@@ -165,8 +127,6 @@ const ImgBoxs: React.FC = () => {
                   style={{
                     width,
                     height,
-                    padding: 0,
-                    position: "absolute",
                   }}
                 />
               </div>
@@ -232,13 +192,7 @@ const ImgBoxs: React.FC = () => {
         </div>
       </div>
 
-      <div className="cell-date-picker">
-        {/* <input
-            id="cellDatePickerBtn"
-            className="formulaInputFocus"
-            readOnly
-          /> */}
-      </div>
+      <div className="cell-date-picker" />
     </div>
   );
 };
