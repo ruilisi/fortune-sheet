@@ -86,6 +86,10 @@
   z-index: 1004;
 }
 
+.fortune-toolbar-select::-webkit-scrollbar {
+  display: none ;
+}
+
 .fortune-toolbar-select,
 .fortune-toolbar-color-picker {
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
@@ -191,9 +195,8 @@
   line-height: 100%;
 }
 
-.set-background-sub-menu {
+.toolbar-item-sub-menu {
   position: absolute;
-  top: -8px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
   background: #fff;
   border: 1px solid rgba(0, 0, 0, .2);
@@ -203,6 +206,7 @@
   box-sizing: border-box;
   user-select: none;
   outline: none;
+  border-radius: 6px;
 }
 
 .set-background-item {
