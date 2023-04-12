@@ -24,6 +24,11 @@ This project is originated from [Luckysheet](https://github.com/mengshukeji/Luck
 
 We aim to make FortuneSheet powerful yet easy to maintain.
 
+## Communication
+* [Discord](https://discord.gg/vHGwMB77w5) English community 
+* [QQ](https://jq.qq.com/?_wv=1027&k=iHaSN47J) Chinese community
+* [Xiemala](https://xiemala.com/s/ctJmUn)
+
 ## Live demo
 
 Take a look at the live demo at [fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/)
