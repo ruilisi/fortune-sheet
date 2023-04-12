@@ -24,6 +24,11 @@
 
 我们的目标是让`FortuneSheet`越来越强大，同时易于维护。
 
+## 交流
+* [Discord](https://discord.gg/vHGwMB77w5) 英文社群
+* [QQ](https://jq.qq.com/?_wv=1027&k=iHaSN47J) 中文社群
+* [Xiemala](https://xiemala.com/s/ctJmUn)
+
 ## 在线样例
 
 项目的在线Demo：[fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/)
