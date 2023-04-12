@@ -56,6 +56,7 @@ import ConditionalFormat from "../ConditionFormat";
 import CustomButton from "./CustomButton";
 import { CustomColor } from "./CustomColor";
 import CustomBorder from "./CustomBorder";
+import { FormatSearch } from "../FormatSearch";
 
 const Toolbar: React.FC<{
   setMoreItems: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -94,13 +95,14 @@ const Toolbar: React.FC<{
     comment,
     fontarray,
   } = locale(context);
+  const toolbarFormat = locale(context).format;
   const sheetWidth = context.luckysheetTableContentHW[0];
 
   const [customColor, setcustomColor] = useState("#000000");
   const [customStyle, setcustomStyle] = useState("1");
 
   const showSubMenu = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>, className: string) => {
       const target = e.target as HTMLDivElement;
       const menuItem =
         target.className === "fortune-toolbar-menu-line"
@@ -109,9 +111,7 @@ const Toolbar: React.FC<{
       const menuItemRect = menuItem.getBoundingClientRect();
       const workbookContainerRect =
         refs.workbookContainer.current!.getBoundingClientRect();
-      const subMenu = menuItem.querySelector(
-        ".set-background-sub-menu"
-      ) as HTMLDivElement;
+      const subMenu = menuItem.querySelector(`.${className}`) as HTMLDivElement;
       if (_.isNil(subMenu)) return;
       const menuItemStyle = window.getComputedStyle(menuItem);
       const menuItemPaddingRight = parseFloat(
@@ -126,20 +126,23 @@ const Toolbar: React.FC<{
         subMenu.style.right = `${menuItemRect.width - menuItemPaddingRight}px`;
       } else {
         subMenu.style.display = "block";
-        subMenu.style.right = `${-(
-          parseFloat(subMenu.style.width.replace("px", "")) +
-          menuItemPaddingRight
-        )}px`;
+        subMenu.style.right =
+          className === "more-format"
+            ? `${-(parseFloat(subMenu.style.width.replace("px", "")) + 0)}px`
+            : `${-(
+                parseFloat(subMenu.style.width.replace("px", "")) +
+                menuItemPaddingRight
+              )}px`;
       }
     },
     [refs.workbookContainer]
   );
 
   const hideSubMenu = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>, className: string) => {
       const target = e.target as HTMLDivElement;
 
-      if (target.className === "set-background-sub-menu") {
+      if (target.className === `${className}`) {
         target.style.display = "none";
         return;
       }
@@ -147,7 +150,7 @@ const Toolbar: React.FC<{
       const subMenu = (
         target.className === "condition-format-item"
           ? target.parentElement
-          : target.querySelector(".set-background-sub-menu")
+          : target.querySelector(`.${className}`)
       ) as HTMLDivElement;
       if (_.isNil(subMenu)) return;
       subMenu.style.display = "none";
@@ -277,38 +280,84 @@ const Toolbar: React.FC<{
           <Combo text={currentFmt} key={name} tooltip={tooltip}>
             {(setOpen) => (
               <Select>
-                {defaultFmt
-                  .slice(0, defaultFmt.length - 2)
-                  .map(({ text, value, example }, ii) =>
-                    value !== "split" ? (
+                {defaultFmt.map(({ text, value, example }, ii) => {
+                  if (value === "split") {
+                    return <MenuDivider key={ii} />;
+                  }
+                  if (value === "fmtOtherSelf") {
+                    return (
                       <Option
                         key={value}
-                        onClick={() => {
-                          setOpen(false);
-                          setContext((ctx) => {
-                            const d = getFlowdata(ctx);
-                            if (d == null) return;
-                            updateFormat(
-                              ctx,
-                              refs.cellInput.current!,
-                              d,
-                              "ct",
-                              value
-                            );
-                          });
-                        }}
+                        onMouseEnter={(e) => showSubMenu(e, "more-format")}
+                        onMouseLeave={(e) => hideSubMenu(e, "more-format")}
                       >
                         <div className="fortune-toolbar-menu-line">
                           <div>{text}</div>
-                          <div className="fortune-toolbar-subtext">
-                            {example}
-                          </div>
+                          <SVGIcon name="rightArrow" width={14} />
+                        </div>
+                        <div
+                          className="more-format toolbar-item-sub-menu"
+                          style={{
+                            display: "none",
+                            width: 150,
+                            bottom: 10,
+                            top: undefined,
+                          }}
+                        >
+                          {[
+                            {
+                              text: toolbarFormat.moreCurrency,
+                              onclick: () => {
+                                showDialog(
+                                  <FormatSearch
+                                    onCancel={hideDialog}
+                                    type="currency"
+                                  />
+                                );
+                                setOpen(false);
+                              },
+                            },
+                          ].map((v) => (
+                            <div
+                              className="set-background-item"
+                              key={v.text}
+                              onClick={() => {
+                                v.onclick();
+                                setOpen(false);
+                              }}
+                            >
+                              {v.text}
+                            </div>
+                          ))}
                         </div>
                       </Option>
-                    ) : (
-                      <MenuDivider key={ii} />
-                    )
-                  )}
+                    );
+                  }
+                  return (
+                    <Option
+                      key={value}
+                      onClick={() => {
+                        setOpen(false);
+                        setContext((ctx) => {
+                          const d = getFlowdata(ctx);
+                          if (d == null) return;
+                          updateFormat(
+                            ctx,
+                            refs.cellInput.current!,
+                            d,
+                            "ct",
+                            value
+                          );
+                        });
+                      }}
+                    >
+                      <div className="fortune-toolbar-menu-line">
+                        <div>{text}</div>
+                        <div className="fortune-toolbar-subtext">{example}</div>
+                      </div>
+                    </Option>
+                  );
+                })}
               </Select>
             )}
           </Combo>
@@ -887,17 +936,22 @@ const Toolbar: React.FC<{
                 </Option>
                 <Option
                   key="backgroundSetting"
-                  onMouseEnter={showSubMenu}
-                  onMouseLeave={hideSubMenu}
+                  onMouseEnter={(e) =>
+                    showSubMenu(e, "set-background-sub-menu")
+                  }
+                  onMouseLeave={(e) =>
+                    hideSubMenu(e, "set-background-sub-menu")
+                  }
                 >
                   <div className="fortune-toolbar-menu-line">
                     {toolbar.backgroundSettings}
                     <SVGIcon name="rightArrow" width={18} />
                     <div
-                      className="set-background-sub-menu"
+                      className="set-background-sub-menu toolbar-item-sub-menu"
                       style={{
                         display: "none",
                         width: 150,
+                        top: -8,
                       }}
                     >
                       {[
@@ -1497,6 +1551,7 @@ const Toolbar: React.FC<{
       refs.canvas,
       customColor,
       customStyle,
+      toolbarFormat.moreCurrency,
     ]
   );
 
