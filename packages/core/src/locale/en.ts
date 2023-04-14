@@ -11315,9 +11315,11 @@ export default {
     borderInside: "Inside border",
     borderHorizontal: "Horizontal borders",
     borderVertical: "Vertical borders",
-    borderColor: "borderColor",
-    borderSize: "borderSize",
+    borderColor: "border color",
+    borderSize: "border size",
     borderSlash: "Slash border",
+    borderDefault: "default",
+    borderStyle: "border style",
   },
   merge: {
     mergeAll: "Merge all",

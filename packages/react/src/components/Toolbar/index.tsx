@@ -55,6 +55,7 @@ import DataVerification from "../DataVerification";
 import ConditionalFormat from "../ConditionFormat";
 import CustomButton from "./CustomButton";
 import { CustomColor } from "./CustomColor";
+import CustomBorder from "./CustomBorder";
 
 const Toolbar: React.FC<{
   setMoreItems: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -94,6 +95,9 @@ const Toolbar: React.FC<{
     fontarray,
   } = locale(context);
   const sheetWidth = context.luckysheetTableContentHW[0];
+
+  const [customColor, setcustomColor] = useState("#000000");
+  const [customStyle, setcustomStyle] = useState("1");
 
   const showSubMenu = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -1148,6 +1152,7 @@ const Toolbar: React.FC<{
             text: border.borderSlash,
             value: "border-slash",
           },
+          { text: "", value: "divider" },
         ];
         return (
           <Combo
@@ -1157,7 +1162,7 @@ const Toolbar: React.FC<{
             text="边框设置"
             onClick={() =>
               setContext((ctx) => {
-                handleBorder(ctx, "border-all");
+                handleBorder(ctx, "border-all", customColor, customStyle);
               })
             }
           >
@@ -1169,7 +1174,7 @@ const Toolbar: React.FC<{
                       key={value}
                       onClick={() => {
                         setContext((ctx) => {
-                          handleBorder(ctx, value);
+                          handleBorder(ctx, value, customColor, customStyle);
                         });
                         setOpen(false);
                       }}
@@ -1183,6 +1188,12 @@ const Toolbar: React.FC<{
                     <MenuDivider key={ii} />
                   )
                 )}
+                <CustomBorder
+                  onPick={(color, style) => {
+                    setcustomColor(color as string);
+                    setcustomStyle(style as string);
+                  }}
+                />
               </Select>
             )}
           </Combo>
@@ -1484,6 +1495,8 @@ const Toolbar: React.FC<{
       hideSubMenu,
       showSubMenu,
       refs.canvas,
+      customColor,
+      customStyle,
     ]
   );
 
