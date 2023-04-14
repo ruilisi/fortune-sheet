@@ -119,6 +119,10 @@
   background: #efefef;
 }
 
+.fortune-toolbar-select::-webkit-scrollbar {
+  display: none;
+}
+
 .fortune-toolbar-color-picker-row {
   display: flex;
   flex-direction: row;
@@ -215,7 +219,6 @@
 #fortunesheet-custom-color {
   min-width: 164px;
   background: rgb(240, 240, 240);
-  position: absolute;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
   border: 1px solid rgba(0, 0, 0, .2);
@@ -275,4 +278,40 @@
   border: 1px solid #0188fb;
   color: #fff;
   margin-right: -4px;
+}
+
+.fortune-border-select-menu{
+    position: absolute;
+    bottom: 0px;
+}
+
+.fortune-border-color-preview {
+  height: 3px;
+}
+
+.fortune-border-select-option {
+  font-size: 12px;
+  height: 24px;
+  line-height: 24px;
+  min-width: 60px;
+  padding: 8px 12px;
+}
+
+.fortune-border-select-option:hover {
+  background: #efefef;
+  cursor: pointer;
+}
+
+.fortune-border-style-preview{
+  height: 3px;
+  overflow: hidden;
+}
+
+.fortune-border-style-picker-menu{
+  padding: 0px 10px;
+}
+
+.fortune-border-style-picker-menu:hover{
+  background: #efefef;
+  cursor: pointer;
 }

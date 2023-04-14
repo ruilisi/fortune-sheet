@@ -1376,7 +1376,12 @@ export function handleTextBackground(
   setAttr(ctx, cellInput, "bg", color);
 }
 
-export function handleBorder(ctx: Context, type: string) {
+export function handleBorder(
+  ctx: Context,
+  type: string,
+  borderColor?: string,
+  borderStyle?: string
+) {
   // *如果禁止前台编辑，则中止下一步操作
   // if (!checkIsAllowEdit()) {
   //   tooltip.info("", locale().pivotTable.errorNotAllowEdit);
@@ -1399,8 +1404,9 @@ export function handleBorder(ctx: Context, type: string) {
   // let color = $(`#${subcolormenuid}`).find(".luckysheet-color-selected").val();
   // let style = $("#luckysheetborderSizepreview").attr("itemvalue");
 
-  let color = "#000000";
-  let style = "1";
+  // let color = "#000000";
+  let color = borderColor;
+  let style = borderStyle;
 
   if (color == null || color === "") {
     color = "#000";

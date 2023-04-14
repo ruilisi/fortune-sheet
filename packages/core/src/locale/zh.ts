@@ -11356,6 +11356,8 @@ export default {
     borderColor: "边框颜色",
     borderSize: "边框粗细",
     borderSlash: "边框斜线",
+    borderDefault: "默认样式",
+    borderStyle: "边框样式",
   },
   merge: {
     mergeAll: "全部合并",
