@@ -91,7 +91,6 @@ export function isAllowEdit(
         }
       }
       return true;
-    }) &&
-    (ctx.allowEdit || true)
+    }) && (_.isUndefined(ctx.allowEdit) ? true : ctx.allowEdit)
   );
 }
