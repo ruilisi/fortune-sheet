@@ -76,6 +76,9 @@ describe("keyboard", () => {
       undo
       // redo
     );
+    await new Promise((resolve) => {
+      setTimeout(() => resolve(true), 1);
+    });
     expect(undo).toHaveBeenCalled();
     // handleWithCtrlOrMetaKey(
     //   ctx,
