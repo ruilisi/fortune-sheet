@@ -75,7 +75,7 @@ export function saveImage(ctx: Context) {
 export function removeActiveImage(ctx: Context) {
   ctx.insertedImgs = _.filter(
     ctx.insertedImgs,
-    (image) => image.id !== ctx.activeImg?.id
+    (image) => image.id !== ctx.activeImg
   );
   ctx.activeImg = undefined;
   saveImage(ctx);
@@ -190,7 +190,7 @@ export function onImageMoveEnd(ctx: Context, globalCache: GlobalCache) {
     globalCache.image = undefined;
 
     if (position) {
-      const img = _.find(ctx.insertedImgs, (v) => v.id === ctx.activeImg?.id);
+      const img = _.find(ctx.insertedImgs, (v) => v.id === ctx.activeImg);
       if (img) {
         img.left = position.left;
         img.top = position.top;
@@ -280,7 +280,7 @@ export function onImageResizeEnd(ctx: Context, globalCache: GlobalCache) {
     globalCache.image = undefined;
     const position = getImagePosition();
     if (position) {
-      const img = _.find(ctx.insertedImgs, (v) => v.id === ctx.activeImg?.id);
+      const img = _.find(ctx.insertedImgs, (v) => v.id === ctx.activeImg);
       if (img) {
         img.left = position.left;
         img.top = position.top;
