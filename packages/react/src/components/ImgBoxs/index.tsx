@@ -1,14 +1,17 @@
 import _ from "lodash";
 import { onImageMoveStart, onImageResizeStart } from "@fortune-sheet/core";
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import WorkbookContext from "../../context";
 
 const ImgBoxs: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
+  const activeImg = useMemo(() => {
+    return _.find(context.insertedImgs, { id: context.activeImg });
+  }, [context.activeImg, context.insertedImgs]);
 
   return (
     <div id="luckysheet-image-showBoxs">
-      {context.activeImg && (
+      {activeImg && (
         <div
           id="luckysheet-modal-dialog-activeImage"
           className="luckysheet-modal-dialog"
@@ -16,7 +19,7 @@ const ImgBoxs: React.FC = () => {
             padding: 0,
             position: "absolute",
             zIndex: 300,
-            ..._.omit(context.activeImg, "src"),
+            ..._.omit(activeImg, "src"),
           }}
         >
           <div
@@ -26,11 +29,11 @@ const ImgBoxs: React.FC = () => {
           <div
             className="luckysheet-modal-dialog-content"
             style={{
-              ..._.omit(context.activeImg, "src, left,top"),
+              ..._.omit(activeImg, "src, left,top"),
               // height: 200,
               // width: 200,
-              backgroundImage: `url(${context.activeImg.src})`,
-              backgroundSize: `${context.activeImg.width}px ${context.activeImg.height}px`,
+              backgroundImage: `url(${activeImg.src})`,
+              backgroundSize: `${activeImg.width}px ${activeImg.height}px`,
               backgroundRepeat: "no-repeat",
               // context.activeImg.width * context.zoomRatio +
               // context.activeImg.height * context.zoomRatio,
@@ -89,7 +92,7 @@ const ImgBoxs: React.FC = () => {
       <div className="img-list">
         {context.insertedImgs?.map((v: any) => {
           const { id, left, top, width, height, src } = v;
-          if (v.id === context.activeImg?.id) return null;
+          if (v.id === context.activeImg) return null;
           return (
             <div
               id={id}
@@ -107,7 +110,7 @@ const ImgBoxs: React.FC = () => {
               onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 setContext((ctx) => {
-                  ctx.activeImg = v;
+                  ctx.activeImg = id;
                 });
                 e.stopPropagation();
               }}

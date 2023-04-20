@@ -500,7 +500,7 @@ const ContextMenu: React.FC = () => {
               setContext((draftCtx) => {
                 const allowEdit = api.isAllowEdit(draftCtx);
                 if (!allowEdit) return;
-                if (draftCtx.activeImg?.id != null) {
+                if (draftCtx.activeImg != null) {
                   removeActiveImage(draftCtx);
                 } else {
                   const msg = deleteSelectedCellText(draftCtx);

@@ -31,7 +31,7 @@ export type Context = {
   hoveredCommentBox?: CommentBox;
   insertedImgs?: Image[];
   editingInsertedImgs?: Image;
-  activeImg?: Image;
+  activeImg?: string;
   presences?: Presence[];
   showSearchReplace?: boolean;
   linkCard?: LinkCardProps;
