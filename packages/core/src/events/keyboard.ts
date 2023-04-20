@@ -163,7 +163,7 @@ export function handleWithCtrlOrMetaKey(
       handleFormulaInput(ctx, fxInput, cellInput, e.keyCode);
     } else if (e.key === "z") {
       // Ctrl + shift + z 重做
-      setTimeout(handleRedo);
+      handleRedo();
       e.stopPropagation();
       return;
     }
@@ -272,7 +272,7 @@ export function handleWithCtrlOrMetaKey(
     return;
   } else if (e.key === "z") {
     // Ctrl + Z  撤销
-    setTimeout(handleUndo);
+    handleUndo();
     e.stopPropagation();
     return;
   } /* else if (e.key === "ArrowUp") {

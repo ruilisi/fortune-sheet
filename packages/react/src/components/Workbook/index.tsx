@@ -539,6 +539,18 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     const onKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
         const { nativeEvent } = e;
+        // handling undo and redo ahead because handleUndo and handleRedo
+        // themselves are calling setContext, and should not be nested
+        // in setContextWithProduce.
+        if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+          if (e.shiftKey) {
+            handleRedo();
+          } else {
+            handleUndo();
+          }
+          e.stopPropagation();
+          return;
+        }
         setContextWithProduce((draftCtx) => {
           handleGlobalKeyDown(
             draftCtx,
@@ -546,7 +558,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             fxInput.current!,
             nativeEvent,
             globalCache.current!,
-            handleUndo,
+            handleUndo, // still passing handleUndo and handleRedo here to satisfy API
             handleRedo,
             canvas.current!.getContext("2d")!
           );
