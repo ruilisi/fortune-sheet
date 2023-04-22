@@ -7,6 +7,8 @@ import {
   handleRowHeaderMouseDown,
   handleRowSizeHandleMouseDown,
   fixRowStyleOverflowInFreeze,
+  handleRowFreezeHandleMouseDown,
+  getSheetIndex,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
@@ -15,6 +17,7 @@ import React, {
   useRef,
   useCallback,
   useEffect,
+  useMemo,
 } from "react";
 import WorkbookContext from "../../context";
 
@@ -30,6 +33,23 @@ const RowHeader: React.FC = () => {
   const [selectedLocation, setSelectedLocation] = useState<
     { row: number; row_pre: number; r1: number; r2: number }[]
   >([]);
+  const sheetIndex = getSheetIndex(context, context.currentSheetId);
+  const sheet = sheetIndex == null ? null : context.luckysheetfile[sheetIndex];
+  const freezeHandleTop = useMemo(() => {
+    if (
+      sheet?.frozen?.type === "row" ||
+      sheet?.frozen?.type === "rangeRow" ||
+      sheet?.frozen?.type === "rangeBoth"
+    ) {
+      return (
+        rowLocationByIndex(
+          sheet?.frozen?.range?.row_focus || 0,
+          context.visibledatarow
+        )[1] + context.scrollTop
+      );
+    }
+    return context.scrollTop;
+  }, [context.visibledatarow, sheet?.frozen, context.scrollTop]);
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -83,6 +103,24 @@ const RowHeader: React.FC = () => {
       const { nativeEvent } = e;
       setContext((draftCtx) => {
         handleRowSizeHandleMouseDown(
+          draftCtx,
+          refs.globalCache,
+          nativeEvent,
+          containerRef.current!,
+          refs.workbookContainer.current!,
+          refs.cellArea.current!
+        );
+      });
+      e.stopPropagation();
+    },
+    [refs.cellArea, refs.globalCache, refs.workbookContainer, setContext]
+  );
+
+  const onRowFreezeHandleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const { nativeEvent } = e;
+      setContext((draftCtx) => {
+        handleRowFreezeHandleMouseDown(
           draftCtx,
           refs.globalCache,
           nativeEvent,
@@ -153,6 +191,13 @@ const RowHeader: React.FC = () => {
       onMouseLeave={onMouseLeave}
       onContextMenu={onContextMenu}
     >
+      <div
+        className="fortune-rows-freeze-handle"
+        onMouseDown={onRowFreezeHandleMouseDown}
+        style={{
+          top: freezeHandleTop,
+        }}
+      />
       <div
         className="fortune-rows-change-size"
         ref={rowChangeSizeRef}

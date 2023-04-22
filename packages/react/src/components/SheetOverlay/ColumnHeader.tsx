@@ -9,6 +9,8 @@ import {
   isAllowEdit,
   getFlowdata,
   fixColumnStyleOverflowInFreeze,
+  handleColFreezeHandleMouseDown,
+  getSheetIndex,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
@@ -17,6 +19,7 @@ import React, {
   useRef,
   useCallback,
   useEffect,
+  useMemo,
 } from "react";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
@@ -34,6 +37,25 @@ const ColumnHeader: React.FC = () => {
     { col: number; col_pre: number; c1: number; c2: number }[]
   >([]);
   const allowEditRef = useRef<boolean>(true);
+  const sheetIndex = getSheetIndex(context, context.currentSheetId);
+  const sheet = sheetIndex == null ? null : context.luckysheetfile[sheetIndex];
+  const freezeHandleLeft = useMemo(() => {
+    if (
+      sheet?.frozen?.type === "column" ||
+      sheet?.frozen?.type === "rangeColumn" ||
+      sheet?.frozen?.type === "rangeBoth"
+    ) {
+      return (
+        colLocationByIndex(
+          sheet?.frozen?.range?.column_focus || 0,
+          context.visibledatacolumn
+        )[1] -
+        2 +
+        context.scrollLeft
+      );
+    }
+    return context.scrollLeft;
+  }, [context.visibledatacolumn, sheet?.frozen, context.scrollLeft]);
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -105,6 +127,24 @@ const ColumnHeader: React.FC = () => {
     [refs.cellArea, refs.globalCache, refs.workbookContainer, setContext]
   );
 
+  const onColFreezeHandleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const { nativeEvent } = e;
+      setContext((draftCtx) => {
+        handleColFreezeHandleMouseDown(
+          draftCtx,
+          refs.globalCache,
+          nativeEvent,
+          containerRef.current!,
+          refs.workbookContainer.current!,
+          refs.cellArea.current!
+        );
+      });
+      e.stopPropagation();
+    },
+    [refs.cellArea, refs.globalCache, refs.workbookContainer, setContext]
+  );
+
   const onContextMenu = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       const { nativeEvent } = e;
@@ -163,6 +203,13 @@ const ColumnHeader: React.FC = () => {
       onMouseLeave={onMouseLeave}
       onContextMenu={onContextMenu}
     >
+      <div
+        className="fortune-cols-freeze-handle"
+        onMouseDown={onColFreezeHandleMouseDown}
+        style={{
+          left: freezeHandleLeft,
+        }}
+      />
       <div
         className="fortune-cols-change-size"
         ref={colChangeSizeRef}

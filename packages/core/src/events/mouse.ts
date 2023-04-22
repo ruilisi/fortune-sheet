@@ -2298,6 +2298,56 @@ function mouseRender(
         (changeSizeRow as HTMLDivElement).style.top = `${y}px`;
       }
     }
+  } else if (ctx.luckysheet_cols_freeze_drag) {
+    // 调整列冻结
+    const x = e.pageX - rect.left - ctx.rowHeaderWidth + scrollX.scrollLeft;
+    const col_location = colLocation(x, ctx.visibledatacolumn);
+    const col_pre = col_location[0];
+
+    if (x < rect.width + ctx.scrollLeft - 100) {
+      const freezeLine = container.querySelector(".fortune-freeze-drag-line");
+      if (freezeLine) {
+        (freezeLine as HTMLDivElement).style.left = `${col_pre - 3}px`;
+      }
+      const freezeHandle = container.querySelector(
+        ".fortune-cols-freeze-handle"
+      );
+      if (freezeHandle) {
+        (freezeHandle as HTMLDivElement).style.left = `${x}px`;
+      }
+      // reuse change-size-line
+      const changeSizeLine = container.querySelector(
+        ".fortune-change-size-line"
+      );
+      if (changeSizeLine) {
+        (changeSizeLine as HTMLDivElement).style.left = `${x}px`;
+      }
+    }
+  } else if (ctx.luckysheet_rows_freeze_drag) {
+    // 调整行冻结
+    const y = e.pageY - rect.top - ctx.columnHeaderHeight + scrollY.scrollTop;
+    const row_location = rowLocation(y, ctx.visibledatarow);
+    const row_pre = row_location[0];
+
+    if (y < rect.height + ctx.scrollTop - 20) {
+      const freezeLine = container.querySelector(".fortune-freeze-drag-line");
+      if (freezeLine) {
+        (freezeLine as HTMLDivElement).style.top = `${row_pre - 3}px`;
+      }
+      const freezeHandle = container.querySelector(
+        ".fortune-rows-freeze-handle"
+      );
+      if (freezeHandle) {
+        (freezeHandle as HTMLDivElement).style.top = `${y}px`;
+      }
+      // reuse change-size-line
+      const changeSizeLine = container.querySelector(
+        ".fortune-change-size-line"
+      );
+      if (changeSizeLine) {
+        (changeSizeLine as HTMLDivElement).style.top = `${y}px`;
+      }
+    }
   }
   /*
     // chart move
@@ -4047,6 +4097,80 @@ export function handleOverlayMouseUp(
     // }, 1);
   }
 
+  // 列冻结拖动结束
+  if (ctx.luckysheet_cols_freeze_drag) {
+    ctx.luckysheet_cols_freeze_drag = false;
+
+    const { scrollLeft } = ctx;
+    const x = e.pageX - rect.left - ctx.rowHeaderWidth + scrollLeft;
+    const col_location = colLocation(x, ctx.visibledatacolumn);
+    const col_index = col_location[2] - 1;
+    const idx = getSheetIndex(ctx, ctx.currentSheetId);
+    if (idx == null) return;
+    if (col_index < 0) {
+      const { frozen } = ctx.luckysheetfile[idx];
+      if (frozen) {
+        if (frozen.type === "rangeBoth" || frozen.type === "both") {
+          frozen.type = "rangeRow";
+        } else if (frozen.type === "column" || frozen.type === "rangeColumn") {
+          delete ctx.luckysheetfile[idx].frozen;
+        }
+      }
+    } else if (!ctx.luckysheetfile[idx].frozen) {
+      ctx.luckysheetfile[idx].frozen = {
+        type: "rangeColumn",
+        range: { column_focus: col_index, row_focus: 0 },
+      };
+    } else {
+      const frozen = ctx.luckysheetfile[idx].frozen!;
+      if (!frozen.range) {
+        frozen.range = { column_focus: col_index, row_focus: 0 };
+      } else {
+        frozen.range.column_focus = col_index;
+      }
+      if (frozen?.type === "rangeRow" || frozen?.type === "row") {
+        frozen.type = "rangeBoth";
+      }
+    }
+  }
+
+  // 行冻结拖动结束
+  if (ctx.luckysheet_rows_freeze_drag) {
+    ctx.luckysheet_rows_freeze_drag = false;
+
+    const { scrollTop } = ctx;
+    const y = e.pageY - rect.top - ctx.columnHeaderHeight + scrollTop;
+    const row_location = rowLocation(y, ctx.visibledatarow);
+    const row_index = row_location[2] - 1;
+    const idx = getSheetIndex(ctx, ctx.currentSheetId);
+    if (idx == null) return;
+    if (row_index < 0) {
+      const { frozen } = ctx.luckysheetfile[idx];
+      if (frozen) {
+        if (frozen.type === "rangeBoth" || frozen.type === "both") {
+          frozen.type = "rangeColumn";
+        } else if (frozen.type === "row" || frozen.type === "rangeRow") {
+          delete ctx.luckysheetfile[idx].frozen;
+        }
+      }
+    } else if (!ctx.luckysheetfile[idx].frozen) {
+      ctx.luckysheetfile[idx].frozen = {
+        type: "rangeRow",
+        range: { column_focus: 0, row_focus: row_index },
+      };
+    } else {
+      const frozen = ctx.luckysheetfile[idx].frozen!;
+      if (!frozen.range) {
+        frozen.range = { column_focus: 0, row_focus: row_index };
+      } else {
+        frozen.range.row_focus = row_index;
+      }
+      if (frozen?.type === "rangeColumn" || frozen?.type === "column") {
+        frozen.type = "rangeBoth";
+      }
+    }
+  }
+
   // if (formula.rangeMove) {
   //   formula.rangeMoveDragged(formula.rangeMoveObj);
   // }
@@ -5043,5 +5167,115 @@ export function handleRowSizeHandleMouseDown(
   // $("#luckysheet-rightclick-menu").hide();
   // $("#luckysheet-cols-h-hover").hide();
   // $("#luckysheet-cols-menu-btn").hide();
+  e.stopPropagation();
+}
+
+export function handleColFreezeHandleMouseDown(
+  ctx: Context,
+  globalCache: GlobalCache,
+  e: MouseEvent,
+  headerContainer: HTMLDivElement,
+  workbookContainer: HTMLDivElement,
+  cellArea: HTMLDivElement
+) {
+  // 有批注在编辑时
+  removeEditingComment(ctx, globalCache);
+  cancelActiveImgItem(ctx, globalCache);
+
+  ctx.luckysheetCellUpdate = [];
+
+  // let mouse = mouseposition(event.pageX, event.pageY);
+  const { scrollLeft } = ctx;
+  const { scrollTop } = ctx;
+
+  const x = e.pageX - headerContainer.getBoundingClientRect().left + scrollLeft;
+
+  const col_location = colLocation(x, ctx.visibledatacolumn);
+  const col = col_location[1];
+
+  ctx.luckysheet_cols_freeze_drag = true;
+  ctx.luckysheet_scroll_status = true;
+  const freezeDragLine = workbookContainer.querySelector(
+    ".fortune-freeze-drag-line"
+  );
+  if (freezeDragLine) {
+    const ele = freezeDragLine as HTMLDivElement;
+    ele.style.height = `${
+      cellArea.getBoundingClientRect().height + scrollTop
+    }px`;
+    ele.style.borderWidth = "0 3px 0 0";
+    ele.style.top = "0";
+    ele.style.left = `${col - 3}px`;
+    ele.style.width = "1px";
+  }
+  // reuse change-size-line
+  const changeSizeLine = workbookContainer.querySelector(
+    ".fortune-change-size-line"
+  );
+  if (changeSizeLine) {
+    const ele = changeSizeLine as HTMLDivElement;
+    ele.style.height = `${
+      cellArea.getBoundingClientRect().height + scrollTop
+    }px`;
+    ele.style.borderWidth = "0 1px 0 0";
+    ele.style.top = "0";
+    ele.style.left = `${col - 3}px`;
+    ele.style.width = "1px";
+  }
+  e.stopPropagation();
+}
+
+export function handleRowFreezeHandleMouseDown(
+  ctx: Context,
+  globalCache: GlobalCache,
+  e: MouseEvent,
+  headerContainer: HTMLDivElement,
+  workbookContainer: HTMLDivElement,
+  cellArea: HTMLDivElement
+) {
+  // 有批注在编辑时
+  removeEditingComment(ctx, globalCache);
+  cancelActiveImgItem(ctx, globalCache);
+
+  ctx.luckysheetCellUpdate = [];
+
+  // let mouse = mouseposition(event.pageX, event.pageY);
+  const { scrollLeft } = ctx;
+  const { scrollTop } = ctx;
+
+  const y = e.pageY - headerContainer.getBoundingClientRect().top + scrollTop;
+
+  const row_location = rowLocation(y, ctx.visibledatarow);
+  const row = row_location[1];
+
+  ctx.luckysheet_rows_freeze_drag = true;
+  ctx.luckysheet_scroll_status = true;
+  const freezeDragLine = workbookContainer.querySelector(
+    ".fortune-freeze-drag-line"
+  );
+  if (freezeDragLine) {
+    const ele = freezeDragLine as HTMLDivElement;
+    ele.style.width = `${
+      cellArea.getBoundingClientRect().width + scrollLeft
+    }px`;
+    ele.style.borderWidth = "0 0 3px 0";
+    ele.style.top = `${row - 3}px`;
+    ele.style.left = "0";
+    ele.style.height = "1px";
+  }
+  // reuse change-size-line
+  const changeSizeLine = workbookContainer.querySelector(
+    ".fortune-change-size-line"
+  );
+  if (changeSizeLine) {
+    const ele = changeSizeLine as HTMLDivElement;
+    ele.style.width = `${
+      cellArea.getBoundingClientRect().width + scrollLeft
+    }px`;
+    ele.style.borderWidth = "0 0 1px 0";
+    ele.style.top = `${row - 3}px`;
+    ele.style.left = "0";
+    ele.style.height = "1px";
+  }
   e.stopPropagation();
 }
