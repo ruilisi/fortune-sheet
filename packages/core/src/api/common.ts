@@ -71,26 +71,3 @@ export function getSheetWithLatestCelldata(
   const sheet = getSheet(ctx, options);
   return { ...sheet, celldata: dataToCelldata(sheet.data) };
 }
-
-export function isAllowEdit(
-  ctx: Context,
-  range?: Sheet["luckysheet_select_save"]
-) {
-  const cfg = ctx.config;
-  const judgeRange = _.isUndefined(range) ? ctx.luckysheet_select_save : range;
-  return (
-    _.every(judgeRange, (selection) => {
-      for (let r = selection.row[0]; r <= selection.row[1]; r += 1) {
-        if (cfg.rowReadOnly?.[r]) {
-          return false;
-        }
-      }
-      for (let c = selection.column[0]; c <= selection.column[1]; c += 1) {
-        if (cfg.colReadOnly?.[c]) {
-          return false;
-        }
-      }
-      return true;
-    }) && (_.isUndefined(ctx.allowEdit) ? true : ctx.allowEdit)
-  );
-}

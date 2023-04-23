@@ -3,7 +3,7 @@ import { mergeCells } from "./merge";
 import { Context, getFlowdata } from "../context";
 // import { locale } from "../locale";
 import { Cell, CellMatrix, GlobalCache } from "../types";
-import { getSheetIndex } from "../utils";
+import { getSheetIndex, isAllowEdit } from "../utils";
 import {
   getRangetxt,
   isAllSelectedCellsInStatus,
@@ -40,7 +40,6 @@ import {
 } from "./validation";
 import { showLinkCard } from "./hyperlink";
 import { cfSplitRange } from "./conditionalFormat";
-import { isAllowEdit } from "../api/common";
 import { getCellTextInfo } from "./text";
 
 type ToolbarItemClickHandler = (

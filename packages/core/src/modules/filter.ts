@@ -2,14 +2,13 @@ import _ from "lodash";
 import { locale } from "../locale";
 import { Context, getFlowdata } from "../context";
 import { Cell } from "../types";
-import { getSheetIndex, rgbToHex } from "../utils";
+import { getSheetIndex, isAllowEdit, rgbToHex } from "../utils";
 import { update } from "./format";
 import { normalizeSelection } from "./selection";
 import { isRealNull } from "./validation";
 import { normalizedAttr } from "./cell";
 import { orderbydata } from "./sort";
 import { checkCF, getComputeMap } from "./ConditionFormat";
-import { isAllowEdit } from "../api/common";
 
 // 筛选配置状态
 export function labelFilterOptionState(

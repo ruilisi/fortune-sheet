@@ -50,7 +50,7 @@ import {
 } from "../modules/selection";
 import { Settings } from "../settings";
 import { GlobalCache } from "../types";
-import { getSheetIndex } from "../utils";
+import { getSheetIndex, isAllowEdit } from "../utils";
 import { onDropCellSelectEnd, onDropCellSelect } from "../modules/dropCell";
 import {
   handleFormulaInput,
@@ -66,7 +66,6 @@ import {
   onSearchDialogMove,
   onSearchDialogMoveEnd,
 } from "../modules/searchReplace";
-import { isAllowEdit } from "../api/common";
 
 let mouseWheelUniqueTimeout: ReturnType<typeof setTimeout>;
 

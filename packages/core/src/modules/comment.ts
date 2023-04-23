@@ -4,7 +4,7 @@ import { mergeBorder } from "./cell";
 import { Context, getFlowdata } from "../context";
 import { CellMatrix, GlobalCache } from "../types";
 import { colLocation, rowLocation } from "./location";
-import { isAllowEdit } from "../api/common";
+import { isAllowEdit } from "../utils";
 
 export function getArrowCanvasSize(
   fromX: number,

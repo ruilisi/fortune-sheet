@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
-import { getSheetIndex } from "../utils";
+import { getSheetIndex, isAllowEdit } from "../utils";
 import { mergeBorder } from "./cell";
 import { getcellrange, iscelldata } from "./formula";
 import { colLocation, rowLocation } from "./location";
@@ -8,7 +8,6 @@ import { normalizeSelection } from "./selection";
 import { changeSheet } from "./sheet";
 import { locale } from "../locale";
 import { GlobalCache } from "../types";
-import { isAllowEdit } from "../api/common";
 
 export function getCellRowColumn(
   ctx: Context,

@@ -7,6 +7,8 @@ import {
   handleColumnHeaderMouseDown,
   handleContextMenu,
   getSelectionStyle,
+  isAllowEdit,
+  getFlowdata,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
@@ -30,6 +32,7 @@ const ColumnHeader: React.FC = () => {
   const [selectedLocation, setSelectedLocation] = useState<
     { col: number; col_pre: number }[]
   >([]);
+  const allowEditRef = useRef<boolean>(true);
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -45,13 +48,18 @@ const ColumnHeader: React.FC = () => {
       if (col_pre !== hoverLocation.col_pre || col !== hoverLocation.col) {
         setHoverLocation({ col_pre, col });
       }
+      const flowdata = getFlowdata(context);
+      if (!_.isNil(flowdata))
+        allowEditRef.current =
+          isAllowEdit(context) &&
+          isAllowEdit(context, [
+            {
+              row: [0, flowdata.length - 1],
+              column: col_location,
+            },
+          ]);
     },
-    [
-      context.luckysheet_cols_change_size,
-      context.visibledatacolumn,
-      hoverLocation.col,
-      hoverLocation.col_pre,
-    ]
+    [context, hoverLocation.col, hoverLocation.col_pre]
   );
 
   const onMouseDown = useCallback(
@@ -174,20 +182,22 @@ const ColumnHeader: React.FC = () => {
             display: "block",
           }}
         >
-          <span
-            className="header-arrow"
-            onClick={(e) => {
-              setContext((ctx) => {
-                ctx.contextMenu = {
-                  x: e.pageX,
-                  y: 90,
-                  headerMenu: true,
-                };
-              });
-            }}
-          >
-            <SVGIcon name="headDownArrow" width={12} />
-          </span>
+          {allowEditRef.current && (
+            <span
+              className="header-arrow"
+              onClick={(e) => {
+                setContext((ctx) => {
+                  ctx.contextMenu = {
+                    x: e.pageX,
+                    y: 90,
+                    headerMenu: true,
+                  };
+                });
+              }}
+            >
+              <SVGIcon name="headDownArrow" width={12} />
+            </span>
+          )}
         </div>
       ) : null}
       {selectedLocation.map(({ col, col_pre }, i) => (
