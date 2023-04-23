@@ -551,6 +551,12 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           e.stopPropagation();
           return;
         }
+        if ((e.ctrlKey || e.metaKey) && e.key === "y") {
+          handleRedo();
+          e.stopPropagation();
+          e.preventDefault();
+          return;
+        }
         setContextWithProduce((draftCtx) => {
           handleGlobalKeyDown(
             draftCtx,

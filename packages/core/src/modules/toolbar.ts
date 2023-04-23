@@ -1594,7 +1594,7 @@ const handlerMap: Record<string, ToolbarItemClickHandler> = {
   "clear-format": handleClearFormat,
   "format-painter": handleFormatPainter,
   search: (ctx: Context) => {
-    ctx.showSearchReplace = true;
+    ctx.showSearch = true;
   },
   link: handleLink,
 };

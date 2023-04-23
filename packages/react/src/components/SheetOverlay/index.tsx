@@ -397,7 +397,7 @@ const SheetOverlay: React.FC = () => {
         />
         <ColumnHeader />
       </div>
-      {context.showSearchReplace && (
+      {(context.showSearch || context.showReplace) && (
         <SearchReplace getContainer={() => containerRef.current!} />
       )}
       <div className="fortune-row-body">

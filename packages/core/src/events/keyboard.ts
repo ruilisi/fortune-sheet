@@ -179,11 +179,10 @@ export function handleWithCtrlOrMetaKey(
     return;
   } else if (e.key === "f") {
     // Ctrl + F  查找
-    ctx.showSearchReplace = true;
-
-    // } else if (e.key === "h") {
-    //   // Ctrl + H  替换
-    //   searchReplace.createDialog(1);
+    ctx.showSearch = true;
+  } else if (e.key === "h") {
+    // Ctrl + H  替换
+    ctx.showReplace = true;
     //   searchReplace.init();
 
     //   $("#luckysheet-search-replace #searchInput input").focus();
