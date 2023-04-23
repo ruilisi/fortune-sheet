@@ -3,11 +3,16 @@ import _ from "lodash";
 import { Context, getFlowdata } from "../context";
 import { locale } from "../locale";
 import { CellMatrix, Selection, SearchResult, GlobalCache } from "../types";
-import { chatatABC, getRegExpStr, getSheetIndex, replaceHtml } from "../utils";
+import {
+  chatatABC,
+  getRegExpStr,
+  getSheetIndex,
+  isAllowEdit,
+  replaceHtml,
+} from "../utils";
 import { setCellValue } from "./cell";
 import { valueShowEs } from "./format";
 import { normalizeSelection, scrollToHighlightCell } from "./selection";
-import { isAllowEdit } from "../api/common";
 
 export function getSearchIndexArr(
   searchText: string,

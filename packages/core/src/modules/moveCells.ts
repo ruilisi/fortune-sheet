@@ -13,12 +13,11 @@ import { hasPartMC } from "./validation";
 import { locale } from "../locale";
 import { getBorderInfoCompute } from "./border";
 import { normalizeSelection } from "./selection";
-import { getSheetIndex } from "../utils";
+import { getSheetIndex, isAllowEdit } from "../utils";
 import { cfSplitRange } from "./conditionalFormat";
 import { GlobalCache } from "../types";
 import { jfrefreshgrid } from "./refresh";
 import { CFSplitRange } from "./ConditionFormat";
-import { isAllowEdit } from "../api/common";
 
 const dragCellThreshold = 8;
 

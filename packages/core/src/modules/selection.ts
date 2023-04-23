@@ -12,13 +12,12 @@ import {
 import { delFunctionGroup } from "./formula";
 import clipboard from "./clipboard";
 import { getBorderInfoCompute } from "./border";
-import { getSheetIndex, replaceHtml } from "../utils";
+import { getSheetIndex, isAllowEdit, replaceHtml } from "../utils";
 import { hasPartMC } from "./validation";
 import { update } from "./format";
 // @ts-ignore
 import SSF from "./ssf";
 import { CFSplitRange } from "./ConditionFormat";
-import { isAllowEdit } from "../api/common";
 
 export const selectionCache = {
   isPasteAction: false,

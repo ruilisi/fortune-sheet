@@ -14,10 +14,9 @@ import {
 import { cancelPaintModel, handleBold } from "../modules/toolbar";
 import { hasPartMC } from "../modules/validation";
 import { GlobalCache } from "../types";
-import { getNowDateTime } from "../utils";
+import { getNowDateTime, isAllowEdit } from "../utils";
 import { handleCopy } from "./copy";
 import { jfrefreshgrid } from "../modules/refresh";
-import { isAllowEdit } from "../api/common";
 
 export function handleGlobalEnter(
   ctx: Context,

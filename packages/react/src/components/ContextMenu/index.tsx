@@ -14,6 +14,7 @@ import {
   showSelected,
   getSheetIndex,
   api,
+  isAllowEdit,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, { useContext, useRef, useCallback, useLayoutEffect } from "react";
@@ -498,7 +499,7 @@ const ContextMenu: React.FC = () => {
             key={name}
             onClick={() => {
               setContext((draftCtx) => {
-                const allowEdit = api.isAllowEdit(draftCtx);
+                const allowEdit = isAllowEdit(draftCtx);
                 if (!allowEdit) return;
                 if (draftCtx.activeImg != null) {
                   removeActiveImage(draftCtx);

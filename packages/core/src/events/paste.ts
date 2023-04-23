@@ -11,14 +11,13 @@ import { getdatabyselection, getQKBorder } from "../modules/cell";
 import { genarate, update } from "../modules/format";
 import { normalizeSelection, selectionCache } from "../modules/selection";
 import { Cell, CellMatrix } from "../types";
-import { getSheetIndex } from "../utils";
+import { getSheetIndex, isAllowEdit } from "../utils";
 import { hasPartMC, isRealNum } from "../modules/validation";
 import { getBorderInfoCompute } from "../modules/border";
 import { expandRowsAndColumns, storeSheetParamALL } from "../modules/sheet";
 import { jfrefreshgrid } from "../modules/refresh";
 import { setRowHeight } from "../api";
 import { CFSplitRange } from "../modules";
-import { isAllowEdit } from "../api/common";
 
 function postPasteCut(
   ctx: Context,

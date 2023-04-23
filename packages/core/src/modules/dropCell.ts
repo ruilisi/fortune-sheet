@@ -4,13 +4,12 @@ import dayjs from "dayjs";
 import { Context, getFlowdata } from "../context";
 import { CellMatrix, Rect, Cell } from "../types";
 import { colLocation, rowLocation } from "./location";
-import { getSheetIndex } from "../utils";
+import { getSheetIndex, isAllowEdit } from "../utils";
 import { getBorderInfoCompute } from "./border";
 import { genarate, update } from "./format";
 import * as formula from "./formula";
 import { isRealNum } from "./validation";
 import { CFSplitRange } from "./ConditionFormat";
-import { isAllowEdit } from "../api/common";
 import { normalizeSelection } from "./selection";
 
 function toPx(v: number) {

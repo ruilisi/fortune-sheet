@@ -8,6 +8,7 @@ import {
   getRangeByTxt,
   getSheetIndex,
   GlobalCache,
+  isAllowEdit,
   iscelldata,
   isdatetime,
   isRealNull,
@@ -16,7 +17,6 @@ import {
   rowLocationByIndex,
   setCellValue,
 } from "..";
-import { isAllowEdit } from "../api/common";
 
 // TODO: 后期增加鼠标可以选择多个选区
 // 开启范围选区
