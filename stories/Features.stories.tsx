@@ -62,8 +62,8 @@ export const MultiInstance: ComponentStory<typeof Workbook> = () => {
       <div
         style={{
           display: "inline-block",
-          width: "100%",
-          height: "50%",
+          width: "50%",
+          height: "100%",
           paddingRight: "12px",
           boxSizing: "border-box",
         }}
@@ -73,8 +73,8 @@ export const MultiInstance: ComponentStory<typeof Workbook> = () => {
       <div
         style={{
           display: "inline-block",
-          width: "100%",
-          height: "50%",
+          width: "50%",
+          height: "100%",
           paddingLeft: "12px",
           boxSizing: "border-box",
         }}

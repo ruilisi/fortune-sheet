@@ -70,6 +70,7 @@ const SheetTab: React.FC = () => {
 
   useEffect(() => {
     const tabCurrent = tabContainerRef.current;
+    if (!tabCurrent) return;
     setIsShowScrollBtn(tabCurrent!.scrollWidth - 2 > tabCurrent!.clientWidth);
   }, [context.luckysheetfile]);
 

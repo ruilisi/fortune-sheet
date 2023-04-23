@@ -24,7 +24,7 @@ const SearchReplace: React.FC<{
   const { findAndReplace, button } = locale(context);
   const [searchText, setSearchText] = useState("");
   const [replaceText, setReplaceText] = useState("");
-  const [showReplace, setShowReplace] = useState(false);
+  const [showReplace, setShowReplace] = useState(context.showReplace);
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
   const [selectedCell, setSelectedCell] = useState<{ r: number; c: number }>();
   const { showAlert } = useAlert();
@@ -37,7 +37,8 @@ const SearchReplace: React.FC<{
   const closeDialog = useCallback(() => {
     _.set(refs.globalCache, "searchDialog.mouseEnter", false);
     setContext((draftCtx) => {
-      draftCtx.showSearchReplace = false;
+      draftCtx.showSearch = false;
+      draftCtx.showReplace = false;
     });
   }, [refs.globalCache, setContext]);
 

@@ -77,7 +77,8 @@ export function handleGlobalWheel(
   scrollbarX: HTMLDivElement,
   scrollbarY: HTMLDivElement
 ) {
-  if (cache.searchDialog?.mouseEnter && ctx.showSearchReplace) return;
+  if (cache.searchDialog?.mouseEnter && ctx.showSearch && ctx.showReplace)
+    return;
   if (ctx.filterContextMenu != null) return;
   let { scrollLeft } = scrollbarX;
   const { scrollTop } = scrollbarY;

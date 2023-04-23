@@ -33,7 +33,8 @@ export type Context = {
   editingInsertedImgs?: Image;
   activeImg?: string;
   presences?: Presence[];
-  showSearchReplace?: boolean;
+  showSearch?: boolean;
+  showReplace?: boolean;
   linkCard?: LinkCardProps;
   rangeDialog?: RangeDialogProps; // 坐标选区鼠标选择
   // 提醒弹窗
