@@ -384,6 +384,32 @@ export function pasteHandlerOfPaintModel(
             value = copyData[h - mth][c - mtc];
           }
 
+          if (isPlainObject(x[c])) {
+            if (x[c].ct && x[c].ct.t === "inlineStr" && value) {
+              delete value.ct;
+            } else {
+              const format = [
+                "bg",
+                "fc",
+                "ct",
+                "ht",
+                "vt",
+                "bl",
+                "it",
+                "cl",
+                "un",
+                "fs",
+                "ff",
+                "tb",
+              ];
+              format.forEach((item) => {
+                Reflect.deleteProperty(x[c], item);
+              });
+            }
+          } else {
+            x[c] = { v: x[c] };
+          }
+
           if (value != null) {
             delete value.v;
             delete value.m;
@@ -393,43 +419,10 @@ export function pasteHandlerOfPaintModel(
             if (value.ct && value.ct.t === "inlineStr") {
               delete value.ct;
             }
-            if (isPlainObject(x[c])) {
-              if (x[c].ct && x[c].ct.t === "inlineStr") {
-                delete value.ct;
-              } else {
-                const format = [
-                  "bg",
-                  "fc",
-                  "ct",
-                  "ht",
-                  "vt",
-                  "bl",
-                  "it",
-                  "cl",
-                  "un",
-                  "fs",
-                  "ff",
-                  "tb",
-                ];
-                format.forEach((item) => {
-                  Reflect.deleteProperty(x[c], item);
-                });
-              }
-            } else {
-              x[c] = { v: x[c] };
-            }
 
-            /**
-             * 2022.10.3弃用x[c] = _.assign(value, x[c]);
-             * 因为如果使用_.assign的话，将会导致x[c]的v和m都是value的值，从而导致一次性刷多个单元格的时候单元格值全为同一个数据
-             */
-            x[c] = {
-              ...value,
-              v: x[c].v,
-              m: x[c].m,
-            };
+            x[c] = _.assign(x[c], value);
             if (x[c].ct && x[c].ct.t === "inlineStr") {
-              x[c].ct.s.forEach((item: any) => _.assign(value, item));
+              x[c].ct.s.forEach((item: any) => _.assign(item, value));
             }
 
             if (copyHasMC && x[c].mc) {
@@ -466,16 +459,6 @@ export function pasteHandlerOfPaintModel(
                 const mask = update(value.ct.fa, x[c].v);
                 x[c].m = mask;
               }
-            }
-          } else {
-            if (x[c]) {
-              x[c] = {
-                ...value,
-                v: x[c].v,
-                m: x[c].m,
-              };
-            } else {
-              x[c] = value;
             }
           }
         }
