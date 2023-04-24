@@ -64,6 +64,15 @@ const InputBox: React.FC = () => {
   ]);
 
   useLayoutEffect(() => {
+    if (!context.allowEdit) {
+      setContext((ctx) => {
+        const flowdata = getFlowdata(ctx);
+        if (!_.isNil(flowdata) && ctx.forceFormulaRef) {
+          const value = getCellValue(row_index, col_index, flowdata, "f");
+          createRangeHightlight(ctx, value);
+        }
+      });
+    }
     if (firstSelection && context.luckysheetCellUpdate.length > 0) {
       if (refs.globalCache.doNotUpdateCell) {
         delete refs.globalCache.doNotUpdateCell;

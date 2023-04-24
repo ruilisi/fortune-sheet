@@ -196,6 +196,8 @@ export type Context = {
   formulaCache: FormulaCache;
   hooks: Hooks;
   showSheetList?: Boolean;
+  // 只读模式公式被引用单元格强制高光
+  forceFormulaRef?: Boolean;
 };
 
 export function defaultContext(): Context {
