@@ -35,11 +35,8 @@ function getCfIconsImg() {
   return cfIconsImg;
 }
 
-function getBorderFix(d: any, r: any, c: any) {
-  if (_.isEmpty(d[r][c]?.bg)) {
-    return [-1, 0, 0, -1];
-  }
-  return [-2, -1, 1, 0];
+function getBorderFix() {
+  return [-1, 0, 0, -1];
 }
 
 function setLineDash(
@@ -1620,7 +1617,7 @@ export class Canvas {
     const flowdata = getFlowdata(this.sheetCtx);
     if (!flowdata) return;
 
-    const borderfix = getBorderFix(flowdata, r, c);
+    const borderfix = getBorderFix();
 
     // // 背景色
     let fillStyle = normalizedAttr(flowdata, r, c, "bg");
@@ -1646,14 +1643,11 @@ export class Canvas {
       renderCtx.fillStyle = fillStyle;
     }
 
-    // 这里计算canvas需要绘制的矩形范围时,需要留下原本单元格边框的位置
-    // 让 fillRect 绘制矩形的起始xy坐标增加1,绘制长宽减少2
-
     const cellsize = [
-      startX + offsetLeft + borderfix[0] + 1,
-      startY + offsetTop + borderfix[1] + 1,
-      endX - startX + borderfix[2] - (isMerge ? 1 : 0) - 2,
-      endY - startY + borderfix[3] - 2,
+      startX + offsetLeft + borderfix[0],
+      startY + offsetTop + borderfix[1],
+      endX - startX + borderfix[2] - (isMerge ? 1 : 0),
+      endY - startY + borderfix[3],
     ];
 
     // 单元格渲染前，考虑到合并单元格会再次渲染一遍，统一放到这里
@@ -1854,16 +1848,13 @@ export class Canvas {
       renderCtx.fillStyle = fillStyle;
     }
 
-    const borderfix = getBorderFix(flowdata, r, c);
-
-    // 这里计算canvas需要绘制的矩形范围时,需要留下原本单元格边框的位置
-    // 让 fillRect 绘制矩形的起始xy坐标增加1,绘制长宽减少2
+    const borderfix = getBorderFix();
 
     const cellsize = [
-      startX + offsetLeft + borderfix[0] + 1,
-      startY + offsetTop + borderfix[1] + 1,
-      endX - startX + borderfix[2] - (isMerge ? 1 : 0) - 2,
-      endY - startY + borderfix[3] - 2,
+      startX + offsetLeft + borderfix[0],
+      startY + offsetTop + borderfix[1],
+      endX - startX + borderfix[2] - (isMerge ? 1 : 0),
+      endY - startY + borderfix[3],
     ];
 
     // 单元格渲染前，考虑到合并单元格会再次渲染一遍，统一放到这里
