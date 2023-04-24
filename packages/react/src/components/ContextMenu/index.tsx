@@ -551,21 +551,6 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if (name === "orderZA") {
-        return (
-          <Menu
-            key={name}
-            onClick={() => {
-              setContext((draftCtx) => {
-                sortSelection(draftCtx, false);
-                draftCtx.contextMenu = {};
-              });
-            }}
-          >
-            {rightclick.orderZA}
-          </Menu>
-        );
-      }
       if (name === "filter") {
         return (
           <Menu
