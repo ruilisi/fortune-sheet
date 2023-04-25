@@ -12,7 +12,12 @@ import {
 import { delFunctionGroup } from "./formula";
 import clipboard from "./clipboard";
 import { getBorderInfoCompute } from "./border";
-import { getSheetIndex, isAllowEdit, replaceHtml } from "../utils";
+import {
+  escapeHTMLTag,
+  getSheetIndex,
+  isAllowEdit,
+  replaceHtml,
+} from "../utils";
 import { hasPartMC } from "./validation";
 import { update } from "./format";
 // @ts-ignore
@@ -1888,7 +1893,7 @@ export function rangeValueToHtml(
           c_value = "";
         }
 
-        column += c_value;
+        column += escapeHTMLTag(c_value);
       } else {
         let style = "";
 

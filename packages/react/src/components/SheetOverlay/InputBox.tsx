@@ -14,6 +14,7 @@ import {
   createRangeHightlight,
   isShowHidenCR,
   israngeseleciton,
+  escapeHTMLTag,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -105,7 +106,7 @@ const InputBox: React.FC = () => {
       }
       refs.globalCache.overwriteCell = false;
       if (!refs.globalCache.ignoreWriteCell)
-        inputRef.current!.innerHTML = escapeScriptTag(value);
+        inputRef.current!.innerHTML = escapeHTMLTag(escapeScriptTag(value));
       refs.globalCache.ignoreWriteCell = false;
       if (!refs.globalCache.doNotFocus) {
         setTimeout(() => {

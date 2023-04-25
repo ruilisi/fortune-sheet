@@ -96,6 +96,14 @@ export function escapeScriptTag(str: string) {
     .replace(/<\/script>/, "&lt;/script&gt;");
 }
 
+export function escapeHTMLTag(str: string) {
+  if (typeof str !== "string") return str;
+  if (str.substr(0, 5) === "<span" || str.startsWith("=")) {
+    return str;
+  }
+  return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 export function getSheetIndex(ctx: Context, id: string) {
   for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
     if (ctx.luckysheetfile[i]?.id === id) {

@@ -313,21 +313,6 @@ function fuzzynum(s: string | number) {
   return v;
 }
 
-export function escapeHTML(preValue: string) {
-  let resultValue = preValue;
-  if (
-    (!resultValue && typeof resultValue !== "string") ||
-    (typeof preValue === "string" && preValue.startsWith("="))
-  )
-    return preValue;
-  try {
-    resultValue = resultValue.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  } catch {
-    return preValue;
-  }
-  return resultValue;
-}
-
 export function valueShowEs(r: number, c: number, d: CellMatrix) {
   let value = getCellValue(r, c, d, "m");
   if (value == null) {
@@ -346,7 +331,5 @@ export function valueShowEs(r: number, c: number, d: CellMatrix) {
       value = getCellValue(r, c, d, "v");
     }
   }
-  value = escapeHTML(value);
-
   return value;
 }

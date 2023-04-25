@@ -3,7 +3,6 @@ import { Context } from "../context";
 import { Cell, CellMatrix, CellStyle } from "../types";
 import { getCellValue, getFontStyleByCell } from "./cell";
 import { selectTextContent, selectTextContentCross } from "./cursor";
-import { escapeHTML } from "./format";
 
 export const attrToCssName = {
   bl: "font-weight",
@@ -54,7 +53,6 @@ export function getInlineStringNoStyle(r: number, c: number, data: CellMatrix) {
         value += strObj.v;
       }
     }
-    value = escapeHTML(value);
     return value;
   }
   return "";

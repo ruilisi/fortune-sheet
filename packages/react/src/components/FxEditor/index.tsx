@@ -11,6 +11,7 @@ import {
   rangeHightlightselected,
   valueShowEs,
   isShowHidenCR,
+  escapeHTMLTag,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -67,7 +68,7 @@ const FxEditor: React.FC = () => {
           value = valueShowEs(r, c, d);
         }
       }
-      refs.fxInput.current!.innerHTML = escapeScriptTag(value);
+      refs.fxInput.current!.innerHTML = escapeHTMLTag(escapeScriptTag(value));
     } else {
       refs.fxInput.current!.innerHTML = "";
     }

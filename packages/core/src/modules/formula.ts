@@ -9,6 +9,7 @@ import {
   getSheetIndex,
   indexToColumnChar,
   getSheetIdByName,
+  escapeHTMLTag,
 } from "../utils";
 import {
   getcellFormula,
@@ -21,11 +22,7 @@ import { moveToEnd } from "./cursor";
 import { locale } from "../locale";
 import { colors } from "./color";
 import { colLocation, mousePosition, rowLocation } from "./location";
-import {
-  cancelFunctionrangeSelected,
-  escapeHTML,
-  seletedHighlistByindex,
-} from ".";
+import { cancelFunctionrangeSelected, seletedHighlistByindex } from ".";
 
 let functionHTMLIndex = 0;
 let rangeIndexes: number[] = [];
@@ -2538,7 +2535,6 @@ export function handleFormulaInput(
   const value1txt = preText ?? $editor.innerText;
   let value = $editor.innerText;
   value = escapeScriptTag(value);
-  value = escapeHTML(value);
   if (
     value.length > 0 &&
     value.startsWith("=") &&
@@ -2603,15 +2599,15 @@ export function handleFormulaInput(
     }
   } else if (value1txt.startsWith("=") && !value.startsWith("=")) {
     if ($copyTo) $copyTo.innerHTML = value;
-    $editor.innerHTML = value;
+    $editor.innerHTML = escapeHTMLTag(value);
   } else if (!value1txt.startsWith("=")) {
     if (!$copyTo) return;
     if ($copyTo.id === "luckysheet-rich-text-editor") {
       if (!$copyTo.innerHTML.startsWith("<span")) {
-        $copyTo.innerHTML = value;
+        $copyTo.innerHTML = escapeHTMLTag(value);
       }
     } else {
-      $copyTo.innerHTML = value;
+      $copyTo.innerHTML = escapeHTMLTag(value);
     }
   }
 }

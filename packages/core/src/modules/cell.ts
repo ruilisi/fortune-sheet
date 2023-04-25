@@ -4,7 +4,7 @@ import { Cell, CellMatrix, Range, Selection, SingleRange } from "../types";
 import { getSheetIndex, indexToColumnChar, rgbToHex } from "../utils";
 import { checkCF, getComputeMap } from "./ConditionFormat";
 import { getFailureText, validateCellData } from "./dataVerification";
-import { escapeHTML, genarate, update } from "./format";
+import { genarate, update } from "./format";
 import {
   delFunctionGroup,
   execfunction,
@@ -1386,14 +1386,12 @@ export function getInlineStringHTML(r: number, c: number, data: CellMatrix) {
     let value = "";
     for (let i = 0; i < strings.length; i += 1) {
       const strObj = strings[i];
-      let strObjValue = strObj.v;
-      if (strObjValue) {
-        strObjValue = escapeHTML(strObjValue);
+      if (strObj.v) {
         const style = getFontStyleByCell(strObj);
         const styleStr = _.map(style, (v, key) => {
           return `${_.kebabCase(key)}:${_.isNumber(v) ? `${v}px` : v};`;
         }).join("");
-        value += `<span class="luckysheet-input-span" index='${i}' style='${styleStr}'>${strObjValue}</span>`;
+        value += `<span class="luckysheet-input-span" index='${i}' style='${styleStr}'>${strObj.v}</span>`;
       }
     }
     return value;
