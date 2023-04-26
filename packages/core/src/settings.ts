@@ -166,7 +166,7 @@ export const defaultSettings: Required<Settings> = {
   showSheetTabs: true, // 是否显示底部表格名称区域
   data: [], // 客户端sheet数据[sheet1, sheet2, sheet3]
   config: {}, // 表格行高、列宽、合并单元格、公式等设置
-  devicePixelRatio: (global || window).devicePixelRatio, // 设备比例，比例越大表格分标率越高
+  devicePixelRatio: 0, // 设备比例，比例越大表格分标率越高，0表示自动
   allowEdit: true, // 是否允许前台编辑
   lang: null, // language
   forceCalculation: false, // 强制刷新公式，公式较多会有性能问题，慎用

@@ -207,7 +207,7 @@ export function defaultContext(): Context {
     defaultrowNum: 84,
     addDefaultRows: 50,
     fullscreenmode: true,
-    devicePixelRatio: (global || window).devicePixelRatio,
+    devicePixelRatio: (globalThis || window).devicePixelRatio,
 
     contextMenu: {},
     sheetTabContextMenu: {},

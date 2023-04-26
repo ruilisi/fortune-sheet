@@ -21,7 +21,7 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
   // const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
-  const { context, setContext, refs } = useContext(WorkbookContext);
+  const { context, setContext, refs, settings } = useContext(WorkbookContext);
 
   /**
    * Update data on window resize
@@ -30,8 +30,10 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
     function resize() {
       if (!data) return;
       setContext((draftCtx) => {
+        if (settings.devicePixelRatio === 0) {
+          draftCtx.devicePixelRatio = (globalThis || window).devicePixelRatio;
+        }
         updateContextWithSheetData(draftCtx, data);
-        draftCtx.devicePixelRatio = window.devicePixelRatio;
         updateContextWithCanvas(
           draftCtx,
           refs.canvas.current!,
@@ -43,7 +45,7 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
     return () => {
       window.removeEventListener("resize", resize);
     };
-  }, [data, refs.canvas, setContext]);
+  }, [data, refs.canvas, setContext, settings.devicePixelRatio]);
 
   /**
    * Recalculate row/col info when data changes
