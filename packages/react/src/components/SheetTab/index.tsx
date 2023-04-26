@@ -46,6 +46,29 @@ const SheetTab: React.FC = () => {
     setIsShowScrollBtn(tabCurrent!.scrollWidth - 2 > tabCurrent!.clientWidth);
   }, [context.luckysheetfile]);
 
+  const onAddSheetClick = useCallback(
+    () =>
+      setTimeout(() => {
+        setContext(
+          (draftCtx) => {
+            if (draftCtx.luckysheetCellUpdate.length > 0) {
+              updateCell(
+                draftCtx,
+                draftCtx.luckysheetCellUpdate[0],
+                draftCtx.luckysheetCellUpdate[1],
+                refs.cellInput.current!
+              );
+            }
+            addSheet(draftCtx, settings);
+          },
+          { addSheetOp: true }
+        );
+        const tabCurrent = tabContainerRef.current;
+        setIsShowScrollBtn(tabCurrent!.scrollWidth > tabCurrent!.clientWidth);
+      }),
+    [refs.cellInput, setContext, settings]
+  );
+
   return (
     <div
       className="luckysheet-sheet-area luckysheet-noselected-text"
@@ -54,31 +77,7 @@ const SheetTab: React.FC = () => {
     >
       <div id="luckysheet-sheet-content">
         {context.allowEdit && (
-          <div
-            className="fortune-sheettab-button"
-            onClick={() => {
-              _.debounce(() => {
-                setContext(
-                  (draftCtx) => {
-                    if (draftCtx.luckysheetCellUpdate.length > 0) {
-                      updateCell(
-                        draftCtx,
-                        draftCtx.luckysheetCellUpdate[0],
-                        draftCtx.luckysheetCellUpdate[1],
-                        refs.cellInput.current!
-                      );
-                    }
-                    addSheet(draftCtx, settings);
-                  },
-                  { addSheetOp: true }
-                );
-              }, 300)();
-              const tabCurrent = tabContainerRef.current;
-              setIsShowScrollBtn(
-                tabCurrent!.scrollWidth > tabCurrent!.clientWidth
-              );
-            }}
-          >
+          <div className="fortune-sheettab-button" onClick={onAddSheetClick}>
             <SVGIcon name="plus" width={16} height={16} />
           </div>
         )}
