@@ -18,55 +18,27 @@ const SheetTab: React.FC = () => {
   const tabContainerRef = useRef<HTMLDivElement>(null);
   const leftScrollRef = useRef<HTMLDivElement>(null);
   const rightScrollRef = useRef<HTMLDivElement>(null);
-  const [sheetScrollAni, setSheetScrollAni] = useState<any>(null);
-  const [sheetScrollStep] = useState<number>(150);
   const [isShowScrollBtn, setIsShowScrollBtn] = useState<boolean>(false);
   const [isShowBoundary, setIsShowBoundary] = useState<boolean>(true);
 
-  const scrollToLeft = useCallback(
-    (moveType: string) => {
-      if (
-        tabContainerRef.current == null ||
-        tabContainerRef.current.scrollLeft == null
-      )
-        return;
-      if (moveType === "left") {
-        const scrollLeft = tabContainerRef.current.scrollLeft as number;
-        let sheetScrollStart = scrollLeft;
-        const sheetScrollEnd = scrollLeft - sheetScrollStep;
+  const scrollDelta = 150;
 
-        if (sheetScrollEnd <= 0) setIsShowBoundary(true);
-        clearInterval(sheetScrollAni);
-        setSheetScrollAni((ani: any) => {
-          ani = setInterval(() => {
-            sheetScrollStart -= 4;
-            tabContainerRef.current!.scrollLeft = sheetScrollStart;
-            if (sheetScrollStart <= sheetScrollEnd) {
-              clearInterval(ani);
-            }
-          }, 1);
-          return ani;
-        });
-      } else if (moveType === "right") {
-        const scrollLeft = tabContainerRef.current.scrollLeft as number;
-        let sheetScrollStart = scrollLeft;
-        const sheetScrollEnd = scrollLeft + sheetScrollStep;
-        if (sheetScrollStart > 0) setIsShowBoundary(false);
-        clearInterval(sheetScrollAni);
-        setSheetScrollAni((ani: any) => {
-          ani = setInterval(() => {
-            sheetScrollStart += 4;
-            tabContainerRef.current!.scrollLeft = sheetScrollStart;
-            if (sheetScrollStart >= sheetScrollEnd) {
-              clearInterval(ani);
-            }
-          }, 1);
-          return ani;
-        });
-      }
-    },
-    [sheetScrollAni, sheetScrollStep]
-  );
+  const scrollBy = useCallback((amount: number) => {
+    if (
+      tabContainerRef.current == null ||
+      tabContainerRef.current.scrollLeft == null
+    ) {
+      return;
+    }
+    const { scrollLeft } = tabContainerRef.current;
+    if (scrollLeft + amount <= 0) setIsShowBoundary(true);
+    else if (scrollLeft > 0) setIsShowBoundary(false);
+
+    tabContainerRef.current?.scrollBy({
+      left: amount,
+      behavior: "smooth",
+    });
+  }, []);
 
   useEffect(() => {
     const tabCurrent = tabContainerRef.current;
@@ -166,8 +138,7 @@ const SheetTab: React.FC = () => {
             className="fortune-sheettab-scroll"
             ref={leftScrollRef}
             onClick={() => {
-              // tabContainerRef.current!.scrollLeft -= 150;
-              scrollToLeft("left");
+              scrollBy(-scrollDelta);
             }}
           >
             <SVGIcon name="arrow-doubleleft" width={12} height={12} />
@@ -179,8 +150,7 @@ const SheetTab: React.FC = () => {
             className="fortune-sheettab-scroll"
             ref={rightScrollRef}
             onClick={() => {
-              // tabContainerRef.current!.scrollLeft += 150;
-              scrollToLeft("right");
+              scrollBy(scrollDelta);
             }}
           >
             <SVGIcon name="arrow-doubleright" width={12} height={12} />
