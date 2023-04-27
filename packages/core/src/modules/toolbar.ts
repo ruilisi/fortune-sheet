@@ -167,6 +167,10 @@ export function updateFormatCell(
       }
     }
 
+    const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
+    if (sheetIndex == null) {
+      return;
+    }
     for (let r = row_st; r <= row_ed; r += 1) {
       if (!_.isNil(ctx.config.rowhidden) && !_.isNil(ctx.config.rowhidden[r])) {
         continue;
@@ -183,23 +187,11 @@ export function updateFormatCell(
           // @ts-ignore
           value[attr] = foucsStatus;
           // }
-          if (
-            !ctx.luckysheetfile[
-              getSheetIndex(ctx, ctx.currentSheetId as string) as number
-            ].config
-          )
-            ctx.luckysheetfile[
-              getSheetIndex(ctx, ctx.currentSheetId as string) as number
-            ].config = {};
-          const cfg =
-            ctx.luckysheetfile[
-              getSheetIndex(ctx, ctx.currentSheetId as string) as number
-            ].config!;
+          ctx.luckysheetfile[sheetIndex].config ||= {};
+          const cfg = ctx.luckysheetfile[sheetIndex].config!;
           const cellWidth =
-            cfg?.columnlen?.[c] ||
-            ctx.luckysheetfile[
-              getSheetIndex(ctx, ctx.currentSheetId as string) as number
-            ].defaultColWidth;
+            cfg.columnlen?.[c] ||
+            ctx.luckysheetfile[sheetIndex].defaultColWidth;
           if (attr === "fs" && canvas) {
             const textInfo = getCellTextInfo(d[r][c]!, canvas, ctx, {
               r,
@@ -210,9 +202,7 @@ export function updateFormatCell(
             const rowHeight = _.round(textInfo.textHeightAll);
             const currentRowHeight =
               cfg.rowlen?.[r] ||
-              ctx.luckysheetfile[
-                getSheetIndex(ctx, ctx.currentSheetId as string) as number
-              ].defaultRowHeight ||
+              ctx.luckysheetfile[sheetIndex].defaultRowHeight ||
               19;
             if (
               !_.isUndefined(rowHeight) &&
