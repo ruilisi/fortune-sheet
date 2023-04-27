@@ -463,7 +463,7 @@ export function handleCellAreaMouseDown(
             vText += ",";
           }
         }
-        if (vText.length > 0 && vText.startsWith("=")) {
+        if (vText.length > 0 && vText.substring(0, 1) === "=") {
           vText = functionHTMLGenerate(vText);
 
           if (window.getSelection) {
@@ -4232,7 +4232,7 @@ export function handleRowHeaderMouseDown(
       ) {
         // 按住ctrl 选择选区时  先处理上一个选区
         let vText = `${cellInput.innerText},`;
-        if (vText.length > 0 && vText.startsWith("=")) {
+        if (vText.length > 0 && vText.substring(0, 1) === "=") {
           vText = functionHTMLGenerate(vText);
 
           if (window.getSelection) {
@@ -4668,7 +4668,7 @@ export function handleColumnHeaderMouseDown(
       ) {
         // 按住ctrl 选择选区时  先处理上一个选区
         let vText = `${cellInput.innerText},`;
-        if (vText.length > 0 && vText.startsWith("=")) {
+        if (vText.length > 0 && vText.substring(0, 1) === "=") {
           vText = functionHTMLGenerate(vText);
 
           if (window.getSelection) {

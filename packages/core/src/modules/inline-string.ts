@@ -384,7 +384,7 @@ export function updateInlineStringFormat(
       const content = span?.innerHTML || "";
 
       const fullContent = $textEditor.innerHTML;
-      if (!fullContent.startsWith("<span")) {
+      if (fullContent.substring(0, 5) !== "<span") {
         inherit = true;
       }
 

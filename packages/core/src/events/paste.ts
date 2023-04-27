@@ -1846,7 +1846,10 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
                 for (let cp = 0; cp < colspan; cp += 1) {
                   if (rp === 0) {
                     const bt = td.style.borderTop;
-                    if (!_.isEmpty(bt) && !bt.toLowerCase().startsWith("0px")) {
+                    if (
+                      !_.isEmpty(bt) &&
+                      bt.substring(0, 3).toLowerCase() !== "0px"
+                    ) {
                       const width = td.style.borderTopWidth;
                       const type = td.style.borderTopStyle;
                       const color = td.style.borderTopColor;
@@ -1867,7 +1870,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
                     const bb = td.style.borderBottom;
                     if (
                       !_.isEmpty(bb) &&
-                      !bb.toLocaleLowerCase().startsWith("0px")
+                      bb.substring(0, 3).toLowerCase() !== "0px"
                     ) {
                       const width = td.style.borderBottomWidth;
                       const type = td.style.borderBottomStyle;
@@ -1887,7 +1890,10 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
                   if (cp === 0) {
                     const bl = td.style.borderLeft;
-                    if (!_.isEmpty(bl) && !bl.toLowerCase().startsWith("0px")) {
+                    if (
+                      !_.isEmpty(bl) &&
+                      bl.substring(0, 3).toLowerCase() !== "0px"
+                    ) {
                       const width = td.style.borderLeftWidth;
                       const type = td.style.borderLeftStyle;
                       const color = td.style.borderLeftColor;
@@ -1906,7 +1912,10 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
                   if (cp === colspan - 1) {
                     const br = td.style.borderLeft;
-                    if (!_.isEmpty(br) && !br.toLowerCase().startsWith("0px")) {
+                    if (
+                      !_.isEmpty(br) &&
+                      br.substring(0, 3).toLowerCase() !== "0px"
+                    ) {
                       const width = td.style.borderRightWidth;
                       const type = td.style.borderRightStyle;
                       const color = td.style.borderRightColor;

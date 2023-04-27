@@ -1744,7 +1744,7 @@ const make_ssf = function make_ssf(SSF) {
         if (v.indexOf("亿") != -1 && v.indexOf("万") == -1) {
           //1亿/1亿111 => 1亿/1亿0111
           var afterYi = v.substring(v.indexOf("亿") + 1);
-          if (!afterYi.startsWith(".") && afterYi != "") {
+          if (afterYi.substring(0, 1) !== "." && afterYi != "") {
             switch ((parseInt(afterYi) + "").length) {
               case 1:
                 afterYi = "000" + afterYi;
@@ -1761,7 +1761,7 @@ const make_ssf = function make_ssf(SSF) {
         } else if (v.indexOf("亿") == -1 && v.indexOf("万") != -1) {
           //3万0011
           var afterWan = v.substring(v.indexOf("万") + 1);
-          if (!afterWan.startsWith(".") && afterWan != "") {
+          if (afterWan.substring(0, 1) !== "." && afterWan != "") {
             switch ((parseInt(afterWan) + "").length) {
               case 1:
                 afterWan = "000" + afterWan;
@@ -1796,7 +1796,7 @@ const make_ssf = function make_ssf(SSF) {
             afterYi +
             v.substring(v.indexOf("万"));
 
-          if (!afterWan.startsWith(".") && afterWan != "") {
+          if (afterWan.substring(0, 1) !== "." && afterWan != "") {
             switch ((parseInt(afterWan) + "").length) {
               case 1:
                 afterWan = "000" + afterWan;
