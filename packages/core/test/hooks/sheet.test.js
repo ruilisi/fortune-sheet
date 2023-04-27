@@ -69,6 +69,7 @@ describe("sheet related hooks", () => {
       pivotTable: null,
       row: undefined,
       status: 0,
+      zoomRatio: 1,
     });
 
     const ctxFirst = getContext({
@@ -101,6 +102,7 @@ describe("sheet related hooks", () => {
       pivotTable: null,
       row: undefined,
       status: 0,
+      zoomRatio: 1,
     });
   });
 

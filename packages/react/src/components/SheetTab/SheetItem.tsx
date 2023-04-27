@@ -3,6 +3,7 @@ import {
   editSheetName,
   cancelNormalSelected,
   cancelActiveImgItem,
+  getSheetIndex,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
@@ -179,6 +180,10 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
           };
           draftCtx.dataVerificationDropDownList = false;
           draftCtx.currentSheetId = sheet.id!;
+          draftCtx.zoomRatio =
+            draftCtx.luckysheetfile[
+              getSheetIndex(draftCtx, draftCtx.currentSheetId) as number
+            ].zoomRatio!;
           cancelActiveImgItem(draftCtx, refs.globalCache);
           cancelNormalSelected(draftCtx);
         });
@@ -191,6 +196,10 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
           // 右击的时候先进行跳转
           ctx.dataVerificationDropDownList = false;
           ctx.currentSheetId = sheet.id!;
+          ctx.zoomRatio =
+            ctx.luckysheetfile[
+              getSheetIndex(ctx, ctx.currentSheetId) as number
+            ].zoomRatio!;
           ctx.sheetTabContextMenu = {
             x: pageX - rect.left + rect.x,
             y: pageY - rect.top + rect.y,

@@ -7,6 +7,7 @@
   flex-direction: column;
   font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
   background-color: white;
+  overflow: hidden;
 }
 
 .fortune-workarea {
@@ -32,4 +33,133 @@
 
 html::-webkit-scrollbar-button {
   display: none;
+}
+
+.fortune-stat-area {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.fortunesheet-zoom-content {
+  position: relative;
+  float: right;
+  width: 210px;
+  height: 22px;
+  line-height: 22px;
+  text-align: right;
+  padding-right: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+.fortunesheet-zoom-slider {
+  position: absolute;
+  top: 0;
+  left: 25px;
+  width: 100px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.fortunesheet-zoom-line {
+    position: absolute;
+    top: 10px;
+    width: 100px;
+    height: 2px;
+    background: #e1e4e8;
+}
+
+.fortunesheet-zoom-cursor {
+  position: absolute;
+  top: 7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 8px;
+  background: #b5bdb8;
+  cursor: pointer;
+  z-index: 2;
+  transition: all .3s;
+}
+
+.fortunesheet-zoom-cursor:hover {
+  position: absolute;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 8px;
+  background: #b5bdb8;
+  cursor: pointer;
+  z-index: 2;
+  transition: all .3s;
+}
+
+.fortunesheet-zoom-hundred {
+  position: absolute;
+  top: 9px;
+  width: 2px;
+  height: 4px;
+  left: 49px;
+  background: #1e1e1f;
+}
+
+.fortunesheet-zoom-minus {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fortunesheet-zoom-plus {
+  position: absolute;
+  top: 0;
+  left: 130px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fortunesheet-zoom-ratio {
+  position: absolute;
+  width: 60px;
+  color: #1e1e1f;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.fortunesheet-zoom-ratio-item:hover{
+  background: #efefef;
+}
+
+.fortunesheet-zoom-ratio-menu {
+  position: absolute;
+  bottom: 15px;
+  left: -15px;
+  line-height: 24px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 10px 0px 10px 0px;
+  border-radius: 6px;
+  background: white;
+  z-index: 1004;
+}
+
+.fortunesheet-zoom-ratio-line {
+  padding: 0px 10px 0px 10px;
+}
+
+.fortunesheet-zoom-color:hover {
+  background: #efefef;
 }
