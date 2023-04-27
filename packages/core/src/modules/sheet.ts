@@ -117,6 +117,7 @@ export function addSheet(
         config: {},
         pivotTable: null,
         isPivotTable: !!isPivotTable,
+        zoomRatio: 1,
       }
     : sheetData;
   if (sheetName !== undefined) sheetconfig.name = sheetName;

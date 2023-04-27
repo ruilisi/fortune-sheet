@@ -59,6 +59,7 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
     context.config?.rowhidden,
     context.config.colhidden,
     data,
+    context.zoomRatio,
     setContext,
   ]);
 

@@ -2,6 +2,7 @@ import {
   Sheet,
   cancelNormalSelected,
   cancelActiveImgItem,
+  getSheetIndex,
 } from "@fortune-sheet/core";
 import React, { useContext, useEffect, useRef } from "react";
 import WorkbookContext from "../../context";
@@ -52,6 +53,10 @@ const SheetListItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
             luckysheet_selection_range: draftCtx.luckysheet_selection_range,
           };
           draftCtx.currentSheetId = sheet.id!;
+          draftCtx.zoomRatio =
+            draftCtx.luckysheetfile[
+              getSheetIndex(draftCtx, draftCtx.currentSheetId) as number
+            ].zoomRatio!;
           cancelActiveImgItem(draftCtx, refs.globalCache);
           cancelNormalSelected(draftCtx);
         });
