@@ -1873,7 +1873,11 @@ function findrangeindex(ctx: Context, v: string, vp: string) {
         pfri[0] += 1;
         pfri[1] = 1;
       } else if (!_.isNil(p) && (p.indexOf("{") > -1 || p.indexOf("}") > -1)) {
-      } else if (!_.isNil(p) && !p[0].startsWith("=") && n.startsWith("=")) {
+      } else if (
+        !_.isNil(p) &&
+        !_.startsWith(p[0], "=") &&
+        _.startsWith(n, "=")
+      ) {
         return [vlen - 1, v_a[vlen - 1].length];
       } else {
         pfri[0] = pfri[0] + vlen - vplen - 1;
@@ -2024,7 +2028,7 @@ function searchFunction(ctx: Context, searchtxt: string) {
     if (n === searchtxt) {
       f.unshift(item);
       result_i += 1;
-    } else if (n.startsWith(searchtxt)) {
+    } else if (_.startsWith(n, searchtxt)) {
       s.unshift(item);
       result_i += 1;
     } else if (n.indexOf(searchtxt) > -1) {

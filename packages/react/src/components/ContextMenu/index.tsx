@@ -120,7 +120,7 @@ const ContextMenu: React.FC = () => {
                 }}
               >
                 <>
-                  {context.lang?.startsWith("zh") && (
+                  {_.startsWith(context.lang ?? "", "zh") && (
                     <>
                       {rightclick.to}
                       <span className={`luckysheet-cols-rows-shift-${dir}`}>
@@ -140,7 +140,7 @@ const ContextMenu: React.FC = () => {
                   <span className="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">
                     {`${rightclick.column}  `}
                   </span>
-                  {!context.lang?.startsWith("zh") && (
+                  {!_.startsWith(context.lang ?? "", "zh") && (
                     <span className={`luckysheet-cols-rows-shift-${dir}`}>
                       {(rightclick as any)[dir]}
                     </span>
@@ -189,7 +189,7 @@ const ContextMenu: React.FC = () => {
                 }}
               >
                 <>
-                  {context.lang?.startsWith("zh") && (
+                  {_.startsWith(context.lang ?? "", "zh") && (
                     <>
                       {rightclick.to}
                       <span className={`luckysheet-cols-rows-shift-${dir}`}>
@@ -209,7 +209,7 @@ const ContextMenu: React.FC = () => {
                   <span className="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">
                     {`${rightclick.row}  `}
                   </span>
-                  {!context.lang?.startsWith("zh") && (
+                  {!_.startsWith(context.lang ?? "", "zh") && (
                     <span className={`luckysheet-cols-rows-shift-${dir}`}>
                       {(rightclick as any)[dir]}
                     </span>

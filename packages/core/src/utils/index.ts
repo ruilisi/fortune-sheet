@@ -98,7 +98,7 @@ export function escapeScriptTag(str: string) {
 
 export function escapeHTMLTag(str: string) {
   if (typeof str !== "string") return str;
-  if (str.substr(0, 5) === "<span" || str.startsWith("=")) {
+  if (str.substr(0, 5) === "<span" || _.startsWith(str, "=")) {
     return str;
   }
   return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
