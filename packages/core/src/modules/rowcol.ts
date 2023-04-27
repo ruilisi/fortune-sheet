@@ -1133,14 +1133,14 @@ export function insertRowCol(
         { row: [index + 1, index + count], column: [0, d[0].length - 1] },
       ];
     }
-    file.row! += count;
+    file.row = file.data.length;
   } else {
     if (direction === "lefttop") {
       range = [{ row: [0, d.length - 1], column: [index, index + count - 1] }];
     } else {
       range = [{ row: [0, d.length - 1], column: [index + 1, index + count] }];
     }
-    file.column! += count;
+    file.column = file.data[0]?.length;
   }
 
   if (changeSelection) {
@@ -1910,7 +1910,7 @@ export function deleteRowCol(
     d.splice(start, slen);
 
     // 删除行后，调整行数
-    file.row! -= slen;
+    file.row = d.length;
   } else {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type1 = "c";
@@ -2042,12 +2042,11 @@ export function deleteRowCol(
     }
 
     // 删除列后，调整列数
-    file.column! -= slen;
+    file.column = d[0]?.length;
   }
+
   // 选中元素被删取消选区
-  if (file.luckysheet_select_save && file.luckysheet_select_save.length > 0) {
-    file.luckysheet_select_save = [];
-  }
+  ctx.luckysheet_select_save = undefined;
 
   // 修改当前sheet页时刷新
   file.data = d;
@@ -2225,7 +2224,7 @@ export function isShowHidenCR(ctx: Context): boolean {
     return false;
   // 如果当先选区处在隐藏行列的时候则不可编辑
   if (!!ctx.config.colhidden && _.size(ctx.config.colhidden) >= 1) {
-    const ctxColumn = ctx.luckysheet_select_save[0].column[0];
+    const ctxColumn = ctx.luckysheet_select_save[0]?.column?.[0];
     const isHidenColumn =
       Object.keys(ctx.config.colhidden).findIndex((o) => {
         return ctxColumn === parseInt(o, 10);
@@ -2235,7 +2234,7 @@ export function isShowHidenCR(ctx: Context): boolean {
     }
   }
   if (!!ctx.config.rowhidden && _.size(ctx.config.rowhidden) >= 1) {
-    const ctxRow = ctx.luckysheet_select_save[0].row[0];
+    const ctxRow = ctx.luckysheet_select_save[0]?.row?.[0];
     const isHidenRow =
       Object.keys(ctx.config.rowhidden).findIndex((o) => {
         return ctxRow === parseInt(o, 10);

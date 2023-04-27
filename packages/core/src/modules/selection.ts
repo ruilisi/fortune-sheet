@@ -2205,38 +2205,51 @@ export function getSelectionStyle(
   h1?: number,
   h2?: number
 ): {
-  left: number | undefined;
-  top: number | undefined;
-  width: number | undefined | string;
-  height: number | undefined | string;
+  left: number;
+  top: number;
+  width: number | string;
+  height: number | string;
   display: string;
+  backgroundColor?: string;
 } {
-  let ret: any = null;
+  let ret: ReturnType<typeof getSelectionStyle> = {
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+    display: "none",
+  };
+  if (_.isEmpty(ctx.luckysheet_select_save)) {
+    return ret;
+  }
   if (mark) {
     if (mark === "foc") {
       ret = {
         display: "block",
-        left: _.last(ctx.luckysheet_select_save)?.left,
-        width: _.last(ctx.luckysheet_select_save)?.width,
-        top: _.last(ctx.luckysheet_select_save)?.top,
-        height: _.last(ctx.luckysheet_select_save)?.height,
+        left: _.last(ctx.luckysheet_select_save)?.left!,
+        width: _.last(ctx.luckysheet_select_save)?.width!,
+        top: _.last(ctx.luckysheet_select_save)?.top!,
+        height: _.last(ctx.luckysheet_select_save)?.height!,
       };
     } else {
       ret = {
-        left: mark === "col" ? h1 : 0,
-        top: mark === "row" ? h1 : 0,
-        width: mark === "col" ? h2 : "100%",
-        height: mark === "row" ? h2 : "100%",
+        left: mark === "col" ? h1! : 0,
+        top: mark === "row" ? h1! : 0,
+        width: mark === "col" ? h2! : "100%",
+        height: mark === "row" ? h2! : "100%",
         display: "block",
         backgroundColor: "rgba(76, 76, 76, 0.1)",
       };
     }
   } else {
+    if (selection == null) {
+      return ret;
+    }
     ret = {
-      left: selection?.left_move,
-      top: selection?.top_move,
-      width: selection?.width_move,
-      height: selection?.height_move,
+      left: selection.left_move!,
+      top: selection.top_move!,
+      width: selection.width_move!,
+      height: selection.height_move!,
       display: "block",
     };
   }
