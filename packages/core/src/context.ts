@@ -154,6 +154,8 @@ export type Context = {
   luckysheet_rows_change_size_start: any[];
   luckysheet_cols_change_size: boolean;
   luckysheet_cols_change_size_start: any[];
+  luckysheet_cols_freeze_drag: boolean;
+  luckysheet_rows_freeze_drag: boolean;
 
   luckysheetCellUpdate: any[];
 
@@ -389,6 +391,8 @@ export function defaultContext(): Context {
     luckysheet_rows_change_size_start: [],
     luckysheet_cols_change_size: false,
     luckysheet_cols_change_size_start: [],
+    luckysheet_cols_freeze_drag: false,
+    luckysheet_rows_freeze_drag: false,
 
     luckysheetCellUpdate: [],
 

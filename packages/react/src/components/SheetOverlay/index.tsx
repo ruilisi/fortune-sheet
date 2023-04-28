@@ -476,7 +476,16 @@ const SheetOverlay: React.FC = () => {
             className="fortune-change-size-line"
             hidden={
               !context.luckysheet_cols_change_size &&
-              !context.luckysheet_rows_change_size
+              !context.luckysheet_rows_change_size &&
+              !context.luckysheet_cols_freeze_drag &&
+              !context.luckysheet_rows_freeze_drag
+            }
+          />
+          <div
+            className="fortune-freeze-drag-line"
+            hidden={
+              !context.luckysheet_cols_freeze_drag &&
+              !context.luckysheet_rows_freeze_drag
             }
           />
           <div

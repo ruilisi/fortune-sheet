@@ -470,8 +470,13 @@
 
 .fortune-cols-change-size,
 .fortune-rows-change-size,
-.fortune-change-size-line {
+.fortune-change-size-line,
+.fortune-cols-freeze-handle,
+.fortune-rows-freeze-handle,
+.fortune-freeze-drag-line {
   /*display: none;*/
+  -webkit-user-drag: none;
+  user-select: none;
   position: absolute;
   z-index: 12;
 }
@@ -494,6 +499,33 @@
 
 .fortune-change-size-line {
   border-color: #0188fb;
+  border-style: solid;
+  z-index: 15;
+  cursor: ew-resize;
+}
+
+.fortune-cols-freeze-handle {
+  position: absolute;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background-color: #ddd;
+  cursor: grab;
+  z-index: 20;
+}
+
+.fortune-rows-freeze-handle {
+  position: absolute;
+  top: 0;
+  height: 3px;
+  width: 100%;
+  background-color: #ddd;
+  cursor: grab;
+  z-index: 20;
+}
+
+.fortune-freeze-drag-line {
+  border-color: #ccc;
   border-style: solid;
   z-index: 15;
   cursor: ew-resize;
@@ -550,7 +582,9 @@
   top: 0;
 }
 
-.luckysheet-postil-show-active .luckysheet-postil-dialog-move .luckysheet-postil-dialog-move-item {
+.luckysheet-postil-show-active
+  .luckysheet-postil-dialog-move
+  .luckysheet-postil-dialog-move-item {
   border-color: #0188fb;
 }
 
@@ -840,15 +874,15 @@
 }
 
 .luckysheet-filter-options {
-  color: #897BFF;
+  color: #897bff;
   cursor: pointer;
   position: absolute;
   z-index: 200;
-  border: 1px solid #897BFF;
+  border: 1px solid #897bff;
   border-radius: 3px;
   top: 3px;
   margin-left: 0px;
-  display: 'block';
+  display: "block";
   padding: 0px 4px;
   font-size: 12px;
   height: 15px;
@@ -859,14 +893,14 @@
 .luckysheet-filter-options:hover {
   color: #fff;
   border: 1px solid #fff;
-  background: #897BFF;
+  background: #897bff;
 }
 
 .luckysheet-filter-options-active {
   color: #fff;
-  border: 1px solid #897BFF;
+  border: 1px solid #897bff;
   padding: 0px 1px;
-  background: #897BFF;
+  background: #897bff;
 }
 
 .caret {
@@ -878,7 +912,7 @@
 }
 
 .caret.down {
-  border-top-color: #897BFF;
+  border-top-color: #897bff;
 }
 
 .luckysheet-filter-options:hover .caret.down {
