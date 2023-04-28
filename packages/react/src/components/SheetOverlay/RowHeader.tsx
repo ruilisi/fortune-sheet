@@ -6,6 +6,7 @@ import {
   handleContextMenu,
   handleRowHeaderMouseDown,
   handleRowSizeHandleMouseDown,
+  fixRowStyleOverflowInFreeze,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
@@ -24,9 +25,10 @@ const RowHeader: React.FC = () => {
   const [hoverLocation, setHoverLocation] = useState({
     row: -1,
     row_pre: -1,
+    row_index: -1,
   });
   const [selectedLocation, setSelectedLocation] = useState<
-    { row: number; row_pre: number }[]
+    { row: number; row_pre: number; r1: number; r2: number }[]
   >([]);
 
   const onMouseMove = useCallback(
@@ -39,9 +41,9 @@ const RowHeader: React.FC = () => {
         containerRef.current!.getBoundingClientRect().top +
         containerRef.current!.scrollTop;
       const row_location = rowLocation(y, context.visibledatarow);
-      const [row_pre, row] = row_location;
+      const [row_pre, row, row_index] = row_location;
       if (row_pre !== hoverLocation.row_pre || row !== hoverLocation.row) {
-        setHoverLocation({ row_pre, row });
+        setHoverLocation({ row_pre, row, row_index });
       }
     },
     [
@@ -73,7 +75,7 @@ const RowHeader: React.FC = () => {
     if (context.luckysheet_rows_change_size) {
       return;
     }
-    setHoverLocation({ row: -1, row_pre: -1 });
+    setHoverLocation({ row: -1, row_pre: -1, row_index: -1 });
   }, [context.luckysheet_rows_change_size]);
 
   const onRowSizeHandleMouseDown = useCallback(
@@ -120,14 +122,15 @@ const RowHeader: React.FC = () => {
       rowTitleMap = selectTitlesMap(rowTitleMap, r1, r2);
     }
     const rowTitleRange = selectTitlesRange(rowTitleMap);
-    const selects: { row: number; row_pre: number }[] = [];
+    const selects: { row: number; row_pre: number; r1: number; r2: number }[] =
+      [];
     for (let i = 0; i < rowTitleRange.length; i += 1) {
       const r1 = rowTitleRange[i][0];
       const r2 = rowTitleRange[i][rowTitleRange[i].length - 1];
       const row = rowLocationByIndex(r2, context.visibledatarow)[1];
       const row_pre = rowLocationByIndex(r1, context.visibledatarow)[0];
       if (_.isNumber(row_pre) && _.isNumber(row)) {
-        selects.push({ row, row_pre });
+        selects.push({ row, row_pre, r1, r2 });
       }
     }
     setSelectedLocation(selects);
@@ -159,26 +162,42 @@ const RowHeader: React.FC = () => {
           opacity: context.luckysheet_rows_change_size ? 1 : 0,
         }}
       />
-      {hoverLocation.row >= 0 && hoverLocation.row_pre >= 0 ? (
+      {!context.luckysheet_rows_change_size && hoverLocation.row_index >= 0 ? (
         <div
           className="fortune-row-header-hover"
-          style={{
-            top: hoverLocation.row_pre,
-            height: hoverLocation.row - hoverLocation.row_pre - 1,
-            display: "block",
-          }}
+          style={_.assign(
+            {
+              top: hoverLocation.row_pre,
+              height: hoverLocation.row - hoverLocation.row_pre - 1,
+              display: "block",
+            },
+            fixRowStyleOverflowInFreeze(
+              context,
+              hoverLocation.row_index,
+              hoverLocation.row_index,
+              refs.globalCache.freezen?.[context.currentSheetId]
+            )
+          )}
         />
       ) : null}
-      {selectedLocation.map(({ row, row_pre }, i) => (
+      {selectedLocation.map(({ row, row_pre, r1, r2 }, i) => (
         <div
           className="fortune-row-header-selected"
           key={i}
-          style={{
-            top: row_pre,
-            height: row - row_pre - 1,
-            display: "block",
-            backgroundColor: "rgba(76, 76, 76, 0.1)",
-          }}
+          style={_.assign(
+            {
+              top: row_pre,
+              height: row - row_pre - 1,
+              display: "block",
+              backgroundColor: "rgba(76, 76, 76, 0.1)",
+            },
+            fixRowStyleOverflowInFreeze(
+              context,
+              r1,
+              r2,
+              refs.globalCache.freezen?.[context.currentSheetId]
+            )
+          )}
         />
       ))}
       {/* placeholder to overflow the container, making the container scrollable */}

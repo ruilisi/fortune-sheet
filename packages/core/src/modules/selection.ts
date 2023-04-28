@@ -1,5 +1,5 @@
 import _, { isPlainObject } from "lodash";
-import type { Sheet as SheetType, Selection, Freezen, Range } from "../types";
+import type { Sheet as SheetType, Freezen, Range } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
   getCellValue,
@@ -2197,34 +2197,21 @@ export function selectAll(ctx: Context) {
   normalizeSelection(ctx, ctx.luckysheet_select_save);
 }
 
-export function getSelectionStyle(
+export function fixRowStyleOverflowInFreeze(
   ctx: Context,
-  selection: Selection,
+  r1: number,
+  r2: number,
   freeze: Freezen | undefined
 ): {
-  left: number | undefined;
-  top: number | undefined;
-  width: number | undefined;
-  height: number | undefined;
-  display: string;
-  backgroundColor?: string;
+  top?: number;
+  height?: number;
+  display?: string;
 } {
-  const ret = {
-    left: selection.left_move,
-    top: selection.top_move,
-    width: selection.width_move,
-    height: selection.height_move,
-    display: "block",
-  };
-  if (!freeze) return ret;
+  if (!freeze) return {};
 
+  const ret: ReturnType<typeof fixRowStyleOverflowInFreeze> = {};
   const { scrollTop } = ctx;
-  const { scrollLeft } = ctx;
-
-  const freezenverticaldata = freeze?.vertical?.freezenverticaldata;
-  const freezenhorizontaldata = freeze?.horizontal?.freezenhorizontaldata;
-
-  const obj = selection;
+  const freezenhorizontaldata = freeze.horizontal?.freezenhorizontaldata;
 
   let rangeshow = true;
 
@@ -2232,9 +2219,6 @@ export function getSelectionStyle(
     const freezenTop = freezenhorizontaldata[0];
     const freezen_rowindex = freezenhorizontaldata[1];
     const offTop = scrollTop - freezenhorizontaldata[2];
-
-    const r1 = obj.row[0];
-    const r2 = obj.row[1];
 
     const row = ctx.visibledatarow[r2];
     const row_pre = r1 - 1 === -1 ? 0 : ctx.visibledatarow[r1 - 1];
@@ -2266,13 +2250,34 @@ export function getSelectionStyle(
     }
   }
 
+  if (!rangeshow) {
+    ret.display = "none";
+  }
+  return ret;
+}
+
+export function fixColumnStyleOverflowInFreeze(
+  ctx: Context,
+  c1: number,
+  c2: number,
+  freeze: Freezen | undefined
+): {
+  left?: number;
+  width?: number;
+  display?: string;
+} {
+  if (!freeze) return {};
+
+  const ret: ReturnType<typeof fixColumnStyleOverflowInFreeze> = {};
+  const { scrollLeft } = ctx;
+  const freezenverticaldata = freeze.vertical?.freezenverticaldata;
+
+  let rangeshow = true;
+
   if (freezenverticaldata != null) {
     const freezenLeft = freezenverticaldata[0];
     const freezen_colindex = freezenverticaldata[1];
     const offLeft = scrollLeft - freezenverticaldata[2];
-
-    const c1 = obj.column[0];
-    const c2 = obj.column[1];
 
     const col = ctx.visibledatacolumn[c2];
     const col_pre = c1 - 1 === -1 ? 0 : ctx.visibledatacolumn[c1 - 1];

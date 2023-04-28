@@ -8,6 +8,7 @@ import {
   handleContextMenu,
   isAllowEdit,
   getFlowdata,
+  fixColumnStyleOverflowInFreeze,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
@@ -27,9 +28,10 @@ const ColumnHeader: React.FC = () => {
   const [hoverLocation, setHoverLocation] = useState({
     col: -1,
     col_pre: -1,
+    col_index: -1,
   });
   const [selectedLocation, setSelectedLocation] = useState<
-    { col: number; col_pre: number }[]
+    { col: number; col_pre: number; c1: number; c2: number }[]
   >([]);
   const allowEditRef = useRef<boolean>(true);
 
@@ -43,9 +45,9 @@ const ColumnHeader: React.FC = () => {
         containerRef.current!.getBoundingClientRect().left +
         containerRef.current!.scrollLeft;
       const col_location = colLocation(x, context.visibledatacolumn);
-      const [col_pre, col] = col_location;
-      if (col_pre !== hoverLocation.col_pre || col !== hoverLocation.col) {
-        setHoverLocation({ col_pre, col });
+      const [col_pre, col, col_index] = col_location;
+      if (col_index !== hoverLocation.col_index) {
+        setHoverLocation({ col_pre, col, col_index });
       }
       const flowdata = getFlowdata(context);
       if (!_.isNil(flowdata))
@@ -58,7 +60,7 @@ const ColumnHeader: React.FC = () => {
             },
           ]);
     },
-    [context, hoverLocation.col, hoverLocation.col_pre]
+    [context, hoverLocation.col_index]
   );
 
   const onMouseDown = useCallback(
@@ -82,7 +84,7 @@ const ColumnHeader: React.FC = () => {
     if (context.luckysheet_cols_change_size) {
       return;
     }
-    setHoverLocation({ col: -1, col_pre: -1 });
+    setHoverLocation({ col: -1, col_pre: -1, col_index: -1 });
   }, [context.luckysheet_cols_change_size]);
 
   const onColSizeHandleMouseDown = useCallback(
@@ -131,14 +133,15 @@ const ColumnHeader: React.FC = () => {
       columnTitleMap = selectTitlesMap(columnTitleMap, c1, c2);
     }
     const columnTitleRange = selectTitlesRange(columnTitleMap);
-    const selects: { col: number; col_pre: number }[] = [];
+    const selects: { col: number; col_pre: number; c1: number; c2: number }[] =
+      [];
     for (let j = 0; j < columnTitleRange.length; j += 1) {
       const c1 = columnTitleRange[j][0];
       const c2 = columnTitleRange[j][columnTitleRange[j].length - 1];
       const col = colLocationByIndex(c2, context.visibledatacolumn)[1];
       const col_pre = colLocationByIndex(c1, context.visibledatacolumn)[0];
       if (_.isNumber(col) && _.isNumber(col_pre)) {
-        selects.push({ col, col_pre });
+        selects.push({ col, col_pre, c1, c2 });
       }
     }
     setSelectedLocation(selects);
@@ -170,16 +173,22 @@ const ColumnHeader: React.FC = () => {
           opacity: context.luckysheet_cols_change_size ? 1 : 0,
         }}
       />
-      {!context.luckysheet_cols_change_size &&
-      hoverLocation.col >= 0 &&
-      hoverLocation.col_pre >= 0 ? (
+      {!context.luckysheet_cols_change_size && hoverLocation.col_index >= 0 ? (
         <div
           className="fortune-col-header-hover"
-          style={{
-            left: hoverLocation.col_pre,
-            width: hoverLocation.col - hoverLocation.col_pre - 1,
-            display: "block",
-          }}
+          style={_.assign(
+            {
+              left: hoverLocation.col_pre,
+              width: hoverLocation.col - hoverLocation.col_pre - 1,
+              display: "block",
+            },
+            fixColumnStyleOverflowInFreeze(
+              context,
+              hoverLocation.col_index,
+              hoverLocation.col_index,
+              refs.globalCache.freezen?.[context.currentSheetId]
+            )
+          )}
         >
           {allowEditRef.current && (
             <span
@@ -199,16 +208,24 @@ const ColumnHeader: React.FC = () => {
           )}
         </div>
       ) : null}
-      {selectedLocation.map(({ col, col_pre }, i) => (
+      {selectedLocation.map(({ col, col_pre, c1, c2 }, i) => (
         <div
           className="fortune-col-header-selected"
           key={i}
-          style={{
-            left: col_pre,
-            width: col - col_pre - 1,
-            display: "block",
-            backgroundColor: "rgba(76, 76, 76, 0.1)",
-          }}
+          style={_.assign(
+            {
+              left: col_pre,
+              width: col - col_pre - 1,
+              display: "block",
+              backgroundColor: "rgba(76, 76, 76, 0.1)",
+            },
+            fixColumnStyleOverflowInFreeze(
+              context,
+              c1,
+              c2,
+              refs.globalCache.freezen?.[context.currentSheetId]
+            )
+          )}
         />
       ))}
       {/* placeholder to overflow the container, making the container scrollable */}
