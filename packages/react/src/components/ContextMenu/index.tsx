@@ -636,8 +636,8 @@ const ContextMenu: React.FC = () => {
       top -= menuH;
       hasOverflow = true;
     }
-    if (top < 90) {
-      top = 90;
+    if (top < 0) {
+      top = 0;
       hasOverflow = true;
     }
     if (hasOverflow) {
