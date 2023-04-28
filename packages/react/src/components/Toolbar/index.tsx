@@ -34,10 +34,6 @@ import {
   createFilter,
   clearFilter,
   applyLocation,
-  setBackgroundPic,
-  showBgChooser,
-  clearBackground,
-  setBackgroundPicRepeat,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
@@ -842,145 +838,41 @@ const Toolbar: React.FC<{
       }
       if (name === "image") {
         return (
-          <Combo iconId={name} tooltip={toolbar.insertImage} key={name}>
-            {(setOpen) => (
-              <Select style={{ overflow: "visible" }}>
-                <Option
-                  key="upload-picture"
-                  onClick={() => {
-                    if (context.allowEdit === false) return;
-                    showImgChooser();
-                  }}
-                >
-                  <div className="fortune-toolbar-menu-line">
-                    {toolbar.insertImage}
-                    <input
-                      id="fortune-img-upload"
-                      type="file"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      onChange={(e) => {
-                        const file = e.currentTarget.files?.[0];
-                        if (!file) return;
+          <Button
+            iconId={name}
+            tooltip={toolbar.insertImage}
+            key={name}
+            onClick={() => {
+              if (context.allowEdit === false) return;
+              showImgChooser();
+            }}
+          >
+            <input
+              id="fortune-img-upload"
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                const file = e.currentTarget.files?.[0];
+                if (!file) return;
 
-                        const render = new FileReader();
-                        render.readAsDataURL(file);
-                        render.onload = (event) => {
-                          if (event.target == null) return;
-                          const src = event.target?.result;
-                          const image = new Image();
-                          image.onload = () => {
-                            setContext((draftCtx) => {
-                              insertImage(draftCtx, image);
-                            });
-                          };
-                          image.src = src as string;
-                        };
-                        e.currentTarget.value = "";
-                        setOpen(false);
-                      }}
-                    />
-                  </div>
-                </Option>
-                <MenuDivider key="divider" />
-                <Option
-                  key="set-background-picture"
-                  onClick={() => {
-                    if (context.allowEdit === false) return;
-                    showBgChooser();
-                  }}
-                >
-                  <div className="fortune-toolbar-menu-line">
-                    {toolbar.setBackgroundPic}
-                    <input
-                      id="fortune-bg-upload"
-                      type="file"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      onChange={(e) => {
-                        const file = e.currentTarget.files?.[0];
-                        if (!file) return;
-
-                        const render = new FileReader();
-                        render.readAsDataURL(file);
-                        render.onload = (event) => {
-                          if (event.target == null) return;
-                          const src = event.target?.result;
-                          const image = new Image();
-                          image.onload = () => {
-                            setContext((draftCtx) => {
-                              setBackgroundPic(draftCtx, image);
-                            });
-                          };
-                          image.src = src as string;
-                        };
-                        e.currentTarget.value = "";
-                        setOpen(false);
-                      }}
-                    />
-                  </div>
-                </Option>
-                <Option
-                  key="clear-background-picture"
-                  onClick={() => {
-                    if (context.allowEdit === false) return;
+                const render = new FileReader();
+                render.readAsDataURL(file);
+                render.onload = (event) => {
+                  if (event.target == null) return;
+                  const src = event.target?.result;
+                  const image = new Image();
+                  image.onload = () => {
                     setContext((draftCtx) => {
-                      clearBackground(draftCtx);
+                      insertImage(draftCtx, image);
                     });
-                    setOpen(false);
-                  }}
-                >
-                  <div className="fortune-toolbar-menu-line">
-                    {toolbar.unsetBackgroundPic}
-                  </div>
-                </Option>
-                <Option
-                  key="backgroundSetting"
-                  onMouseEnter={(e) =>
-                    showSubMenu(e, "set-background-sub-menu")
-                  }
-                  onMouseLeave={(e) =>
-                    hideSubMenu(e, "set-background-sub-menu")
-                  }
-                >
-                  <div className="fortune-toolbar-menu-line">
-                    {toolbar.backgroundSettings}
-                    <SVGIcon name="rightArrow" width={18} />
-                    <div
-                      className="set-background-sub-menu toolbar-item-sub-menu"
-                      style={{
-                        display: "none",
-                        width: 150,
-                        top: -8,
-                      }}
-                    >
-                      {[
-                        { text: toolbar.backgroundRepeat, value: "repeat" },
-                        {
-                          text: toolbar.backgroundNoRepeat,
-                          value: "no-repeat",
-                        },
-                        { text: toolbar.backgroundStretch, value: "stretch" },
-                      ].map((v) => (
-                        <div
-                          className="set-background-item"
-                          key={v.text}
-                          onClick={() => {
-                            setContext((draftCtx) => {
-                              setBackgroundPicRepeat(draftCtx, v.value);
-                            });
-                            setOpen(false);
-                          }}
-                        >
-                          {v.text}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </Option>
-              </Select>
-            )}
-          </Combo>
+                  };
+                  image.src = src as string;
+                };
+                e.currentTarget.value = "";
+              }}
+            />
+          </Button>
         );
       }
       if (name === "comment") {

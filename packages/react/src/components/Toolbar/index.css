@@ -111,8 +111,6 @@
 
 .fortune-toolbar-select-option {
   font-size: 12px;
-  height: 24px;
-  line-height: 24px;
   min-width: 60px;
   padding: 8px 12px;
   cursor: pointer;
@@ -207,17 +205,6 @@
   user-select: none;
   outline: none;
   border-radius: 6px;
-}
-
-.set-background-item {
-  display: flex;
-  justify-content: center;
-  padding: 6px 18px;
-  z-index: 1005;
-}
-
-.set-background-item:hover {
-  background: #efefef;
 }
 
 #fortunesheet-custom-color {

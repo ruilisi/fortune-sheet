@@ -6,6 +6,7 @@
   padding: 0;
   flex-direction: column;
   font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+  background-color: white;
 }
 
 .fortune-workarea {
@@ -27,14 +28,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.sheet-background {
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  z-index: -1;
-  background-color: white;
 }
 
 html::-webkit-scrollbar-button {

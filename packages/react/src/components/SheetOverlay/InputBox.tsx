@@ -314,7 +314,7 @@ const InputBox: React.FC = () => {
           ? {
               left: firstSelection.left,
               top: firstSelection.top,
-              zIndex: _.isEmpty(context.luckysheetCellUpdate) ? -2 : 19,
+              zIndex: _.isEmpty(context.luckysheetCellUpdate) ? -1 : 19,
               display: "block",
             }
           : { left: -10000, top: -10000, display: "block" }

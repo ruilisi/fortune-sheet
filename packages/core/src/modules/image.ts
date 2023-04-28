@@ -57,13 +57,6 @@ export function showImgChooser() {
   if (chooser) chooser.click();
 }
 
-export function showBgChooser() {
-  const chooser = document.getElementById(
-    "fortune-bg-upload"
-  ) as HTMLInputElement;
-  if (chooser) chooser.click();
-}
-
 export function saveImage(ctx: Context) {
   const index = getSheetIndex(ctx, ctx.currentSheetId);
   if (index == null) return;
@@ -289,48 +282,5 @@ export function onImageResizeEnd(ctx: Context, globalCache: GlobalCache) {
         saveImage(ctx);
       }
     }
-  }
-}
-
-export function setBackgroundPic(
-  ctx: Context,
-  image: HTMLImageElement,
-  repeat: "repeat" | "no-repeat" | "stretch" = "no-repeat"
-) {
-  const index = getSheetIndex(ctx, ctx.currentSheetId);
-  if (index == null || !image.src) return;
-  const file = ctx.luckysheetfile[index];
-  if (!file.backgroundPic) file.backgroundPic = {};
-  file.backgroundPic.src = image.src;
-  if (repeat === "repeat" || repeat === "no-repeat") {
-    file.backgroundPic.repeat = repeat;
-  } else {
-    file.backgroundPic.repeat = "no-repeat";
-    file.backgroundPic.backgroundSize = "100%";
-  }
-}
-
-export function clearBackground(ctx: Context) {
-  const index = getSheetIndex(ctx, ctx.currentSheetId);
-  if (index == null) return;
-  const file = ctx.luckysheetfile[index];
-  if (file.backgroundPic) {
-    file.backgroundPic = undefined;
-  }
-}
-
-export function setBackgroundPicRepeat(
-  ctx: Context,
-  repeat: string = "no-repeat"
-) {
-  const index = getSheetIndex(ctx, ctx.currentSheetId);
-  if (index == null) return;
-  const file = ctx.luckysheetfile[index];
-  if (!file.backgroundPic) file.backgroundPic = {};
-  if (repeat === "repeat" || repeat === "no-repeat") {
-    file.backgroundPic.repeat = repeat;
-  } else if (repeat === "stretch") {
-    file.backgroundPic.repeat = "no-repeat";
-    file.backgroundPic.backgroundSize = "100%";
   }
 }
