@@ -342,6 +342,12 @@ const InputBox: React.FC = () => {
           }}
           className="luckysheet-cell-input"
           id="luckysheet-rich-text-editor"
+          style={{
+            transform: `scale(${context.zoomRatio})`,
+            transformOrigin: "left top",
+            width: `${100 / context.zoomRatio}%`,
+            height: `${100 / context.zoomRatio}%`,
+          }}
           aria-autocomplete="list"
           onChange={onChange}
           onKeyDown={onKeyDown}
