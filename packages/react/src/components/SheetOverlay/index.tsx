@@ -30,6 +30,7 @@ import {
   getSheetIndex,
   fixRowStyleOverflowInFreeze,
   fixColumnStyleOverflowInFreeze,
+  handleKeydownForZoom,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext, { SetContextOptions } from "../../context";
@@ -241,6 +242,21 @@ const SheetOverlay: React.FC = () => {
     ]
   );
 
+  const onKeyDownForZoom = useCallback(
+    (ev: KeyboardEvent) => {
+      const newZoom = handleKeydownForZoom(ev, context.zoomRatio);
+      if (newZoom !== context.zoomRatio) {
+        setContext((ctx) => {
+          ctx.zoomRatio = newZoom;
+          ctx.luckysheetfile[
+            getSheetIndex(ctx, ctx.currentSheetId)!
+          ].zoomRatio = newZoom;
+        });
+      }
+    },
+    [context.zoomRatio, setContext]
+  );
+
   const onTouchStart = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
       const { nativeEvent } = e;
@@ -373,6 +389,13 @@ const SheetOverlay: React.FC = () => {
       document.removeEventListener("mouseup", onMouseUp);
     };
   }, [onMouseUp]);
+
+  useEffect(() => {
+    document.addEventListener("keydown", onKeyDownForZoom);
+    return () => {
+      document.removeEventListener("keydown", onKeyDownForZoom);
+    };
+  }, [onKeyDownForZoom]);
 
   return (
     <div
