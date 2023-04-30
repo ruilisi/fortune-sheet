@@ -31,3 +31,4 @@ export * from "./splitColumn";
 export * from "./locationCondition";
 export * from "./dataVerification";
 export * from "./ConditionFormat";
+export * from "./zoom";
