@@ -558,9 +558,6 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           draftCtx.defaultcolumnNum = mergedSettings.column;
           draftCtx.defaultrowNum = mergedSettings.row;
           draftCtx.defaultFontSize = mergedSettings.defaultFontSize;
-          draftCtx.rowHeaderWidth = mergedSettings.rowHeaderWidth || 1.5;
-          draftCtx.columnHeaderHeight =
-            mergedSettings.columnHeaderHeight || 1.5;
           if (_.isEmpty(draftCtx.luckysheetfile)) {
             const newData = produce(originalData, (draftData) => {
               ensureSheetIndex(draftData, mergedSettings.generateSheetId);
@@ -635,6 +632,10 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           draftCtx.insertedImgs = sheet.images;
 
           draftCtx.zoomRatio = _.isNil(sheet.zoomRatio) ? 1 : sheet.zoomRatio;
+          draftCtx.rowHeaderWidth =
+            mergedSettings.rowHeaderWidth * draftCtx.zoomRatio;
+          draftCtx.columnHeaderHeight =
+            mergedSettings.columnHeaderHeight * draftCtx.zoomRatio;
 
           if (!_.isNil(sheet.defaultRowHeight)) {
             draftCtx.defaultrowlen = Number(sheet.defaultRowHeight);
