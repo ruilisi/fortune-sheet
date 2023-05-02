@@ -74,7 +74,13 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
         placeholderRef.current!
       )
     );
-  }, [refs.canvas, setContext]);
+  }, [
+    refs.canvas,
+    setContext,
+    context.rowHeaderWidth,
+    context.columnHeaderHeight,
+    context.devicePixelRatio,
+  ]);
 
   /**
    * Recalculate freeze data when sheet changes or sheet.frozen changes
