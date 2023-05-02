@@ -49,7 +49,6 @@ import { generateAPIs } from "./api";
 import { ModalProvider } from "../../context/modal";
 import FilterMenu from "../ContextMenu/FilterMenu";
 import SheetList from "../SheetList";
-import ZoomControl from "../ZoomControl";
 
 enablePatches();
 
@@ -756,7 +755,6 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                   </div>
                 )}
               </div>
-              <ZoomControl />
             </div>
           </div>
         </ModalProvider>

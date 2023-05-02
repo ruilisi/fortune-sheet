@@ -1,7 +1,8 @@
-import React, { useCallback, useContext, useRef } from "react";
+import React, { useCallback, useContext, useRef, useState } from "react";
 import { Context, getSheetIndex } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
 import "./index.css";
 
 const presets = [
@@ -45,156 +46,27 @@ const presets = [
 
 const ZoomControl: React.FC = () => {
   const { context, setContext } = useContext(WorkbookContext);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [radioMenuOpen, setRadioMenuOpen] = useState(false);
 
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const sliderRef = useRef<HTMLDivElement>(null);
-  const isDragRef = useRef(false);
-  const shortcutRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseDown = useCallback(() => {
-    isDragRef.current = true;
-  }, []);
-
-  const handleMouseUp = useCallback(() => {
-    isDragRef.current = false;
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    isDragRef.current = false;
-  }, []);
-
-  const showShortcut = useCallback(() => {
-    shortcutRef.current!.style.display = "block";
-  }, []);
-
-  // 缩放快捷栏
-  const shortcutZoom = useCallback(
-    (ratioInfo: string) => {
-      setContext(
-        (ctx: Context) => {
-          const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
-          // 更改信息显示
-          const ratio = parseInt(ratioInfo.replace(/%/g, ""), 10);
-
-          // 更改缩放倍率
-          ctx.luckysheetfile[index].zoomRatio = ratio / 100;
-
-          // 更改小球位置
-          if (ratio >= 100) {
-            cursorRef.current!.style.left = `${(
-              46 +
-              (5 / 3) * (ctx.luckysheetfile[index].zoomRatio! - 1) * 10
-            ).toFixed(1)}px`;
-          } else {
-            cursorRef.current!.style.left = `${(
-              46 -
-              (50 / 9) * (1 - ctx.luckysheetfile[index].zoomRatio!) * 10
-            ).toFixed(1)}px`;
-          }
-          ctx.zoomRatio = ctx.luckysheetfile[index].zoomRatio!;
-        },
-        { noHistory: true }
-      );
+  useOutsideClick(
+    menuRef,
+    () => {
+      setRadioMenuOpen(false);
     },
-    [setContext]
+    []
   );
 
-  const handleMenuMouseLeave = useCallback(() => {
-    shortcutRef.current!.style.display = "none";
-  }, []);
-
-  // 更改页面缩放
-  const changeZoom = useCallback(
-    (operate: string) => {
+  const zoomTo = useCallback(
+    (val: number) => {
       setContext(
         (ctx: Context) => {
-          const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
-
-          if (!ctx.luckysheetfile[index].zoomRatio) {
-            ctx.luckysheetfile[index].zoomRatio = 1;
+          const index = getSheetIndex(ctx, ctx.currentSheetId);
+          if (index == null) {
+            return;
           }
-
-          if (
-            operate === "zoomIn" &&
-            ctx.luckysheetfile[index].zoomRatio! < 4
-          ) {
-            ctx.luckysheetfile[index].zoomRatio! = parseFloat(
-              (ctx.luckysheetfile[index].zoomRatio! + 0.1).toFixed(1)
-            );
-          }
-          if (
-            operate === "zoomOut" &&
-            ctx.luckysheetfile[index].zoomRatio! > 0.1
-          ) {
-            ctx.luckysheetfile[index].zoomRatio! = parseFloat(
-              (ctx.luckysheetfile[index].zoomRatio! - 0.1).toFixed(1)
-            );
-          }
-
-          if (ctx.luckysheetfile[index].zoomRatio! > 1) {
-            cursorRef.current!.style.left = `${(
-              46 +
-              (5 / 3) * (ctx.luckysheetfile[index].zoomRatio! - 1) * 10
-            ).toFixed(1)}px`;
-          } else {
-            cursorRef.current!.style.left = `${(
-              46 -
-              (50 / 9) * (1 - ctx.luckysheetfile[index].zoomRatio!) * 10
-            ).toFixed(1)}px`;
-          }
-
-          return ctx;
-        },
-        { noHistory: true }
-      );
-    },
-    [setContext]
-  );
-
-  // 点击缩放条缩放
-  const tapToZoom = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      setContext(
-        (ctx: Context) => {
-          const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
-          const sliderRect = sliderRef.current!.getBoundingClientRect();
-          const left = e.pageX - sliderRect.left;
-
-          cursorRef.current!.style.left = `${left}px`;
-          if (left > 46 && left <= 96) {
-            ctx.luckysheetfile[index].zoomRatio! = (left - 46) * 0.06 + 1;
-          } else {
-            ctx.luckysheetfile[index].zoomRatio! = 1 - (46 - left) * 0.1 * 0.18;
-          }
-          ctx.zoomRatio = ctx.luckysheetfile[index].zoomRatio!;
-        },
-        { noHistory: true }
-      );
-    },
-    [setContext]
-  );
-
-  // 滑动小球缩放
-  const dragToScale = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      setContext(
-        (ctx: Context) => {
-          if (isDragRef.current) {
-            const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
-            const sliderRect = sliderRef.current!.getBoundingClientRect();
-            const left = e.pageX - sliderRect.left - 4;
-            // 防止小球滑出缩放条
-            if (left <= 96 && left >= -4) {
-              cursorRef.current!.style.left = `${left}px`;
-              if (left > 46 && left <= 96) {
-                ctx.luckysheetfile[index].zoomRatio! = (left - 46) * 0.06 + 1;
-              } else {
-                ctx.luckysheetfile[index].zoomRatio! =
-                  1 - (46 - left) * 0.1 * 0.18;
-              }
-            }
-            ctx.zoomRatio = ctx.luckysheetfile[index].zoomRatio!;
-          }
+          ctx.luckysheetfile[index].zoomRatio = val;
+          ctx.zoomRatio = val;
         },
         { noHistory: true }
       );
@@ -203,92 +75,50 @@ const ZoomControl: React.FC = () => {
   );
 
   return (
-    <>
-      <div className="fortune-zoom-content">
-        <div className="fortune-zoom-content">
-          <div
-            className="fortune-zoom-minus fortune-zoom-color"
-            onClick={(e) => {
-              changeZoom("zoomOut");
-              e.stopPropagation();
-            }}
-          >
-            <SVGIcon name="minus" width={16} height={16} />
-          </div>
-          <div
-            ref={sliderRef}
-            className="fortune-zoom-slider"
-            onClick={(e) => {
-              tapToZoom(e);
-              e.stopPropagation();
-            }}
-          >
-            <div className="fortune-zoom-line" />
-            <div
-              className="fortune-zoom-cursor"
-              style={{
-                left:
-                  context.zoomRatio > 1
-                    ? `${(46 + (5 / 3) * (context.zoomRatio! - 1) * 10).toFixed(
-                        1
-                      )}px`
-                    : `${(
-                        46 -
-                        (50 / 9) * (1 - context.zoomRatio!) * 10
-                      ).toFixed(1)}px`,
-              }}
-              ref={cursorRef}
-              onMouseDown={handleMouseDown}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseLeave}
-              onMouseMove={(e) => {
-                dragToScale(e);
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            />
-            <div className="fortune-zoom-hundred" />
-          </div>
-          <div
-            className="fortune-zoom-plus fortune-zoom-color"
-            onClick={(e) => {
-              changeZoom("zoomIn");
-              e.stopPropagation();
-            }}
-          >
-            <SVGIcon name="plus" width={16} height={16} />
-          </div>
-        </div>
+    <div className="fortune-zoom-container">
+      <div
+        className="fortune-zoom-button"
+        onClick={(e) => {
+          zoomTo(context.zoomRatio - 0.1);
+          e.stopPropagation();
+        }}
+      >
+        <SVGIcon name="minus" width={16} height={16} />
       </div>
       <div className="fortune-zoom-ratio">
         <div
-          className="fortune-zoom-ratio-info fortune-zoom-color"
-          onClick={showShortcut}
+          className="fortune-zoom-ratio-current fortune-zoom-button"
+          onClick={() => setRadioMenuOpen(true)}
         >
           {(context.zoomRatio * 100).toFixed(0)}%
         </div>
-        <div
-          className="fortune-zoom-ratio-menu"
-          style={{ display: "none" }}
-          ref={shortcutRef}
-          onMouseLeave={handleMenuMouseLeave}
-        >
-          {presets.map((v) => (
-            <div
-              className="fortune-zoom-ratio-item"
-              key={v.text}
-              onClick={(e) => {
-                shortcutZoom(v.text);
-                e.preventDefault();
-              }}
-            >
-              <div className="fortune-zoom-ratio-line">{v.text}</div>
-            </div>
-          ))}
-        </div>
+        {radioMenuOpen && (
+          <div className="fortune-zoom-ratio-menu" ref={menuRef}>
+            {presets.map((v) => (
+              <div
+                className="fortune-zoom-ratio-item"
+                key={v.text}
+                onClick={(e) => {
+                  zoomTo(v.value);
+                  e.preventDefault();
+                }}
+              >
+                <div className="fortune-zoom-ratio-text">{v.text}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </>
+      <div
+        className="fortune-zoom-button"
+        onClick={(e) => {
+          zoomTo(context.zoomRatio + 0.1);
+          e.stopPropagation();
+        }}
+      >
+        <SVGIcon name="plus" width={16} height={16} />
+      </div>
+    </div>
   );
 };
 

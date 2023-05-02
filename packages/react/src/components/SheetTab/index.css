@@ -4,7 +4,7 @@
   background-color: #fafafc;
   color: #444;
   height: 31px;
-  padding: 0 0 0 44px;
+  padding: 0 30px 0 44px;
   margin: 0;
   -webkit-touch-callout: none;
   cursor: default;
@@ -267,4 +267,8 @@
   position: absolute;
   top: 4px;
   right: 2px;
+}
+
+.fortune-sheet-area-right {
+  display: flex !important;
 }
