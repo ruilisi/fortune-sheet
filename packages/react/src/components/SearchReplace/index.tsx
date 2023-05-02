@@ -62,8 +62,8 @@ const SearchReplace: React.FC<{
 
   return (
     <div
-      id="fortunesheet-search-replace"
-      className="fortunesheet-search-replace fortune-dialog"
+      id="fortune-search-replace"
+      className="fortune-search-replace fortune-dialog"
       style={getInitialPosition(getContainer())}
       onMouseEnter={() => {
         _.set(refs.globalCache, "searchDialog.mouseEnter", true);

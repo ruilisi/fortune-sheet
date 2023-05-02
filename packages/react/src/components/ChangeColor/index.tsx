@@ -33,7 +33,7 @@ export const ChangeColor: React.FC<Props> = ({ triggerParentUpdate }) => {
   }, [selectColor, setContext]);
 
   return (
-    <div id="fortunesheet-change-color">
+    <div id="fortune-change-color">
       <div className="color-reset" onClick={() => setSelectColor(undefined)}>
         {sheetconfig.resetColor}
       </div>

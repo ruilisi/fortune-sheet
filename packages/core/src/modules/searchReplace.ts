@@ -344,7 +344,7 @@ export function onSearchDialogMoveStart(
   e: MouseEvent,
   container: HTMLDivElement
 ) {
-  const box = document.getElementById("fortunesheet-search-replace");
+  const box = document.getElementById("fortune-search-replace");
   if (!box) return;
   // eslint-disable-next-line prefer-const
   let { top, left, width, height } = box.getBoundingClientRect();
@@ -365,7 +365,7 @@ export function onSearchDialogMove(globalCache: GlobalCache, e: MouseEvent) {
   const searchDialog = globalCache?.searchDialog;
   const moveProps = searchDialog?.moveProps;
   if (moveProps == null) return;
-  const dialog = document.getElementById("fortunesheet-search-replace");
+  const dialog = document.getElementById("fortune-search-replace");
   const { x: startX, y: startY } = moveProps.cursorMoveStartPosition!;
   let { top, left } = moveProps.initialPosition!;
   left += e.pageX - startX;

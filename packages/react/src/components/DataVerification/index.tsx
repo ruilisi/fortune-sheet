@@ -223,7 +223,7 @@ const DataVerification: React.FC = () => {
   }, []);
 
   return (
-    <div id="fortunesheet-data-verification">
+    <div id="fortune-data-verification">
       <div className="title">{toolbar.dataVerification}</div>
       <div className="box">
         <div className="box-item" style={{ borderTop: "1px solid #E1E4E8" }}>

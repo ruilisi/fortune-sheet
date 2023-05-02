@@ -1,10 +1,10 @@
 label {
     cursor: default;
 }
-#fortunesheet-location-condition {
+#fortune-location-condition {
     min-width: 500px;
 }
-#fortunesheet-location-condition .title {
+#fortune-location-condition .title {
     background-color: #fff;
     color: #000;
     cursor: default;
@@ -12,40 +12,40 @@ label {
     font-weight: normal;
     line-height: 48px;
 }
-#fortunesheet-location-condition .listbox {
+#fortune-location-condition .listbox {
     border: 1px solid #dfdfdf;
     padding: 10px;
     font-size: 14px;
     color: #000;
 }
-#fortunesheet-location-condition .listbox .listItem {
+#fortune-location-condition .listbox .listItem {
     padding: 5px 0;
 }
-#fortunesheet-location-condition .listbox .listItem input[type="radio"] {
+#fortune-location-condition .listbox .listItem input[type="radio"] {
     float: left;
     margin-top: 5px;
 }
-#fortunesheet-location-condition .listItem {
+#fortune-location-condition .listItem {
     padding: 5px 0;
 }
-#fortunesheet-location-condition .listItem .subItem {
+#fortune-location-condition .listItem .subItem {
     height: 30px;
     padding: 0 10px;
     display: block;
 }
-#fortunesheet-location-condition input[type="radio"] {
+#fortune-location-condition input[type="radio"] {
     float: left;
     margin-top: 3px;
 }
-#fortunesheet-location-condition .listbox .listItem .subbox {
+#fortune-location-condition .listbox .listItem .subbox {
     height: 30px;
     padding: 0 10px;
 }
-#fortunesheet-location-condition .listbox .listItem .subbox .subItem {
+#fortune-location-condition .listbox .listItem .subbox .subItem {
     float: left;
     margin-right: 5px;
 }
-#fortunesheet-location-condition .button-basic {
+#fortune-location-condition .button-basic {
     display: inline-block;
     margin-bottom: 0;
     font-weight: 400;
@@ -61,13 +61,13 @@ label {
     user-select: none;
     margin-top: 10px;
 }
-#fortunesheet-location-condition .button-primary {
+#fortune-location-condition .button-primary {
     background: #0188fb;
     border: 1px solid #0188fb;
     color: #fff;
     margin-right: 10px;
 }
-#fortunesheet-location-condition .button-close {
+#fortune-location-condition .button-close {
     color: #333;
     background-color: #fff;
     border: 1px solid #ccc;

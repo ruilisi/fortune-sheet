@@ -953,9 +953,9 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                 )}
               </div>
               <div className="fortune-zoom-content">
-                <div className="fortunesheet-zoom-content">
+                <div className="fortune-zoom-content">
                   <div
-                    className="fortunesheet-zoom-minus fortunesheet-zoom-color"
+                    className="fortune-zoom-minus fortune-zoom-color"
                     onClick={(e) => {
                       changeZoom("zoomOut");
                       e.stopPropagation();
@@ -965,15 +965,15 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                   </div>
                   <div
                     ref={sliderRef}
-                    className="fortunesheet-zoom-slider"
+                    className="fortune-zoom-slider"
                     onClick={(e) => {
                       tapToZoom(e);
                       e.stopPropagation();
                     }}
                   >
-                    <div className="fortunesheet-zoom-line" />
+                    <div className="fortune-zoom-line" />
                     <div
-                      className="fortunesheet-zoom-cursor"
+                      className="fortune-zoom-cursor"
                       style={{
                         left:
                           context.zoomRatio > 1
@@ -997,10 +997,10 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                         e.stopPropagation();
                       }}
                     />
-                    <div className="fortunesheet-zoom-hundred" />
+                    <div className="fortune-zoom-hundred" />
                   </div>
                   <div
-                    className="fortunesheet-zoom-plus fortunesheet-zoom-color"
+                    className="fortune-zoom-plus fortune-zoom-color"
                     onClick={(e) => {
                       changeZoom("zoomIn");
                       e.stopPropagation();
@@ -1010,31 +1010,29 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                   </div>
                 </div>
               </div>
-              <div className="fortunesheet-zoom-ratio">
+              <div className="fortune-zoom-ratio">
                 <div
-                  className="fortunesheet-zoom-ratio-info fortunesheet-zoom-color"
+                  className="fortune-zoom-ratio-info fortune-zoom-color"
                   onClick={showShortcut}
                 >
                   {(context.zoomRatio * 100).toFixed(0)}%
                 </div>
                 <div
-                  className="fortunesheet-zoom-ratio-menu"
+                  className="fortune-zoom-ratio-menu"
                   style={{ display: "none" }}
                   ref={shortcutRef}
                   onMouseLeave={handleMenuMouseLeave}
                 >
                   {zoomRatioItems.map((v) => (
                     <div
-                      className="fortunesheet-zoom-ratio-item"
+                      className="fortune-zoom-ratio-item"
                       key={v.text}
                       onClick={(e) => {
                         shortcutZoom(v.text);
                         e.preventDefault();
                       }}
                     >
-                      <div className="fortunesheet-zoom-ratio-line">
-                        {v.text}
-                      </div>
+                      <div className="fortune-zoom-ratio-line">{v.text}</div>
                     </div>
                   ))}
                 </div>
