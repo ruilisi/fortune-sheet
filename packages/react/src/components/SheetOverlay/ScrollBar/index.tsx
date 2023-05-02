@@ -25,7 +25,7 @@ const ScrollBar: React.FC<Props> = ({ axis }) => {
         axis === "x"
           ? {
               left: context.rowHeaderWidth,
-              width: context.cellmainWidth,
+              width: `calc(100% - ${context.rowHeaderWidth}px)`,
             }
           : { height: "100%" }
       }
