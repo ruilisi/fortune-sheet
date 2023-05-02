@@ -19,7 +19,10 @@ const ImgBoxs: React.FC = () => {
             padding: 0,
             position: "absolute",
             zIndex: 300,
-            ..._.omit(activeImg, "src"),
+            width: activeImg.width * context.zoomRatio,
+            height: activeImg.height * context.zoomRatio,
+            left: activeImg.left * context.zoomRatio,
+            top: activeImg.top * context.zoomRatio,
           }}
         >
           <div
@@ -29,11 +32,12 @@ const ImgBoxs: React.FC = () => {
           <div
             className="luckysheet-modal-dialog-content"
             style={{
-              ..._.omit(activeImg, "src, left,top"),
-              // height: 200,
-              // width: 200,
+              width: activeImg.width * context.zoomRatio,
+              height: activeImg.height * context.zoomRatio,
               backgroundImage: `url(${activeImg.src})`,
-              backgroundSize: `${activeImg.width}px ${activeImg.height}px`,
+              backgroundSize: `${activeImg.width * context.zoomRatio}px ${
+                activeImg.height * context.zoomRatio
+              }px`,
               backgroundRepeat: "no-repeat",
               // context.activeImg.width * context.zoomRatio +
               // context.activeImg.height * context.zoomRatio,
@@ -99,12 +103,12 @@ const ImgBoxs: React.FC = () => {
               key={id}
               className="luckysheet-modal-dialog luckysheet-modal-dialog-image"
               style={{
-                width,
-                height,
+                width: width * context.zoomRatio,
+                height: height * context.zoomRatio,
                 padding: 0,
                 position: "absolute",
-                left,
-                top,
+                left: left * context.zoomRatio,
+                top: top * context.zoomRatio,
                 zIndex: 200,
               }}
               onMouseDown={(e) => e.stopPropagation()}
@@ -128,8 +132,8 @@ const ImgBoxs: React.FC = () => {
                   src={src}
                   alt=""
                   style={{
-                    width,
-                    height,
+                    width: width * context.zoomRatio,
+                    height: height * context.zoomRatio,
                   }}
                 />
               </div>
