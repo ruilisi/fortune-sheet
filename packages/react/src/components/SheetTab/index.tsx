@@ -12,6 +12,7 @@ import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
 import "./index.css";
 import SheetItem from "./SheetItem";
+import ZoomControl from "../ZoomControl";
 
 const SheetTab: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
@@ -155,6 +156,9 @@ const SheetTab: React.FC = () => {
             <SVGIcon name="arrow-doubleright" width={12} height={12} />
           </div>
         )}
+      </div>
+      <div className="fortune-sheet-area-right">
+        <ZoomControl />
       </div>
     </div>
   );
