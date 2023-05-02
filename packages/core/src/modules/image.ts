@@ -185,8 +185,8 @@ export function onImageMoveEnd(ctx: Context, globalCache: GlobalCache) {
     if (position) {
       const img = _.find(ctx.insertedImgs, (v) => v.id === ctx.activeImg);
       if (img) {
-        img.left = position.left;
-        img.top = position.top;
+        img.left = position.left / ctx.zoomRatio;
+        img.top = position.top / ctx.zoomRatio;
         saveImage(ctx);
       }
     }
@@ -275,10 +275,10 @@ export function onImageResizeEnd(ctx: Context, globalCache: GlobalCache) {
     if (position) {
       const img = _.find(ctx.insertedImgs, (v) => v.id === ctx.activeImg);
       if (img) {
-        img.left = position.left;
-        img.top = position.top;
-        img.width = position.width;
-        img.height = position.height;
+        img.left = position.left / ctx.zoomRatio;
+        img.top = position.top / ctx.zoomRatio;
+        img.width = position.width / ctx.zoomRatio;
+        img.height = position.height / ctx.zoomRatio;
         saveImage(ctx);
       }
     }
