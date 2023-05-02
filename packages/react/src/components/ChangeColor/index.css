@@ -1,4 +1,4 @@
-#fortunesheet-change-color {
+#fortune-change-color {
   min-width: 164px;
   height: 252px;
   background: rgb(240, 240, 240);
@@ -10,7 +10,7 @@
   border: 1px solid rgba(0, 0, 0, .2);
 }
 
-#fortunesheet-change-color .color-reset {
+#fortune-change-color .color-reset {
   position: relative;
   color: #333;
   cursor: pointer;
@@ -25,11 +25,11 @@
   background: white;
 }
 
-#fortunesheet-change-color .color-reset:hover {
+#fortune-change-color .color-reset:hover {
   background: rgb(230, 230, 230);
 }
 
-#fortunesheet-change-color .custom-color {
+#fortune-change-color .custom-color {
   position: relative;
   margin: auto;
   padding: 10px;

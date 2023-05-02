@@ -145,7 +145,7 @@ export const LocationCondition: React.FC<{}> = () => {
   );
 
   return (
-    <div id="fortunesheet-location-condition">
+    <div id="fortune-location-condition">
       <div className="title">{findAndReplace.location}</div>
       <div className="listbox">
         {/* 常量 */}

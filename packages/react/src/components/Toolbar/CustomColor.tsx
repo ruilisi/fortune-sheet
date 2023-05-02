@@ -15,7 +15,7 @@ export const CustomColor: React.FC<Props> = ({ onCustomPick, onColorPick }) => {
   const [inputColor, setInputColor] = useState<string | undefined>("#000000");
 
   return (
-    <div id="fortunesheet-custom-color">
+    <div id="fortune-custom-color">
       <div className="color-reset" onClick={() => onCustomPick(undefined)}>
         {sheetconfig.resetColor}
       </div>

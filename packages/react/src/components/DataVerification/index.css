@@ -1,54 +1,54 @@
-#fortunesheet-data-verification {
+#fortune-data-verification {
   min-width: 500px;
   padding: 10px 0px;
   user-select: none;
 }
 
-#fortunesheet-data-verification .title {
+#fortune-data-verification .title {
   font-size: 16px;
 }
 
-#fortunesheet-data-verification .box {
+#fortune-data-verification .box {
   font-size: 14px;
 }
 
-#fortunesheet-data-verification .box .box-item {
+#fortune-data-verification .box .box-item {
   padding: 10px;
   border-bottom: 1px solid #E1E4E8;
 }
 
-#fortunesheet-data-verification .box .box-item .box-item-title {
+#fortune-data-verification .box .box-item .box-item-title {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 10px;
 }
 
-#fortunesheet-data-verification .box .box-item .data-verification-range {
+#fortune-data-verification .box .box-item .data-verification-range {
   width: 100%;
   height: 30px;
   border: 1px solid #d4d4d4;
 }
 
-#fortunesheet-data-verification .box .box-item .show-box-item {
+#fortune-data-verification .box .box-item .show-box-item {
   margin-top: 6px;
   font-size: 12px;
 }
 
-#fortunesheet-data-verification .box .box-item .show-box-item .check-box {
+#fortune-data-verification .box .box-item .show-box-item .check-box {
   height: 30px;
   line-height: 30px;
   margin-bottom: 10px;
 
 }
 
-#fortunesheet-data-verification .box .box-item .show-box-item .check-box input {
+#fortune-data-verification .box .box-item .show-box-item .check-box input {
   height: 30px;
   padding: 0 10px;
   border: 1px solid #d4d4d4;
   box-sizing: border-box;
 }
 
-#fortunesheet-data-verification .input-box input {
+#fortune-data-verification .input-box input {
   height: 30px;
   padding: 4px 10px 4px 10px;
   border: 1px solid #d4d4d4;
@@ -56,7 +56,7 @@
   margin-top: 6px;
 }
 
-#fortunesheet-data-verification .input-box span {
+#fortune-data-verification .input-box span {
   margin: 0px 16px;
 }
 
@@ -77,23 +77,23 @@
   cursor: pointer;
 }
 
-#fortunesheet-data-verification .box .box-item .data-verification-type-select {
+#fortune-data-verification .box .box-item .data-verification-type-select {
   width: 100%;
   height: 30px;
   border-color: #d4d4d4;
   outline-style: none;
 }
 
-#fortunesheet-data-verification .box .box-item .check {
+#fortune-data-verification .box .box-item .check {
   font-size: 12px;
   line-height: 24px;
 }
 
-#fortunesheet-data-verification .box .box-item .check input {
+#fortune-data-verification .box .box-item .check input {
   vertical-align: text-top;
 }
 
-#fortunesheet-data-verification .button-basic {
+#fortune-data-verification .button-basic {
   display: inline-block;
   margin-bottom: 0;
   font-weight: 400;
@@ -110,14 +110,14 @@
   margin-top: 10px;
 }
 
-#fortunesheet-data-verification .button-primary {
+#fortune-data-verification .button-primary {
   background: #0188fb;
   border: 1px solid #0188fb;
   color: #fff;
   margin-right: 10px;
 }
 
-#fortunesheet-data-verification .button-close {
+#fortune-data-verification .button-close {
   color: #333;
   background-color: #fff;
   border: 1px solid #ccc;

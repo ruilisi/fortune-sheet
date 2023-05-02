@@ -41,7 +41,7 @@ html::-webkit-scrollbar-button {
   align-items: center;
 }
 
-.fortunesheet-zoom-content {
+.fortune-zoom-content {
   position: relative;
   float: right;
   width: 210px;
@@ -56,7 +56,7 @@ html::-webkit-scrollbar-button {
   user-select: none;
 }
 
-.fortunesheet-zoom-slider {
+.fortune-zoom-slider {
   position: absolute;
   top: 0;
   left: 25px;
@@ -66,7 +66,7 @@ html::-webkit-scrollbar-button {
   align-items: center;
 }
 
-.fortunesheet-zoom-line {
+.fortune-zoom-line {
     position: absolute;
     top: 10px;
     width: 100px;
@@ -74,7 +74,7 @@ html::-webkit-scrollbar-button {
     background: #e1e4e8;
 }
 
-.fortunesheet-zoom-cursor {
+.fortune-zoom-cursor {
   position: absolute;
   top: 7px;
   width: 8px;
@@ -86,7 +86,7 @@ html::-webkit-scrollbar-button {
   transition: all .3s;
 }
 
-.fortunesheet-zoom-cursor:hover {
+.fortune-zoom-cursor:hover {
   position: absolute;
   top: 5px;
   width: 10px;
@@ -98,7 +98,7 @@ html::-webkit-scrollbar-button {
   transition: all .3s;
 }
 
-.fortunesheet-zoom-hundred {
+.fortune-zoom-hundred {
   position: absolute;
   top: 9px;
   width: 2px;
@@ -107,7 +107,7 @@ html::-webkit-scrollbar-button {
   background: #1e1e1f;
 }
 
-.fortunesheet-zoom-minus {
+.fortune-zoom-minus {
   position: absolute;
   top: 0;
   left: 0;
@@ -119,7 +119,7 @@ html::-webkit-scrollbar-button {
   justify-content: center;
 }
 
-.fortunesheet-zoom-plus {
+.fortune-zoom-plus {
   position: absolute;
   top: 0;
   left: 130px;
@@ -131,7 +131,7 @@ html::-webkit-scrollbar-button {
   justify-content: center;
 }
 
-.fortunesheet-zoom-ratio {
+.fortune-zoom-ratio {
   position: absolute;
   width: 60px;
   color: #1e1e1f;
@@ -140,11 +140,11 @@ html::-webkit-scrollbar-button {
   cursor: pointer;
 }
 
-.fortunesheet-zoom-ratio-item:hover{
+.fortune-zoom-ratio-item:hover{
   background: #efefef;
 }
 
-.fortunesheet-zoom-ratio-menu {
+.fortune-zoom-ratio-menu {
   position: absolute;
   bottom: 15px;
   left: -15px;
@@ -156,10 +156,10 @@ html::-webkit-scrollbar-button {
   z-index: 1004;
 }
 
-.fortunesheet-zoom-ratio-line {
+.fortune-zoom-ratio-line {
   padding: 0px 10px 0px 10px;
 }
 
-.fortunesheet-zoom-color:hover {
+.fortune-zoom-color:hover {
   background: #efefef;
 }

@@ -207,7 +207,7 @@
   border-radius: 6px;
 }
 
-#fortunesheet-custom-color {
+#fortune-custom-color {
   min-width: 164px;
   background: rgb(240, 240, 240);
   border-radius: 6px;
@@ -216,7 +216,7 @@
   font-size: 12px;
 }
 
-#fortunesheet-custom-color .color-reset {
+#fortune-custom-color .color-reset {
   position: relative;
   color: #333;
   cursor: pointer;
@@ -231,11 +231,11 @@
   background: white;
 }
 
-#fortunesheet-custom-color .color-reset:hover {
+#fortune-custom-color .color-reset:hover {
   background: rgb(230, 230, 230);
 }
 
-#fortunesheet-custom-color .custom-color {
+#fortune-custom-color .custom-color {
   position: relative;
   margin: auto;
   padding: 10px;

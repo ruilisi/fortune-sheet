@@ -76,7 +76,7 @@ export const SplitColumn: React.FC<{}> = () => {
   }, [context, splitOperate]);
 
   return (
-    <div id="fortunesheet-split-column">
+    <div id="fortune-split-column">
       <div className="title">{splitText.splitTextTitle}</div>
       <div className="splitDelimiters">{splitText.splitDelimiters}</div>
       <div className="splitSymbols" ref={splitSymbols}>
