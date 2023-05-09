@@ -11440,6 +11440,8 @@ export default {
 
     filiterInputNone: "无",
 
+    from: "从",
+    to: "到",
     filiterInputTip: "输入筛选值",
     filiterRangeStartTip: "范围开始",
     filiterRangeEndTip: "范围结束",

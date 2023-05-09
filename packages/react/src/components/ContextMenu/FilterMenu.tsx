@@ -27,6 +27,7 @@ import Menu from "./Menu";
 import SVGIcon from "../SVGIcon";
 import { useAlert } from "../../hooks/useAlert";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
+import "./index.css";
 
 const SelectItem: React.FC<{
   item: FilterValue;
@@ -489,45 +490,45 @@ const FilterMenu: React.FC = () => {
                   {filter.filterByCondition}
                 </Menu>
                 <div
-                  className="luckysheet-\${menuid}-bycondition"
-                  style={{ display: "none" }}
+                  className="fortune-filter-bycondition"
+                  // style={{ display: "none" }}
                 >
                   <div
-                    className="luckysheet-flat-menu-button luckysheet-mousedown-cancel"
-                    id="luckysheet-\${menuid}-selected"
+                    className="fortune-flat-menu-button fortune-mousedown-cancel"
+                    id="fortune-filter-selected"
                   >
                     <span
-                      className="luckysheet-mousedown-cancel"
+                      className="fortune-mousedown-cancel"
                       data-value="null"
                       data-type="0"
                     >
                       {filter.filiterInputNone}
                     </span>
-                    <div className="luckysheet-mousedown-cancel">
+                    <div className="fortune-mousedown-cancel">
                       <i className="fa fa-sort" aria-hidden="true" />
                     </div>
                   </div>
-                  {/* <div className="luckysheet-\${menuid}-selected-input">
-          <input
-            type="text"
-            placeholder="${filter.filiterInputTip}"
-            className="luckysheet-mousedown-cancel"
-          />
-        </div>
-        <div className="luckysheet-\${menuid}-selected-input luckysheet-\${menuid}-selected-input2">
-          <span>{filter.filiterRangeStart}</span>
-          <input
-            type="text"
-            placeholder="${filter.filiterRangeStartTip}"
-            className="luckysheet-mousedown-cancel"
-          />
-          <span>{filter.filiterRangeEnd}</span>
-          <input
-            type="text"
-            placeholder="${filter.filiterRangeEndTip}"
-            className="luckysheet-mousedown-cancel"
-          />
-        </div> */}
+                  <div className="fortune-filter-selected-input">
+                    <input
+                      type="text"
+                      placeholder={filter.filiterInputTip}
+                      className="fortune-mousedown-cancel"
+                    />
+                  </div>
+                  <div className="fortune-filter-selected-input fortune-filter-selected-input2">
+                    <span>{filter.from}</span>
+                    <input
+                      type="text"
+                      placeholder={filter.filiterRangeStartTip}
+                      className="fortune-mousedown-cancel"
+                    />
+                    <span>{filter.to}</span>
+                    <input
+                      type="text"
+                      placeholder={filter.filiterRangeEndTip}
+                      className="fortune-mousedown-cancel"
+                    />
+                  </div>
                 </div>
               </div>
             );
@@ -779,6 +780,88 @@ const FilterMenu: React.FC = () => {
           )}
         </div>
       )}
+      {/* {showByConditionSubMenu && (
+        <div className="fortune-filter-bycondition-submenu">
+          {[
+            {
+              key: "byCondition",
+              title: filter.conditionNone,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellNotNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellTextContain,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellTextNotContain,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+            {
+              key: "byCondition",
+              title: filter.conditionCellIsNull,
+            },
+          ]}
+        </div>
+      )} */}
     </>
   );
 };

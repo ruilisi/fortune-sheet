@@ -277,3 +277,73 @@
   top: 3px;
   right: -18px;
 }
+
+.fortune-flat-menu-button {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  background-color: #f5f5f5;
+  background-image: -webkit-linear-gradient(to bottom,#f5f5f5,#f1f1f1);
+  background-image: -moz-linear-gradient(to bottom,#f5f5f5,#f1f1f1);
+  background-image: -ms-linear-gradient(to bottom,#f5f5f5,#f1f1f1);
+  background-image: -o-linear-gradient(to bottom,#f5f5f5,#f1f1f1);
+  background-image: linear-gradient(to bottom,#f5f5f5,#f1f1f1);
+  border: 1px solid #dcdcdc;
+  color: #333;
+  cursor: default;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 27px;
+  list-style: none;
+  margin: 0 2px;
+  min-width: 46px;
+  outline: 0;
+  padding: 0 18px 0 6px;
+  text-align: left;
+  text-decoration: none;
+  position: relative;
+  padding-left: 15px;
+}
+
+.fortune-filter-menu .fortune-filter-bycondition .fortune-filter-selected-input {
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-top: 3px;
+  /* display: none; */
+}
+
+.fortune-filter-menu .fortune-filter-bycondition .fortune-filter-selected-input2 input{
+  height: 24px;
+  width: 92px;
+  padding-right: 3px;
+  padding-left: 3px;
+  margin-left: -3px;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 1px;
+  border: 1px solid #d9d9d9;
+  border-top: 1px solid silver;
+  font-size: 13px;
+}
+
+.fortune-filter-menu .fortune-filter-bycondition .fortune-filter-selected-input2 span{
+  margin-left: 2px;
+  margin-right: 5px;
+}
+
+.fortune-filter-selected-input input.fortune-mousedown-cancel {
+  margin: 0px 20px;
+  width: 230px;
+  box-sizing: border-box;
+  height: 26px;
+  border-radius: 3px;
+  border: 1px solid #d9d9d9;
+  font-size: 12px;
+  padding: 1px 8px;
+  outline: none;
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+  user-select: auto;
+  text-align: start;
+}

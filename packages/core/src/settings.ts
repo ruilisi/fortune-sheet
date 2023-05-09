@@ -279,8 +279,8 @@ export const defaultSettings: Required<Settings> = {
     "|",
     "filter-by-color",
     "|",
-    // "filter-by-condition",
-    // "|",
+    "filter-by-condition",
+    "|",
     "filter-by-value",
   ], // 筛选菜单
   generateSheetId: () => uuidv4(),
