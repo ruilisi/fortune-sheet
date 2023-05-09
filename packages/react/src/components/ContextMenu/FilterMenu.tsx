@@ -189,6 +189,7 @@ const FilterMenu: React.FC = () => {
   const [showSubMenu, setShowSubMenu] = useState(false);
   const { showAlert } = useAlert();
   const mouseHoverSubMenu = useRef<boolean>(false);
+  contextRef.current = context;
 
   // 点击其他区域的时候关闭FilterMenu
   const close = useCallback(() => {
