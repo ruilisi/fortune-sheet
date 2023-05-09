@@ -387,7 +387,6 @@ export function getFilterColumnValues(
     visibleRows.push(r);
 
     cell = flowdata[r][col];
-
     if (
       cell != null &&
       !isRealNull(cell.v) &&
@@ -469,6 +468,7 @@ export function getFilterColumnValues(
       const data = valuesMap.get(`${v}`);
       const text = m == null ? filter.valueBlank : `${m}`;
       const key = `${v}#$$$#${m}`;
+      // console.log(m, cell?.m);
       if (data != null) {
         let maskValue = _.find(data, (value) => value.mask === m);
         if (maskValue == null) {

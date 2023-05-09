@@ -215,14 +215,20 @@ const FilterMenu: React.FC = () => {
   const searchValues = useMemo(
     () =>
       _.debounce((text: string) => {
-        setShowValues(
-          _.filter(
-            data.flattenValues,
-            (v) => v.toLowerCase().indexOf(text.toLowerCase()) > -1
-          )
+        const filteredValues = _.filter(
+          data.flattenValues,
+          (v) => v.toLowerCase().indexOf(text.toLowerCase()) > -1
         );
+        setShowValues(filteredValues);
+        const hideArray: number[] = [];
+        Object.entries(data.valueRowMap).forEach(([key, value]) => {
+          if (key.includes(text) && Array.isArray(value)) {
+            hideArray.push(...value);
+          }
+        });
+        hiddenRows.current = _.xor(hideArray, data.visibleRows);
       }, 300),
-    [data.flattenValues]
+    [data.flattenValues, data.valueRowMap, data.visibleRows]
   );
 
   const selectAll = useCallback(() => {
