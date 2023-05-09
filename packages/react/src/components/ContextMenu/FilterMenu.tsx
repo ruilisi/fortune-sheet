@@ -215,18 +215,20 @@ const FilterMenu: React.FC = () => {
   const searchValues = useMemo(
     () =>
       _.debounce((text: string) => {
-        const filteredValues = _.filter(
+        const filterValues = _.filter(
           data.flattenValues,
           (v) => v.toLowerCase().indexOf(text.toLowerCase()) > -1
         );
-        setShowValues(filteredValues);
-        const hideArray: number[] = [];
-        Object.entries(data.valueRowMap).forEach(([key, value]) => {
-          if (key.includes(text) && Array.isArray(value)) {
-            hideArray.push(...value);
-          }
+        setShowValues(filterValues);
+        setDatesUncheck(produce((draft) => _.xor(draft, filterValues)));
+        setValuesUncheck(produce((draft) => _.xor(draft, filterValues)));
+        const filteredArrays: any[] = filterValues.flatMap((value: string) => {
+          const matchedKey = Object.keys(data.valueRowMap).find((key: string) =>
+            key.includes(`${value}#$$$#${value}`)
+          );
+          return matchedKey ? data.valueRowMap[matchedKey] : [];
         });
-        hiddenRows.current = _.xor(hideArray, data.visibleRows);
+        hiddenRows.current = _.xor(filteredArrays, data.visibleRows);
       }, 300),
     [data.flattenValues, data.valueRowMap, data.visibleRows]
   );
@@ -571,6 +573,7 @@ const FilterMenu: React.FC = () => {
                       id="luckysheet-\${menuid}-byvalue-input"
                       value={searchText}
                       onChange={(e) => {
+                        console.log(datesUncheck);
                         setSearchText(e.target.value);
                         searchValues(e.target.value);
                       }}
