@@ -71,15 +71,6 @@ const ConditionRules: React.FC<{ type: string }> = ({ type }) => {
     ]
   );
 
-  const handleEnterDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
-        close("confirm");
-      }
-    },
-    [close]
-  );
-
   // rulesValue初始化
   useEffect(() => {
     setContext((ctx) => {
@@ -114,7 +105,7 @@ const ConditionRules: React.FC<{ type: string }> = ({ type }) => {
   }, []);
 
   return (
-    <div className="condition-rules" onKeyDown={handleEnterDown} tabIndex={0}>
+    <div className="condition-rules">
       <div className="condition-rules-title">
         {(conditionformat as any)[`conditionformat_${type}`]}
       </div>
