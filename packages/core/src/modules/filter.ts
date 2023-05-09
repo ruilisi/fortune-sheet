@@ -387,6 +387,7 @@ export function getFilterColumnValues(
     visibleRows.push(r);
 
     cell = flowdata[r][col];
+
     if (
       cell != null &&
       !isRealNull(cell.v) &&
