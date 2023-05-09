@@ -573,7 +573,6 @@ const FilterMenu: React.FC = () => {
                       id="luckysheet-\${menuid}-byvalue-input"
                       value={searchText}
                       onChange={(e) => {
-                        console.log(datesUncheck);
                         setSearchText(e.target.value);
                         searchValues(e.target.value);
                       }}
