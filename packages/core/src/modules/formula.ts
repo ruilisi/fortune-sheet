@@ -2865,7 +2865,7 @@ export function israngeseleciton(ctx: Context, istooltip?: boolean) {
       ctx.formulaCache.rangeSetValueTo = anchor.parentNode;
     } else {
       lasttxt = txt.substring(anchorOffset - 1, 1);
-      ctx.formulaCache.rangeSetValueTo = anchor.parentNode.nextSibling;
+      ctx.formulaCache.rangeSetValueTo = anchor.parentNode;
     }
 
     if (
@@ -3256,10 +3256,12 @@ export function rangeSetValue(
     //   }
   } else {
     const function_str = `<span class="fortune-formula-functionrange-cell" rangeindex="${functionHTMLIndex}" dir="auto" style="color:${colors[functionHTMLIndex]};">${range}</span>`;
-    $editor.insertBefore(
-      parseElement(function_str),
-      ctx.formulaCache.rangeSetValueTo
-    );
+    const eleToInsert = parseElement(function_str);
+    if (ctx.formulaCache.rangeSetValueTo) {
+      ctx.formulaCache.rangeSetValueTo.after(eleToInsert);
+    } else {
+      $editor.append(eleToInsert);
+    }
     ctx.formulaCache.rangechangeindex = functionHTMLIndex;
     const span = $editor.querySelector(
       `span[rangeindex='${ctx.formulaCache.rangechangeindex}']`
