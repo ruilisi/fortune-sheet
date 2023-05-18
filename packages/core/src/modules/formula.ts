@@ -1932,17 +1932,20 @@ export function createRangeHightlight(
         (cellrange.sheetId === -1 &&
           ctx.formulaCache.rangetosheet === ctx.currentSheetId)
       ) {
-        formulaRanges.push({
-          rangeIndex,
-          ...seletedHighlistByindex(
-            ctx,
-            cellrange.row[0],
-            cellrange.row[1],
-            cellrange.column[0],
-            cellrange.column[1]
-          ),
-          backgroundColor: colors[rangeIndex],
-        });
+        const rect = seletedHighlistByindex(
+          ctx,
+          cellrange.row[0],
+          cellrange.row[1],
+          cellrange.column[0],
+          cellrange.column[1]
+        );
+        if (rect) {
+          formulaRanges.push({
+            rangeIndex,
+            ...rect,
+            backgroundColor: colors[rangeIndex],
+          });
+        }
       }
     });
   ctx.formulaRangeHighlight = formulaRanges;

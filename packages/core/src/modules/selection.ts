@@ -64,12 +64,20 @@ export function seletedHighlistByindex(
   const col = ctx.visibledatacolumn[c2];
   const col_pre = c1 - 1 === -1 ? 0 : ctx.visibledatacolumn[c1 - 1];
 
-  return {
-    left: col_pre,
-    width: col - col_pre - 1,
-    top: row_pre,
-    height: row - row_pre - 1,
-  };
+  if (
+    _.isNumber(row) &&
+    _.isNumber(row_pre) &&
+    _.isNumber(col) &&
+    _.isNumber(col_pre)
+  ) {
+    return {
+      left: col_pre,
+      width: col - col_pre - 1,
+      top: row_pre,
+      height: row - row_pre - 1,
+    };
+  }
+  return null;
 }
 
 export function normalizeSelection(
