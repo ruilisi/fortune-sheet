@@ -3256,11 +3256,12 @@ export function rangeSetValue(
     //   }
   } else {
     const function_str = `<span class="fortune-formula-functionrange-cell" rangeindex="${functionHTMLIndex}" dir="auto" style="color:${colors[functionHTMLIndex]};">${range}</span>`;
-    const eleToInsert = parseElement(function_str);
-    if (ctx.formulaCache.rangeSetValueTo) {
-      ctx.formulaCache.rangeSetValueTo.after(eleToInsert);
+    const newEle = parseElement(function_str);
+    const refEle = ctx.formulaCache.rangeSetValueTo;
+    if (refEle && refEle.parentNode) {
+      refEle.parentNode.insertBefore(newEle, refEle.nextSibling)
     } else {
-      $editor.append(eleToInsert);
+      $editor.appendChild(newEle);
     }
     ctx.formulaCache.rangechangeindex = functionHTMLIndex;
     const span = $editor.querySelector(
