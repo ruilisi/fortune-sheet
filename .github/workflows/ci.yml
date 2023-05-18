@@ -1,0 +1,15 @@
+name: CI
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'yarn'
+    - run: yarn install --frozen-lockfile
+    - run: yarn tsc
+    - run: yarn lint
+    - run: yarn test
