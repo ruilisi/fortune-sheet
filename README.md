@@ -102,13 +102,30 @@ See detailed documentation at [fortune-sheet-doc](https://ruilisi.github.io/fort
 ## Get started (react)
 
 ### Download and install the library
-```shell
-yarn add @fortune-sheet/react
-```
-or using npm:
+
+<details open>
+<summary>Using npm</summary>
+
 ```shell
 npm install @fortune-sheet/react
 ```
+</details>
+
+<details>
+<summary>Using pnpm</summary>
+
+```shell
+pnpm install @fortune-sheet/react
+```
+</details>
+
+<details>
+<summary>Using yarn</summary>
+
+```shell
+yarn add @fortune-sheet/react
+```
+</details>
 
 ### Create an HTML placeholder
 ```html

@@ -99,13 +99,30 @@
 ## 快速开始 (react)
 
 ### 安装库
-```shell
-yarn add @fortune-sheet/react
-```
-或使用 npm:
+
+<details open>
+<summary>使用 npm</summary>
+
 ```shell
 npm install @fortune-sheet/react
 ```
+</details>
+
+<details>
+<summary>使用 pnpm</summary>
+
+```shell
+pnpm install @fortune-sheet/react
+```
+</details>
+
+<details>
+<summary>使用 yarn</summary>
+
+```shell
+yarn add @fortune-sheet/react
+```
+</details>
 
 ### 创建一个HTML容器
 ```html
