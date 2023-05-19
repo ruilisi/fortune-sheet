@@ -1,15 +1,14 @@
 import _ from "lodash";
 import { locale } from "../locale";
 import { Context, getFlowdata } from "../context";
-import { Cell } from "../types";
+import { Cell, CellMatrix } from "../types";
 import { getSheetIndex, isAllowEdit, rgbToHex } from "../utils";
 import { update } from "./format";
 import { normalizeSelection } from "./selection";
 import { isRealNull } from "./validation";
-import { normalizedAttr, setCellValue } from "./cell";
-import { orderbydata } from "./sort";
+import { normalizedAttr } from "./cell";
+import { sortDataRange } from "./sort";
 import { checkCF, getComputeMap } from "./ConditionFormat";
-import { execfunction, functionCopy } from ".";
 
 // 筛选配置状态
 export function labelFilterOptionState(
@@ -82,7 +81,7 @@ export function orderbydatafiler(
   str += 1;
 
   let hasMc = false; // 排序选区是否有合并单元格
-  let data: (Cell | null)[][] = [];
+  const data: CellMatrix = [];
 
   for (let r = str; r <= edr; r += 1) {
     const data_row: (Cell | null)[] = [];
@@ -108,54 +107,10 @@ export function orderbydatafiler(
     return filter.mergeError;
     // }
   }
-  const oldData = _.cloneDeep(data);
-  data = orderbydata(asc, curr - stc, data);
 
-  for (let r = str; r <= edr; r += 1) {
-    for (let c = stc; c <= edc; c += 1) {
-      d[r][c] = data[r - str][c - stc];
-    }
-  }
-
-  for (let r = str; r <= edr; r += 1) {
-    for (let c = stc; c <= edc; c += 1) {
-      if (oldData[r - str][c - stc]?.f) {
-        const index = _.findIndex(oldData, (row) => {
-          return _.some(
-            row,
-            (cell) => cell!.f === data[r - (str || 0)][c - stc]?.f
-          );
-        });
-        const offsetRow = r - str - index;
-        let func = data[r - str][c - stc]!.f;
-        if (offsetRow > 0) {
-          func = `=${functionCopy(ctx, func!, "down", offsetRow)}`;
-        }
-
-        if (offsetRow < 0) {
-          func = `=${functionCopy(ctx, func!, "up", Math.abs(offsetRow))}`;
-        }
-        const funcV = execfunction(ctx, func!, r, c, undefined, true);
-        [, data[r - str][c - stc]!.v, data[r - str][c - stc]!.f] = funcV;
-      }
-      setCellValue(ctx, r, c, d, data[r - str][c - stc]);
-    }
-  }
+  sortDataRange(ctx, d, data, curr - stc, asc, str, edr, stc, edc);
 
   return null;
-
-  // let allParam = {};
-  // if (ctx.config.rowlen != null) {
-  //   let cfg = _.assign({}, ctx.config);
-  //   cfg = rowlenByRange(d, str, edr, cfg);
-
-  //   allParam = {
-  //     cfg,
-  //     RowlChange: true,
-  //   };
-  // }
-
-  // jfrefreshgrid(d, [{ row: [str, edr], column: [stc, edc] }], allParam);
 }
 
 // 创建筛选配置
