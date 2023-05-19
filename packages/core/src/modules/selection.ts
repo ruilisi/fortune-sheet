@@ -425,7 +425,7 @@ export function pasteHandlerOfPaintModel(
               delete value.ct;
             }
 
-            x[c] = _.assign(x[c], value);
+            x[c] = _.assign(x[c], _.cloneDeep(value));
             if (x[c].ct && x[c].ct.t === "inlineStr") {
               x[c].ct.s.forEach((item: any) => _.assign(item, value));
             }
