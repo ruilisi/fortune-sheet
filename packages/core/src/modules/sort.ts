@@ -1,8 +1,9 @@
 import numeral from "numeral";
 import _ from "lodash";
-import { execfunction, functionCopy, setCellValue } from ".";
+import { execfunction, functionCopy, update } from ".";
 import {
   Cell,
+  CellMatrix,
   Context,
   diff,
   getFlowdata,
@@ -57,10 +58,61 @@ export function orderbydata(
     return 0;
   };
   const d = (x: any, y: any) => a(y, x);
-  if (isAsc) {
-    return data.sort(a);
+  const sortedData = _.clone(data);
+  sortedData.sort(isAsc ? a : d);
+
+  // calc row offsets
+  const rowOffsets = sortedData.map((r, i) => {
+    const origIndex = _.findIndex(data, (origR) => origR === r);
+    return i - origIndex;
+  });
+
+  return { sortedData, rowOffsets };
+}
+
+export function sortDataRange(
+  ctx: Context,
+  sheetData: CellMatrix,
+  dataRange: CellMatrix,
+  index: number,
+  isAsc: boolean,
+  str: number,
+  edr: number,
+  stc: number,
+  edc: number
+) {
+  const { sortedData, rowOffsets } = orderbydata(isAsc, index, dataRange);
+
+  for (let r = str; r <= edr; r += 1) {
+    for (let c = stc; c <= edc; c += 1) {
+      const cell = sortedData[r - str][c - stc];
+      if (cell?.f) {
+        const moveOffset = rowOffsets[r - str];
+        let func = cell?.f!;
+        if (moveOffset > 0) {
+          func = `=${functionCopy(ctx, func, "down", moveOffset)}`;
+        } else if (moveOffset < 0) {
+          func = `=${functionCopy(ctx, func, "up", -moveOffset)}`;
+        }
+        const funcV = execfunction(ctx, func, r, c, undefined, true);
+        [, cell!.v, cell!.f] = funcV;
+        cell.m = update(cell.ct?.fa || "General", cell.v);
+      }
+      sheetData[r][c] = cell;
+    }
   }
-  return data.sort(d);
+
+  // let allParam = {};
+  // if (ctx.config.rowlen != null) {
+  //   let cfg = _.assign({}, ctx.config);
+  //   cfg = rowlenByRange(d, str, edr, cfg);
+
+  //   allParam = {
+  //     cfg,
+  //     RowlChange: true,
+  //   };
+  // }
+  jfrefreshgrid(ctx, sheetData, [{ row: [str, edr], column: [stc, edc] }]);
 }
 
 export function sortSelection(ctx: Context, isAsc: boolean) {
@@ -124,7 +176,7 @@ export function sortSelection(ctx: Context, isAsc: boolean) {
   }
 
   let hasMc = false; // 排序选区是否有合并单元格
-  let data: any[][] = [];
+  const data: CellMatrix = [];
   if (edr == null) return;
   for (let r = str; r <= edr; r += 1) {
     const data_row = [];
@@ -150,50 +202,5 @@ export function sortSelection(ctx: Context, isAsc: boolean) {
     return;
   }
 
-  const oldData = _.cloneDeep(data);
-  data = orderbydata(isAsc, 0, data);
-  for (let r = str; r <= edr; r += 1) {
-    for (let c = c1; c <= c2; c += 1) {
-      d[r][c] = data[r - str][c - c1];
-      setCellValue(ctx, r, c, d, data[r - str][c - c1]);
-    }
-  }
-
-  for (let r = str; r <= edr; r += 1) {
-    for (let c = c1; c <= c2; c += 1) {
-      if (oldData[r - str][c - c1]?.f) {
-        const index = _.findIndex(oldData, (row) => {
-          return _.some(
-            row,
-            (cell) => cell!.f === data[r - (str || 0)][c - c1]?.f
-          );
-        });
-        const offsetRow = r - str - index;
-        let func = data[r - str][c - c1]!.f;
-        if (offsetRow > 0) {
-          func = `=${functionCopy(ctx, func!, "down", offsetRow)}`;
-        }
-
-        if (offsetRow < 0) {
-          func = `=${functionCopy(ctx, func!, "up", Math.abs(offsetRow))}`;
-        }
-        const funcV = execfunction(ctx, func!, r, c, undefined, true);
-        [, data[r - str][c - c1]!.v, data[r - str][c - c1]!.f] = funcV;
-      }
-      setCellValue(ctx, r, c, d, data[r - str][c - c1]);
-    }
-  }
-  // let allParam = {};
-  // if (ctx.config.rowlen != null) {
-  //   // let cfg = $.extend(true, {}, Store.config);
-  //   let cfg = _.cloneDeep(ctx.config);
-  //   cfg = rowlenByRange(d, str, edr, cfg);
-
-  //   allParam = {
-  //     cfg,
-  //     RowlChange: true,
-  //   };
-  // }
-
-  jfrefreshgrid(ctx, d, [{ row: [str, edr], column: [c1, c2] }]);
+  sortDataRange(ctx, d, data, 0, isAsc, str, edr, c1, c2);
 }
