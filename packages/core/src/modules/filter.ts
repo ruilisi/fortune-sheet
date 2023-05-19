@@ -6,9 +6,10 @@ import { getSheetIndex, isAllowEdit, rgbToHex } from "../utils";
 import { update } from "./format";
 import { normalizeSelection } from "./selection";
 import { isRealNull } from "./validation";
-import { normalizedAttr } from "./cell";
+import { normalizedAttr, setCellValue } from "./cell";
 import { orderbydata } from "./sort";
 import { checkCF, getComputeMap } from "./ConditionFormat";
+import { execfunction, functionCopy } from ".";
 
 // 筛选配置状态
 export function labelFilterOptionState(
@@ -81,10 +82,10 @@ export function orderbydatafiler(
   str += 1;
 
   let hasMc = false; // 排序选区是否有合并单元格
-  let data = [];
+  let data: (Cell | null)[][] = [];
 
   for (let r = str; r <= edr; r += 1) {
-    const data_row = [];
+    const data_row: (Cell | null)[] = [];
 
     for (let c = stc; c <= edc; c += 1) {
       if (d[r][c] != null && d[r][c]?.mc != null) {
@@ -107,7 +108,7 @@ export function orderbydatafiler(
     return filter.mergeError;
     // }
   }
-
+  const oldData = _.cloneDeep(data);
   data = orderbydata(asc, curr - stc, data);
 
   for (let r = str; r <= edr; r += 1) {
@@ -115,6 +116,32 @@ export function orderbydatafiler(
       d[r][c] = data[r - str][c - stc];
     }
   }
+
+  for (let r = str; r <= edr; r += 1) {
+    for (let c = stc; c <= edc; c += 1) {
+      if (oldData[r - str][c - stc]?.f) {
+        const index = _.findIndex(oldData, (row) => {
+          return _.some(
+            row,
+            (cell) => cell!.f === data[r - (str || 0)][c - stc]?.f
+          );
+        });
+        const offsetRow = r - str - index;
+        let func = data[r - str][c - stc]!.f;
+        if (offsetRow > 0) {
+          func = `=${functionCopy(ctx, func!, "down", offsetRow)}`;
+        }
+
+        if (offsetRow < 0) {
+          func = `=${functionCopy(ctx, func!, "up", Math.abs(offsetRow))}`;
+        }
+        const funcV = execfunction(ctx, func!, r, c, undefined, true);
+        [, data[r - str][c - stc]!.v, data[r - str][c - stc]!.f] = funcV;
+      }
+      setCellValue(ctx, r, c, d, data[r - str][c - stc]);
+    }
+  }
+
   return null;
 
   // let allParam = {};
