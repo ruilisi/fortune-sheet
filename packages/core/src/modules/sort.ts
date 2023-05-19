@@ -1,5 +1,6 @@
 import numeral from "numeral";
-import { setCellValue } from ".";
+import _ from "lodash";
+import { execfunction, functionCopy, setCellValue } from ".";
 import {
   Cell,
   Context,
@@ -9,6 +10,7 @@ import {
   isRealNull,
   isRealNum,
 } from "..";
+import { jfrefreshgrid } from "./refresh";
 
 export function orderbydata(
   isAsc: boolean,
@@ -93,7 +95,7 @@ export function sortSelection(ctx: Context, isAsc: boolean) {
   const c1 = ctx.luckysheet_select_save[0].column[0];
   const c2 = ctx.luckysheet_select_save[0].column[1];
 
-  let str;
+  let str: number | null = null;
   let edr;
 
   for (let r = r1; r <= r2; r += 1) {
@@ -122,7 +124,7 @@ export function sortSelection(ctx: Context, isAsc: boolean) {
   }
 
   let hasMc = false; // 排序选区是否有合并单元格
-  let data = [];
+  let data: any[][] = [];
   if (edr == null) return;
   for (let r = str; r <= edr; r += 1) {
     const data_row = [];
@@ -147,11 +149,37 @@ export function sortSelection(ctx: Context, isAsc: boolean) {
 
     return;
   }
-  data = orderbydata(isAsc, 0, data);
 
+  const oldData = _.cloneDeep(data);
+  data = orderbydata(isAsc, 0, data);
   for (let r = str; r <= edr; r += 1) {
     for (let c = c1; c <= c2; c += 1) {
       d[r][c] = data[r - str][c - c1];
+      setCellValue(ctx, r, c, d, data[r - str][c - c1]);
+    }
+  }
+
+  for (let r = str; r <= edr; r += 1) {
+    for (let c = c1; c <= c2; c += 1) {
+      if (oldData[r - str][c - c1]?.f) {
+        const index = _.findIndex(oldData, (row) => {
+          return _.some(
+            row,
+            (cell) => cell!.f === data[r - (str || 0)][c - c1]?.f
+          );
+        });
+        const offsetRow = r - str - index;
+        let func = data[r - str][c - c1]!.f;
+        if (offsetRow > 0) {
+          func = `=${functionCopy(ctx, func!, "down", offsetRow)}`;
+        }
+
+        if (offsetRow < 0) {
+          func = `=${functionCopy(ctx, func!, "up", Math.abs(offsetRow))}`;
+        }
+        const funcV = execfunction(ctx, func!, r, c, undefined, true);
+        [, data[r - str][c - c1]!.v, data[r - str][c - c1]!.f] = funcV;
+      }
       setCellValue(ctx, r, c, d, data[r - str][c - c1]);
     }
   }
@@ -167,5 +195,5 @@ export function sortSelection(ctx: Context, isAsc: boolean) {
   //   };
   // }
 
-  // jfrefreshgrid(d, [{ row: [str, edr], column: [c1, c2] }], allParam);
+  jfrefreshgrid(ctx, d, [{ row: [str, edr], column: [c1, c2] }]);
 }
