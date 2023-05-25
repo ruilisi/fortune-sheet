@@ -3,8 +3,8 @@
 const ZOOM_STEP = 0.1; // 点击以及 Ctrl + +-
 
 // 缩放最大最小比例
-const MAX_ZOOM_RATIO = 4;
-const MIN_ZOOM_RATIO = 0.1;
+export const MAX_ZOOM_RATIO = 4;
+export const MIN_ZOOM_RATIO = 0.1;
 
 export function handleKeydownForZoom(ev: KeyboardEvent, currentZoom: number) {
   if (!ev.ctrlKey) {
@@ -31,5 +31,5 @@ export function handleKeydownForZoom(ev: KeyboardEvent, currentZoom: number) {
       zoom = MIN_ZOOM_RATIO;
     }
   }
-  return zoom;
+  return parseFloat(zoom.toFixed(1));
 }

@@ -1,5 +1,10 @@
 import React, { useCallback, useContext, useRef, useState } from "react";
-import { Context, getSheetIndex } from "@fortune-sheet/core";
+import {
+  Context,
+  MAX_ZOOM_RATIO,
+  MIN_ZOOM_RATIO,
+  getSheetIndex,
+} from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
@@ -59,6 +64,10 @@ const ZoomControl: React.FC = () => {
 
   const zoomTo = useCallback(
     (val: number) => {
+      val = parseFloat(val.toFixed(1));
+      if (val > MAX_ZOOM_RATIO || val < MIN_ZOOM_RATIO) {
+        return;
+      }
       setContext(
         (ctx: Context) => {
           const index = getSheetIndex(ctx, ctx.currentSheetId);
