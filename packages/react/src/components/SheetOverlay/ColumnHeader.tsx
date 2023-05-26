@@ -43,7 +43,8 @@ const ColumnHeader: React.FC = () => {
     if (
       sheet?.frozen?.type === "column" ||
       sheet?.frozen?.type === "rangeColumn" ||
-      sheet?.frozen?.type === "rangeBoth"
+      sheet?.frozen?.type === "rangeBoth" ||
+      sheet?.frozen?.type === "both"
     ) {
       return (
         colLocationByIndex(

@@ -39,7 +39,8 @@ const RowHeader: React.FC = () => {
     if (
       sheet?.frozen?.type === "row" ||
       sheet?.frozen?.type === "rangeRow" ||
-      sheet?.frozen?.type === "rangeBoth"
+      sheet?.frozen?.type === "rangeBoth" ||
+      sheet?.frozen?.type === "both"
     ) {
       return (
         rowLocationByIndex(
