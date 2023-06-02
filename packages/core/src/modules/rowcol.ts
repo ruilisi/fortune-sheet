@@ -3,7 +3,8 @@ import { Context } from "../context";
 import { Sheet } from "../types";
 import { getSheetIndex } from "../utils";
 import { getcellFormula } from "./cell";
-import { functionStrChange } from "./formula";
+import { execfunction, functionStrChange } from "./formula";
+import { update } from "./format";
 
 const refreshLocalMergeData = (merge_new: Record<string, any>, file: Sheet) => {
   Object.entries(merge_new).forEach(([, v]) => {
@@ -1175,6 +1176,30 @@ export function insertRowCol(
   // }
 }
 
+export function updateFormulaDeletingRowCol(ctx: Context, newCalcChain: any[]) {
+  for (
+    let SheetIndex = 0;
+    SheetIndex < ctx.luckysheetfile.length;
+    SheetIndex += 1
+  ) {
+    const calcChain = newCalcChain;
+    const { data } = ctx.luckysheetfile[SheetIndex];
+
+    for (let i = 0; i < calcChain!.length; i += 1) {
+      const calc: any = _.cloneDeep(calcChain![i]);
+      const calc_r = calc.r;
+      const calc_c = calc.c;
+      const func = data![calc_r]![calc_c]!.f as string;
+      const funcV = execfunction(ctx, func, calc_r, calc_c, undefined, true);
+      [, data![calc_r]![calc_c]!.v] = funcV;
+      data![calc_r]![calc_c]!.m = update(
+        data![calc_r]![calc_c]!.ct?.fa || "General",
+        data![calc_r]![calc_c]!.v
+      );
+    }
+  }
+}
+
 export function deleteRowCol(
   ctx: Context,
   op: {
@@ -2052,6 +2077,9 @@ export function deleteRowCol(
   file.data = d;
   file.config = cfg;
   file.calcChain = newCalcChain;
+  // 删除行列后，更新公式所在单元格的值
+  updateFormulaDeletingRowCol(ctx, newCalcChain);
+
   if (newFilterObj != null) {
     file.filter = newFilterObj.filter;
     file.filter_select = newFilterObj.filter_select;
