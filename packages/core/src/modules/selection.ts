@@ -33,6 +33,19 @@ export function scrollToHighlightCell(ctx: Context, r: number, c: number) {
   const winH = ctx.cellmainHeight;
   const winW = ctx.cellmainWidth;
 
+  const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
+  const sheet = sheetIndex == null ? null : ctx.luckysheetfile[sheetIndex];
+
+  if (!sheet) return;
+
+  const frozen = sheet?.frozen;
+  const row_focus = sheet?.frozen?.range?.row_focus || 0;
+  const column_focus = sheet?.frozen?.range?.column_focus || 0;
+
+  const freezeH = frozen && r > row_focus ? ctx.visibledatarow[row_focus] : 0;
+  const freezeW =
+    frozen && c > column_focus ? ctx.visibledatacolumn[column_focus] : 0;
+
   const row = ctx.visibledatarow[r];
   const row_pre = r - 1 === -1 ? 0 : ctx.visibledatarow[r - 1];
   const col = ctx.visibledatacolumn[c];
@@ -40,14 +53,16 @@ export function scrollToHighlightCell(ctx: Context, r: number, c: number) {
 
   if (col - scrollLeft - winW + 20 > 0) {
     ctx.scrollLeft = col - winW + 20;
-  } else if (col_pre - scrollLeft < 0) {
-    ctx.scrollLeft = col_pre - 20;
+  } else if (col_pre - scrollLeft - freezeW < 0) {
+    const scrollAmount = Math.max(20, freezeW);
+    ctx.scrollLeft = col_pre - scrollAmount;
   }
 
   if (row - scrollTop - winH + 20 > 0) {
     ctx.scrollTop = row - winH + 20;
-  } else if (row_pre - scrollTop < 0) {
-    ctx.scrollTop = row_pre - 20;
+  } else if (row_pre - scrollTop - freezeH < 0) {
+    const scrollAmount = Math.max(100, freezeH);
+    ctx.scrollTop = row_pre - scrollAmount;
   }
 }
 
