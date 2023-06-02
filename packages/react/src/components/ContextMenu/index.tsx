@@ -15,6 +15,7 @@ import {
   getSheetIndex,
   api,
   isAllowEdit,
+  jfrefreshgrid,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, { useContext, useRef, useCallback, useLayoutEffect } from "react";
@@ -514,6 +515,7 @@ const ContextMenu: React.FC = () => {
                   }
                 }
                 draftCtx.contextMenu = {};
+                jfrefreshgrid(draftCtx, null, undefined);
               });
             }}
           >
