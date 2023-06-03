@@ -61,7 +61,7 @@ export function scrollToHighlightCell(ctx: Context, r: number, c: number) {
   if (row - scrollTop - winH + 20 > 0) {
     ctx.scrollTop = row - winH + 20;
   } else if (row_pre - scrollTop - freezeH < 0) {
-    const scrollAmount = Math.max(100, freezeH);
+    const scrollAmount = Math.max(20, freezeH);
     ctx.scrollTop = row_pre - scrollAmount;
   }
 }
