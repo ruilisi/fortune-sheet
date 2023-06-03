@@ -61,7 +61,8 @@ type AdditionalProps = {
 
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
   ({ onChange, onOp, data: originalData, ...props }, ref) => {
-    const [context, setContext] = useState(defaultContext());
+    const globalCache = useRef<GlobalCache>({ undoList: [], redoList: [] });
+    const [context, setContext] = useState(defaultContext(globalCache.current));
     const { formula } = locale(context);
     const cellInput = useRef<HTMLDivElement>(null);
     const fxInput = useRef<HTMLDivElement>(null);
@@ -70,7 +71,6 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     const scrollbarY = useRef<HTMLDivElement>(null);
     const cellArea = useRef<HTMLDivElement>(null);
     const workbookContainer = useRef<HTMLDivElement>(null);
-    const globalCache = useRef<GlobalCache>({ undoList: [], redoList: [] });
     const [moreToolbarItems, setMoreToolbarItems] =
       useState<React.ReactNode>(null);
 

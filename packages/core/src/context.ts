@@ -16,6 +16,7 @@ import {
   RangeDialogProps,
   DataRegulationProps,
   ConditionRulesProps,
+  GlobalCache,
 } from "./types";
 import { getSheetIndex } from "./utils";
 
@@ -200,9 +201,11 @@ export type Context = {
   showSheetList?: Boolean;
   // 只读模式公式被引用单元格强制高光
   forceFormulaRef?: Boolean;
+
+  getGlobalCache: () => GlobalCache;
 };
 
-export function defaultContext(): Context {
+export function defaultContext(globalCache: GlobalCache): Context {
   return {
     luckysheetfile: [],
     defaultcolumnNum: 60,
@@ -445,6 +448,8 @@ export function defaultContext(): Context {
     groupValuesRefreshData: [],
     formulaCache: new FormulaCache(), // class will not be frozen by immer, can be mutated at any time.
     hooks: {},
+
+    getGlobalCache: () => globalCache,
   };
 }
 

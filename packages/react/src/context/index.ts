@@ -36,7 +36,7 @@ const WorkbookContext = React.createContext<{
   handleUndo: () => void;
   handleRedo: () => void;
 }>({
-  context: defaultContext(),
+  context: defaultContext({ undoList: [], redoList: [] }),
   setContext: () => {},
   settings: defaultSettings,
   handleUndo: () => {},
