@@ -1003,11 +1003,13 @@ export function updateCell(
 
       const cellWidth = cfg.columnlen?.[c] || ctx.defaultcollen;
 
-      const textInfo = getCellTextInfo(d[r][c] as Cell, canvas!, ctx, {
-        r,
-        c,
-        cellWidth,
-      });
+      const textInfo = canvas
+        ? getCellTextInfo(d[r][c] as Cell, canvas, ctx, {
+            r,
+            c,
+            cellWidth,
+          })
+        : null;
 
       let currentRowLen = defaultrowlen;
       // console.log("rowlen", textInfo);
