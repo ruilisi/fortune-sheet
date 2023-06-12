@@ -1278,7 +1278,11 @@ export function moveHighlightRange(
     last.row = rowseleted;
     last.column = columnseleted;
     normalizeSelection(ctx, ctx.luckysheet_select_save);
-    scrollToHighlightCell(ctx, last.row[0], last.column[0]);
+    if (index === -1) {
+      scrollToHighlightCell(ctx, last.row[0], last.column[0]);
+    } else {
+      scrollToHighlightCell(ctx, last.row[1], last.column[1]);
+    }
   } else if (type === "rangeOfFormula") {
     const last = ctx.formulaCache.func_selectedrange;
     if (_.isNil(last)) return;
