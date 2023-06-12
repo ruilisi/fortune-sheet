@@ -12,12 +12,19 @@ export default class clipboard {
         ele.style.left = "-10000px";
         document.querySelector(".fortune-container")?.append(ele);
       }
+      const previouslyFocusedElement = document.activeElement as HTMLElement;
       ele.style.display = "block";
       ele.innerHTML = str;
       ele.focus({ preventScroll: true });
       document.execCommand("selectAll");
       document.execCommand("copy");
       setTimeout(() => ele?.blur(), 10);
+      if (
+        previouslyFocusedElement &&
+        typeof previouslyFocusedElement.focus === "function"
+      ) {
+        previouslyFocusedElement.focus();
+      }
     } catch (e) {
       console.error(e);
     }
