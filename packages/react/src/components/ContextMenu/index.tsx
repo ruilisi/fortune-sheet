@@ -25,7 +25,7 @@ import { useDialog } from "../../hooks/useDialog";
 import Divider from "./Divider";
 import "./index.css";
 import Menu from "./Menu";
-import CustomSort from "../customSort";
+import CustomSort from "../CustomSort";
 
 const ContextMenu: React.FC = () => {
   const { showDialog } = useDialog();
