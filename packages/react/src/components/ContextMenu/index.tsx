@@ -25,6 +25,7 @@ import { useDialog } from "../../hooks/useDialog";
 import Divider from "./Divider";
 import "./index.css";
 import Menu from "./Menu";
+import CustomSort from "../customSort";
 
 const ContextMenu: React.FC = () => {
   const { showDialog } = useDialog();
@@ -550,6 +551,21 @@ const ContextMenu: React.FC = () => {
             }}
           >
             {rightclick.orderZA}
+          </Menu>
+        );
+      }
+      if (name === "sort") {
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                showDialog(<CustomSort />);
+                draftCtx.contextMenu = {};
+              });
+            }}
+          >
+            {rightclick.sortSelection}
           </Menu>
         );
       }

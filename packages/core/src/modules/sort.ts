@@ -115,10 +115,14 @@ export function sortDataRange(
   jfrefreshgrid(ctx, sheetData, [{ row: [str, edr], column: [stc, edc] }]);
 }
 
-export function sortSelection(ctx: Context, isAsc: boolean) {
+export function sortSelection(ctx: Context, isAsc: boolean, index?: number) {
   // if (!checkProtectionAuthorityNormal(ctx.currentSheetIndex, "sort")) {
   //   return;
   // }
+  let sortIndex = 0;
+  if (!_.isUndefined(index)) {
+    sortIndex = index;
+  }
   if (ctx.allowEdit === false) return;
   if (ctx.luckysheet_select_save == null) return;
   if (ctx.luckysheet_select_save.length > 1) {
@@ -202,5 +206,5 @@ export function sortSelection(ctx: Context, isAsc: boolean) {
     return;
   }
 
-  sortDataRange(ctx, d, data, 0, isAsc, str, edr, c1, c2);
+  sortDataRange(ctx, d, data, sortIndex, isAsc, str, edr, c1, c2);
 }
