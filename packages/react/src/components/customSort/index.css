@@ -1,24 +1,23 @@
 .fortune-sort-title {
-    background-color: #fff;
-    color: #000;
-    cursor: default;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 24px;
-    margin: 0 0 16px;
+  background-color: #fff;
+  color: #000;
+  cursor: default;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  margin: 0 0 16px;
 }
 
 .fortune-sort-modal > div {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .fortune-sort-tablec td {
-    padding: 5px;
-    white-space: nowrap;
+  padding: 5px;
+  white-space: nowrap;
 }
 
-
 .fortune-sort-button {
-    margin-top: 10px;
-    margin-bottom: 25px;
+  margin-top: 10px;
+  margin-bottom: 25px;
 }
