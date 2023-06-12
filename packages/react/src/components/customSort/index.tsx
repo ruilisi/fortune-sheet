@@ -12,7 +12,6 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import _ from "lodash";
 import WorkbookContext from "../../context";
 import "./index.css";
 import { useDialog } from "../../hooks/useDialog";
@@ -42,12 +41,7 @@ const CustomSort: React.FC<{}> = () => {
   // 改变排序方式
   const handleRadioChange = useCallback((e: RadioChangeEvent) => {
     const sortValue = e.target.value;
-    setAscOrDesc(() => {
-      if (sortValue === "asc") {
-        return true;
-      }
-      return false;
-    });
+    setAscOrDesc(sortValue === "asc");
   }, []);
 
   const handleTitleChange = useCallback(
@@ -60,28 +54,26 @@ const CustomSort: React.FC<{}> = () => {
 
   // 获取排序列
   useEffect(() => {
-    setRangeColChar([]);
+    const list: string[] = [];
     if (isTitleChange) {
       for (let i = col_start; i <= col_end; i += 1) {
         // 判断列首是否为空
-        if (
-          !_.isNil(context.luckysheetfile[sheetIndex].data![row_start][i]?.v)
-        ) {
-          const colHeaderValue = context.luckysheetfile[sheetIndex].data![
-            row_start
-          ][i]!.v as string;
-          setRangeColChar((prevArray) => [...prevArray, colHeaderValue]);
+        const cell = context.luckysheetfile[sheetIndex].data?.[row_start]?.[i];
+        const colHeaderValue = cell?.m || cell?.v;
+        if (colHeaderValue) {
+          list.push(colHeaderValue as string);
         } else {
           const ColumnChar = indexToColumnChar(i);
-          setRangeColChar((prevArray) => [...prevArray, `列${ColumnChar}`]);
+          list.push(`${sort.columnOperation} ${ColumnChar}`);
         }
       }
     } else {
       for (let i = col_start; i <= col_end; i += 1) {
         const ColumnChar = indexToColumnChar(i);
-        setRangeColChar((prevArray) => [...prevArray, ColumnChar]);
+        list.push(ColumnChar);
       }
     }
+    setRangeColChar(list);
   }, [
     col_end,
     col_start,
@@ -89,6 +81,7 @@ const CustomSort: React.FC<{}> = () => {
     isTitleChange,
     row_start,
     sheetIndex,
+    sort.columnOperation,
   ]);
 
   return (
@@ -115,7 +108,7 @@ const CustomSort: React.FC<{}> = () => {
             <span>{sort.hasTitle}</span>
           </div>
 
-          <div className="fortunne-sort-tablec">
+          <div className="fortune-sort-tablec">
             <table cellSpacing="0">
               <tbody>
                 <tr>

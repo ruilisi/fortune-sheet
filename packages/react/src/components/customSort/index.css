@@ -8,11 +8,11 @@
     margin: 0 0 16px;
 }
 
-.fortune-sort-modal>div {
+.fortune-sort-modal > div {
     margin-bottom: 10px;
 }
 
-td {
+.fortune-sort-tablec td {
     padding: 5px;
     white-space: nowrap;
 }
