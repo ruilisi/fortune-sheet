@@ -64,7 +64,9 @@ const CustomSort: React.FC<{}> = () => {
     if (isTitleChange) {
       for (let i = col_start; i <= col_end; i += 1) {
         // 判断列首是否为空
-        if (!_.isNil(context.luckysheetfile[sheetIndex].data![row_start][i])) {
+        if (
+          !_.isNil(context.luckysheetfile[sheetIndex].data![row_start][i]?.v)
+        ) {
           const colHeaderValue = context.luckysheetfile[sheetIndex].data![
             row_start
           ][i]!.v as string;
