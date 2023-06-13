@@ -18,13 +18,10 @@ export default class clipboard {
       ele.focus({ preventScroll: true });
       document.execCommand("selectAll");
       document.execCommand("copy");
-      setTimeout(() => ele?.blur(), 10);
-      if (
-        previouslyFocusedElement &&
-        typeof previouslyFocusedElement.focus === "function"
-      ) {
-        previouslyFocusedElement.focus();
-      }
+      setTimeout(() => {
+        ele?.blur();
+        previouslyFocusedElement?.focus?.();
+      }, 10);
     } catch (e) {
       console.error(e);
     }
