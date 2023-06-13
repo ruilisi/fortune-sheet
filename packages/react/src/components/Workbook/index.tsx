@@ -100,8 +100,9 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     // 计算选区的信息
     useEffect(() => {
       const selection = context.luckysheet_select_save;
+      const { lang } = props;
       if (selection) {
-        const re = calcSelectionInfo(context);
+        const re = calcSelectionInfo(context, lang);
         setCalInfo(re);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
