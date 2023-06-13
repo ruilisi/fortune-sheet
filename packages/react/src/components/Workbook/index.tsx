@@ -101,7 +101,8 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     useEffect(() => {
       const selection = context.luckysheet_select_save;
       if (selection) {
-        const re = calcSelectionInfo(context);
+        const { useStandardNumbersForStats } = props;
+        const re = calcSelectionInfo(context, useStandardNumbersForStats);
         setCalInfo(re);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
