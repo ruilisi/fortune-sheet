@@ -160,35 +160,35 @@ export function handleWithCtrlOrMetaKey(
       // $("#luckysheet-rich-text-editor").html(value);
       // luckysheetRangeLast($("#luckysheet-rich-text-editor")[0]);
       handleFormulaInput(ctx, fxInput, cellInput, e.keyCode);
-    } else if (e.key.toLowerCase() === "z") {
+    } else if (e.code === "KeyZ") {
       // Ctrl + shift + z 重做
       handleRedo();
       e.stopPropagation();
       return;
     }
-  } else if (e.key.toLowerCase() === "b") {
+  } else if (e.code === "KeyB") {
     // Ctrl + B  加粗
     handleBold(ctx, cellInput);
     // $("#luckysheet-icon-bold").click();
-  } else if (e.key.toLowerCase() === "c") {
+  } else if (e.code === "KeyC") {
     // Ctrl + C  复制
     handleCopy(ctx);
     // luckysheetactiveCell();
     e.stopPropagation();
     return;
-  } else if (e.key.toLowerCase() === "f") {
+  } else if (e.code === "KeyF") {
     // Ctrl + F  查找
     ctx.showSearch = true;
-  } else if (e.key.toLowerCase() === "h") {
+  } else if (e.code === "KeyH") {
     // Ctrl + H  替换
     ctx.showReplace = true;
     //   searchReplace.init();
 
     //   $("#luckysheet-search-replace #searchInput input").focus();
-    // } else if (e.key.toLowerCase() === "i") {
+    // } else if (e.code === "KeyC") {
     //   // Ctrl + I  斜体
     //   $("#luckysheet-icon-italic").click();
-  } else if (e.key.toLowerCase() === "v") {
+  } else if (e.code === "KeyV") {
     // Ctrl + V  粘贴
     // if (isEditMode()) {
     //   // 此模式下禁用粘贴
@@ -212,7 +212,7 @@ export function handleWithCtrlOrMetaKey(
     // luckysheetactiveCell();
     e.stopPropagation();
     return;
-  } else if (e.key.toLowerCase() === "x") {
+  } else if (e.code === "KeyX") {
     // Ctrl + X  剪切
     // 复制时存在格式刷状态，取消格式刷
     if (ctx.luckysheetPaintModelOn) {
@@ -268,12 +268,12 @@ export function handleWithCtrlOrMetaKey(
 
     e.stopPropagation();
     return;
-  } else if (e.key.toLowerCase() === "z") {
+  } else if (e.code === "KeyZ") {
     // Ctrl + Z  撤销
     handleUndo();
     e.stopPropagation();
     return;
-  } /* else if (e.key.toLowerCase() === "ArrowUp") {
+  } /* else if (e.key === "ArrowUp") {
     // Ctrl + up  调整单元格
     if (
       parseInt($inputbox.css("top")) > 0 ||
@@ -284,7 +284,7 @@ export function handleWithCtrlOrMetaKey(
     }
 
     luckysheetMoveHighlightCell2("up", "rangeOfSelect");
-  } else if (e.key.toLowerCase() === "ArrowDown") {
+  } else if (e.key === "ArrowDown") {
     // Ctrl + down  调整单元格
     if (
       parseInt($inputbox.css("top")) > 0 ||
@@ -295,7 +295,7 @@ export function handleWithCtrlOrMetaKey(
     }
 
     luckysheetMoveHighlightCell2("down", "rangeOfSelect");
-  } else if (e.key.toLowerCase() === "ArrowLeft") {
+  } else if (e.key === "ArrowLeft") {
     // Ctrl + top  调整单元格
     if (
       parseInt($inputbox.css("top")) > 0 ||
@@ -306,7 +306,7 @@ export function handleWithCtrlOrMetaKey(
     }
 
     luckysheetMoveHighlightCell2("left", "rangeOfSelect");
-  } else if (e.key.toLowerCase() === "ArrowRight") {
+  } else if (e.key === "ArrowRight") {
     // Ctrl + right  调整单元格
     if (
       parseInt($inputbox.css("top")) > 0 ||
@@ -349,7 +349,7 @@ export function handleWithCtrlOrMetaKey(
       $("#luckysheet-rich-text-editor"),
       e.keyCode
     );
-  } */ else if (e.key.toLowerCase() === "a") {
+  } */ else if (e.code === "KeyA") {
     // Ctrl + A  全选
     // $("#luckysheet-left-top").trigger("mousedown");
     // $(document).trigger("mouseup");
