@@ -185,7 +185,7 @@ export function handleWithCtrlOrMetaKey(
     //   searchReplace.init();
 
     //   $("#luckysheet-search-replace #searchInput input").focus();
-    // } else if (e.code === "KeyC") {
+    // } else if (e.code === "KeyI") {
     //   // Ctrl + I  斜体
     //   $("#luckysheet-icon-italic").click();
   } else if (e.code === "KeyV") {

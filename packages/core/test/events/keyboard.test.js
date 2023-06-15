@@ -9,8 +9,8 @@ import { getFlowdata } from "../../src/context";
 import { groupValuesRefresh } from "../../src";
 
 describe("keyboard", () => {
-  const keypressWithCtrlPressed = (key) => {
-    return new KeyboardEvent("ctrl+[key]", { key, ctrlKey: true });
+  const keypressWithCtrlPressed = (key, code) => {
+    return new KeyboardEvent("ctrl+[key]", { key, ctrlKey: true, code });
   };
   const getContext = () =>
     contextFactory({
@@ -51,7 +51,7 @@ describe("keyboard", () => {
     handleWithCtrlOrMetaKey(
       ctx,
       cache,
-      keypressWithCtrlPressed("b"),
+      keypressWithCtrlPressed("b", "KeyB"),
       cellInput,
       fxInput,
       () => {},
@@ -70,7 +70,7 @@ describe("keyboard", () => {
     handleWithCtrlOrMetaKey(
       ctx,
       cache,
-      keypressWithCtrlPressed("z"),
+      keypressWithCtrlPressed("z", "KeyZ"),
       cellInput,
       fxInput,
       undo
@@ -99,7 +99,7 @@ describe("keyboard", () => {
     handleWithCtrlOrMetaKey(
       ctx,
       cache,
-      keypressWithCtrlPressed("a"),
+      keypressWithCtrlPressed("a", "KeyA"),
       cellInput,
       fxInput,
       () => {},
