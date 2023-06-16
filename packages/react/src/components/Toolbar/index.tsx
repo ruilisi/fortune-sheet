@@ -24,7 +24,6 @@ import {
   handleBorder,
   toolbarItemSelectedFunc,
   handleFreeze,
-  insertImage,
   showImgChooser,
   updateFormat,
   handleSort,
@@ -846,33 +845,7 @@ const Toolbar: React.FC<{
               if (context.allowEdit === false) return;
               showImgChooser();
             }}
-          >
-            <input
-              id="fortune-img-upload"
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={(e) => {
-                const file = e.currentTarget.files?.[0];
-                if (!file) return;
-
-                const render = new FileReader();
-                render.readAsDataURL(file);
-                render.onload = (event) => {
-                  if (event.target == null) return;
-                  const src = event.target?.result;
-                  const image = new Image();
-                  image.onload = () => {
-                    setContext((draftCtx) => {
-                      insertImage(draftCtx, image);
-                    });
-                  };
-                  image.src = src as string;
-                };
-                e.currentTarget.value = "";
-              }}
-            />
-          </Button>
+          />
         );
       }
       if (name === "comment") {
