@@ -12,6 +12,7 @@ import {
   valueShowEs,
   isShowHidenCR,
   escapeHTMLTag,
+  isAllowEdit,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -78,6 +79,16 @@ const FxEditor: React.FC = () => {
     context.currentSheetId,
     context.luckysheet_select_save,
   ]);
+
+  const onMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.stopPropagation();
+      if (!isAllowEdit(context, context.luckysheet_select_save)) {
+        e.preventDefault();
+      }
+    },
+    [context]
+  );
 
   const onFocus = useCallback(() => {
     if (context.allowEdit === false) {
@@ -282,6 +293,7 @@ const FxEditor: React.FC = () => {
           className="fortune-fx-input"
           id="luckysheet-functionbox-cell"
           aria-autocomplete="list"
+          onMouseDown={onMouseDown}
           onFocus={onFocus}
           onKeyDown={onKeyDown}
           onChange={onChange}

@@ -2,6 +2,7 @@ import _ from "lodash";
 import { Context } from "../context";
 import { locale } from "../locale";
 import { Sheet } from "../types";
+import { checkProtectionCellCanEdit } from "../modules";
 
 export * from "./patch";
 
@@ -262,6 +263,15 @@ export function isAllowEdit(
           return false;
         }
       }
+
+      for (let r = selection.row[0]; r <= selection.row[1]; r += 1) {
+        for (let c = selection.column[0]; c <= selection.column[1]; c += 1) {
+          if (!checkProtectionCellCanEdit(ctx, r, c, ctx.currentSheetId)) {
+            return false;
+          }
+        }
+      }
+
       return true;
     }) && (_.isUndefined(ctx.allowEdit) ? true : ctx.allowEdit)
   );
