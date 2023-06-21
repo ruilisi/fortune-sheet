@@ -7,6 +7,7 @@ import formula from "./data/formula";
 import empty from "./data/empty";
 import freeze from "./data/freeze";
 import dataVerification from "./data/dataVerification";
+import protectedSheetData from "./data/protected";
 
 export default {
   component: Workbook,
@@ -50,6 +51,12 @@ Freeze.args = { data: [freeze] };
 export const DataVerification = Template.bind({});
 // @ts-ignore
 DataVerification.args = { data: [dataVerification] };
+
+export const ProtectedSheet = Template.bind({});
+// @ts-ignore
+ProtectedSheet.args = {
+  data: [protectedSheetData],
+};
 
 export const MultiInstance: ComponentStory<typeof Workbook> = () => {
   return (

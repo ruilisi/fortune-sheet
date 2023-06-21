@@ -52,7 +52,6 @@ const ContentEditable: React.FC<ContentEditableProps> = ({ ...props }) => {
 
   return (
     <div
-      onMouseDown={(e) => e.stopPropagation()}
       onDoubleClick={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
       {..._.omit(

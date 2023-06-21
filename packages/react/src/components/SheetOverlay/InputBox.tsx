@@ -15,6 +15,7 @@ import {
   isShowHidenCR,
   israngeseleciton,
   escapeHTMLTag,
+  isAllowEdit,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -263,6 +264,9 @@ const InputBox: React.FC = () => {
             isBlur
           )
             return;
+          if (!isAllowEdit(draftCtx, draftCtx.luckysheet_select_save)) {
+            return;
+          }
           // if(event.target.id!="luckysheet-input-box" && event.target.id!="luckysheet-rich-text-editor"){
           handleFormulaInput(
             draftCtx,
