@@ -625,11 +625,28 @@ export function saveFilter(
   );
 
   const cfg = _.assign({}, ctx.config);
+
+  // need to remove indices of all frozen rowa here
+  const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
+  const sheet = sheetIndex == null ? null : ctx.luckysheetfile[sheetIndex];
+
+  if (!sheet) return;
+
+  const frozen = sheet?.frozen;
+  const row_focus = sheet?.frozen?.range?.row_focus || 0;
+
+  if (frozen) {
+    for (let i = 0; i <= row_focus; i += 1) {
+      if (Object.prototype.hasOwnProperty.call(rowHiddenAll, i)) {
+        delete rowHiddenAll[i];
+      }
+    }
+  }
+
   cfg.rowhidden = rowHiddenAll;
 
   // config
   ctx.config = cfg;
-  const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
   if (sheetIndex == null) {
     return;
   }
