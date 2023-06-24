@@ -3,7 +3,22 @@ import { Context } from "../context";
 // import { locale } from "../locale";
 import { hasPartMC } from "./validation";
 
-export function handleScreenShot(ctx: Context) {
+interface ScreenHotOptions {
+  noDefaultBorder: boolean;
+}
+
+function setDefaultColor(empty: boolean) {
+  if (!empty) {
+    return () => {};
+  }
+  const defaultStrokeStyle = defaultStyle.strokeStyle;
+  defaultStyle.strokeStyle = "#ffffff";
+  return () => {
+    defaultStyle.strokeStyle = defaultStrokeStyle;
+  };
+}
+
+export function handleScreenShot(ctx: Context, options?: ScreenHotOptions) {
   // const { screenshot } = locale;
   if (ctx.luckysheet_select_save == null) return undefined;
   if (ctx.luckysheet_select_save.length === 0) {
@@ -91,7 +106,7 @@ export function handleScreenShot(ctx: Context) {
   newCanvasElement.style.width = `${ch_width}px`;
   newCanvasElement.style.height = `${rh_height}px`;
   const newCanvas = new Canvas(newCanvasElement, ctx);
-
+  const revertColor = setDefaultColor(options?.noDefaultBorder);
   newCanvas.drawMain({
     scrollWidth,
     scrollHeight,
@@ -132,5 +147,6 @@ export function handleScreenShot(ctx: Context) {
   }
 
   newCanvasElement.remove();
+  revertColor();
   return image.src;
 }

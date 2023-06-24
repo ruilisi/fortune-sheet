@@ -217,6 +217,7 @@ export const defaultSettings: Required<Settings> = {
     "splitColumn",
     "locationCondition",
     "screenshot",
+    "print",
     "search",
   ], // 自定义工具栏
   cellContextMenu: [

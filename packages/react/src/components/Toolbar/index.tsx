@@ -53,6 +53,7 @@ import CustomButton from "./CustomButton";
 import { CustomColor } from "./CustomColor";
 import CustomBorder from "./CustomBorder";
 import { FormatSearch } from "../FormatSearch";
+import { PrintButton } from "../PrintButton";
 
 const Toolbar: React.FC<{
   setMoreItems: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -568,7 +569,9 @@ const Toolbar: React.FC<{
             tooltip={tooltip}
             key={name}
             onClick={() => {
-              const imgsrc = handleScreenShot(contextRef.current);
+              const imgsrc = handleScreenShot(contextRef.current, {
+                noDefaultBorder: true,
+              });
               if (imgsrc) {
                 showDialog(
                   <div>
@@ -584,6 +587,10 @@ const Toolbar: React.FC<{
             }}
           />
         );
+      }
+      if (name === "print") {
+        // Usage
+        return <PrintButton />;
       }
       if (name === "splitColumn") {
         return (
