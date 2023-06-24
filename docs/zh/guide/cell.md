@@ -144,6 +144,13 @@
         <td>setFormula <br> setArrayFormula <br> workbook.calculateFormula();</td>
     </tr>
     <tr>
+        <td>lo</td>
+        <td>locked</td>
+        <td>锁定单元格，不可编辑</td>
+        <td>1表示锁定，0表示可编辑。锁定表格，默认1，可编辑表格，默认0。</td>
+        <td></td>
+    </tr>
+    <tr>
         <td>ps</td>
         <td>comment</td>
         <td>批注</td>

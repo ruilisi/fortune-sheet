@@ -137,6 +137,13 @@
         <td>setFormula <br> setArrayFormula <br> workbook.calculateFormula();</td>
     </tr>
     <tr>
+        <td>lo</td>
+        <td>locked</td>
+        <td>Lock the cell, cannot be edited.</td>
+        <td>0 is editable,1 is locked. Protected table, default 1; editable table, default 0.</td>
+        <td></td>
+    </tr>
+    <tr>
         <td>ps</td>
         <td>comment</td>
         <td>comment</td>
