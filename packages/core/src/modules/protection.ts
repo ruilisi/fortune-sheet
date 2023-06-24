@@ -2,7 +2,7 @@ import _ from "lodash";
 import { Context } from "../context";
 import { getSheetByIndex } from "../utils";
 
-export function checkProtectionCellCanEdit(
+export function checkCellIsLocked(
   ctx: Context,
   r: number,
   c: number,
@@ -12,27 +12,17 @@ export function checkProtectionCellCanEdit(
   if (_.isNil(sheetFile)) {
     return true;
   }
-
-  if (_.isNil(sheetFile.config) || _.isNil(sheetFile.config.authority)) {
-    return true;
-  }
-
-  const aut = sheetFile.config.authority;
-
-  if (_.isNil(aut) || _.isNil(aut.sheet) || aut.sheet === 0) {
-    return true;
-  }
-
-  // sheet is locked
-  // thd determine the cell lock status.
-
   const { data } = sheetFile;
   const cell = data?.[r]?.[c];
-  // allow edit cell
-  if (cell?.lo === 0) {
-    return true;
+  // cell have lo attribute
+  if (!_.isNil(cell?.lo)) {
+    return !!cell?.lo;
   }
-  return false;
+
+  // default locked status from sheet config
+  const aut = sheetFile.config?.authority;
+  const sheetInEditable = _.isNil(aut) || _.isNil(aut.sheet) || aut.sheet === 0;
+  return !sheetInEditable;
 }
 
 export function checkProtectionSelectLockedOrUnLockedCells(
