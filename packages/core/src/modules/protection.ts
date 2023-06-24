@@ -10,7 +10,7 @@ export function checkCellIsLocked(
 ) {
   const sheetFile = getSheetByIndex(ctx, sheetId);
   if (_.isNil(sheetFile)) {
-    return true;
+    return false;
   }
   const { data } = sheetFile;
   const cell = data?.[r]?.[c];
