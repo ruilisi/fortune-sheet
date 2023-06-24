@@ -7,7 +7,7 @@ import formula from "./data/formula";
 import empty from "./data/empty";
 import freeze from "./data/freeze";
 import dataVerification from "./data/dataVerification";
-import protectedSheetData from "./data/protected";
+import lockcellData from "./data/protected";
 
 export default {
   component: Workbook,
@@ -55,7 +55,7 @@ DataVerification.args = { data: [dataVerification] };
 export const ProtectedSheet = Template.bind({});
 // @ts-ignore
 ProtectedSheet.args = {
-  data: [protectedSheetData],
+  data: lockcellData,
 };
 
 export const MultiInstance: ComponentStory<typeof Workbook> = () => {

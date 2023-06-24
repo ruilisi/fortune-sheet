@@ -1,4 +1,4 @@
-const data = {
+const protectedSheet = {
   name: "protected",
   config: {
     authority: {
@@ -8,8 +8,18 @@ const data = {
   celldata: [
     { r: 0, c: 0, v: { v: "can edit", lo: 0 } },
     { r: 0, c: 1, v: { v: "is locked", lo: 1 } },
-    { r: 0, c: 2, v: { v: "default", lo: 1 } },
+    { r: 0, c: 2, v: { v: "default is locked" } },
   ],
 };
 
-export default data;
+const editableSheet = {
+  name: "editable",
+  celldata: [
+    { r: 0, c: 0, v: { v: "can edit", lo: 0 } },
+    { r: 0, c: 1, v: { v: "is locked", lo: 1 } },
+    { r: 0, c: 2, v: { v: "default can edit" } },
+  ],
+};
+const lockcellData = [protectedSheet, editableSheet];
+
+export default lockcellData;
