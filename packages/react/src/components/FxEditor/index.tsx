@@ -20,6 +20,7 @@ import React, {
   useCallback,
   useEffect,
   useRef,
+  useMemo,
 } from "react";
 import "./index.css";
 import _ from "lodash";
@@ -80,23 +81,14 @@ const FxEditor: React.FC = () => {
     context.luckysheet_select_save,
   ]);
 
-  const onMouseDown = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      e.stopPropagation();
-      if (!isAllowEdit(context, context.luckysheet_select_save)) {
-        e.preventDefault();
-      }
-    },
-    [context]
-  );
-
   const onFocus = useCallback(() => {
     if (context.allowEdit === false) {
       return;
     }
     if (
       (context.luckysheet_select_save?.length ?? 0) > 0 &&
-      !context.luckysheet_cell_selected_move
+      !context.luckysheet_cell_selected_move &&
+      isAllowEdit(context, context.luckysheet_select_save)
     ) {
       setFocused(true);
       setContext((draftCtx) => {
@@ -113,13 +105,7 @@ const FxEditor: React.FC = () => {
         // formula.rangeResizeTo = $("#luckysheet-functionbox-cell");
       });
     }
-  }, [
-    context.allowEdit,
-    context.luckysheet_cell_selected_move,
-    context.luckysheet_select_save?.length,
-    refs.globalCache,
-    setContext,
-  ]);
+  }, [context, refs.globalCache, setContext]);
 
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -279,6 +265,19 @@ const FxEditor: React.FC = () => {
     }
   }, [refs.cellInput, refs.fxInput, setContext]);
 
+  const allowEdit = useMemo(() => {
+    if (context.allowEdit === false) {
+      return false;
+    }
+    if (isHidenRC) {
+      return false;
+    }
+    if (!isAllowEdit(context, context.luckysheet_select_save)) {
+      return false;
+    }
+    return true;
+  }, [context, isHidenRC]);
+
   return (
     <div className="fortune-fx-editor">
       <NameBox />
@@ -293,15 +292,12 @@ const FxEditor: React.FC = () => {
           className="fortune-fx-input"
           id="luckysheet-functionbox-cell"
           aria-autocomplete="list"
-          onMouseDown={onMouseDown}
           onFocus={onFocus}
           onKeyDown={onKeyDown}
           onChange={onChange}
           onBlur={() => setFocused(false)}
           tabIndex={0}
-          allowEdit={
-            context.allowEdit === true ? !isHidenRC : context.allowEdit
-          }
+          allowEdit={allowEdit}
         />
         {focused && (
           <>
