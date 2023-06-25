@@ -1390,9 +1390,9 @@ export function handleContextMenu(
   container: HTMLDivElement,
   area: "cell" | "rowHeader" | "columnHeader"
 ) {
-  e.preventDefault();
-  const allowEdit = isAllowEdit(ctx);
-  if (!allowEdit) return;
+  if (!ctx.allowEdit) {
+    return;
+  }
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
 
