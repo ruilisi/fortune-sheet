@@ -545,7 +545,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         // handling undo and redo ahead because handleUndo and handleRedo
         // themselves are calling setContext, and should not be nested
         // in setContextWithProduce.
-        if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+        if ((e.ctrlKey || e.metaKey) && e.code === "KeyZ") {
           if (e.shiftKey) {
             handleRedo();
           } else {
@@ -554,7 +554,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           e.stopPropagation();
           return;
         }
-        if ((e.ctrlKey || e.metaKey) && e.key === "y") {
+        if ((e.ctrlKey || e.metaKey) && e.code === "KeyY") {
           handleRedo();
           e.stopPropagation();
           e.preventDefault();
