@@ -4,7 +4,12 @@ import { Context } from "../context";
 import { hasPartMC } from "./validation";
 
 interface ScreenHotOptions {
-  noDefaultBorder: boolean;
+  noDefaultBorder?: boolean;
+  imageLayer?: boolean;
+  range?: {
+    row: [number, number];
+    column: [number, number];
+  };
 }
 
 function setDefaultColor(empty: boolean) {
@@ -18,7 +23,90 @@ function setDefaultColor(empty: boolean) {
   };
 }
 
-export function handleScreenShot(ctx: Context, options?: ScreenHotOptions) {
+async function drawImages(
+  context: Context,
+  {
+    canvasCtx,
+    scrollWidth,
+    scrollHeight,
+    drawWidth,
+    drawHeight,
+    offsetLeft,
+    offsetTop,
+  }: {
+    canvasCtx: CanvasRenderingContext2D;
+    scrollWidth: number;
+    scrollHeight: number;
+    drawWidth: number;
+    drawHeight: number;
+    offsetLeft: number;
+    offsetTop: number;
+  }
+) {
+  // 读取上下文中的图片
+  // 判断是否相交
+  const images = context.insertedImgs ?? [];
+  const rect = {
+    left: scrollWidth,
+    top: scrollHeight,
+    right: scrollWidth + drawWidth,
+    bottom: scrollHeight + drawHeight,
+  };
+
+  canvasCtx.save();
+  canvasCtx.scale(context.devicePixelRatio, context.devicePixelRatio);
+  canvasCtx.translate(-scrollWidth + offsetLeft, -scrollHeight + offsetTop);
+  function pointInRect(point: { x: number; y: number }) {
+    const { x, y } = point;
+    if (x > rect.left && x < rect.right && y > rect.top && y < rect.bottom) {
+      return true;
+    }
+    return false;
+  }
+  async function drawImage(imageOrigin: HTMLImageElement) {
+    const { left, top, width, height, src } = imageOrigin as any;
+
+    const imageEle = await new Promise<HTMLImageElement>((resolve) => {
+      const image = new Image();
+      image.src = src;
+
+      image.onload = function onload() {
+        resolve(image);
+      };
+      image.onerror = function onload() {
+        resolve(image);
+      };
+    });
+    canvasCtx.drawImage(imageEle, left, top, width, height);
+  }
+  await Promise.all(
+    images.map(async (image): Promise<void> => {
+      const { left, top, width, height } = image as any;
+      // 判断矩形相交
+      const points = [
+        // 左上
+        { x: left, y: top },
+        // 右上
+        { x: left + width, y: top },
+        // 左下
+        { x: left, y: top + height },
+        // 右下
+        { x: left + width, y: top + height },
+      ];
+      if (points.some((v) => pointInRect(v))) {
+        // 判断与画布相交
+        await drawImage(image as any);
+      }
+    })
+  );
+
+  canvasCtx.restore();
+}
+
+export async function handleScreenShot(
+  ctx: Context,
+  options?: ScreenHotOptions
+) {
   // const { screenshot } = locale;
   if (ctx.luckysheet_select_save == null) return undefined;
   if (ctx.luckysheet_select_save.length === 0) {
@@ -76,29 +164,30 @@ export function handleScreenShot(ctx: Context, options?: ScreenHotOptions) {
     }
   }
 
-  const st_r = ctx.luckysheet_select_save[0].row[0];
-  const ed_r = ctx.luckysheet_select_save[0].row[1];
-  const st_c = ctx.luckysheet_select_save[0].column[0];
-  const ed_c = ctx.luckysheet_select_save[0].column[1];
+  const [st_r, ed_r] = options?.range?.row ?? ctx.luckysheet_select_save[0].row;
+  const [st_c, ed_c] =
+    options?.range?.column ?? ctx.luckysheet_select_save[0].column;
 
+  // max line width = 3;
   let scrollHeight;
   let rh_height;
   if (st_r - 1 < 0) {
-    scrollHeight = 0;
-    rh_height = ctx.visibledatarow[ed_r];
+    scrollHeight = -1.5;
+    rh_height = ctx.visibledatarow[ed_r] + 1.5;
   } else {
-    scrollHeight = ctx.visibledatarow[st_r - 1];
-    rh_height = ctx.visibledatarow[ed_r] - ctx.visibledatarow[st_r - 1];
+    scrollHeight = ctx.visibledatarow[st_r - 1] - 1.5;
+    rh_height = ctx.visibledatarow[ed_r] - ctx.visibledatarow[st_r - 1] + 1.5;
   }
 
   let scrollWidth;
   let ch_width;
   if (st_c - 1 < 0) {
-    scrollWidth = 0;
-    ch_width = ctx.visibledatacolumn[ed_c];
+    scrollWidth = -1.5;
+    ch_width = ctx.visibledatacolumn[ed_c] + 1.5;
   } else {
-    scrollWidth = ctx.visibledatacolumn[st_c - 1];
-    ch_width = ctx.visibledatacolumn[ed_c] - ctx.visibledatacolumn[st_c - 1];
+    scrollWidth = ctx.visibledatacolumn[st_c - 1] - 1.5;
+    ch_width =
+      ctx.visibledatacolumn[ed_c] - ctx.visibledatacolumn[st_c - 1] + 1.5;
   }
   const newCanvasElement = document.createElement("canvas");
   newCanvasElement.width = Math.ceil(ch_width * devicePixelRatio);
@@ -106,7 +195,7 @@ export function handleScreenShot(ctx: Context, options?: ScreenHotOptions) {
   newCanvasElement.style.width = `${ch_width}px`;
   newCanvasElement.style.height = `${rh_height}px`;
   const newCanvas = new Canvas(newCanvasElement, ctx);
-  const revertColor = setDefaultColor(options?.noDefaultBorder);
+  const revertColor = setDefaultColor(options?.noDefaultBorder ?? false);
   newCanvas.drawMain({
     scrollWidth,
     scrollHeight,
@@ -116,25 +205,18 @@ export function handleScreenShot(ctx: Context, options?: ScreenHotOptions) {
     offsetTop: 1,
     clear: true,
   });
+  revertColor();
   const ctx_newCanvas = newCanvasElement.getContext("2d");
   if (ctx_newCanvas == null) return undefined;
-
-  // 补上 左边框和上边框
-  ctx_newCanvas.beginPath();
-  ctx_newCanvas.moveTo(0, 0);
-  ctx_newCanvas.lineTo(0, ctx.devicePixelRatio * rh_height);
-  ctx_newCanvas.lineWidth = ctx.devicePixelRatio * 2;
-  ctx_newCanvas.strokeStyle = defaultStyle.strokeStyle;
-  ctx_newCanvas.stroke();
-  ctx_newCanvas.closePath();
-
-  ctx_newCanvas.beginPath();
-  ctx_newCanvas.moveTo(0, 0);
-  ctx_newCanvas.lineTo(ctx.devicePixelRatio * ch_width, 0);
-  ctx_newCanvas.lineWidth = ctx.devicePixelRatio * 2;
-  ctx_newCanvas.strokeStyle = defaultStyle.strokeStyle;
-  ctx_newCanvas.stroke();
-  ctx_newCanvas.closePath();
+  await drawImages(ctx, {
+    canvasCtx: ctx_newCanvas,
+    scrollWidth,
+    scrollHeight,
+    drawWidth: ch_width,
+    drawHeight: rh_height,
+    offsetLeft: 0,
+    offsetTop: 0,
+  });
 
   const image = new Image();
   const url = newCanvasElement.toDataURL("image/png");
@@ -147,6 +229,5 @@ export function handleScreenShot(ctx: Context, options?: ScreenHotOptions) {
   }
 
   newCanvasElement.remove();
-  revertColor();
   return image.src;
 }

@@ -6,6 +6,7 @@ import cell from "./data/cell";
 import formula from "./data/formula";
 import empty from "./data/empty";
 import freeze from "./data/freeze";
+import print from "./data/print";
 import dataVerification from "./data/dataVerification";
 
 export default {
@@ -50,6 +51,10 @@ Freeze.args = { data: [freeze] };
 export const DataVerification = Template.bind({});
 // @ts-ignore
 DataVerification.args = { data: [dataVerification] };
+
+export const Print = Template.bind({});
+// @ts-ignore
+Print.args = { data: [print] };
 
 export const MultiInstance: ComponentStory<typeof Workbook> = () => {
   return (

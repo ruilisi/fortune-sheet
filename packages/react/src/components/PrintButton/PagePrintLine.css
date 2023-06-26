@@ -1,0 +1,10 @@
+.fortune-print-row-line{
+    width: 9999vw;
+    border-top: 1px dotted;
+    position: absolute;
+}
+.fortune-print-col-line{
+    height: 9999vh;
+    border-left: 1px dotted;
+    position: absolute;
+}

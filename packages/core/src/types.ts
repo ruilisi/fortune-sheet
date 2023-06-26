@@ -95,6 +95,11 @@ export type Presence = {
   };
 };
 
+export type PrintConfig = {
+  size?: "a4";
+  pageOrientation?: "upright" | "rotate-left" | "rotate-right";
+};
+
 export type SheetConfig = {
   merge?: Record<string, { r: number; c: number; rs: number; cs: number }>; // 合并单元格
   rowlen?: Record<string, number>; // 表格行高
@@ -107,6 +112,7 @@ export type SheetConfig = {
   authority?: any;
   rowReadOnly?: Record<number, number>;
   colReadOnly?: Record<number, number>;
+  print?: PrintConfig;
 };
 
 export type Image = {

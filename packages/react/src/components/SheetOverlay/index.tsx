@@ -48,6 +48,7 @@ import RangeDialog from "../DataVerification/RangeDialog";
 import { useDialog } from "../../hooks/useDialog";
 import SVGIcon from "../SVGIcon";
 import DropDownList from "../DataVerification/DropdownList";
+import { PageLine } from "../PrintButton/PagePrintLine";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
@@ -442,6 +443,7 @@ const SheetOverlay: React.FC = () => {
               : "default",
           }}
         >
+          <PageLine />
           <div id="fortune-formula-functionrange" />
           {context.formulaRangeSelect && (
             <div

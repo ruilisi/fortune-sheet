@@ -568,10 +568,8 @@ const Toolbar: React.FC<{
             iconId={name}
             tooltip={tooltip}
             key={name}
-            onClick={() => {
-              const imgsrc = handleScreenShot(contextRef.current, {
-                noDefaultBorder: true,
-              });
+            onClick={async () => {
+              const imgsrc = await handleScreenShot(contextRef.current);
               if (imgsrc) {
                 showDialog(
                   <div>

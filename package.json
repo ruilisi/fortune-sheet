@@ -8,7 +8,7 @@
   "repository": "https://github.com/ruilisi/fortune-sheet",
   "license": "MIT",
   "scripts": {
-    "dev": "npx yarn storybook",
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider npx yarn storybook",
     "build": "node ./scripts/build",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",

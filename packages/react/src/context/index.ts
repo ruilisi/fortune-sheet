@@ -24,7 +24,7 @@ export type SetContextOptions = {
   logPatch?: boolean;
 } & PatchOptions;
 
-const WorkbookContext = React.createContext<{
+export interface IWorkbookContext {
   context: Context;
   setContext: (
     recipe: (ctx: Context) => void,
@@ -35,7 +35,9 @@ const WorkbookContext = React.createContext<{
   refs: RefValues;
   handleUndo: () => void;
   handleRedo: () => void;
-}>({
+}
+
+const WorkbookContext = React.createContext<IWorkbookContext>({
   context: defaultContext({ undoList: [], redoList: [] }),
   setContext: () => {},
   settings: defaultSettings,
