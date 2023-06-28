@@ -1681,6 +1681,7 @@ export function execFunctionGroup(
   // console.timeEnd("4");
 
   ctx.formulaCache.execFunctionExist = undefined;
+  groupValuesRefresh(ctx);
 }
 
 function findrangeindex(ctx: Context, v: string, vp: string) {
