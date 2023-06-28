@@ -243,9 +243,12 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
    */
   useEffect(() => {
     if (context.groupValuesRefreshData.length > 0) {
-      setContext((draftCtx) => {
-        groupValuesRefresh(draftCtx);
-      });
+      setContext(
+        (draftCtx) => {
+          groupValuesRefresh(draftCtx);
+        },
+        { noHistory: true }
+      );
     }
   }, [context.groupValuesRefreshData.length, setContext]);
 

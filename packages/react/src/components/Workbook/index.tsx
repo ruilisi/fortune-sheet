@@ -19,6 +19,7 @@ import {
   insertRowCol,
   locale,
   calcSelectionInfo,
+  execFunctionGroup,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -339,8 +340,29 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           emitOp(newContext, history.inversePatches, inversedOptions, true);
           return newContext;
         });
+        setContextWithProduce(
+          (ctx_) => {
+            _.forEach(history.inversePatches, (singlePatch) => {
+              if (
+                (singlePatch.path.length !== 6 ||
+                  singlePatch.path[5] !== "v") &&
+                singlePatch.path.length !== 5
+              )
+                return;
+              const r = singlePatch.path[3] as number;
+              const c = singlePatch.path[4] as number;
+              const value =
+                typeof singlePatch.value === "string" ||
+                singlePatch.value === null
+                  ? singlePatch.value || 0
+                  : singlePatch.value.v;
+              execFunctionGroup(ctx_, r, c, value);
+            });
+          },
+          { noHistory: true }
+        );
       }
-    }, [emitOp]);
+    }, [emitOp, setContextWithProduce]);
 
     const handleRedo = useCallback(() => {
       const history = globalCache.current.redoList.pop();
@@ -351,8 +373,29 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           emitOp(newContext, history.patches, history.options);
           return newContext;
         });
+        setContextWithProduce(
+          (ctx_) => {
+            _.forEach(history.patches, (singlePatch) => {
+              if (
+                (singlePatch.path.length !== 6 ||
+                  singlePatch.path[5] !== "v") &&
+                singlePatch.path.length !== 5
+              )
+                return;
+              const r = singlePatch.path[3] as number;
+              const c = singlePatch.path[4] as number;
+              const value =
+                typeof singlePatch.value === "string" ||
+                singlePatch.value === null
+                  ? singlePatch.value || 0
+                  : singlePatch.value.v;
+              execFunctionGroup(ctx_, r, c, value);
+            });
+          },
+          { noHistory: true }
+        );
       }
-    }, [emitOp]);
+    }, [emitOp, setContextWithProduce]);
 
     useEffect(() => {
       if (context.luckysheet_select_save != null) {
