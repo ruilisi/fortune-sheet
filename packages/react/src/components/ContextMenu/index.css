@@ -347,3 +347,8 @@
   user-select: auto;
   text-align: start;
 }
+
+.fortune-filter-submenu {
+    height: 100px;
+    overflow-y: auto;
+}

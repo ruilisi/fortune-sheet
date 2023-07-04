@@ -190,6 +190,11 @@ const FilterMenu: React.FC = () => {
   const [showSubMenu, setShowSubMenu] = useState(false);
   const { showAlert } = useAlert();
   const mouseHoverSubMenu = useRef<boolean>(false);
+  const [conditionText, setConditionText] = useState(filter.filiterInputNone);
+  const [conditionValue, setConditionValue] = useState("");
+  contextRef.current = context;
+
+  const filterInputRef = useRef<HTMLInputElement>(null);
 
   // 点击其他区域的时候关闭FilterMenu
   const close = useCallback(() => {
@@ -216,22 +221,14 @@ const FilterMenu: React.FC = () => {
   const searchValues = useMemo(
     () =>
       _.debounce((text: string) => {
-        const filterValues = _.filter(
-          data.flattenValues,
-          (v) => v.toLowerCase().indexOf(text.toLowerCase()) > -1
+        setShowValues(
+          _.filter(
+            data.flattenValues,
+            (v) => v.toLowerCase().indexOf(text.toLowerCase()) > -1
+          )
         );
-        setShowValues(filterValues);
-        setDatesUncheck(produce((draft) => _.xor(draft, filterValues)));
-        setValuesUncheck(produce((draft) => _.xor(draft, filterValues)));
-        const filteredArrays: any[] = filterValues.flatMap((value: string) => {
-          const matchedKey = Object.keys(data.valueRowMap).find((key: string) =>
-            key.includes(`${value}#$$$#${value}`)
-          );
-          return matchedKey ? data.valueRowMap[matchedKey] : [];
-        });
-        hiddenRows.current = _.xor(filteredArrays, data.visibleRows);
       }, 300),
-    [data.flattenValues, data.valueRowMap, data.visibleRows]
+    [data.flattenValues]
   );
 
   const selectAll = useCallback(() => {
@@ -264,6 +261,82 @@ const FilterMenu: React.FC = () => {
       );
     },
     []
+  );
+
+  // 按条件筛选
+  const filterByCondition = useCallback(
+    (text: String | undefined, conditionItem: String) => {
+      // 文本包含
+      if (conditionItem === "conditionCellTextContain") {
+        const filterRow = _.filter(
+          data.flattenValues,
+          (v) => v.toLowerCase().indexOf(text!.toLowerCase()) > -1
+        );
+        setDatesUncheck(produce((draft) => _.xor(draft, filterRow)));
+        setValuesUncheck(produce((draft) => _.xor(draft, filterRow)));
+        // Object.keys(data.valueRowMap).forEach(key=> {
+        //   if(key.includes(filterRow))
+        // })
+        // _.pickBy(data.dateRowMap, (value, key) => {
+        //   _.some(filterRow, (str) => _.includes(key, str));
+        // }).forEach((value, key) => {
+        //   console.info(value, key);
+        // });
+        // console.info(filterRow);
+        hiddenRows.current = _.xor(
+          data.visibleRows,
+          data.valueRowMap[`${filterRow}#$$$#${filterRow}`]
+        );
+      }
+      // 文本等于
+      if (conditionItem === "conditionCellTextEqual") {
+        const filterRow = _.filter(
+          data.flattenValues,
+          (v) => v.toLowerCase().indexOf(text!.toLowerCase()) > -1
+        );
+        setDatesUncheck(produce((draft) => _.xor(draft, filterRow)));
+        setValuesUncheck(produce((draft) => _.xor(draft, filterRow)));
+        hiddenRows.current = _.xor(
+          data.visibleRows,
+          data.valueRowMap[`${filterRow}#$$$#${filterRow}`]
+        );
+      }
+    },
+    [data.flattenValues, data.valueRowMap, data.visibleRows]
+  );
+
+  const handleConditionFilter = useCallback(
+    (value: string) => {
+      if (value === "conditionCellIsNull") {
+        clearAll();
+      } else if (value === "conditionCellNotNull") {
+        selectAll();
+      } else if (
+        value ===
+        ("conditionCellTextContain" ||
+          "conditionCellTextNotContain" ||
+          "conditionCellTextStart" ||
+          "conditionCellTextEnd" ||
+          "conditionCellTextEqual")
+      ) {
+        // 文本包含/不包含/开头为/结尾为/等于
+      } else if (
+        value ===
+        ("conditionCellGreater" ||
+          "conditionCellGreaterEqual" ||
+          "conditionCellLess" ||
+          "conditionCellLessEqual" ||
+          "conditionCellEqual" ||
+          "conditionCellNotEqual")
+      ) {
+        // 大于/大于等于/小于/小于等于/等于/不等于
+      } else if (
+        value === ("conditionCellBetween" || "conditionCellNotBetween")
+      ) {
+        // 介于
+      }
+    },
+    [clearAll, selectAll]
   );
 
   const delayHideSubMenu = useMemo(
@@ -502,17 +575,61 @@ const FilterMenu: React.FC = () => {
                       data-value="null"
                       data-type="0"
                     >
-                      {filter.filiterInputNone}
+                      {conditionText}
                     </span>
                     <div className="fortune-mousedown-cancel">
                       <i className="fa fa-sort" aria-hidden="true" />
                     </div>
                   </div>
+                  <div className="fortune-filter-submenu">
+                    {[
+                      { text: "单元格为空", value: "conditionCellIsNull" },
+                      { text: "单元格有数据", value: "conditionCellNotNull" },
+                      { text: "文本包含", value: "conditionCellTextContain" },
+                      {
+                        text: "文本不包含",
+                        value: "conditionCellTextNotContain",
+                      },
+                      { text: "文本开头为", value: "conditionCellTextStart" },
+                      { text: "文本结尾为", value: "conditionCellTextEnd" },
+                      { text: "文本等于", value: "conditionCellTextEqual" },
+                      // { text: "日期等于", value: "conditionCellDateEqual" },
+                      // { text: "日期早于", value: "conditionCellDateBefore" },
+                      // { text: "日期晚于", value: "conditionCellDateAfter" },
+                      { text: "大于", value: "conditionCellGreater" },
+                      { text: "大于等于", value: "conditionCellGreaterEqual" },
+                      { text: "小于", value: "conditionCellLess" },
+                      { text: "小于等于", value: "conditionCellLessEqual" },
+                      { text: "等于", value: "conditionCellEqual" },
+                      { text: "不等于", value: "conditionCellNotEqual" },
+                      { text: "介于", value: "conditionCellBetween" },
+                      { text: "不在其中", value: "conditionCellNotBetween" },
+                    ].map((v) => (
+                      <div
+                        className="luckysheet-cols-menuitem luckysheet-mousedown-cancel"
+                        key={v.value}
+                        onClick={() => {
+                          setConditionText(v.text);
+                          setConditionValue(v.value);
+                          handleConditionFilter(v.value);
+                        }}
+                      >
+                        <div className="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
+                          {v.text}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
                   <div className="fortune-filter-selected-input">
                     <input
+                      ref={filterInputRef}
                       type="text"
                       placeholder={filter.filiterInputTip}
                       className="fortune-mousedown-cancel"
+                      onChange={(e) => {
+                        filterByCondition(e.target.value, conditionValue);
+                      }}
                     />
                   </div>
                   <div className="fortune-filter-selected-input fortune-filter-selected-input2">
