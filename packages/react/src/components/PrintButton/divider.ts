@@ -74,7 +74,7 @@ export function computePrintPage(
   context: Context,
   range: CellRange
 ): {
-  orientation: PrintConfig["pageOrientation"];
+  orientation: NonNullable<PrintConfig["pageOrientation"]>;
   printPages: PrintPageRange[];
   divider: {
     row: number[];

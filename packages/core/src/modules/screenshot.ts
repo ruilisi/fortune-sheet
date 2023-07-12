@@ -1,25 +1,13 @@
-import { Canvas, defaultStyle } from "../canvas";
+import { Canvas } from "../canvas";
 import { Context } from "../context";
 // import { locale } from "../locale";
 import { hasPartMC } from "./validation";
 
 interface ScreenHotOptions {
-  noDefaultBorder?: boolean;
   imageLayer?: boolean;
-  range?: {
-    row: [number, number];
-    column: [number, number];
-  };
-}
-
-function setDefaultColor(empty: boolean) {
-  if (!empty) {
-    return () => {};
-  }
-  const defaultStrokeStyle = defaultStyle.strokeStyle;
-  defaultStyle.strokeStyle = "#ffffff";
-  return () => {
-    defaultStyle.strokeStyle = defaultStrokeStyle;
+  range: {
+    row: number[];
+    column: number[];
   };
 }
 
@@ -103,10 +91,78 @@ async function drawImages(
   canvasCtx.restore();
 }
 
-export async function handleScreenShot(
+export async function handleScreenShotByRange(
   ctx: Context,
-  options?: ScreenHotOptions
+  options: ScreenHotOptions
 ) {
+  const { range } = options;
+  const [st_r, ed_r] = range.row;
+  const [st_c, ed_c] = range.column;
+
+  // max line width = 3;
+  let scrollHeight;
+  let rh_height;
+  if (st_r - 1 < 0) {
+    scrollHeight = -1.5;
+    rh_height = ctx.visibledatarow[ed_r] + 1.5;
+  } else {
+    scrollHeight = ctx.visibledatarow[st_r - 1] - 1.5;
+    rh_height = ctx.visibledatarow[ed_r] - ctx.visibledatarow[st_r - 1] + 1.5;
+  }
+
+  let scrollWidth;
+  let ch_width;
+  if (st_c - 1 < 0) {
+    scrollWidth = -1.5;
+    ch_width = ctx.visibledatacolumn[ed_c] + 1.5;
+  } else {
+    scrollWidth = ctx.visibledatacolumn[st_c - 1] - 1.5;
+    ch_width =
+      ctx.visibledatacolumn[ed_c] - ctx.visibledatacolumn[st_c - 1] + 1.5;
+  }
+  const newCanvasElement = document.createElement("canvas");
+
+  newCanvasElement.width = Math.ceil(ch_width * ctx.devicePixelRatio);
+  newCanvasElement.height = Math.ceil(rh_height * ctx.devicePixelRatio);
+  newCanvasElement.style.width = `${ch_width}px`;
+  newCanvasElement.style.height = `${rh_height}px`;
+  const newCanvas = new Canvas(newCanvasElement, ctx);
+  newCanvas.drawMain({
+    scrollWidth,
+    scrollHeight,
+    drawWidth: ch_width,
+    drawHeight: rh_height,
+    offsetLeft: 1,
+    offsetTop: 1,
+    clear: true,
+  });
+  const ctx_newCanvas = newCanvasElement.getContext("2d");
+  if (ctx_newCanvas == null) return undefined;
+  await drawImages(ctx, {
+    canvasCtx: ctx_newCanvas,
+    scrollWidth,
+    scrollHeight,
+    drawWidth: ch_width,
+    drawHeight: rh_height,
+    offsetLeft: 0,
+    offsetTop: 0,
+  });
+
+  const image = new Image();
+  const url = newCanvasElement.toDataURL("image/png");
+  image.src = url;
+
+  if (ch_width > rh_height) {
+    image.style.width = "100%";
+  } else {
+    image.style.height = "100%";
+  }
+
+  newCanvasElement.remove();
+  return image.src;
+}
+
+export async function handleScreenShot(ctx: Context) {
   // const { screenshot } = locale;
   if (ctx.luckysheet_select_save == null) return undefined;
   if (ctx.luckysheet_select_save.length === 0) {
@@ -164,70 +220,5 @@ export async function handleScreenShot(
     }
   }
 
-  const [st_r, ed_r] = options?.range?.row ?? ctx.luckysheet_select_save[0].row;
-  const [st_c, ed_c] =
-    options?.range?.column ?? ctx.luckysheet_select_save[0].column;
-
-  // max line width = 3;
-  let scrollHeight;
-  let rh_height;
-  if (st_r - 1 < 0) {
-    scrollHeight = -1.5;
-    rh_height = ctx.visibledatarow[ed_r] + 1.5;
-  } else {
-    scrollHeight = ctx.visibledatarow[st_r - 1] - 1.5;
-    rh_height = ctx.visibledatarow[ed_r] - ctx.visibledatarow[st_r - 1] + 1.5;
-  }
-
-  let scrollWidth;
-  let ch_width;
-  if (st_c - 1 < 0) {
-    scrollWidth = -1.5;
-    ch_width = ctx.visibledatacolumn[ed_c] + 1.5;
-  } else {
-    scrollWidth = ctx.visibledatacolumn[st_c - 1] - 1.5;
-    ch_width =
-      ctx.visibledatacolumn[ed_c] - ctx.visibledatacolumn[st_c - 1] + 1.5;
-  }
-  const newCanvasElement = document.createElement("canvas");
-  newCanvasElement.width = Math.ceil(ch_width * devicePixelRatio);
-  newCanvasElement.height = Math.ceil(rh_height * devicePixelRatio);
-  newCanvasElement.style.width = `${ch_width}px`;
-  newCanvasElement.style.height = `${rh_height}px`;
-  const newCanvas = new Canvas(newCanvasElement, ctx);
-  const revertColor = setDefaultColor(options?.noDefaultBorder ?? false);
-  newCanvas.drawMain({
-    scrollWidth,
-    scrollHeight,
-    drawWidth: ch_width,
-    drawHeight: rh_height,
-    offsetLeft: 1,
-    offsetTop: 1,
-    clear: true,
-  });
-  revertColor();
-  const ctx_newCanvas = newCanvasElement.getContext("2d");
-  if (ctx_newCanvas == null) return undefined;
-  await drawImages(ctx, {
-    canvasCtx: ctx_newCanvas,
-    scrollWidth,
-    scrollHeight,
-    drawWidth: ch_width,
-    drawHeight: rh_height,
-    offsetLeft: 0,
-    offsetTop: 0,
-  });
-
-  const image = new Image();
-  const url = newCanvasElement.toDataURL("image/png");
-  image.src = url;
-
-  if (ch_width > rh_height) {
-    image.style.width = "100%";
-  } else {
-    image.style.height = "100%";
-  }
-
-  newCanvasElement.remove();
-  return image.src;
+  return handleScreenShotByRange(ctx, { range: ctx.luckysheet_select_save[0] });
 }

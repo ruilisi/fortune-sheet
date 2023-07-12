@@ -1,22 +1,22 @@
 import _ from "lodash";
-import { SheetConfig } from ".";
+import { SheetConfig, api } from ".";
 import { FormulaCache } from "./modules";
 import { normalizeSelection } from "./modules/selection";
-import { Hooks } from "./settings";
+import { Hooks, Settings } from "./settings";
 import {
-  Sheet,
-  Selection,
   Cell,
   CommentBox,
-  Rect,
-  Image,
-  Presence,
-  LinkCardProps,
-  FilterOptions,
-  RangeDialogProps,
-  DataRegulationProps,
   ConditionRulesProps,
+  DataRegulationProps,
+  FilterOptions,
   GlobalCache,
+  Image,
+  LinkCardProps,
+  Presence,
+  RangeDialogProps,
+  Rect,
+  Selection,
+  Sheet,
 } from "./types";
 import { getSheetIndex } from "./utils";
 
@@ -627,4 +627,63 @@ export function updateContextWithCanvas(
   canvas.height = Math.ceil(
     ctx.luckysheetTableContentHW[1] * ctx.devicePixelRatio
   );
+}
+
+export function loadSheetById(
+  ctx: Context,
+  sheetId: string,
+  defaultSettings: Required<Settings>
+) {
+  const sheet = api.getSheet(ctx, { id: sheetId });
+  if (!sheet) return;
+
+  // const { data } = sheet;
+  // expand cell data
+  // 一般初始化的时候数据已经整理完毕
+  // if (_.isEmpty(data)) {
+  //   const temp = initSheetData(ctx, sheet, sheetIdx);
+  //   if (!_.isNull(temp)) {
+  //     data = temp;
+  //   }
+  // }
+
+  ctx.luckysheet_select_save = [];
+
+  ctx.config = _.isNil(sheet.config) ? {} : sheet.config;
+  ctx.insertedImgs = sheet.images;
+
+  ctx.zoomRatio = _.isNil(sheet.zoomRatio) ? 1 : sheet.zoomRatio;
+
+  if (!_.isNil(sheet.defaultRowHeight)) {
+    ctx.defaultrowlen = Number(sheet.defaultRowHeight);
+  } else {
+    ctx.defaultrowlen = defaultSettings.defaultRowHeight;
+  }
+
+  if (!_.isNil(sheet.addRows)) {
+    ctx.addDefaultRows = Number(sheet.addRows);
+  } else {
+    ctx.addDefaultRows = defaultSettings.addRows;
+  }
+
+  if (!_.isNil(sheet.defaultColWidth)) {
+    ctx.defaultcollen = Number(sheet.defaultColWidth);
+  } else {
+    ctx.defaultcollen = defaultSettings.defaultColWidth;
+  }
+
+  if (!_.isNil(sheet.showGridLines)) {
+    const { showGridLines } = sheet;
+    if (showGridLines === 0 || showGridLines === false) {
+      ctx.showGridLines = false;
+    } else {
+      ctx.showGridLines = true;
+    }
+  } else {
+    ctx.showGridLines = true;
+  }
+  const data = getFlowdata(ctx, sheetId);
+  if (data) {
+    updateContextWithSheetData(ctx, data);
+  }
 }

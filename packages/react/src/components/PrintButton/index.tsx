@@ -1,15 +1,20 @@
 import React, { useContext } from "react";
 import { createRoot } from "react-dom/client";
 
-import "./index.css";
-import WorkbookContext, { IWorkbookContext } from "../../context";
+import { Context, Settings } from "@fortune-sheet/core";
+import WorkbookContext from "../../context";
 import Button from "../Toolbar/Button";
-import { PrintContainer } from "./PrintContainer";
+import { PrintContainer, PrintContext, PrintOptions } from "./PrintContainer";
+import "./index.css";
 
 const containerId = "fortunPrintContainer";
 const { print: originPrint } = window;
 
-async function printImage(context: IWorkbookContext) {
+export async function printExcel(
+  context: Context,
+  settings: Required<Settings>,
+  options: PrintOptions = {}
+) {
   let printElement = document.querySelector(`#${containerId}`);
   if (!printElement) {
     printElement = document.createElement("div");
@@ -21,13 +26,14 @@ async function printImage(context: IWorkbookContext) {
 
   await new Promise((resolve) => {
     root.render(
-      <WorkbookContext.Provider value={context}>
+      <PrintContext.Provider value={{ context, settings }}>
         <PrintContainer
+          options={options}
           onSuccess={() => {
             resolve(undefined);
           }}
         />
-      </WorkbookContext.Provider>
+      </PrintContext.Provider>
     );
   });
 
@@ -44,7 +50,7 @@ export const PrintButton = () => {
       tooltip="打印"
       key="print"
       onClick={() => {
-        printImage(workbookContext);
+        printExcel(workbookContext.context, workbookContext.settings);
       }}
     />
   );

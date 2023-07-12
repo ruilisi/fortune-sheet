@@ -1,17 +1,33 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
-import { handleScreenShot } from "@fortune-sheet/core";
-import WorkbookContext from "../../context";
+import {
+  Context,
+  Settings,
+  api,
+  handleScreenShotByRange,
+  loadSheetById,
+} from "@fortune-sheet/core";
+import produce from "immer";
+import React, {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import { PrintPageRange, computePrintPage, getCellRange } from "./divider";
 
+export const PrintContext = React.createContext<{
+  context: Context;
+  settings: Required<Settings>;
+}>({} as any);
+
 const PageContainer = ({ pageInfo }: { pageInfo: PrintPageRange }) => {
-  const { context } = useContext(WorkbookContext);
+  const { context } = useContext(PrintContext);
   const [loading, setLoading] = useState(true);
   const [src, setSrc] = useState("");
   useLayoutEffect(() => {
     (async function loadImage() {
       try {
-        const imgsrc = await handleScreenShot(context, {
-          noDefaultBorder: true,
+        const imgsrc = await handleScreenShotByRange(context, {
           range: pageInfo.range,
         });
         if (imgsrc) {
@@ -32,13 +48,53 @@ const PageContainer = ({ pageInfo }: { pageInfo: PrintPageRange }) => {
     </div>
   );
 };
-export const PrintContainer = ({ onSuccess }: { onSuccess: () => void }) => {
-  const { context } = useContext(WorkbookContext);
-  const range = getCellRange(context, context.currentSheetId, {
-    type: "value",
-  });
 
-  const { printPages } = computePrintPage(context, range);
+export const SheetContainer = ({ sheetId }: { sheetId: string }) => {
+  const { context, settings } = useContext(PrintContext);
+  const newContext = useMemo(() => {
+    return produce(context, (draftContext) => {
+      draftContext.currentSheetId = sheetId;
+      loadSheetById(draftContext, sheetId, settings);
+      draftContext.showGridLines = false;
+    });
+  }, [context, settings, sheetId]);
+
+  const { printPages } = useMemo(() => {
+    const range = getCellRange(newContext, newContext.currentSheetId, {
+      type: "value",
+    });
+
+    return computePrintPage(newContext, range);
+  }, [newContext]);
+
+  return (
+    <PrintContext.Provider
+      value={useMemo(
+        () => ({ settings, context: newContext }),
+        [newContext, settings]
+      )}
+    >
+      {printPages.map((page, index) => {
+        return <PageContainer pageInfo={page} key={index} />;
+      })}
+    </PrintContext.Provider>
+  );
+};
+
+export interface PrintOptions {
+  sheetIds?: string[];
+}
+
+export const PrintContainer = ({
+  onSuccess,
+  options,
+}: {
+  onSuccess: () => void;
+  options: PrintOptions;
+}) => {
+  const { context } = useContext(PrintContext);
+  const sheets = api.getAllSheets(context);
+
   useEffect(() => {
     const timer = setInterval(() => {
       const eles = document.querySelectorAll(".fortune-print-img-loading");
@@ -52,8 +108,16 @@ export const PrintContainer = ({ onSuccess }: { onSuccess: () => void }) => {
   }, [onSuccess]);
   return (
     <>
-      {printPages.map((page, index) => {
-        return <PageContainer pageInfo={page} key={index} />;
+      {sheets.map((sheet) => {
+        if (!sheet.id) {
+          return null;
+        }
+        if (options.sheetIds) {
+          if (!options.sheetIds.includes(sheet.id)) {
+            return null;
+          }
+        }
+        return <SheetContainer sheetId={sheet.id} key={sheet.id} />;
       })}
     </>
   );
