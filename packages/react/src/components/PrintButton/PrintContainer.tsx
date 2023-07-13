@@ -15,6 +15,10 @@ import React, {
 } from "react";
 import { PrintPageRange, computePrintPage, getCellRange } from "./divider";
 
+export interface PrintOptions {
+  sheetIds?: string[];
+}
+
 export const PrintContext = React.createContext<{
   context: Context;
   settings: Required<Settings>;
@@ -80,10 +84,6 @@ export const SheetContainer = ({ sheetId }: { sheetId: string }) => {
     </PrintContext.Provider>
   );
 };
-
-export interface PrintOptions {
-  sheetIds?: string[];
-}
 
 export const PrintContainer = ({
   onSuccess,

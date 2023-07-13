@@ -1,27 +1,29 @@
 import {
-  addSheet,
-  api,
   Cell,
-  Context,
-  deleteRowCol,
-  deleteSheet,
-  insertRowCol,
-  Op,
-  opToPatch,
-  Range,
-  Selection,
-  Presence,
-  Settings,
-  SingleRange,
-  createFilterOptions,
-  getSheetIndex,
-  Sheet,
   CellMatrix,
   CellWithRowAndCol,
+  Context,
+  Op,
+  Presence,
+  Range,
+  Selection,
+  Settings,
+  Sheet,
+  SingleRange,
+  addSheet,
+  api,
+  createFilterOptions,
+  deleteRowCol,
+  deleteSheet,
+  getSheetIndex,
+  insertRowCol,
+  opToPatch,
 } from "@fortune-sheet/core";
 import { applyPatches } from "immer";
 import _ from "lodash";
 import { SetContextOptions } from "../../context";
+import { printExcel } from "../PrintButton";
+import { PrintOptions } from "../PrintButton/PrintContainer";
 
 export function generateAPIs(
   context: Context,
@@ -316,6 +318,10 @@ export function generateAPIs(
       colCount?: number
     ) => {
       return api.celldataToData(celldata, rowCount, colCount);
+    },
+
+    printExcel: (options?: PrintOptions) => {
+      return printExcel(context, settings, options);
     },
   };
 }
