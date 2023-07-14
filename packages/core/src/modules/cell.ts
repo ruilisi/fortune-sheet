@@ -7,8 +7,8 @@ import { getFailureText, validateCellData } from "./dataVerification";
 import { genarate, update } from "./format";
 import {
   delFunctionGroup,
-  execfunction,
   execFunctionGroup,
+  execfunction,
   functionHTMLGenerate,
   getcellrange,
   iscelldata,
@@ -16,11 +16,11 @@ import {
 import {
   attrToCssName,
   convertSpanToShareString,
-  isInlineStringCell,
   isInlineStringCT,
+  isInlineStringCell,
 } from "./inline-string";
-import { isRealNull, isRealNum, valueIsError } from "./validation";
 import { getCellTextInfo } from "./text";
+import { isRealNull, isRealNum, valueIsError } from "./validation";
 
 // TODO put these in context ref
 // let rangestart = false;

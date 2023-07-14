@@ -1,13 +1,13 @@
-import React, { useState, useCallback } from "react";
-import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { Sheet } from "@fortune-sheet/core";
 import { Workbook } from "@fortune-sheet/react";
-import cell from "./data/cell";
-import formula from "./data/formula";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
+import React, { useCallback, useState } from "react";
+import cell, { autoSizeCellHeight } from "./data/cell";
+import dataVerification from "./data/dataVerification";
 import empty from "./data/empty";
+import formula from "./data/formula";
 import freeze from "./data/freeze";
 import print from "./data/print";
-import dataVerification from "./data/dataVerification";
 
 export default {
   component: Workbook,
@@ -31,7 +31,7 @@ const Template: ComponentStory<typeof Workbook> = ({
 
 export const Basic = Template.bind({});
 // @ts-ignore
-Basic.args = { data: [cell] };
+Basic.args = { data: [autoSizeCellHeight, cell] };
 
 export const Formula = Template.bind({});
 // @ts-ignore

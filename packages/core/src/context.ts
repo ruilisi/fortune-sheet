@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { SheetConfig, api } from ".";
+import { initSheetRowlen } from "./api";
 import { FormulaCache } from "./modules";
 import { normalizeSelection } from "./modules/selection";
 import { Hooks, Settings } from "./settings";
@@ -634,8 +635,9 @@ export function loadSheetById(
   sheetId: string,
   defaultSettings: Required<Settings>
 ) {
+  const sheetIndex = getSheetIndex(ctx, sheetId);
   const sheet = api.getSheet(ctx, { id: sheetId });
-  if (!sheet) return;
+  if (!sheet || _.isNil(sheetIndex)) return;
 
   // const { data } = sheet;
   // expand cell data
@@ -686,4 +688,6 @@ export function loadSheetById(
   if (data) {
     updateContextWithSheetData(ctx, data);
   }
+
+  initSheetRowlen(ctx, sheetIndex);
 }

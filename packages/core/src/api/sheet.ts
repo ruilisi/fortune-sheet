@@ -1,10 +1,17 @@
 import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
-import { dataToCelldata, getSheet } from "./common";
+import {
+  api,
+  execfunction,
+  getCellTextInfo,
+  insertUpdateFunctionGroup,
+  isInlineStringCell,
+  locale,
+} from "..";
 import { Context } from "../context";
 import { CellMatrix, CellWithRowAndCol, Sheet } from "../types";
 import { getSheetIndex } from "../utils";
-import { api, execfunction, insertUpdateFunctionGroup, locale } from "..";
+import { dataToCelldata, getSheet } from "./common";
 
 export function getAllSheets(ctx: Context) {
   return ctx.luckysheetfile;
@@ -47,6 +54,62 @@ export function initSheetData(
     return expandedData;
   }
   return null;
+}
+const canvas = document.createElement("canvas");
+const renderCtx = canvas.getContext("2d");
+export function initSheetRowlen(draftCtx: Context, index: number) {
+  const sheetfile = draftCtx.luckysheetfile[index];
+  const cfg = sheetfile.config;
+  if (_.isNil(cfg)) {
+    return;
+  }
+  const { defaultrowlen } = draftCtx;
+  const rowlen: Record<string, number> = cfg.rowlen ?? {};
+  sheetfile.data?.forEach((row, r) => {
+    const customHeight = cfg.customHeight?.[r];
+    if (customHeight || cfg?.rowlen?.[r]) {
+      return;
+    }
+    row.forEach((cell, c) => {
+      if (_.isEmpty(cell)) {
+        return;
+      }
+      if (isInlineStringCell(cell) || (cell?.tb === "2" && cell.v)) {
+        // let currentRowLen = defaultrowlen;
+        // if(!_.isNil(cfg["rowlen"][r])){
+        //     currentRowLen = cfg["rowlen"][r];
+        // }
+
+        let cellWidth = cfg.columnlen?.[c] || draftCtx.defaultcollen;
+        // mergedCell
+        if (cell.mc?.cs) {
+          _.range(1, cell.mc.cs).forEach((offsetC) => {
+            cellWidth += cfg.columnlen?.[c + offsetC] || draftCtx.defaultcollen;
+          });
+        }
+
+        const textInfo = renderCtx
+          ? getCellTextInfo(cell, renderCtx, draftCtx, {
+              r,
+              c,
+              cellWidth,
+            })
+          : null;
+
+        let currentRowLen = defaultrowlen;
+        // console.log("rowlen", textInfo);
+        if (textInfo) {
+          currentRowLen = textInfo.textHeightAll + 2;
+        }
+
+        if (currentRowLen > defaultrowlen) {
+          rowlen[r] = Math.max(currentRowLen, rowlen[r] ?? 0);
+        }
+      }
+    });
+  });
+
+  cfg.rowlen = Object.assign(cfg.rowlen ?? {}, rowlen);
 }
 
 export function hideSheet(ctx: Context, sheetId: string) {

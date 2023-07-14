@@ -1,54 +1,55 @@
 import {
+  CellMatrix,
+  CellWithRowAndCol,
+  Context,
+  GlobalCache,
+  Op,
+  Settings,
+  Sheet as SheetType,
+  api,
+  calcSelectionInfo,
   defaultContext,
   defaultSettings,
-  Settings,
-  Context,
-  initSheetIndex,
-  CellWithRowAndCol,
-  GlobalCache,
-  Sheet as SheetType,
-  handleGlobalKeyDown,
-  getSheetIndex,
-  handlePaste,
-  filterPatch,
-  patchToOp,
-  Op,
-  inverseRowColOptions,
   ensureSheetIndex,
-  CellMatrix,
+  filterPatch,
+  getSheetIndex,
+  handleGlobalKeyDown,
+  handlePaste,
+  initSheetIndex,
   insertRowCol,
+  inverseRowColOptions,
   locale,
-  calcSelectionInfo,
+  patchToOp,
 } from "@fortune-sheet/core";
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-  useImperativeHandle,
-} from "react";
-import "./index.css";
 import produce, {
+  Patch,
   applyPatches,
   enablePatches,
-  Patch,
   produceWithPatches,
 } from "immer";
 import _ from "lodash";
-import Sheet from "../Sheet";
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import WorkbookContext, { SetContextOptions } from "../../context";
-import Toolbar from "../Toolbar";
-import FxEditor from "../FxEditor";
-import SheetTab from "../SheetTab";
+import { ModalProvider } from "../../context/modal";
 import ContextMenu from "../ContextMenu";
-import SVGDefines from "../SVGDefines";
+import FilterMenu from "../ContextMenu/FilterMenu";
 import SheetTabContextMenu from "../ContextMenu/SheetTab";
+import FxEditor from "../FxEditor";
+import SVGDefines from "../SVGDefines";
+import Sheet from "../Sheet";
+import SheetList from "../SheetList";
+import SheetTab from "../SheetTab";
+import Toolbar from "../Toolbar";
 import MoreItemsContaier from "../Toolbar/MoreItemsContainer";
 import { generateAPIs } from "./api";
-import { ModalProvider } from "../../context/modal";
-import FilterMenu from "../ContextMenu/FilterMenu";
-import SheetList from "../SheetList";
+import "./index.css";
 
 enablePatches();
 
@@ -515,6 +516,10 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               // @ts-ignore
               navigator.userLanguage; // 兼容IE浏览器
             draftCtx.lang = lang;
+          }
+          const renderCtx = canvas.current?.getContext("2d");
+          if (renderCtx) {
+            api.initSheetRowlen(draftCtx, sheetIdx);
           }
         },
         { noHistory: true }
