@@ -105,7 +105,15 @@ const FxEditor: React.FC = () => {
         // formula.rangeResizeTo = $("#luckysheet-functionbox-cell");
       });
     }
-  }, [context, refs.globalCache, setContext]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    context.config,
+    context.luckysheet_select_save,
+    context.luckysheetfile,
+    context.currentSheetId,
+    refs.globalCache,
+    setContext,
+  ]);
 
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -276,7 +284,14 @@ const FxEditor: React.FC = () => {
       return false;
     }
     return true;
-  }, [context, isHidenRC]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    context.config,
+    context.luckysheet_select_save,
+    context.luckysheetfile,
+    context.currentSheetId,
+    isHidenRC,
+  ]);
 
   return (
     <div className="fortune-fx-editor">
