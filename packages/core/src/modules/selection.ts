@@ -621,7 +621,8 @@ export function colHasMerged(ctx: Context, c: number, r1: number, r2: number) {
   const flowData = getFlowdata(ctx);
   if (_.isNil(flowData)) return false;
   for (let r = r1; r <= r2; r += 1) {
-    const cell = flowData[r][c];
+    const rFlowData = flowData[r];
+    const cell = _.isNil(rFlowData) ? null : rFlowData[c];
     if (
       !_.isNil(ctx.config.merge) &&
       !_.isNil(cell) &&
