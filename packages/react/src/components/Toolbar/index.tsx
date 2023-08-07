@@ -292,7 +292,7 @@ const Toolbar: React.FC<{
                           <SVGIcon name="rightArrow" width={14} />
                         </div>
                         <div
-                          className="more-format toolbar-item-sub-menu"
+                          className="more-format toolbar-item-sub-menu fortune-toolbar-select"
                           style={{
                             display: "none",
                             width: 150,
@@ -315,7 +315,7 @@ const Toolbar: React.FC<{
                             },
                           ].map((v) => (
                             <div
-                              className="set-background-item"
+                              className="set-background-item fortune-toolbar-select-option"
                               key={v.text}
                               onClick={() => {
                                 v.onclick();

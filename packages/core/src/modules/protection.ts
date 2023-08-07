@@ -2,6 +2,29 @@ import _ from "lodash";
 import { Context } from "../context";
 import { getSheetByIndex } from "../utils";
 
+export function checkCellIsLocked(
+  ctx: Context,
+  r: number,
+  c: number,
+  sheetId: string
+) {
+  const sheetFile = getSheetByIndex(ctx, sheetId);
+  if (_.isNil(sheetFile)) {
+    return false;
+  }
+  const { data } = sheetFile;
+  const cell = data?.[r]?.[c];
+  // cell have lo attribute
+  if (!_.isNil(cell?.lo)) {
+    return !!cell?.lo;
+  }
+
+  // default locked status from sheet config
+  const aut = sheetFile.config?.authority;
+  const sheetInEditable = _.isNil(aut) || _.isNil(aut.sheet) || aut.sheet === 0;
+  return !sheetInEditable;
+}
+
 export function checkProtectionSelectLockedOrUnLockedCells(
   ctx: Context,
   r: number,

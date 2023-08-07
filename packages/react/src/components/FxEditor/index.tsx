@@ -12,6 +12,7 @@ import {
   valueShowEs,
   isShowHidenCR,
   escapeHTMLTag,
+  isAllowEdit,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -19,6 +20,7 @@ import React, {
   useCallback,
   useEffect,
   useRef,
+  useMemo,
 } from "react";
 import "./index.css";
 import _ from "lodash";
@@ -85,7 +87,8 @@ const FxEditor: React.FC = () => {
     }
     if (
       (context.luckysheet_select_save?.length ?? 0) > 0 &&
-      !context.luckysheet_cell_selected_move
+      !context.luckysheet_cell_selected_move &&
+      isAllowEdit(context, context.luckysheet_select_save)
     ) {
       setFocused(true);
       setContext((draftCtx) => {
@@ -102,10 +105,12 @@ const FxEditor: React.FC = () => {
         // formula.rangeResizeTo = $("#luckysheet-functionbox-cell");
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    context.allowEdit,
-    context.luckysheet_cell_selected_move,
-    context.luckysheet_select_save?.length,
+    context.config,
+    context.luckysheet_select_save,
+    context.luckysheetfile,
+    context.currentSheetId,
     refs.globalCache,
     setContext,
   ]);
@@ -268,6 +273,26 @@ const FxEditor: React.FC = () => {
     }
   }, [refs.cellInput, refs.fxInput, setContext]);
 
+  const allowEdit = useMemo(() => {
+    if (context.allowEdit === false) {
+      return false;
+    }
+    if (isHidenRC) {
+      return false;
+    }
+    if (!isAllowEdit(context, context.luckysheet_select_save)) {
+      return false;
+    }
+    return true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    context.config,
+    context.luckysheet_select_save,
+    context.luckysheetfile,
+    context.currentSheetId,
+    isHidenRC,
+  ]);
+
   return (
     <div className="fortune-fx-editor">
       <NameBox />
@@ -287,9 +312,7 @@ const FxEditor: React.FC = () => {
           onChange={onChange}
           onBlur={() => setFocused(false)}
           tabIndex={0}
-          allowEdit={
-            context.allowEdit === true ? !isHidenRC : context.allowEdit
-          }
+          allowEdit={allowEdit}
         />
         {focused && (
           <>

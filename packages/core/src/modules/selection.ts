@@ -605,7 +605,7 @@ export function selectionCopyShow(range: any, ctx: Context) {
 export function rowHasMerged(ctx: Context, r: number, c1: number, c2: number) {
   let hasMerged = false;
   const flowData = getFlowdata(ctx);
-  if (_.isNil(flowData)) return false;
+  if (_.isNil(flowData) || _.isNil(flowData[r])) return false;
   for (let c = c1; c <= c2; c += 1) {
     const cell = flowData[r][c];
     if (!_.isNil(cell) && "mc" in cell) {
@@ -621,7 +621,7 @@ export function colHasMerged(ctx: Context, c: number, r1: number, r2: number) {
   const flowData = getFlowdata(ctx);
   if (_.isNil(flowData)) return false;
   for (let r = r1; r <= r2; r += 1) {
-    const cell = flowData[r][c];
+    const cell = flowData[r]?.[c];
     if (
       !_.isNil(ctx.config.merge) &&
       !_.isNil(cell) &&
