@@ -97,7 +97,7 @@ const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
   return filterOptions == null ? (
     <div />
   ) : (
-    <div>
+    <>
       <div
         id="luckysheet-filter-selected-sheet"
         className="luckysheet-cell-selected luckysheet-filter-selected"
@@ -184,7 +184,7 @@ const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
           </div>
         );
       })}
-    </div>
+    </>
   );
 };
 
