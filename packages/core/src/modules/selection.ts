@@ -51,95 +51,18 @@ export function scrollToHighlightCell(ctx: Context, r: number, c: number) {
   const col = ctx.visibledatacolumn[c];
   const col_pre = c - 1 === -1 ? 0 : ctx.visibledatacolumn[c - 1];
 
-  const colRangeStart = ctx.luckysheet_select_save?.[0].column[0];
-  const colRangeEnd = ctx.luckysheet_select_save?.[0].column[1];
-  const rowRangeStart = ctx.luckysheet_select_save?.[0].row[0];
-  const rowRangeEnd = ctx.luckysheet_select_save?.[0].row[1];
-
-  const selectionColumnFocus = ctx.luckysheet_select_save?.[0].column_focus;
-  const selectionRowFocus = ctx.luckysheet_select_save?.[0].row_focus;
-
-  let scrollAmount = Math.max(20, freezeW);
-
-  // Rightward movement of cell/selection
   if (col - scrollLeft - winW + 20 > 0) {
-    // If selection size is shrinking towards right
-    const isShrinking = colRangeEnd === selectionColumnFocus;
-    // If selection is shrinking, then scroll to keep the rightmost cell in selection visible
-    if (isShrinking && colRangeStart && colRangeStart !== colRangeEnd) {
-      const colRangeStart_pre = Math.max(0, colRangeStart - 1);
-      if (colRangeStart_pre < column_focus) ctx.scrollLeft = 0;
-      else
-        ctx.scrollLeft =
-          ctx.visibledatacolumn[colRangeStart_pre] - scrollAmount;
-    }
-    // Otherwise just scroll by fixed amount
-    else ctx.scrollLeft = ctx.visibledatacolumn[frozen ? c + 1 : c] - winW + 20;
-  }
-  // Leftward movement of cell/selection
-  else if (col_pre - scrollLeft - freezeW < 0) {
-    // If selection size is shrinking towards left
-    const isShrinking = colRangeStart === selectionColumnFocus;
-    // If selection is shrinking, then scroll to keep the leftmost cell in selection visible
-    if (
-      isShrinking &&
-      colRangeEnd &&
-      colRangeStart !== colRangeEnd &&
-      ctx.visibledatacolumn[colRangeEnd] < ctx.scrollLeft + winW
-    ) {
-      ctx.scrollLeft =
-        ctx.visibledatacolumn[frozen ? colRangeEnd + 1 : colRangeEnd] -
-        winW +
-        scrollAmount;
-    }
-    // Otherwise just scroll by fixed amount
-    else ctx.scrollLeft = col_pre - scrollAmount;
+    ctx.scrollLeft = col - winW + 20;
+  } else if (col_pre - scrollLeft - freezeW < 0) {
+    const scrollAmount = Math.max(20, freezeW);
+    ctx.scrollLeft = col_pre - scrollAmount;
   }
 
-  scrollAmount = Math.max(20, freezeH);
-
-  // Downward movement of cell/selection
   if (row - scrollTop - winH + 20 > 0) {
-    const isShrinking = rowRangeEnd === selectionRowFocus;
-    // If selection is shrinking, then scroll to keep the topmost cell in selection visible
-    if (isShrinking && rowRangeStart && rowRangeStart !== rowRangeEnd) {
-      const rowRangeStart_pre = Math.max(0, rowRangeStart - 1);
-      // Don't scroll if topmost cell is within frozen range
-      if (rowRangeStart_pre < row_focus) ctx.scrollTop = 0;
-      else ctx.scrollTop = ctx.visibledatarow[rowRangeStart_pre] - scrollAmount;
-    }
-    // Otherwise just scroll by fixed amount
-    else ctx.scrollTop = row - winH + 20;
-  }
-  // Upward movement of cell/selection
-  else if (row_pre - scrollTop - freezeH < 0) {
-    const isShrinking = rowRangeStart === selectionRowFocus;
-
-    // If selection is shrinking, then scroll to keep the bottom most cell in selection visible
-    if (
-      isShrinking &&
-      rowRangeEnd &&
-      rowRangeStart !== rowRangeEnd &&
-      ctx.visibledatarow[rowRangeEnd] < ctx.scrollTop + winH
-    ) {
-      ctx.scrollTop = ctx.visibledatarow[rowRangeEnd] - winH + scrollAmount;
-    }
-    // Otherwise just scroll by fixed amount
-    else {
-      ctx.scrollTop = row_pre - scrollAmount;
-    }
-  } else if (
-    frozen &&
-    rowRangeEnd &&
-    colRangeEnd &&
-    (rowRangeStart !== rowRangeEnd || colRangeStart !== colRangeEnd)
-  ) {
-    if (ctx.visibledatarow[rowRangeEnd] + 20 < scrollTop + winH) {
-      ctx.scrollTop = Math.max(0, ctx.scrollTop - scrollAmount);
-    }
-    if (ctx.visibledatacolumn[colRangeEnd] + 20 < scrollLeft + winW) {
-      ctx.scrollLeft = Math.max(0, ctx.scrollLeft - scrollAmount);
-    }
+    ctx.scrollTop = row - winH + 20;
+  } else if (row_pre - scrollTop - freezeH < 0) {
+    const scrollAmount = Math.max(20, freezeH);
+    ctx.scrollTop = row_pre - scrollAmount;
   }
 }
 
