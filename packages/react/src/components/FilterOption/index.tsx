@@ -91,8 +91,19 @@ const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
     ]
   );
 
-  const frozenColumns = frozen?.range?.column_focus || -1;
-  const frozenRows = frozen?.range?.row_focus || -1;
+  const freezeType = frozen?.type;
+  let frozenColumns = -1;
+  let frozenRows = -1;
+
+  if (freezeType === "row") frozenRows = 0;
+  else if (freezeType === "column") frozenColumns = 0;
+  else if (freezeType === "both") {
+    frozenColumns = 0;
+    frozenRows = 0;
+  } else {
+    frozenColumns = frozen?.range?.column_focus || -1;
+    frozenRows = frozen?.range?.row_focus || -1;
+  }
 
   return filterOptions == null ? (
     <div />
