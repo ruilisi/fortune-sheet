@@ -154,13 +154,12 @@ const ColumnHeader: React.FC = () => {
           draftCtx,
           settings,
           nativeEvent,
-          refs.workbookContainer.current!,
           refs.cellArea.current!,
           "columnHeader"
         );
       });
     },
-    [refs.workbookContainer, setContext, settings, refs.cellArea]
+    [setContext, settings, refs.cellArea]
   );
 
   useEffect(() => {

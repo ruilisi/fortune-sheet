@@ -429,7 +429,11 @@ const FilterMenu: React.FC = () => {
         className="fortune-context-menu luckysheet-cols-menu fortune-filter-menu"
         id="luckysheet-\${menuid}-menu"
         ref={containerRef}
-        style={{ left: filterContextMenu.x, top: filterContextMenu.y }}
+        style={{
+          left: filterContextMenu.x,
+          top: filterContextMenu.y,
+          position: "fixed",
+        }}
       >
         {settings.filterContextMenu?.map((name, i) => {
           if (name === "|") {

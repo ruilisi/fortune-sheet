@@ -673,7 +673,7 @@ const ContextMenu: React.FC = () => {
       className="fortune-context-menu luckysheet-cols-menu"
       ref={containerRef}
       onContextMenu={(e) => e.stopPropagation()}
-      style={{ left: contextMenu.x, top: contextMenu.y }}
+      style={{ left: contextMenu.x, top: contextMenu.y, position: "fixed" }}
     >
       {context.contextMenu.headerMenu === true
         ? settings.headerContextMenu.map((menu, i) => getMenuElement(menu, i))

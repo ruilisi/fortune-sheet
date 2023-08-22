@@ -143,13 +143,12 @@ const RowHeader: React.FC = () => {
           draftCtx,
           settings,
           nativeEvent,
-          refs.workbookContainer.current!,
           refs.cellArea.current!,
           "rowHeader"
         );
       });
     },
-    [refs.workbookContainer, setContext, settings, refs.cellArea]
+    [setContext, settings, refs.cellArea]
   );
 
   useEffect(() => {

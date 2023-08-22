@@ -1386,7 +1386,6 @@ export function handleContextMenu(
   ctx: Context,
   settings: Settings,
   e: MouseEvent,
-  workbookContainer: HTMLDivElement,
   container: HTMLDivElement,
   area: "cell" | "rowHeader" | "columnHeader"
 ) {
@@ -1400,7 +1399,6 @@ export function handleContextMenu(
   //   //非编辑模式下禁止右键功能框
   //   return;
   // }
-  const workbookRect = workbookContainer.getBoundingClientRect();
 
   const { cellContextMenu } = settings;
 
@@ -1420,8 +1418,8 @@ export function handleContextMenu(
   }
 
   // relative to the workbook container
-  const x = e.pageX - workbookRect.left + workbookRect.x;
-  const y = e.pageY - workbookRect.top + workbookRect.y;
+  const x = e.pageX;
+  const y = e.pageY;
   // showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
   ctx.contextMenu = {
     x,
