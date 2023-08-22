@@ -9,6 +9,7 @@ module.exports = {
     "airbnb",
     "plugin:prettier/recommended",
     "plugin:jest/recommended",
+    "plugin:storybook/recommended",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {

@@ -1,0 +1,17 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "chrome": 100,
+          "safari": 15,
+          "firefox": 91
+        }
+      }
+    ],
+	"@babel/preset-flow",
+	"@babel/preset-typescript",
+	"@babel/preset-react"
+  ]
+}
