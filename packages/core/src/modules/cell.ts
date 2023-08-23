@@ -153,6 +153,10 @@ export function setCellValue(
         delete cell.f;
       }
 
+      // if (!_.isNil(v.spl)) {
+      //   cell.spl = v.spl;
+      // }
+
       if (!_.isNil(v.ct)) {
         cell.ct = v.ct;
       }
