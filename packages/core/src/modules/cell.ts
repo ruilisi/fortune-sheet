@@ -143,6 +143,10 @@ export function setCellValue(
 
   let vupdate;
 
+  if (!_.isNil(v.v) && _.includes(v.ct?.fa, "0.0")) {
+    v.v = _.replace(v.v.toString(), ",", ".");
+  }
+
   if (_.isPlainObject(v)) {
     if (_.isNil(cell)) {
       cell = v;
