@@ -1,4 +1,3 @@
-import { dirname, join } from "path";
 module.exports = {
   stories: [
     "../stories/**/*.stories.mdx",
@@ -6,21 +5,18 @@ module.exports = {
   ],
 
   addons: [
-    getAbsolutePath("@storybook/addon-links"),
-    getAbsolutePath("@storybook/addon-essentials"),
-    getAbsolutePath("@storybook/addon-interactions"),
+    "@storybook/addon-links",
+    "@storybook/addon-essentials",
+    "@storybook/addon-interactions",
   ],
 
   framework: {
-    name: getAbsolutePath("@storybook/react-webpack5"),
+    name: "@storybook/react-webpack5",
     options: {}
   },
 
   docs: {
-    autodocs: true
+    autodocs: false
   }
 };
 
-function getAbsolutePath(value) {
-  return dirname(require.resolve(join(value, "package.json")));
-}
