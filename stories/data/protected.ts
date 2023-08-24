@@ -12,6 +12,22 @@ const protectedSheet = {
   ],
 };
 
+const partialEditableSheet = {
+  name: "partial editable",
+  config: {
+    colReadOnly: { "1": 1 },
+    rowReadOnly: { "1": 1 },
+    columnlen: {
+      "0": 200,
+      "1": 200,
+    },
+  },
+  celldata: [
+    { r: 0, c: 1, v: { v: "protected column" } },
+    { r: 1, c: 0, v: { v: "protected row" } },
+  ],
+};
+
 const editableSheet = {
   name: "editable",
   celldata: [
@@ -20,6 +36,7 @@ const editableSheet = {
     { r: 0, c: 2, v: { v: "default can edit" } },
   ],
 };
-const lockcellData = [protectedSheet, editableSheet];
+
+const lockcellData = [protectedSheet, partialEditableSheet, editableSheet];
 
 export default lockcellData;
