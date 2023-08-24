@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { Sheet } from "@fortune-sheet/core";
 import { Workbook } from "@fortune-sheet/react";
 import cell from "./data/cell";
@@ -11,9 +11,9 @@ import lockcellData from "./data/protected";
 
 export default {
   component: Workbook,
-} as ComponentMeta<typeof Workbook>;
+} as Meta<typeof Workbook>;
 
-const Template: ComponentStory<typeof Workbook> = ({
+const Template: StoryFn<typeof Workbook> = ({
   // eslint-disable-next-line react/prop-types
   data: data0,
   ...args
@@ -58,7 +58,7 @@ ProtectedSheet.args = {
   data: lockcellData,
 };
 
-export const MultiInstance: ComponentStory<typeof Workbook> = () => {
+export const MultiInstance: StoryFn<typeof Workbook> = () => {
   return (
     <div
       style={{

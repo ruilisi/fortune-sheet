@@ -5,7 +5,7 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { Sheet, Op, Selection, colors } from "@fortune-sheet/core";
 import { Workbook, WorkbookInstance } from "@fortune-sheet/react";
 import { v4 as uuidv4 } from "uuid";
@@ -13,9 +13,9 @@ import { hashCode } from "./utils";
 
 export default {
   component: Workbook,
-} as ComponentMeta<typeof Workbook>;
+} as Meta<typeof Workbook>;
 
-const Template: ComponentStory<typeof Workbook> = ({ ...args }) => {
+const Template: StoryFn<typeof Workbook> = ({ ...args }) => {
   const [data, setData] = useState<Sheet[]>();
   const [error, setError] = useState(false);
   const wsRef = useRef<WebSocket>();
