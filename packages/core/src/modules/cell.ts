@@ -284,6 +284,21 @@ export function setCellValue(
     } else if (!_.isNil(cell.ct) && cell.ct.fa === "@") {
       cell.m = vupdateStr;
       cell.v = vupdate;
+    } else if (!_.isNil(cell.ct) && !_.isNil(cell.ct.t) && cell.ct.t === "d") {
+      const mask = genarate(vupdate);
+      if (_.isNil(mask)) {
+        cell.m = !_.isNil(cell.ct.fa)
+          ? update(cell.ct.fa, vupdate).toString()
+          : vupdate;
+        cell.v = vupdate;
+        return;
+      }
+      if (mask?.[1].fa === cell.ct.fa) {
+        [cell.m, , cell.v] = mask;
+        return;
+      }
+      cell.m = vupdate;
+      cell.v = vupdate;
     } else if (
       !_.isNil(cell.ct) &&
       !_.isNil(cell.ct.fa) &&
