@@ -1,4 +1,6 @@
 import _, { isPlainObject } from "lodash";
+// @ts-ignore
+import numfmt from "numfmt";
 import type { Sheet as SheetType, Freezen, Range } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
@@ -20,8 +22,6 @@ import {
 } from "../utils";
 import { hasPartMC } from "./validation";
 import { update } from "./format";
-// @ts-ignore
-import SSF from "./ssf";
 import { CFSplitRange } from "./ConditionFormat";
 
 export const selectionCache = {
@@ -2380,9 +2380,9 @@ export function calcSelectionInfo(ctx: Context, lang?: string | null) {
   }
   const formatString =
     lang && !["zh", "zh_tw"].includes(lang) ? "0.00" : "w0.00";
-  const average: string = SSF.format(formatString, sum / numberC);
-  sum = SSF.format(formatString, sum);
-  max = SSF.format(formatString, max);
-  min = SSF.format(formatString, min);
+  const average: string = numfmt.format(formatString, sum / numberC);
+  sum = numfmt.format(formatString, sum);
+  max = numfmt.format(formatString, max);
+  min = numfmt.format(formatString, min);
   return { numberC, count, sum, max, min, average };
 }
