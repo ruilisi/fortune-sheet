@@ -2363,9 +2363,13 @@ export function calcSelectionInfo(ctx: Context, lang?: string | null) {
       for (let c = 0; c < data[0].length; c += 1) {
         // 防止选区长度超出data
         if (r >= data.length || c >= data[0].length) break;
+        const ct = data![r][c]?.ct?.t as string;
         const value = data![r][c]?.m as string;
         // 判断是不是数字
-        if (parseFloat(value).toString() !== "NaN") {
+        if (
+          ct === "n" ||
+          (ct === "g" && parseFloat(value).toString() !== "NaN")
+        ) {
           const valueNumber = parseFloat(value);
           count += 1;
           sum += valueNumber;
