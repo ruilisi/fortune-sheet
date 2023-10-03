@@ -431,6 +431,30 @@ Like `setCellFormat`, but set multiple cell formats in one shot.
 | range | { row: number[], column: number[] } | range of cells to be set |
 | [options] | [CommonOptions](#commonoptions) | common options |
 
+Example:
+
+```tsx
+import { Workbook, WorkbookInstance } from "@fortune-sheet/react";
+
+const ExampleComponent = () => {
+  const ref = useRef < WorkbookInstance > null;
+
+  useEffect(() => {
+    // Sets A1:C3 to use the Arial font.
+    ref.current?.setCellFormatByRange("ff", "Arial", {
+      column: [0, 2],
+      row: [0, 2],
+    });
+  }, []);
+
+  return (
+    <>
+      <Workbook ref={ref} />
+    </>
+  );
+};
+```
+
 ---
 
 ### mergeCells
