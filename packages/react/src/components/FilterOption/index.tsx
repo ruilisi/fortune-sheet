@@ -51,24 +51,20 @@ const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
     ) => {
       if (filterOptions == null) return;
       setContext((draftCtx) => {
-        const container = getContainer();
-        const workbookRect =
-          refs.workbookContainer.current!.getBoundingClientRect();
         if (draftCtx.filterContextMenu?.col === filterOptions.startCol + i)
           return;
         draftCtx.filterContextMenu = {
           x:
             v.left +
             draftCtx.rowHeaderWidth -
-            refs.scrollbarX.current!.scrollLeft +
-            workbookRect.x,
+            refs.scrollbarX.current!.scrollLeft,
           y:
             v.top +
-            20 +
-            container.getBoundingClientRect().y +
+            23 +
+            draftCtx.toolbarHeight +
+            draftCtx.calculatebarHeight +
             draftCtx.columnHeaderHeight -
-            refs.scrollbarY.current!.scrollTop +
-            workbookRect.y,
+            refs.scrollbarY.current!.scrollTop,
           col: filterOptions.startCol + i,
           startRow: filterOptions.startRow,
           endRow: filterOptions.endRow,

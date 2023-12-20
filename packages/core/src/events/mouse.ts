@@ -1420,8 +1420,8 @@ export function handleContextMenu(
   }
 
   // relative to the workbook container
-  const x = e.pageX - workbookRect.left + workbookRect.x;
-  const y = e.pageY - workbookRect.top + workbookRect.y;
+  const x = e.pageX - workbookRect.left;
+  const y = e.pageY - workbookRect.top;
   // showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
   ctx.contextMenu = {
     x,

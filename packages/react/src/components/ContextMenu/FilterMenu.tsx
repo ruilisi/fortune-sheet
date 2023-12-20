@@ -143,7 +143,7 @@ const DateSelectTree: React.FC<{
 };
 
 const FilterMenu: React.FC = () => {
-  const { context, setContext, settings } = useContext(WorkbookContext);
+  const { context, setContext, settings, refs } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const contextRef = useRef<Context>(context);
   const byColorMenuRef = useRef<HTMLDivElement>(null);
@@ -329,6 +329,11 @@ const FilterMenu: React.FC = () => {
     const winH = window.innerHeight;
     const winW = window.innerWidth;
     const rect = containerRef.current.getBoundingClientRect();
+    const workbookRect =
+      refs.workbookContainer.current?.getBoundingClientRect();
+    if (!workbookRect) {
+      return;
+    }
     const menuW = rect.width;
     // menu最小高度
     const menuH = 350;
@@ -336,11 +341,11 @@ const FilterMenu: React.FC = () => {
     let left = filterContextMenu.x;
 
     let hasOverflow = false;
-    if (left + menuW > winW) {
+    if (workbookRect.left + left + menuW > winW) {
       left -= menuW;
       hasOverflow = true;
     }
-    if (top + menuH > winH) {
+    if (workbookRect.top + top + menuH > winH) {
       top -= menuH;
       hasOverflow = true;
     }
@@ -371,19 +376,16 @@ const FilterMenu: React.FC = () => {
   }, [filterContextMenu, setContext]);
 
   useLayoutEffect(() => {
+    if (!subMenuPos) return;
     // re-position the subMenu if it overflows the window
     const rect = byColorMenuRef.current?.getBoundingClientRect();
     const subMenuRect = subMenuRef.current?.getBoundingClientRect();
     if (rect == null || subMenuRect == null) return;
-    if (subMenuPos!.left! < rect.right) return;
+
     const winW = window.innerWidth;
-    let hasOverflow = false;
-    const pos = { top: rect.top - 5 };
-    if (rect.right + subMenuRect.width > winW) {
-      hasOverflow = true;
-      _.set(pos, "left", rect.left - subMenuRect.width);
-    }
-    if (hasOverflow) {
+    const pos = _.cloneDeep(subMenuPos);
+    if (subMenuRect.left + subMenuRect.width > winW) {
+      pos.left! -= subMenuRect.width;
       setSubMenuPos(pos);
     }
   }, [subMenuPos]);

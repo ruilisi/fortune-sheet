@@ -30,7 +30,7 @@ import CustomSort from "../CustomSort";
 const ContextMenu: React.FC = () => {
   const { showDialog } = useDialog();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { context, setContext, settings } = useContext(WorkbookContext);
+  const { context, setContext, settings, refs } = useContext(WorkbookContext);
   const { contextMenu } = context;
   const { showAlert } = useAlert();
   const { rightclick, drag, generalDialog, info } = locale(context);
@@ -640,17 +640,22 @@ const ContextMenu: React.FC = () => {
     const winH = window.innerHeight;
     const winW = window.innerWidth;
     const rect = containerRef.current.getBoundingClientRect();
+    const workbookRect =
+      refs.workbookContainer.current?.getBoundingClientRect();
+    if (!workbookRect) {
+      return;
+    }
     const menuW = rect.width;
     const menuH = rect.height;
     let top = contextMenu.y || 0;
     let left = contextMenu.x || 0;
 
     let hasOverflow = false;
-    if (left + menuW > winW) {
+    if (workbookRect.left + left + menuW > winW) {
       left -= menuW;
       hasOverflow = true;
     }
-    if (top + menuH > winH) {
+    if (workbookRect.top + top + menuH > winH) {
       top -= menuH;
       hasOverflow = true;
     }
