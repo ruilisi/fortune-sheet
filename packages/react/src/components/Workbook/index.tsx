@@ -37,7 +37,7 @@ import produce, {
 } from "immer";
 import _ from "lodash";
 import Sheet from "../Sheet";
-import WorkbookContext, { SetContextOptions } from "../../context";
+import WorkbookContext, { RefValues, SetContextOptions } from "../../context";
 import Toolbar from "../Toolbar";
 import FxEditor from "../FxEditor";
 import SheetTab from "../SheetTab";
@@ -62,8 +62,6 @@ type AdditionalProps = {
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
   ({ onChange, onOp, data: originalData, ...props }, ref) => {
     const globalCache = useRef<GlobalCache>({ undoList: [], redoList: [] });
-    const [context, setContext] = useState(defaultContext(globalCache.current));
-    const { formula } = locale(context);
     const cellInput = useRef<HTMLDivElement>(null);
     const fxInput = useRef<HTMLDivElement>(null);
     const canvas = useRef<HTMLCanvasElement>(null);
@@ -71,6 +69,24 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     const scrollbarY = useRef<HTMLDivElement>(null);
     const cellArea = useRef<HTMLDivElement>(null);
     const workbookContainer = useRef<HTMLDivElement>(null);
+
+    const refs: RefValues = useMemo(
+      () => ({
+        globalCache: globalCache.current,
+        cellInput,
+        fxInput,
+        canvas,
+        scrollbarX,
+        scrollbarY,
+        cellArea,
+        workbookContainer,
+      }),
+      []
+    );
+
+    const [context, setContext] = useState(defaultContext(refs));
+    const { formula } = locale(context);
+
     const [moreToolbarItems, setMoreToolbarItems] =
       useState<React.ReactNode>(null);
 
@@ -375,18 +391,16 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         settings: mergedSettings,
         handleUndo,
         handleRedo,
-        refs: {
-          globalCache: globalCache.current,
-          cellInput,
-          fxInput,
-          canvas,
-          scrollbarX,
-          scrollbarY,
-          cellArea,
-          workbookContainer,
-        },
+        refs,
       }),
-      [context, handleRedo, handleUndo, mergedSettings, setContextWithProduce]
+      [
+        context,
+        handleRedo,
+        handleUndo,
+        mergedSettings,
+        refs,
+        setContextWithProduce,
+      ]
     );
 
     useEffect(() => {

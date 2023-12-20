@@ -8,7 +8,7 @@ import {
   PatchOptions,
 } from "@fortune-sheet/core";
 
-type RefValues = {
+export type RefValues = {
   globalCache: GlobalCache;
   cellInput: React.MutableRefObject<HTMLDivElement | null>;
   fxInput: React.MutableRefObject<HTMLDivElement | null>;
@@ -24,6 +24,15 @@ export type SetContextOptions = {
   logPatch?: boolean;
 } & PatchOptions;
 
+const defaultRefs = {
+  globalCache: { undoList: [], redoList: [] },
+  cellInput: React.createRef<HTMLDivElement | null>(),
+  fxInput: React.createRef<HTMLDivElement | null>(),
+  canvas: React.createRef<HTMLCanvasElement | null>(),
+  cellArea: React.createRef<HTMLDivElement | null>(),
+  workbookContainer: React.createRef<HTMLDivElement | null>(),
+};
+
 const WorkbookContext = React.createContext<{
   context: Context;
   setContext: (
@@ -36,7 +45,7 @@ const WorkbookContext = React.createContext<{
   handleUndo: () => void;
   handleRedo: () => void;
 }>({
-  context: defaultContext({ undoList: [], redoList: [] }),
+  context: defaultContext(defaultRefs),
   setContext: () => {},
   settings: defaultSettings,
   handleUndo: () => {},

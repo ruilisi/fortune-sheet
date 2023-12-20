@@ -20,6 +20,19 @@ import {
 } from "./types";
 import { getSheetIndex } from "./utils";
 
+interface MutableRefObject<T> {
+  current: T;
+}
+
+type RefValues = {
+  globalCache: GlobalCache;
+  cellInput: MutableRefObject<HTMLDivElement | null>;
+  fxInput: MutableRefObject<HTMLDivElement | null>;
+  canvas: MutableRefObject<HTMLCanvasElement | null>;
+  cellArea: MutableRefObject<HTMLDivElement | null>;
+  workbookContainer: MutableRefObject<HTMLDivElement | null>;
+};
+
 export type Context = {
   luckysheetfile: Sheet[];
   defaultcolumnNum: number;
@@ -202,10 +215,10 @@ export type Context = {
   // 只读模式公式被引用单元格强制高光
   forceFormulaRef?: Boolean;
 
-  getGlobalCache: () => GlobalCache;
+  getRefs: () => RefValues;
 };
 
-export function defaultContext(globalCache: GlobalCache): Context {
+export function defaultContext(refs: RefValues): Context {
   return {
     luckysheetfile: [],
     defaultcolumnNum: 60,
@@ -449,7 +462,7 @@ export function defaultContext(globalCache: GlobalCache): Context {
     formulaCache: new FormulaCache(), // class will not be frozen by immer, can be mutated at any time.
     hooks: {},
 
-    getGlobalCache: () => globalCache,
+    getRefs: () => refs,
   };
 }
 
