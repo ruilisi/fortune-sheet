@@ -194,8 +194,8 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
           ctx.currentSheetId = sheet.id!;
           ctx.zoomRatio = sheet.zoomRatio || 1;
           ctx.sheetTabContextMenu = {
-            x: pageX - rect.left,
-            y: pageY - rect.top,
+            x: pageX - rect.left - window.scrollX,
+            y: pageY - rect.top - window.scrollY,
             sheet,
             onRename: () => setEditing(true),
           };
@@ -231,8 +231,8 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
             // 右击的时候先进行跳转
             ctx.currentSheetId = sheet.id!;
             ctx.sheetTabContextMenu = {
-              x: pageX - rect.left,
-              y: pageY - rect.top,
+              x: pageX - rect.left - window.scrollX,
+              y: pageY - rect.top - window.scrollY,
               sheet,
               onRename: () => setEditing(true),
             };
