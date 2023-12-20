@@ -26,7 +26,11 @@ import {
   onCellsMove,
   cellFocus,
 } from "../modules";
-import { scrollToFrozenRowCol } from "../modules/freeze";
+import {
+  getFrozenHandleLeft,
+  getFrozenHandleTop,
+  scrollToFrozenRowCol,
+} from "../modules/freeze";
 import {
   cancelFunctionrangeSelected,
   mergeBorder,
@@ -175,14 +179,17 @@ export function handleGlobalWheel(
   e.preventDefault();
 }
 
-function fixPositionOnFrozenCells(
+export function fixPositionOnFrozenCells(
   freeze: Freezen | undefined,
   x: number,
   y: number,
   mouseX: number,
   mouseY: number
 ) {
-  if (!freeze) return [x, y];
+  let inHorizontalFreeze = false;
+  let inVerticalFreeze = false;
+
+  if (!freeze) return { x, y, inHorizontalFreeze, inVerticalFreeze };
 
   const freezenverticaldata = freeze?.vertical?.freezenverticaldata;
   const freezenhorizontaldata = freeze?.horizontal?.freezenhorizontaldata;
@@ -192,6 +199,7 @@ function fixPositionOnFrozenCells(
     mouseX < freezenverticaldata[0] - freezenverticaldata[2]
   ) {
     x = mouseX + freezenverticaldata[2];
+    inVerticalFreeze = true;
   }
 
   if (
@@ -199,9 +207,10 @@ function fixPositionOnFrozenCells(
     mouseY < freezenhorizontaldata[0] - freezenhorizontaldata[2]
   ) {
     y = mouseY + freezenhorizontaldata[2];
+    inHorizontalFreeze = true;
   }
 
-  return [x, y];
+  return { x, y, inHorizontalFreeze, inVerticalFreeze };
 }
 
 export function handleCellAreaMouseDown(
@@ -229,13 +238,14 @@ export function handleCellAreaMouseDown(
   const rect = container.getBoundingClientRect();
   const mouseX = e.pageX - rect.left - window.scrollX;
   const mouseY = e.pageY - rect.top - window.scrollY;
-  let x = mouseX + ctx.scrollLeft;
-  let y = mouseY + ctx.scrollTop;
-  if (x >= rect.width + ctx.scrollLeft || y >= rect.height + ctx.scrollTop) {
+  const _x = mouseX + ctx.scrollLeft;
+  const _y = mouseY + ctx.scrollTop;
+  if (_x >= rect.width + ctx.scrollLeft || _y >= rect.height + ctx.scrollTop) {
     return;
   }
   const freeze = globalCache.freezen?.[ctx.currentSheetId];
-  [x, y] = fixPositionOnFrozenCells(freeze, x, y, mouseX, mouseY);
+  const { x, y, inHorizontalFreeze, inVerticalFreeze } =
+    fixPositionOnFrozenCells(freeze, _x, _y, mouseX, mouseY);
 
   const row_location = rowLocation(y, ctx.visibledatarow);
   let row = row_location[1];
@@ -273,13 +283,15 @@ export function handleCellAreaMouseDown(
   // //数据验证 单元格聚焦
   cellFocus(ctx, row_index, col_index, true);
 
-  // //若点击单元格部分不在视图内
-  if (col_pre < ctx.scrollLeft) {
-    ctx.scrollLeft = col_pre;
-  }
+  // 若点击单元格部分不在视图内
+  if (!inHorizontalFreeze && !inVerticalFreeze) {
+    if (col_pre < ctx.scrollLeft) {
+      ctx.scrollLeft = col_pre;
+    }
 
-  if (row_pre < ctx.scrollTop) {
-    ctx.scrollTop = row_pre;
+    if (row_pre < ctx.scrollTop) {
+      ctx.scrollTop = row_pre;
+    }
   }
 
   // //mousedown是右键
@@ -1245,11 +1257,11 @@ export function handleCellAreaDoubleClick(
   const rect = container.getBoundingClientRect();
   const mouseX = e.pageX - rect.left;
   const mouseY = e.pageY - rect.top;
-  let x = mouseX + ctx.scrollLeft;
-  let y = mouseY + ctx.scrollTop;
+  const _x = mouseX + ctx.scrollLeft;
+  const _y = mouseY + ctx.scrollTop;
 
   const freeze = globalCache.freezen?.[ctx.currentSheetId];
-  [x, y] = fixPositionOnFrozenCells(freeze, x, y, mouseX, mouseY);
+  const { x, y } = fixPositionOnFrozenCells(freeze, _x, _y, mouseX, mouseY);
 
   const row_location = rowLocation(y, ctx.visibledatarow);
   let row_index = row_location[2];
@@ -1432,16 +1444,16 @@ export function handleContextMenu(
   // select current cell when clicking the right button
   e.preventDefault();
   if (area === "cell") {
-    _.set(ctx.contextMenu, "headerMenu", false);
+    _.set(ctx.contextMenu, "headerMenu", undefined);
     const rect = container.getBoundingClientRect();
     const mouseX = e.pageX - rect.left - window.scrollX;
     const mouseY = e.pageY - rect.top - window.scrollY;
-    let selected_x = mouseX + ctx.scrollLeft;
-    let selected_y = mouseY + ctx.scrollTop;
-    [selected_x, selected_y] = fixPositionOnFrozenCells(
-      undefined,
-      selected_x,
-      selected_y,
+    const _selected_x = mouseX + ctx.scrollLeft;
+    const _selected_y = mouseY + ctx.scrollTop;
+    const { x: selected_x, y: selected_y } = fixPositionOnFrozenCells(
+      ctx.getRefs().globalCache.freezen?.[ctx.currentSheetId],
+      _selected_x,
+      _selected_y,
       mouseX,
       mouseY
     );
@@ -1570,9 +1582,17 @@ export function handleContextMenu(
       },
     ];
   } else if (area === "rowHeader") {
-    _.set(ctx.contextMenu, "headerMenu", true);
+    _.set(ctx.contextMenu, "headerMenu", "row");
     const rect = container.getBoundingClientRect();
-    const selected_y = e.pageY - rect.top + ctx.scrollTop;
+    const mouseY = e.pageY - rect.top - window.scrollY;
+    const _selected_y = mouseY + ctx.scrollTop;
+    const { y: selected_y } = fixPositionOnFrozenCells(
+      ctx.getRefs().globalCache.freezen?.[ctx.currentSheetId],
+      0,
+      _selected_y,
+      0,
+      mouseY
+    );
     const row_location = rowLocation(selected_y, ctx.visibledatarow);
     const row = row_location[1];
     const row_pre = row_location[0];
@@ -1614,9 +1634,17 @@ export function handleContextMenu(
       row_select: true,
     });
   } else if (area === "columnHeader") {
-    _.set(ctx.contextMenu, "headerMenu", true);
+    _.set(ctx.contextMenu, "headerMenu", "column");
     const rect = container.getBoundingClientRect();
-    const selected_x = e.pageX - rect.left + ctx.scrollLeft;
+    const mouseX = e.pageX - rect.left - window.scrollX;
+    const _selected_x = mouseX + ctx.scrollLeft;
+    const { x: selected_x } = fixPositionOnFrozenCells(
+      ctx.getRefs().globalCache.freezen?.[ctx.currentSheetId],
+      _selected_x,
+      0,
+      mouseX,
+      0
+    );
     const row_index = ctx.visibledatarow.length - 1;
     const row = ctx.visibledatarow[row_index];
     const row_pre = 0;
@@ -1711,18 +1739,19 @@ function mouseRender(
   }
   // 拖动选择
   if (ctx.luckysheet_select_status) {
-    const x =
-      e.pageX -
-      rect.left -
-      window.scrollX -
-      ctx.rowHeaderWidth +
-      ctx.scrollLeft;
-    const y =
-      e.pageY -
-      rect.top -
-      window.scrollY -
-      ctx.columnHeaderHeight +
-      ctx.scrollTop;
+    const mouseX = e.pageX - rect.left - window.scrollX;
+    const mouseY = e.pageY - rect.top - window.scrollY;
+    const _x = mouseX - ctx.rowHeaderWidth + ctx.scrollLeft;
+    const _y = mouseY - ctx.columnHeaderHeight + ctx.scrollTop;
+
+    const freeze = globalCache.freezen?.[ctx.currentSheetId];
+    const { x, y } = fixPositionOnFrozenCells(
+      freeze,
+      _x,
+      _y,
+      mouseX - ctx.rowHeaderWidth,
+      mouseY - ctx.columnHeaderHeight
+    );
 
     const row_location = rowLocation(y, ctx.visibledatarow);
     const row = row_location[1];
@@ -2324,11 +2353,13 @@ function mouseRender(
     onDropCellSelect(ctx, e, scrollX, scrollY, container);
   } else if (ctx.luckysheet_cols_change_size) {
     // 调整列宽拖动
-    const x = e.pageX - rect.left - ctx.rowHeaderWidth + scrollX.scrollLeft;
-    if (
-      x + 3 - ctx.luckysheet_cols_change_size_start[0] > 30 &&
-      x < rect.width + ctx.scrollLeft - 100
-    ) {
+    const x =
+      e.pageX -
+      rect.left -
+      ctx.rowHeaderWidth +
+      scrollX.scrollLeft -
+      window.scrollX;
+    if (x < rect.width + ctx.scrollLeft - 100) {
       const changeSizeLine = container.querySelector(
         ".fortune-change-size-line"
       );
@@ -2344,11 +2375,13 @@ function mouseRender(
     }
   } else if (ctx.luckysheet_rows_change_size) {
     // 调整行高拖动
-    const y = e.pageY - rect.top - ctx.columnHeaderHeight + scrollY.scrollTop;
-    if (
-      y + 3 - ctx.luckysheet_rows_change_size_start[0] > 19 &&
-      y < rect.height + ctx.scrollTop - 20
-    ) {
+    const y =
+      e.pageY -
+      rect.top -
+      ctx.columnHeaderHeight +
+      scrollY.scrollTop -
+      window.scrollY;
+    if (y < rect.height + ctx.scrollTop - 20) {
       const changeSizeLine = container.querySelector(
         ".fortune-change-size-line"
       );
@@ -2364,14 +2397,20 @@ function mouseRender(
     }
   } else if (ctx.luckysheet_cols_freeze_drag) {
     // 调整列冻结
-    const x = e.pageX - rect.left - ctx.rowHeaderWidth + scrollX.scrollLeft;
-    const col_location = colLocation(x, ctx.visibledatacolumn);
-    const col_pre = col_location[0];
+    const x =
+      e.pageX -
+      rect.left -
+      ctx.rowHeaderWidth +
+      ctx.scrollLeft -
+      window.scrollX;
+    const [col_pre, col_curr] = colLocation(x, ctx.visibledatacolumn);
+
+    const col = x > (col_pre + col_curr) / 2 ? col_curr : col_pre;
 
     if (x < rect.width + ctx.scrollLeft - 100) {
       const freezeLine = container.querySelector(".fortune-freeze-drag-line");
       if (freezeLine) {
-        (freezeLine as HTMLDivElement).style.left = `${col_pre - 3}px`;
+        (freezeLine as HTMLDivElement).style.left = `${Math.max(0, col - 2)}px`;
       }
       const freezeHandle = container.querySelector(
         ".fortune-cols-freeze-handle"
@@ -2389,14 +2428,20 @@ function mouseRender(
     }
   } else if (ctx.luckysheet_rows_freeze_drag) {
     // 调整行冻结
-    const y = e.pageY - rect.top - ctx.columnHeaderHeight + scrollY.scrollTop;
-    const row_location = rowLocation(y, ctx.visibledatarow);
-    const row_pre = row_location[0];
+    const y =
+      e.pageY -
+      rect.top -
+      ctx.columnHeaderHeight +
+      ctx.scrollTop -
+      window.scrollY;
+    const [row_pre, row_curr] = rowLocation(y, ctx.visibledatarow);
+
+    const row = y > (row_curr + row_pre) / 2 ? row_curr : row_pre;
 
     if (y < rect.height + ctx.scrollTop - 20) {
       const freezeLine = container.querySelector(".fortune-freeze-drag-line");
       if (freezeLine) {
-        (freezeLine as HTMLDivElement).style.top = `${row_pre - 3}px`;
+        (freezeLine as HTMLDivElement).style.top = `${Math.max(0, row - 2)}px`;
       }
       const freezeHandle = container.querySelector(
         ".fortune-rows-freeze-handle"
@@ -3981,17 +4026,14 @@ export function handleOverlayMouseUp(
     // ).css("cursor", "default");
 
     const { scrollTop } = ctx;
-    const y = e.pageY - rect.top - ctx.columnHeaderHeight + scrollTop;
+    const y =
+      e.pageY - rect.top - ctx.columnHeaderHeight + scrollTop - window.scrollY;
     const winH = rect.height;
 
-    let size = y + 3 - ctx.luckysheet_rows_change_size_start[0];
-
-    if (y + 3 - ctx.luckysheet_rows_change_size_start[0] < 19) {
-      size = 19;
-    }
+    let delta = y + 3 - ctx.luckysheet_rows_change_size_start[0];
 
     if (y >= winH - 20 + scrollTop) {
-      size = winH - 20 - ctx.luckysheet_rows_change_size_start[0] + scrollTop;
+      delta = winH - 20 - ctx.luckysheet_rows_change_size_start[0] + scrollTop;
     }
 
     const cfg = ctx.config;
@@ -4001,6 +4043,20 @@ export function handleOverlayMouseUp(
 
     if (cfg.customHeight == null) {
       cfg.customHeight = {};
+    }
+
+    let size = ctx.defaultrowlen;
+
+    if (ctx.visibledatarow[ctx.luckysheet_rows_change_size_start[1]] != null) {
+      size =
+        ctx.visibledatarow[ctx.luckysheet_rows_change_size_start[1]] -
+        (ctx.visibledatarow[ctx.luckysheet_rows_change_size_start[1] - 1] || 0);
+    }
+
+    size += delta;
+
+    if (size < 10) {
+      size = 10;
     }
 
     cfg.customHeight[ctx.luckysheet_rows_change_size_start[1]] = 1;
@@ -4065,10 +4121,27 @@ export function handleOverlayMouseUp(
     ctx.luckysheet_cols_change_size = false;
 
     const { scrollLeft } = ctx;
-    const x = e.pageX - rect.left - ctx.rowHeaderWidth + scrollLeft;
+    const x =
+      e.pageX - rect.left - ctx.rowHeaderWidth + scrollLeft - window.scrollX;
     const winW = rect.width;
 
-    let size = x + 3 - ctx.luckysheet_cols_change_size_start[0];
+    let delta = x + 3 - ctx.luckysheet_cols_change_size_start[0];
+
+    if (x >= winW - 100 + scrollLeft) {
+      delta =
+        winW - 100 - ctx.luckysheet_cols_change_size_start[0] + scrollLeft;
+    }
+
+    delta /= ctx.zoomRatio;
+
+    const cfg = ctx.config;
+    if (cfg.columnlen == null) {
+      cfg.columnlen = {};
+    }
+
+    if (cfg.customWidth == null) {
+      cfg.customWidth = {};
+    }
 
     let firstcolumnlen = ctx.defaultcollen;
     if (
@@ -4079,24 +4152,15 @@ export function handleOverlayMouseUp(
         ctx.config.columnlen[ctx.luckysheet_cols_change_size_start[1]];
     }
 
+    let size =
+      (cfg.columnlen[ctx.luckysheet_cols_change_size_start[1]] ||
+        ctx.defaultcollen) + delta;
+
     if (Math.abs(size - firstcolumnlen) < 3) {
       return;
     }
-    if (x + 3 - ctx.luckysheet_cols_change_size_start[0] < 30) {
-      size = 30;
-    }
-
-    if (x >= winW - 100 + scrollLeft) {
-      size = winW - 100 - ctx.luckysheet_cols_change_size_start[0] + scrollLeft;
-    }
-
-    const cfg = ctx.config;
-    if (cfg.columnlen == null) {
-      cfg.columnlen = {};
-    }
-
-    if (cfg.customWidth == null) {
-      cfg.customWidth = {};
+    if (size < 10) {
+      size = 10;
     }
 
     cfg.customWidth[ctx.luckysheet_cols_change_size_start[1]] = 1;
@@ -4166,9 +4230,14 @@ export function handleOverlayMouseUp(
     ctx.luckysheet_cols_freeze_drag = false;
 
     const { scrollLeft } = ctx;
-    const x = e.pageX - rect.left - ctx.rowHeaderWidth + scrollLeft;
-    const col_location = colLocation(x, ctx.visibledatacolumn);
-    const col_index = col_location[2] - 1;
+    const x =
+      e.pageX - rect.left - ctx.rowHeaderWidth + scrollLeft - window.scrollX;
+    const [col_pre, col_curr, col_index_curr] = colLocation(
+      x,
+      ctx.visibledatacolumn
+    );
+    const col_index =
+      x > (col_curr + col_pre) / 2 ? col_index_curr : col_index_curr - 1;
     const idx = getSheetIndex(ctx, ctx.currentSheetId);
     if (idx == null) return;
     if (col_index < 0) {
@@ -4179,6 +4248,12 @@ export function handleOverlayMouseUp(
         } else if (frozen.type === "column" || frozen.type === "rangeColumn") {
           delete ctx.luckysheetfile[idx].frozen;
         }
+      }
+      const freezeHandle = container.querySelector(
+        ".fortune-cols-freeze-handle"
+      ) as HTMLDivElement;
+      if (freezeHandle) {
+        freezeHandle.style.left = `${ctx.scrollLeft}px`;
       }
     } else if (!ctx.luckysheetfile[idx].frozen) {
       ctx.luckysheetfile[idx].frozen = {
@@ -4196,6 +4271,12 @@ export function handleOverlayMouseUp(
         frozen.type = "rangeBoth";
       }
     }
+    const freezeHandle = container.querySelector(
+      ".fortune-cols-freeze-handle"
+    ) as HTMLDivElement;
+    if (freezeHandle) {
+      freezeHandle.style.left = `${getFrozenHandleLeft(ctx)}px`;
+    }
   }
 
   // 行冻结拖动结束
@@ -4203,9 +4284,14 @@ export function handleOverlayMouseUp(
     ctx.luckysheet_rows_freeze_drag = false;
 
     const { scrollTop } = ctx;
-    const y = e.pageY - rect.top - ctx.columnHeaderHeight + scrollTop;
-    const row_location = rowLocation(y, ctx.visibledatarow);
-    const row_index = row_location[2] - 1;
+    const y =
+      e.pageY - rect.top - ctx.columnHeaderHeight + scrollTop - window.scrollY;
+    const [row_pre, row_curr, row_index_curr] = rowLocation(
+      y,
+      ctx.visibledatarow
+    );
+    const row_index =
+      y > (row_curr + row_pre) / 2 ? row_index_curr : row_index_curr - 1;
     const idx = getSheetIndex(ctx, ctx.currentSheetId);
     if (idx == null) return;
     if (row_index < 0) {
@@ -4232,6 +4318,12 @@ export function handleOverlayMouseUp(
       if (frozen?.type === "rangeColumn" || frozen?.type === "column") {
         frozen.type = "rangeBoth";
       }
+    }
+    const freezeHandle = container.querySelector(
+      ".fortune-rows-freeze-handle"
+    ) as HTMLDivElement;
+    if (freezeHandle) {
+      freezeHandle.style.top = `${getFrozenHandleTop(ctx)}px`;
     }
   }
 
@@ -4280,7 +4372,11 @@ export function handleRowHeaderMouseDown(
   // }
 
   const rect = container.getBoundingClientRect();
-  const y = e.pageY - rect.top + ctx.scrollTop;
+  const mouseY = e.pageY - rect.top - window.scrollY;
+  const _y = mouseY + ctx.scrollTop;
+
+  const freeze = globalCache.freezen?.[ctx.currentSheetId];
+  const { y } = fixPositionOnFrozenCells(freeze, 0, _y, 0, mouseY);
 
   const row_location = rowLocation(y, ctx.visibledatarow);
   const row = row_location[1];
@@ -4720,7 +4816,10 @@ export function handleColumnHeaderMouseDown(
   // }
 
   const rect = container.getBoundingClientRect();
-  const x = e.pageX - rect.left + ctx.scrollLeft;
+  const mouseX = e.pageX - rect.left - window.scrollX;
+  const _x = mouseX + ctx.scrollLeft;
+  const freeze = globalCache.freezen?.[ctx.currentSheetId];
+  const { x } = fixPositionOnFrozenCells(freeze, _x, 0, mouseX, 0);
 
   const row_index = ctx.visibledatarow.length - 1;
   const row = ctx.visibledatarow[row_index];
@@ -5137,11 +5236,14 @@ export function handleColSizeHandleMouseDown(
   const { scrollLeft } = ctx;
   const { scrollTop } = ctx;
 
-  const x = e.pageX - headerContainer.getBoundingClientRect().left + scrollLeft;
+  const mouseX =
+    e.pageX - headerContainer.getBoundingClientRect().left - window.scrollX;
+  const _x = mouseX + scrollLeft;
+  const freeze = globalCache.freezen?.[ctx.currentSheetId];
+  const { x } = fixPositionOnFrozenCells(freeze, _x, 0, mouseX, 0);
 
   const col_location = colLocation(x, ctx.visibledatacolumn);
   const col = col_location[1];
-  const col_pre = col_location[0];
   const col_index = col_location[2];
 
   ctx.luckysheet_cols_change_size = true;
@@ -5162,7 +5264,7 @@ export function handleColSizeHandleMouseDown(
   // $(
   //   "#luckysheet-sheettable, #luckysheet-cols-h-c, .luckysheet-cols-h-cells, .luckysheet-cols-h-cells canvas"
   // ).css("cursor", "ew-resize");
-  ctx.luckysheet_cols_change_size_start = [col_pre, col_index];
+  ctx.luckysheet_cols_change_size_start = [_x, col_index];
   // $("#luckysheet-rightclick-menu").hide();
   // $("#luckysheet-cols-h-hover").hide();
   // $("#luckysheet-cols-menu-btn").hide();
@@ -5202,11 +5304,14 @@ export function handleRowSizeHandleMouseDown(
   const { scrollLeft } = ctx;
   const { scrollTop } = ctx;
 
-  const y = e.pageY - headerContainer.getBoundingClientRect().top + scrollTop;
+  const mouseY =
+    e.pageY - headerContainer.getBoundingClientRect().top - window.scrollY;
+  const _y = mouseY + scrollTop;
+  const freeze = globalCache.freezen?.[ctx.currentSheetId];
+  const { y } = fixPositionOnFrozenCells(freeze, 0, _y, 0, mouseY);
 
   const row_location = rowLocation(y, ctx.visibledatarow);
   const row = row_location[1];
-  const row_pre = row_location[0];
   const row_index = row_location[2];
 
   ctx.luckysheet_rows_change_size = true;
@@ -5227,7 +5332,7 @@ export function handleRowSizeHandleMouseDown(
   // $(
   //   "#luckysheet-sheettable, #luckysheet-cols-h-c, .luckysheet-cols-h-cells, .luckysheet-cols-h-cells canvas"
   // ).css("cursor", "ew-resize");
-  ctx.luckysheet_rows_change_size_start = [row_pre, row_index];
+  ctx.luckysheet_rows_change_size_start = [_y, row_index];
   // $("#luckysheet-rightclick-menu").hide();
   // $("#luckysheet-cols-h-hover").hide();
   // $("#luckysheet-cols-menu-btn").hide();

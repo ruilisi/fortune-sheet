@@ -9,6 +9,7 @@ import {
   fixRowStyleOverflowInFreeze,
   handleRowFreezeHandleMouseDown,
   getSheetIndex,
+  fixPositionOnFrozenCells,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
@@ -30,6 +31,7 @@ const RowHeader: React.FC = () => {
     row_pre: -1,
     row_index: -1,
   });
+  const [hoverInFreeze, setHoverInFreeze] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<
     { row: number; row_pre: number; r1: number; r2: number }[]
   >([]);
@@ -57,14 +59,24 @@ const RowHeader: React.FC = () => {
       if (context.luckysheet_rows_change_size) {
         return;
       }
-      const y =
+      const mouseY =
         e.pageY -
-        containerRef.current!.getBoundingClientRect().top +
-        containerRef.current!.scrollTop;
+        containerRef.current!.getBoundingClientRect().top -
+        window.scrollY;
+      const _y = mouseY + containerRef.current!.scrollTop;
+      const freeze = refs.globalCache.freezen?.[context.currentSheetId];
+      const { y, inHorizontalFreeze } = fixPositionOnFrozenCells(
+        freeze,
+        0,
+        _y,
+        0,
+        mouseY
+      );
       const row_location = rowLocation(y, context.visibledatarow);
       const [row_pre, row, row_index] = row_location;
       if (row_pre !== hoverLocation.row_pre || row !== hoverLocation.row) {
         setHoverLocation({ row_pre, row, row_index });
+        setHoverInFreeze(inHorizontalFreeze);
       }
     },
     [
@@ -72,6 +84,8 @@ const RowHeader: React.FC = () => {
       context.visibledatarow,
       hoverLocation.row,
       hoverLocation.row_pre,
+      refs.globalCache.freezen,
+      context.currentSheetId,
     ]
   );
 
@@ -204,7 +218,7 @@ const RowHeader: React.FC = () => {
         ref={rowChangeSizeRef}
         onMouseDown={onRowSizeHandleMouseDown}
         style={{
-          top: hoverLocation.row - 3,
+          top: hoverLocation.row - 3 + (hoverInFreeze ? context.scrollTop : 0),
           opacity: context.luckysheet_rows_change_size ? 1 : 0,
         }}
       />

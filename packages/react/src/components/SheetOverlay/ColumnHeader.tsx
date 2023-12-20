@@ -11,6 +11,7 @@ import {
   fixColumnStyleOverflowInFreeze,
   handleColFreezeHandleMouseDown,
   getSheetIndex,
+  fixPositionOnFrozenCells,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
@@ -33,6 +34,7 @@ const ColumnHeader: React.FC = () => {
     col_pre: -1,
     col_index: -1,
   });
+  const [hoverInFreeze, setHoverInFreeze] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<
     { col: number; col_pre: number; c1: number; c2: number }[]
   >([]);
@@ -63,14 +65,24 @@ const ColumnHeader: React.FC = () => {
       if (context.luckysheet_cols_change_size) {
         return;
       }
-      const x =
+      const mouseX =
         e.pageX -
-        containerRef.current!.getBoundingClientRect().left +
-        containerRef.current!.scrollLeft;
+        containerRef.current!.getBoundingClientRect().left -
+        window.scrollX;
+      const _x = mouseX + containerRef.current!.scrollLeft;
+      const freeze = refs.globalCache.freezen?.[context.currentSheetId];
+      const { x, inVerticalFreeze } = fixPositionOnFrozenCells(
+        freeze,
+        _x,
+        0,
+        mouseX,
+        0
+      );
       const col_location = colLocation(x, context.visibledatacolumn);
       const [col_pre, col, col_index] = col_location;
       if (col_index !== hoverLocation.col_index) {
         setHoverLocation({ col_pre, col, col_index });
+        setHoverInFreeze(inVerticalFreeze);
       }
       const flowdata = getFlowdata(context);
       if (!_.isNil(flowdata))
@@ -83,7 +95,7 @@ const ColumnHeader: React.FC = () => {
             },
           ]);
     },
-    [context, hoverLocation.col_index]
+    [context, hoverLocation.col_index, refs.globalCache.freezen]
   );
 
   const onMouseDown = useCallback(
@@ -217,7 +229,8 @@ const ColumnHeader: React.FC = () => {
         id="fortune-cols-change-size"
         onMouseDown={onColSizeHandleMouseDown}
         style={{
-          left: hoverLocation.col - 5,
+          left:
+            hoverLocation.col - 5 + (hoverInFreeze ? context.scrollLeft : 0),
           opacity: context.luckysheet_cols_change_size ? 1 : 0,
         }}
       />

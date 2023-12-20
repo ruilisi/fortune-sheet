@@ -1,5 +1,12 @@
 import _ from "lodash";
-import { Context, Freezen, getSheetIndex, GlobalCache } from "..";
+import {
+  colLocationByIndex,
+  Context,
+  Freezen,
+  getSheetIndex,
+  GlobalCache,
+  rowLocationByIndex,
+} from "..";
 
 function cutVolumn(arr: number[], cutindex: number) {
   if (cutindex <= 0) {
@@ -186,4 +193,48 @@ export function scrollToFrozenRowCol(
       // }, 100);
     }
   }
+}
+
+export function getFrozenHandleTop(ctx: Context) {
+  const idx = getSheetIndex(ctx, ctx.currentSheetId);
+  if (idx == null) return ctx.scrollTop;
+
+  const sheet = ctx.luckysheetfile[idx];
+  if (
+    sheet?.frozen?.type === "row" ||
+    sheet?.frozen?.type === "rangeRow" ||
+    sheet?.frozen?.type === "rangeBoth" ||
+    sheet?.frozen?.type === "both"
+  ) {
+    return (
+      rowLocationByIndex(
+        sheet?.frozen?.range?.row_focus || 0,
+        ctx.visibledatarow
+      )[1] + ctx.scrollTop
+    );
+  }
+  return ctx.scrollTop;
+}
+
+export function getFrozenHandleLeft(ctx: Context) {
+  const idx = getSheetIndex(ctx, ctx.currentSheetId);
+  if (idx == null) return ctx.scrollLeft;
+
+  const sheet = ctx.luckysheetfile[idx];
+  if (
+    sheet?.frozen?.type === "column" ||
+    sheet?.frozen?.type === "rangeColumn" ||
+    sheet?.frozen?.type === "rangeBoth" ||
+    sheet?.frozen?.type === "both"
+  ) {
+    return (
+      colLocationByIndex(
+        sheet?.frozen?.range?.column_focus || 0,
+        ctx.visibledatacolumn
+      )[1] -
+      2 +
+      ctx.scrollLeft
+    );
+  }
+  return ctx.scrollLeft;
 }
