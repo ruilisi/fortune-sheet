@@ -3,7 +3,6 @@ import {
   Canvas,
   updateContextWithCanvas,
   updateContextWithSheetData,
-  groupValuesRefresh,
   handleGlobalWheel,
   initFreeze,
   Sheet as SheetType,
@@ -237,17 +236,6 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
       tableCanvas.drawRowHeader(context.scrollTop);
     }
   }, [context, refs.canvas, refs.globalCache.freezen, setContext, sheet.id]);
-
-  /**
-   * Apply the calculation results
-   */
-  useEffect(() => {
-    if (context.groupValuesRefreshData.length > 0) {
-      setContext((draftCtx) => {
-        groupValuesRefresh(draftCtx);
-      });
-    }
-  }, [context.groupValuesRefreshData.length, setContext]);
 
   const onWheel = useCallback(
     (e: WheelEvent) => {

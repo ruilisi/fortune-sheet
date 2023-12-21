@@ -19,6 +19,7 @@ import {
   insertRowCol,
   locale,
   calcSelectionInfo,
+  groupValuesRefresh,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -57,6 +58,20 @@ export type WorkbookInstance = ReturnType<typeof generateAPIs>;
 type AdditionalProps = {
   onChange?: (data: SheetType[]) => void;
   onOp?: (op: Op[]) => void;
+};
+
+const triggerGroupValuesRefresh = (ctx: Context) => {
+  if (ctx.groupValuesRefreshData.length > 0) {
+    groupValuesRefresh(ctx);
+  }
+};
+
+const concatProducer = (...producers: ((ctx: Context) => void)[]) => {
+  return (ctx: Context) => {
+    producers.forEach((producer) => {
+      producer(ctx);
+    });
+  };
 };
 
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
@@ -246,7 +261,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         setContext((ctx_) => {
           const [result, patches, inversePatches] = produceWithPatches(
             ctx_,
-            recipe
+            concatProducer(recipe, triggerGroupValuesRefresh)
           );
           if (patches.length > 0 && !options.noHistory) {
             if (options.logPatch) {
