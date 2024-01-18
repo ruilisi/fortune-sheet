@@ -2338,18 +2338,29 @@ export function updateDropCell(ctx: Context) {
         for (let j = apply_str_r; j <= apply_end_r; j += 1) {
           const cell = applyData[j - apply_str_r];
 
-          if (cell?.f != null) {
+          if (cell) {
             const f = `=${formula.functionCopy(
               ctx,
-              cell.f,
+              cell?.f || "",
               "down",
               j - apply_str_r + 1
             )}`;
+
             const v = formula.execfunction(ctx, f, j, i);
 
-            formula.execFunctionGroup(ctx, j, i, v[1], undefined, d);
+            const cellValue = v[1] === "" ? cell.v : v[1];
 
-            [, cell.v, cell.f] = v;
+            formula.execFunctionGroup(ctx, j, i, cellValue, undefined, d);
+
+            cell.v = cellValue;
+
+            const isEmptyFormula = v[2] === "=";
+            if (isEmptyFormula) {
+              cell.f = undefined;
+              cell.m = cellValue?.toString();
+            } else {
+              [, , cell.f] = v;
+            }
 
             if (cell.spl != null) {
               cell.spl = v[3].data;
@@ -2449,18 +2460,29 @@ export function updateDropCell(ctx: Context) {
         for (let j = apply_end_r; j >= apply_str_r; j -= 1) {
           const cell = applyData[apply_end_r - j];
 
-          if (cell?.f != null) {
+          if (cell) {
             const f = `=${formula.functionCopy(
               ctx,
-              cell.f,
+              cell.f || "",
               "up",
               apply_end_r - j + 1
             )}`;
+
             const v = formula.execfunction(ctx, f, j, i);
 
-            formula.execFunctionGroup(ctx, j, i, v[1], undefined, d);
+            const cellValue = v[1] === "" ? cell.v : v[1];
 
-            [, cell.v, cell.f] = v;
+            formula.execFunctionGroup(ctx, j, i, cellValue, undefined, d);
+
+            cell.v = cellValue;
+
+            const isEmptyFormula = v[2] === "=";
+            if (isEmptyFormula) {
+              cell.f = undefined;
+              cell.m = cellValue?.toString();
+            } else {
+              [, , cell.f] = v;
+            }
 
             if (cell.spl != null) {
               cell.spl = v[3].data;
@@ -2556,18 +2578,28 @@ export function updateDropCell(ctx: Context) {
         for (let j = apply_str_c; j <= apply_end_c; j += 1) {
           const cell = applyData[j - apply_str_c];
 
-          if (cell?.f != null) {
+          if (cell) {
             const f = `=${formula.functionCopy(
               ctx,
-              cell.f,
+              cell.f || "",
               "right",
               j - apply_str_c + 1
             )}`;
             const v = formula.execfunction(ctx, f, i, j);
 
-            formula.execFunctionGroup(ctx, j, i, v[1], undefined, d);
+            const cellValue = v[1] === "" ? cell.v : v[1];
 
-            [, cell.v, cell.f] = v;
+            formula.execFunctionGroup(ctx, i, j, cellValue, undefined, d);
+
+            cell.v = cellValue;
+
+            const isEmptyFormula = v[2] === "=";
+            if (isEmptyFormula) {
+              cell.f = undefined;
+              cell.m = cellValue?.toString();
+            } else {
+              [, , cell.f] = v;
+            }
 
             if (cell.spl != null) {
               cell.spl = v[3].data;
@@ -2654,18 +2686,28 @@ export function updateDropCell(ctx: Context) {
         for (let j = apply_end_c; j >= apply_str_c; j -= 1) {
           const cell = applyData[apply_end_c - j];
 
-          if (cell?.f != null) {
+          if (cell) {
             const f = `=${formula.functionCopy(
               ctx,
-              cell.f,
+              cell.f || "",
               "left",
               apply_end_c - j + 1
             )}`;
             const v = formula.execfunction(ctx, f, i, j);
 
-            formula.execFunctionGroup(ctx, j, i, v[1], undefined, d);
+            const cellValue = v[1] === "" ? cell.v : v[1];
 
-            [, cell.v, cell.f] = v;
+            formula.execFunctionGroup(ctx, i, j, cellValue, undefined, d);
+
+            cell.v = cellValue;
+
+            const isEmptyFormula = v[2] === "=";
+            if (isEmptyFormula) {
+              cell.f = undefined;
+              cell.m = cellValue?.toString();
+            } else {
+              [, , cell.f] = v;
+            }
 
             if (cell.spl != null) {
               cell.spl = v[3].data;
