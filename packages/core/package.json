@@ -7,7 +7,7 @@
   "files": [
     "dist"
   ],
-  "repository": "https://github.com/ruilisi/fortune-sheet",
+  "repository": "https://github.com/Tomerkakou/fortune-sheet",
   "license": "MIT",
   "dependencies": {
     "@fortune-sheet/formula-parser": "^0.2.10",
@@ -36,6 +36,7 @@
     "collabrative"
   ],
   "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
     "access": "public"
   }
 }

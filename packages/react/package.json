@@ -7,7 +7,7 @@
   "files": [
     "dist"
   ],
-  "repository": "https://github.com/ruilisi/fortune-sheet",
+  "repository": "https://github.com/Tomerkakou/fortune-sheet",
   "license": "MIT",
   "scripts": {
     "tsc": "tsc"
@@ -35,6 +35,7 @@
     "collabrative"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
   }
 }
