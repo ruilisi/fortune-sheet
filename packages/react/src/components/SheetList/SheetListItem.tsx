@@ -2,7 +2,7 @@ import {
   Sheet,
   cancelNormalSelected,
   cancelActiveImgItem,
-} from "@fortune-sheet/core";
+} from "@tomerkakou/fortune-sheet-core";
 import React, { useContext, useEffect, useRef } from "react";
 import WorkbookContext from "../../context";
 import "./index.css";

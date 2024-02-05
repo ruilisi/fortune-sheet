@@ -1,5 +1,5 @@
 {
-  "name": "@fortune-sheet/formula-parser",
+  "name": "@tomerkakou/fortune-sheet-formula-parser",
   "version": "0.2.10",
   "description": "Formula parser",
   "main": "lib/index.js",

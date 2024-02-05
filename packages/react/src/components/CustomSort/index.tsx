@@ -4,7 +4,7 @@ import {
   indexToColumnChar,
   locale,
   sortSelection,
-} from "@fortune-sheet/core";
+} from "@tomerkakou/fortune-sheet-core";
 import React, {
   ChangeEvent,
   useCallback,

@@ -20,7 +20,7 @@ import {
   locale,
   calcSelectionInfo,
   groupValuesRefresh,
-} from "@fortune-sheet/core";
+} from "@tomerkakou/fortune-sheet-core";
 import React, {
   useMemo,
   useState,

@@ -15,8 +15,8 @@
     "lib": ["es5", "dom"],
     "baseUrl": "./",
     "paths": {
-      "@fortune-sheet/core": ["packages/core/src"],
-      "@fortune-sheet/react": ["packages/react/src"]
+      "@tomerkakou/fortune-sheet-core": ["packages/core/src"],
+      "@tomerkakou/fortune-sheet-react": ["packages/react/src"]
     }
   },
   "include": ["packages/*/src", "stories/"],
