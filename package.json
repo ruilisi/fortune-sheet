@@ -76,9 +76,6 @@
     "react-dom": "^18.2.0",
     "typescript": "^4.9.4"
   },
-  "gitHooks": {
-    "pre-commit": "npx yarn lint"
-  },
   "resolutions": {
     "react": "^18.2.0",
     "eslint": "^8.31.0"
