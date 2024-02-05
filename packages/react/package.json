@@ -1,6 +1,6 @@
 {
-  "name": "tomer-fortune-sheet-react",
-  "version": "1.0.0",
+  "name": "@fortune-sheet/react",
+  "version": "0.19.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.esm.js",
@@ -13,7 +13,7 @@
     "tsc": "tsc"
   },
   "dependencies": {
-    "tomer-fortune-sheet-core": "^1.0.0",
+    "@fortune-sheet/core": "^0.19.2",
     "immer": "^9.0.12",
     "lodash": "^4.17.21"
   },

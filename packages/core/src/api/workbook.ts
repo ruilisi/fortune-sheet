@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Context, Sheet, getSheetIndex } from "..";
+import { Context, Sheet } from "..";
 import {
   addSheet as addSheetInternal,
   deleteSheet as deleteSheetInternal,
@@ -25,10 +25,6 @@ export function addSheet(
     sheetname,
     sheetData
   );
-}
-
-export function getActiveSheet(ctx: Context) {
-  return [getSheetIndex(ctx, ctx.currentSheetId), ctx.currentSheetId];
 }
 
 export function deleteSheet(ctx: Context, options: CommonOptions = {}) {
@@ -75,26 +71,14 @@ export function scroll(
     scrollTop?: number;
     targetRow?: number;
     targetColumn?: number;
-  },
-  commonOptions: CommonOptions = {}
-) {
-  let sheetId: string | undefined;
-  let scrollLeft: number | undefined;
-  let scrollTop: number | undefined;
-  try {
-    const sheet = getSheet(ctx, commonOptions);
-    sheetId = sheet.id;
-  } catch (e) {
-    sheetId = ctx.currentSheetId;
   }
+) {
   if (options.scrollLeft != null) {
     if (!_.isNumber(options.scrollLeft)) {
       throw INVALID_PARAMS;
     }
-    if (scrollbarX && sheetId === ctx.currentSheetId) {
+    if (scrollbarX) {
       scrollbarX.scrollLeft = options.scrollLeft;
-    } else {
-      scrollLeft = options.scrollLeft;
     }
   } else if (options.targetColumn != null) {
     if (!_.isNumber(options.targetColumn)) {
@@ -104,10 +88,8 @@ export function scroll(
       options.targetColumn <= 0
         ? 0
         : ctx.visibledatacolumn[options.targetColumn - 1];
-    if (scrollbarX && sheetId === ctx.currentSheetId) {
+    if (scrollbarX) {
       scrollbarX.scrollLeft = col_pre;
-    } else {
-      scrollLeft = col_pre;
     }
   }
 
@@ -115,10 +97,8 @@ export function scroll(
     if (!_.isNumber(options.scrollTop)) {
       throw INVALID_PARAMS;
     }
-    if (scrollbarY && sheetId === ctx.currentSheetId) {
+    if (scrollbarY) {
       scrollbarY.scrollTop = options.scrollTop;
-    } else {
-      scrollTop = options.scrollTop;
     }
   } else if (options.targetRow != null) {
     if (!_.isNumber(options.targetRow)) {
@@ -127,17 +107,8 @@ export function scroll(
     const row_pre =
       options.targetRow <= 0 ? 0 : ctx.visibledatarow[options.targetRow - 1];
 
-    if (scrollbarY && sheetId === ctx.currentSheetId) {
+    if (scrollbarY) {
       scrollbarY.scrollTop = row_pre;
-    } else {
-      scrollTop = row_pre;
-    }
-    if (scrollLeft && scrollTop && sheetId && sheetId !== ctx.currentSheetId) {
-      ctx.sheetScrollRecord[sheetId] = {
-        ...ctx.sheetScrollRecord[sheetId],
-        scrollLeft,
-        scrollTop,
-      };
     }
   }
 }

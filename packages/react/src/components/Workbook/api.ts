@@ -263,18 +263,12 @@ export function generateAPIs(
     setSheetOrder: (orderList: Record<string, number>) =>
       setContext((draftCtx) => api.setSheetOrder(draftCtx, orderList)),
 
-    scroll: (
-      options: {
-        scrollLeft?: number;
-        scrollTop?: number;
-        targetRow?: number;
-        targetColumn?: number;
-      },
-      commonOptions: api.CommonOptions = {}
-    ) =>
-      setContext((draftCtx) =>
-        api.scroll(draftCtx, scrollbarX, scrollbarY, options, commonOptions)
-      ),
+    scroll: (options: {
+      scrollLeft?: number;
+      scrollTop?: number;
+      targetRow?: number;
+      targetColumn?: number;
+    }) => api.scroll(context, scrollbarX, scrollbarY, options),
 
     addPresences: (newPresences: Presence[]) => {
       setContext((draftCtx) => {
@@ -322,9 +316,6 @@ export function generateAPIs(
       colCount?: number
     ) => {
       return api.celldataToData(celldata, rowCount, colCount);
-    },
-    getActiveSheet: () => {
-      return api.getActiveSheet(context);
     },
   };
 }

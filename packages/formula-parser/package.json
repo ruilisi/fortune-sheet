@@ -1,6 +1,6 @@
 {
-  "name": "tomer-fortune-sheet-formula-parser",
-  "version": "1.0.0",
+  "name": "@fortune-sheet/formula-parser",
+  "version": "0.2.10",
   "description": "Formula parser",
   "main": "lib/index.js",
   "module": "es/index.js",
