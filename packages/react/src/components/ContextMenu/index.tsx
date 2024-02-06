@@ -614,6 +614,58 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
+      if(name === "updateEntitie" && settings.onUpdate){
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                const selection=api.getSelection(draftCtx);
+                if(selection && selection.length>1){
+                  showAlert(rightclick.cannotUpdateOrAddEntite,"ok");
+                }
+                else{
+                  settings.updateEntitie(true);
+                }
+              });
+            }}
+          >
+            {rightclick.updateEntitie}
+          </Menu>
+        );
+      }
+      if(name === "revertChanges" && settings.onUpdate){
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              settings.revertChanges();
+            }}
+          >
+            {rightclick.revertChanges}
+          </Menu>
+        );
+      }
+      if(name === "addEntitie" && !(settings.onUpdate)){
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                const selection=api.getSelection(draftCtx);
+                if(selection && selection.length>1){
+                  showAlert(rightclick.cannotUpdateOrAddEntite,"ok");
+                }
+                else{
+                  settings.addEntitie(true);
+                }
+              });
+            }}
+          >
+            {rightclick.addEntitie}
+          </Menu>
+        );
+      }
       return null;
     },
     [
@@ -682,7 +734,7 @@ const ContextMenu: React.FC = () => {
     >
       {context.contextMenu.headerMenu === true
         ? settings.headerContextMenu.map((menu, i) => getMenuElement(menu, i))
-        : settings.cellContextMenu.map((menu, i) => getMenuElement(menu, i))}
+        : settings.cellContextMenu.map((menu, i) => getMenuElement(menu, i))} 
     </div>
   );
 };

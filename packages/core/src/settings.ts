@@ -220,6 +220,10 @@ export const defaultSettings: Required<Settings> = {
     "search",
   ], // 自定义工具栏
   cellContextMenu: [
+    "updateEntitie",
+    "revertChanges",
+    "addEntitie",
+    "|",
     "copy", // 复制
     "paste", // 粘贴
     "|",
@@ -264,6 +268,10 @@ export const defaultSettings: Required<Settings> = {
     "orderZA", // 降序
   ], // header菜单
   sheetTabContextMenu: [
+    "updateEntitie",
+    "revertChanges",
+    "addEntitie",
+    "|",
     "delete",
     "copy",
     "rename",

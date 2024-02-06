@@ -11514,6 +11514,10 @@ export default {
     cannotInsertOnColumnReadOnly: "無法對只讀列插入",
     rowOverLimit: "超出10000行限制",
     columnOverLimit: "超出1000列限制",
+    updateEntite:"Update entitie",
+    addEntitie:"Add entitie",
+    revertChanges:"Revert changes",
+    cannotUpdateOrAddEntite:"Please select only one range",
   },
   comment: {
     insert: "新建批註",
@@ -11662,6 +11666,10 @@ export default {
     chartEditNoOpt: "圖表編輯模式下不允許該操作！",
     sheetNameSpecCharError: "名稱不能包含:[ ] :  ? * / ' \"",
     sheetNamecannotIsEmptyError: "名稱不能為空",
+    updateEntite:"Update entitie",
+    addEntitie:"Add entitie",
+    revertChanges:"Revert changes",
+    cannotUpdateOrAddEntite:"Please select only one range",
   },
   conditionformat: {
     conditionformat_greaterThan: "條件格式——大於",

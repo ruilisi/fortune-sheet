@@ -11520,6 +11520,10 @@ export default {
     cannotInsertOnColumnReadOnly: "Cannot insert into read-only column",
     rowOverLimit: "10000 row limit exceeded",
     columnOverLimit: "1000 column limit exceeded",
+    updateEntite:"Update entitie",
+    addEntitie:"Add entitie",
+    revertChanges:"Revert changes",
+    cannotUpdateOrAddEntite:"Please select only one range",
   },
   comment: {
     insert: "Insert",
@@ -11671,6 +11675,10 @@ export default {
     chartEditNoOpt: "This operation is not allowed in chart editing mode!",
     sheetNameSpecCharError: "The name cannot contain:[ ] :  ? * / ' \"",
     sheetNamecannotIsEmptyError: "Sheet name cannot be empty",
+    updateEntite:"Update entitie",
+    addEntitie:"Add entitie",
+    revertChanges:"Revert changes",
+    cannotUpdateOrAddEntite:"Please select only one range",
   },
   conditionformat: {
     conditionformat_greaterThan: "Conditionformat-GreaterThan",

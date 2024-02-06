@@ -11490,6 +11490,10 @@ export default {
       "No se puede insertar en la columna de solo lectura",
     rowOverLimit: "Límite de 10000 filas excedido",
     columnOverLimit: "Límite de 1000 columnas excedido",
+    updateEntite:"Update entitie",
+    addEntitie:"Add entitie",
+    revertChanges:"Revert changes",
+    cannotUpdateOrAddEntite:"Please select only one range",
   },
   comment: {
     insert: "Insertar",
@@ -11638,6 +11642,10 @@ export default {
       "¡Esta operación no está permitida en el modo de edición de gráficos!",
     sheetNameSpecCharError: "El nombre no puede contener:[ ] :  ? * / ' \"",
     sheetNamecannotIsEmptyError: "El nombre de la hoja no puede estar vacío",
+    updateEntite:"Update entitie",
+    addEntitie:"Add entitie",
+    revertChanges:"Revert changes",
+    cannotUpdateOrAddEntite:"Please select only one range",
   },
   conditionformat: {
     conditionformat_greaterThan: "Conditionformat-GreaterThan",

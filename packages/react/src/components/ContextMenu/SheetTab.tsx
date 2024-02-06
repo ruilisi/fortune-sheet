@@ -98,6 +98,38 @@ const SheetTabContextMenu: React.FC = () => {
     });
   }, [context.allowEdit, setContext, sheet?.id]);
 
+  const updateEntitie=useCallback(()=>{
+    setContext((ctx)=>{
+      let sheetIndex:number=-1;
+      for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
+        if (ctx.luckysheetfile[i]?.id === sheet?.id) {
+          sheetIndex = i;
+          break;
+        }
+      }
+      if(sheetIndex === -1 || !(sheet?.id)){
+        throw Error("Invalid sheet");
+      }
+      settings.updateEntitie(false,sheet?.id,sheetIndex)
+    })
+  },[sheet?.id,setContext,settings.updateEntitie])
+
+  const addEntitie=useCallback(()=>{
+    setContext((ctx)=>{
+      let sheetIndex:number=-1;
+      for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
+        if (ctx.luckysheetfile[i]?.id === sheet?.id) {
+          sheetIndex = i;
+          break;
+        }
+      }
+      if(sheetIndex === -1 || !(sheet?.id)){
+        throw Error("Invalid sheet");
+      }
+      settings.addEntitie(false,sheet?.id,sheetIndex)
+    })
+  },[sheet?.id,setContext,settings.addEntitie])
+
   if (!sheet || x == null || y == null) return null;
 
   return (
@@ -243,6 +275,45 @@ const SheetTabContextMenu: React.FC = () => {
         }
         if (name === "|") {
           return <Divider key={`divide-${i}`} />;
+        }
+        if(name === "updateEntitie" && settings.onUpdate){
+          return (
+            <Menu
+              key={name}
+              onClick={() => {
+                updateEntitie();
+                close();
+              }}
+            >
+              {sheetconfig.updateEntitie}
+            </Menu>
+          );
+        }
+        if(name === "revertChanges" && settings.onUpdate){
+          return (
+            <Menu
+              key={name}
+              onClick={() => {
+                settings.revertChanges();
+                close();
+              }}
+            >
+              {sheetconfig.revertChanges}
+            </Menu>
+          );
+        }
+        if(name === "addEntitie" && !(settings.onUpdate)){
+          return (
+            <Menu
+              key={name}
+              onClick={() => {
+                addEntitie();
+                close();
+              }}
+            >
+              {sheetconfig.addEntitie}
+            </Menu>
+          );
         }
         return null;
       })}
