@@ -90,6 +90,12 @@ export function setSelection(
   if (ctx.currentSheetId === sheet.id) {
     ctx.luckysheet_select_save = sheet.luckysheet_select_save;
   }
+  else if(sheet.id){
+    ctx.sheetScrollRecord[sheet.id]={
+      ...ctx.sheetScrollRecord[sheet.id],
+      luckysheet_select_save:sheet.luckysheet_select_save,
+    }
+  }
 }
 
 export function setCellValuesByRange(

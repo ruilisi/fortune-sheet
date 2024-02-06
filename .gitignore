@@ -7,7 +7,6 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
-.npmrc
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -141,4 +140,8 @@ dist
 # storybook
 /storybook-static
 
+#.npmrc
 .npmrc
+packages/react/.npmrc
+packages/core/.npmrc
+packages/core/.npmrc
