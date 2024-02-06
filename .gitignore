@@ -140,3 +140,5 @@ dist
 
 # storybook
 /storybook-static
+
+.npmrc
