@@ -155,6 +155,11 @@ export type Settings = {
     icon?: React.ReactNode;
     onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   }[];
+
+  updateEntitie?: (isCell:boolean,sheetId?:string,sheetIndex?:number)=>void;
+  addEntitie?: (isCell:boolean,sheetId?:string,sheetIndex?:number)=>void;
+  revertChanges?: ()=>void;
+  onUpdate? : boolean; 
 };
 
 export const defaultSettings: Required<Settings> = {
@@ -294,4 +299,14 @@ export const defaultSettings: Required<Settings> = {
   generateSheetId: () => uuidv4(),
   hooks: {},
   customToolbarItems: [],
+  updateEntitie: function (isCell: boolean, sheetId?: string | undefined, sheetIndex?: number | undefined): void {
+    throw new Error("Function not implemented.");
+  },
+  addEntitie: function (isCell: boolean, sheetId?: string | undefined, sheetIndex?: number | undefined): void {
+    throw new Error("Function not implemented.");
+  },
+  revertChanges: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  onUpdate: false
 };

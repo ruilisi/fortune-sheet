@@ -11554,7 +11554,7 @@ export default {
     cannotInsertOnColumnReadOnly: "无法对只读列插入",
     rowOverLimit: "超出10000行限制",
     columnOverLimit: "超出1000列限制",
-    updateEntite:"Update entitie",
+    updateEntitie:"Update entitie",
     addEntitie:"Add entitie",
     revertChanges:"Revert changes",
     cannotUpdateOrAddEntite:"Please select only one range",
@@ -11707,7 +11707,7 @@ export default {
     sheetNameSpecCharError:
       "名称不能超过31个字符，首尾不能是' 且名称不能包含:\r\n[ ] : \\ ? * /",
     sheetNamecannotIsEmptyError: "名称不能为空!",
-    updateEntite:"Update entitie",
+    updateEntitie:"Update entitie",
     addEntitie:"Add entitie",
     revertChanges:"Revert changes",
     cannotUpdateOrAddEntite:"Please select only one range",
