@@ -627,6 +627,7 @@ const ContextMenu: React.FC = () => {
                 else{
                   settings.updateEntitie(true);
                 }
+                draftCtx.contextMenu = {};
               });
             }}
           >
@@ -639,7 +640,10 @@ const ContextMenu: React.FC = () => {
           <Menu
             key={name}
             onClick={() => {
-              settings.revertChanges();
+              setContext((draftCtx)=>{
+                settings.revertChanges();
+                draftCtx.contextMenu = {};
+              })
             }}
           >
             {rightclick.revertChanges}
@@ -659,7 +663,9 @@ const ContextMenu: React.FC = () => {
                 else{
                   settings.addEntitie(true);
                 }
+                draftCtx.contextMenu = {};
               });
+              
             }}
           >
             {rightclick.addEntitie}

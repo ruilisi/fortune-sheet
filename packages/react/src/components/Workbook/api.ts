@@ -270,10 +270,9 @@ export function generateAPIs(
         targetRow?: number;
         targetColumn?: number;
       },
-      commonOptions: api.CommonOptions = {}
     ) =>
       setContext((draftCtx) =>
-        api.scroll(draftCtx, scrollbarX, scrollbarY, options, commonOptions)
+        api.scroll(draftCtx, scrollbarX, scrollbarY, options)
       ),
 
     addPresences: (newPresences: Presence[]) => {
