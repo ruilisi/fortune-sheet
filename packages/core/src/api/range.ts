@@ -87,6 +87,9 @@ export function setSelection(
 ) {
   const sheet = getSheet(ctx, options);
   sheet.luckysheet_select_save = normalizeSelection(ctx, range);
+  if(sheet.luckysheet_select_save){
+    sheet.luckysheet_select_save[0].scrollTo=1;
+  }
   if (ctx.currentSheetId === sheet.id) {
     ctx.luckysheet_select_save = sheet.luckysheet_select_save;
   }

@@ -82,6 +82,7 @@ export type Selection = {
   moveXY?: { x: number; y: number };
   row_select?: boolean;
   column_select?: boolean;
+  scrollTo?: number;
 };
 
 export type Presence = {

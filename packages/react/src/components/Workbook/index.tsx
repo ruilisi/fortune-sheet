@@ -75,7 +75,7 @@ const concatProducer = (...producers: ((ctx: Context) => void)[]) => {
 };
 
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
-  ({ onChange, onOp, data: originalData, ...props }, ref) => {
+  ({ onChange, onOp, data: originalData,scrollInside, ...props }, ref) => {
     const globalCache = useRef<GlobalCache>({ undoList: [], redoList: [] });
     const cellInput = useRef<HTMLDivElement>(null);
     const fxInput = useRef<HTMLDivElement>(null);
@@ -398,6 +398,36 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       context.luckysheet_select_save,
       mergedSettings.hooks,
     ]);
+
+    useEffect(()=>{
+      console.log("fired");
+      var i = getSheetIndex(context, context.currentSheetId);
+      if (i === null) {
+        console.log("i null");
+        return;
+      }
+      if (!sheet || !context.luckysheet_select_save || context.luckysheet_select_save.length <1) {
+        console.log(i, " no sheet of no option");
+        return;
+      }
+      if (scrollInside && context.luckysheet_select_save[0].scrollTo===2) {
+        console.log("scroll",context.luckysheet_select_save[0].scrollTo);
+        scrollInside({targetRow:context.luckysheet_select_save[0].row[0],targetColumn:context.luckysheet_select_save[0].column[0]});
+        setContextWithProduce((draftCtx)=>{
+          if(draftCtx.luckysheet_select_save){
+            draftCtx.luckysheet_select_save[0].scrollTo=0;
+          }
+        })
+      }
+      else{
+        console.log(context.luckysheet_select_save[0].scrollTo);
+        setContextWithProduce((draftCtx)=>{
+          if(draftCtx.luckysheet_select_save && draftCtx.luckysheet_select_save[0].scrollTo===1){
+            draftCtx.luckysheet_select_save[0].scrollTo=2;
+          }
+        })
+      }
+    },[context.visibledatarow])
 
     const providerValue = useMemo(
       () => ({
