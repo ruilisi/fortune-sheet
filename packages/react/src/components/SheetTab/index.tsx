@@ -82,7 +82,6 @@ const SheetTab: React.FC = () => {
             <SVGIcon name="plus" width={16} height={16} />
           </div>
         )}
-        {context.allowEdit && (
           <div className="sheet-list-container">
             <div
               id="all-sheets"
@@ -101,7 +100,6 @@ const SheetTab: React.FC = () => {
               <SVGIcon name="all-sheets" width={16} height={16} />
             </div>
           </div>
-        )}
         <div
           id="luckysheet-sheets-m"
           className="luckysheet-sheets-m lucky-button-custom"

@@ -1402,9 +1402,7 @@ export function handleContextMenu(
   container: HTMLDivElement,
   area: "cell" | "rowHeader" | "columnHeader"
 ) {
-  if (!ctx.allowEdit) {
-    return;
-  }
+  
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
 
