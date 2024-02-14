@@ -219,7 +219,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
       >
         {sheet.name}
       </span>
-      <span
+      {/*<span
         className="luckysheet-sheets-item-function"
         onMouseEnter={() => setSvgColor("#5c5c5c")}
         onMouseLeave={() => setSvgColor("#c3c3c3")}
@@ -240,7 +240,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
         }}
       >
         <SVGIcon name="downArrow" width={12} style={{ fill: svgColor }} />
-      </span>
+      </span>*/}
       {!!sheet.color && (
         <div
           className="luckysheet-sheets-item-color"

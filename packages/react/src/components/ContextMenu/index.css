@@ -277,3 +277,9 @@
   top: 3px;
   right: -18px;
 }
+
+.pre-context-item {
+  position: absolute;
+  left:5px;
+  margin-right: 10px;
+}

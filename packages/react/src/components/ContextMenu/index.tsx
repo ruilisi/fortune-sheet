@@ -26,6 +26,7 @@ import Divider from "./Divider";
 import "./index.css";
 import Menu from "./Menu";
 import CustomSort from "../CustomSort";
+import SVGIcon from "../SVGIcon";
 
 const ContextMenu: React.FC = () => {
   const { showDialog } = useDialog();
@@ -37,10 +38,10 @@ const ContextMenu: React.FC = () => {
   const getMenuElement = useCallback(
     (name: string, i: number) => {
       const selection = context.luckysheet_select_save?.[0];
-      if (name === "|") {
+      if (name === "|" && context.allowEdit) {
         return <Divider key={`divider-${i}`} />;
       }
-      if (name === "copy") {
+      if (name === "copy" && context.allowEdit) {
         return (
           <Menu
             key={name}
@@ -60,7 +61,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if (name === "paste") {
+      if (name === "paste" && context.allowEdit) {
         return (
           <Menu
             key={name}
@@ -75,7 +76,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if (name === "insert-column") {
+      if (name === "insert-column" && context.allowEdit) {
         return selection?.row_select
           ? null
           : ["left", "right"].map((dir) => (
@@ -151,7 +152,7 @@ const ContextMenu: React.FC = () => {
               </Menu>
             ));
       }
-      if (name === "insert-row") {
+      if (name === "insert-row" && context.allowEdit) {
         return selection?.column_select
           ? null
           : ["top", "bottom"].map((dir) => (
@@ -220,7 +221,7 @@ const ContextMenu: React.FC = () => {
               </Menu>
             ));
       }
-      if (name === "delete-column") {
+      if (name === "delete-column" && context.allowEdit) {
         return (
           selection?.column_select && (
             <Menu
@@ -273,7 +274,7 @@ const ContextMenu: React.FC = () => {
           )
         );
       }
-      if (name === "delete-row") {
+      if (name === "delete-row" && context.allowEdit) {
         return (
           selection?.row_select && (
             <Menu
@@ -323,7 +324,7 @@ const ContextMenu: React.FC = () => {
           )
         );
       }
-      if (name === "hide-row") {
+      if (name === "hide-row" && context.allowEdit) {
         return (
           selection?.row_select === true &&
           ["hideSelected", "showHide"].map((item) => (
@@ -349,7 +350,7 @@ const ContextMenu: React.FC = () => {
           ))
         );
       }
-      if (name === "hide-column") {
+      if (name === "hide-column" && context.allowEdit) {
         return (
           selection?.column_select === true &&
           ["hideSelected", "showHide"].map((item) => (
@@ -375,7 +376,7 @@ const ContextMenu: React.FC = () => {
           ))
         );
       }
-      if (name === "set-row-height") {
+      if (name === "set-row-height" && context.allowEdit) {
         const rowHeight = selection?.height || context.defaultrowlen;
         const shownRowHeight = context.luckysheet_select_save?.some(
           (section) =>
@@ -435,7 +436,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         ) : null;
       }
-      if (name === "set-column-width") {
+      if (name === "set-column-width" && context.allowEdit) {
         const colWidth = selection?.width || context.defaultcollen;
         const shownColWidth = context.luckysheet_select_save?.some(
           (section) =>
@@ -495,7 +496,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         ) : null;
       }
-      if (name === "clear") {
+      if (name === "clear" && context.allowEdit) {
         return (
           <Menu
             key={name}
@@ -524,7 +525,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if (name === "orderAZ") {
+      if (name === "orderAZ" && context.allowEdit) {
         return (
           <Menu
             key={name}
@@ -539,7 +540,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if (name === "orderZA") {
+      if (name === "orderZA" && context.allowEdit) {
         return (
           <Menu
             key={name}
@@ -554,7 +555,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if (name === "sort") {
+      if (name === "sort" && context.allowEdit) {
         return (
           <Menu
             key={name}
@@ -569,7 +570,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if (name === "filter") {
+      if (name === "filter" && context.allowEdit) {
         return (
           <Menu
             key={name}
@@ -584,7 +585,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if (name === "image") {
+      if (name === "image" && context.allowEdit) {
         return (
           <Menu
             key={name}
@@ -599,7 +600,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if (name === "link") {
+      if (name === "link" && context.allowEdit) {
         return (
           <Menu
             key={name}
@@ -646,6 +647,9 @@ const ContextMenu: React.FC = () => {
               })
             }}
           >
+            <span className="pre-context-item">
+                <SVGIcon name="undo" width={16} height={16} />
+            </span>
             {rightclick.revertChanges}
           </Menu>
         );
@@ -668,6 +672,9 @@ const ContextMenu: React.FC = () => {
               
             }}
           >
+            <span className="pre-context-item">
+                <SVGIcon name="plus" width={16} height={16} />
+              </span>
             {rightclick.addEntitie}
           </Menu>
         );

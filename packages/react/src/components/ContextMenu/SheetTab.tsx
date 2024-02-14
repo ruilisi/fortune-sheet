@@ -140,7 +140,7 @@ const SheetTabContextMenu: React.FC = () => {
       ref={containerRef}
     >
       {settings.sheetTabContextMenu?.map((name, i) => {
-        if (name === "delete") {
+        if (name === "delete" && context.allowEdit) {
           return (
             <Menu
               key={name}
@@ -176,7 +176,7 @@ const SheetTabContextMenu: React.FC = () => {
             </Menu>
           );
         }
-        if (name === "rename") {
+        if (name === "rename" && context.allowEdit) {
           return (
             <Menu
               key={name}
@@ -189,7 +189,7 @@ const SheetTabContextMenu: React.FC = () => {
             </Menu>
           );
         }
-        if (name === "move") {
+        if (name === "move" && context.allowEdit) {
           return (
             <React.Fragment key={name}>
               <Menu
@@ -211,7 +211,7 @@ const SheetTabContextMenu: React.FC = () => {
             </React.Fragment>
           );
         }
-        if (name === "hide") {
+        if (name === "hide" && context.allowEdit) {
           return (
             <Menu
               key={name}
@@ -224,7 +224,7 @@ const SheetTabContextMenu: React.FC = () => {
             </Menu>
           );
         }
-        if (name === "copy") {
+        if (name === "copy" && context.allowEdit) {
           return (
             <Menu
               key={name}
@@ -237,7 +237,7 @@ const SheetTabContextMenu: React.FC = () => {
             </Menu>
           );
         }
-        if (name === "color") {
+        if (name === "color" && context.allowEdit) {
           return (
             <Menu
               key={name}
@@ -260,7 +260,7 @@ const SheetTabContextMenu: React.FC = () => {
             </Menu>
           );
         }
-        if (name === "focus") {
+        if (name === "focus" && context.allowEdit) {
           return (
             <Menu
               key={name}
@@ -273,7 +273,7 @@ const SheetTabContextMenu: React.FC = () => {
             </Menu>
           );
         }
-        if (name === "|") {
+        if (name === "|" && context.allowEdit) {
           return <Divider key={`divide-${i}`} />;
         }
         if(name === "updateEntitie" && settings.onUpdate){
@@ -298,6 +298,9 @@ const SheetTabContextMenu: React.FC = () => {
                 close();
               }}
             >
+              <span className="pre-context-item">
+                <SVGIcon name="undo" width={16} height={16} />
+              </span>
               {sheetconfig.revertChanges}
             </Menu>
           );
@@ -311,6 +314,9 @@ const SheetTabContextMenu: React.FC = () => {
                 close();
               }}
             >
+              <span className="pre-context-item">
+                <SVGIcon name="plus" width={16} height={16} />
+              </span>
               {sheetconfig.addEntitie}
             </Menu>
           );

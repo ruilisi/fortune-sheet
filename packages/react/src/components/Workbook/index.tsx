@@ -400,18 +400,14 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     ]);
 
     useEffect(()=>{
-      console.log("fired");
       var i = getSheetIndex(context, context.currentSheetId);
       if (i === null) {
-        console.log("i null");
         return;
       }
       if (!sheet || !context.luckysheet_select_save || context.luckysheet_select_save.length <1) {
-        console.log(i, " no sheet of no option");
         return;
       }
       if (scrollInside && context.luckysheet_select_save[0].scrollTo===2) {
-        console.log("scroll",context.luckysheet_select_save[0].scrollTo);
         scrollInside({targetRow:context.luckysheet_select_save[0].row[0],targetColumn:context.luckysheet_select_save[0].column[0]});
         setContextWithProduce((draftCtx)=>{
           if(draftCtx.luckysheet_select_save){
