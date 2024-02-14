@@ -2367,7 +2367,7 @@ export function calcSelectionInfo(ctx: Context, lang?: string | null) {
         const value = data![r][c]?.m as string;
         // 判断是不是数字
         if (
-          ct === "n" ||
+          (ct === "n" && parseFloat(value).toString() !== "NaN") ||
           (ct === "g" && parseFloat(value).toString() !== "NaN")
         ) {
           const valueNumber = parseFloat(value);
