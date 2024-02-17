@@ -285,6 +285,9 @@ const SheetTabContextMenu: React.FC = () => {
                 close();
               }}
             >
+              <span className="pre-context-item">
+                <SVGIcon name="check" width={16} height={16} />
+              </span>
               {sheetconfig.updateEntitie}
             </Menu>
           );

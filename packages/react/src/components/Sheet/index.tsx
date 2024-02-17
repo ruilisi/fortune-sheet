@@ -10,6 +10,7 @@ import {
 import "./index.css";
 import WorkbookContext from "../../context";
 import SheetOverlay from "../SheetOverlay";
+import _ from 'lodash';
 
 type Props = {
   sheet: SheetType;
@@ -40,10 +41,17 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
         );
       });
     }
-    window.addEventListener("resize", resize);
-    return () => {
-      window.removeEventListener("resize", resize);
-    };
+    if (!placeholderRef.current) return;
+
+    const resizeObserver = new ResizeObserver(_.debounce(() => {
+      resize()
+    }, 300));
+    resizeObserver.observe(placeholderRef.current);
+    return () => resizeObserver.disconnect(); // clean up 
+    // window.addEventListener("resize", resize);
+    // return () => {
+    //   window.removeEventListener("resize", resize);
+    // };
   }, [data, refs.canvas, setContext, settings.devicePixelRatio]);
 
   /**
