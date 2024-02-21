@@ -150,7 +150,24 @@ export function setCellFormatByRange(
   if (!_.isArray(range)) {
     throw INVALID_PARAMS;
   }
-
+  if (_.isArray(value)){
+    range.forEach((singleRange)=>{
+      const len=(singleRange.row[1]-singleRange.row[0]+1)*(singleRange.column[1]-singleRange.column[0]+1)
+      if(len!==value.length){
+        throw INVALID_PARAMS;
+      }
+    })
+    range.forEach((singleRange) => {
+      let i=0
+      for (let r = singleRange.row[0]; r <= singleRange.row[1]; r += 1) {
+        for (let c = singleRange.column[0]; c <= singleRange.column[1]; c += 1) {
+          setCellFormat(ctx, r, c, attr, value[i], options);
+          i++;
+        }
+      }
+    });
+    return;
+  }
   range.forEach((singleRange) => {
     for (let r = singleRange.row[0]; r <= singleRange.row[1]; r += 1) {
       for (let c = singleRange.column[0]; c <= singleRange.column[1]; c += 1) {

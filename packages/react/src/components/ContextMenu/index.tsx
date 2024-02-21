@@ -633,7 +633,7 @@ const ContextMenu: React.FC = () => {
             }}
           >
             <span className="pre-context-item">
-                <SVGIcon name="check" width={16} height={16} />
+                <SVGIcon name="check" width={16} height={16} style={{fill:"#74E291"}} />
             </span>
             {rightclick.updateEntitie}
           </Menu>
@@ -644,8 +644,8 @@ const ContextMenu: React.FC = () => {
           <Menu
             key={name}
             onClick={() => {
+              settings.revertChanges();
               setContext((draftCtx)=>{
-                settings.revertChanges();
                 draftCtx.contextMenu = {};
               })
             }}
@@ -676,7 +676,7 @@ const ContextMenu: React.FC = () => {
             }}
           >
             <span className="pre-context-item">
-                <SVGIcon name="plus" width={16} height={16} />
+                <SVGIcon name="plus" width={16} height={16} style={{fill:"#74E291"}}/>
               </span>
             {rightclick.addEntitie}
           </Menu>
