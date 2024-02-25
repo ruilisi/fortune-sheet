@@ -41,17 +41,18 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
         );
       });
     }
-    if (!placeholderRef.current) return;
+    // if (!placeholderRef.current) return;
 
-    const resizeObserver = new ResizeObserver(_.debounce(() => {
-      resize()
-    }, 300));
-    resizeObserver.observe(placeholderRef.current);
-    return () => resizeObserver.disconnect(); // clean up 
-    // window.addEventListener("resize", resize);
-    // return () => {
-    //   window.removeEventListener("resize", resize);
-    // };
+    // const resizeObserver = new ResizeObserver(_.debounce(() => {
+    //   resize()
+    // }, 300));
+    // resizeObserver.observe(placeholderRef.current);
+    // return () => resizeObserver.disconnect(); // clean up
+
+    window.addEventListener("resize", resize);
+    return () => {
+      window.removeEventListener("resize", resize);
+    };
   }, [data, refs.canvas, setContext, settings.devicePixelRatio]);
 
   /**

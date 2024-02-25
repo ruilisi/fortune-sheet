@@ -286,7 +286,7 @@ const SheetTabContextMenu: React.FC = () => {
               }}
             >
               <span className="pre-context-item">
-                <SVGIcon name="check" width={16} height={16} style={{fill:"#74E291"}}/>
+                <SVGIcon name="check" width={16} height={16} />
               </span>
               {sheetconfig.updateEntitie}
             </Menu>
@@ -318,7 +318,7 @@ const SheetTabContextMenu: React.FC = () => {
               }}
             >
               <span className="pre-context-item">
-                <SVGIcon name="plus" width={16} height={16} style={{fill:"#74E291"}}/>
+                <SVGIcon name="plus" width={16} height={16}/>
               </span>
               {sheetconfig.addEntitie}
             </Menu>
