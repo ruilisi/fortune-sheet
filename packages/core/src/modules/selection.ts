@@ -1550,25 +1550,11 @@ export function rangeValueToHtml(
     const c2 = range.column[1];
 
     for (let copyR = r1; copyR <= r2; copyR += 1) {
-      if (
-        !_.isNil(sheet.config?.rowhidden) &&
-        !_.isNil(sheet.config?.rowhidden[copyR])
-      ) {
-        continue;
-      }
-
       if (!rowIndexArr.includes(copyR)) {
         rowIndexArr.push(copyR);
       }
 
       for (let copyC = c1; copyC <= c2; copyC += 1) {
-        if (
-          !_.isNil(sheet.config?.colhidden) &&
-          !_.isNil(sheet.config?.colhidden[copyC])
-        ) {
-          continue;
-        }
-
         if (!colIndexArr.includes(copyC)) {
           colIndexArr.push(copyC);
         }
@@ -1594,24 +1580,10 @@ export function rangeValueToHtml(
   for (let i = 0; i < rowIndexArr.length; i += 1) {
     const r = rowIndexArr[i];
 
-    if (
-      !_.isNil(sheet.config?.rowhidden) &&
-      !_.isNil(sheet.config?.rowhidden[r])
-    ) {
-      continue;
-    }
-
     cpdata += "<tr>";
 
     for (let j = 0; j < colIndexArr.length; j += 1) {
       const c = colIndexArr[j];
-
-      if (
-        !_.isNil(sheet.config?.colhidden) &&
-        !_.isNil(sheet.config?.colhidden[c])
-      ) {
-        continue;
-      }
 
       // eslint-disable-next-line no-template-curly-in-string
       let column = '<td ${span} style="${style}">';
@@ -2363,9 +2335,13 @@ export function calcSelectionInfo(ctx: Context, lang?: string | null) {
       for (let c = 0; c < data[0].length; c += 1) {
         // 防止选区长度超出data
         if (r >= data.length || c >= data[0].length) break;
+        const ct = data![r][c]?.ct?.t as string;
         const value = data![r][c]?.m as string;
         // 判断是不是数字
-        if (parseFloat(value).toString() !== "NaN") {
+        if (
+          ct === "n" ||
+          (ct === "g" && parseFloat(value).toString() !== "NaN")
+        ) {
           const valueNumber = parseFloat(value);
           count += 1;
           sum += valueNumber;
