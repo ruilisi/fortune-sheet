@@ -15,6 +15,7 @@
     "immer": "^9.0.12",
     "lodash": "^4.17.21",
     "numeral": "^2.0.6",
+    "numfmt": "2.5.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

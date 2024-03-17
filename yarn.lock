@@ -15741,6 +15741,11 @@ numeral@^2.0.6:
   resolved "https://registry.npmmirror.com/numeral/-/numeral-2.0.6.tgz#4ad080936d443c2561aed9f2197efffe25f4e506"
   integrity sha512-qaKRmtYPZ5qdw4jWJD6bxEf1FJEqllJrwxCLIm0sQU/A7v2/czigzOb+C2uSiFsa9lBUzeH7M1oK+Q+OLxL3kA==
 
+numfmt@2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/numfmt/-/numfmt-2.5.1.tgz#7297ca7eb036ca3e10680b6c04b9854e55f6e774"
+  integrity sha512-hhohb6oCH3z9rZpFRGrb335CVwWN62Ajom8QI86PbIR+z6AFG8LuLGpoNz6/zR/tEKoTptzkS6kpAkSE218arg==
+
 nwsapi@^2.2.0:
   version "2.2.0"
   resolved "https://registry.npmmirror.com/nwsapi/-/nwsapi-2.2.0.tgz#204879a9e3d068ff2a55139c2c772780681a38b7"

@@ -1,8 +1,8 @@
 import numeral from "numeral";
 import _ from "lodash";
-import { isRealNum, valueIsError, isdatetime } from "./validation";
 // @ts-ignore
-import SSF from "./ssf";
+import numfmt from "numfmt";
+import { isRealNum, valueIsError, isdatetime } from "./validation";
 import { CellMatrix } from "../types";
 import { getCellValue } from "./cell";
 
@@ -126,7 +126,7 @@ export function genarate(value: string | number | boolean) {
       ct = { fa: "#0.E+00", t: "n" };
     }
 
-    m = SSF.format(ct.fa, v);
+    m = numfmt.format(ct.fa, v);
   } else if (value.toString().indexOf("%") > -1) {
     const index = value.toString().indexOf("%");
     const value2 = value.toString().substring(0, index);
@@ -160,7 +160,7 @@ export function genarate(value: string | number | boolean) {
                 t: "n",
               };
               v = numeral(value).value();
-              m = SSF.format(ct.fa, v);
+              m = numfmt.format(ct.fa, v);
             } else {
               m = value.toString();
               ct = { fa: "@", t: "s" };
@@ -168,7 +168,7 @@ export function genarate(value: string | number | boolean) {
           } else {
             ct = { fa: `0.${new Array(len + 1).join("0")}%`, t: "n" };
             v = numeral(value).value();
-            m = SSF.format(ct.fa, v);
+            m = numfmt.format(ct.fa, v);
           }
         } else {
           m = value.toString();
@@ -188,7 +188,7 @@ export function genarate(value: string | number | boolean) {
         if (isThousands) {
           ct = { fa: "#,##0%", t: "n" };
           v = numeral(value).value();
-          m = SSF.format(ct.fa, v);
+          m = numfmt.format(ct.fa, v);
         } else {
           m = value.toString();
           ct = { fa: "@", t: "s" };
@@ -196,7 +196,7 @@ export function genarate(value: string | number | boolean) {
       } else {
         ct = { fa: "0%", t: "n" };
         v = numeral(value).value();
-        m = SSF.format(ct.fa, v);
+        m = numfmt.format(ct.fa, v);
       }
     } else {
       m = value.toString();
@@ -226,7 +226,7 @@ export function genarate(value: string | number | boolean) {
         if (isThousands) {
           ct = { fa: `#,##0.${new Array(len + 1).join("0")}`, t: "n" };
           v = numeral(value).value();
-          m = SSF.format(ct.fa, v);
+          m = numfmt.format(ct.fa, v);
         } else {
           m = value.toString();
           ct = { fa: "@", t: "s" };
@@ -235,7 +235,7 @@ export function genarate(value: string | number | boolean) {
         if (isRealNum(value1) && isRealNum(value2)) {
           ct = { fa: `0.${new Array(len + 1).join("0")}`, t: "n" };
           v = numeral(value).value();
-          m = SSF.format(ct.fa, v);
+          m = numfmt.format(ct.fa, v);
         } else {
           m = value.toString();
           ct = { fa: "@", t: "s" };
@@ -270,7 +270,7 @@ export function genarate(value: string | number | boolean) {
     }
 
     ct.t = "d";
-    m = SSF.format(ct.fa, v);
+    m = numfmt.format(ct.fa, v);
   } else {
     m = value as string;
     ct.fa = "General";
@@ -281,11 +281,11 @@ export function genarate(value: string | number | boolean) {
 }
 
 export function update(fmt: string, v: any) {
-  return SSF.format(fmt, v);
+  return numfmt.format(fmt, v);
 }
 
-export function is_date(fmt: string, v?: any) {
-  return SSF.is_date(fmt, v);
+export function is_date(fmt: string) {
+  return numfmt.isDate(fmt);
 }
 
 function fuzzynum(s: string | number) {
