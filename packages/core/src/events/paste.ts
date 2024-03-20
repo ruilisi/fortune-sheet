@@ -18,6 +18,7 @@ import { expandRowsAndColumns, storeSheetParamALL } from "../modules/sheet";
 import { jfrefreshgrid } from "../modules/refresh";
 import { setRowHeight } from "../api";
 import { CFSplitRange } from "../modules";
+import clipboard from "../modules/clipboard";
 
 function postPasteCut(
   ctx: Context,
@@ -1991,13 +1992,16 @@ export function handlePasteByClick(ctx: Context, triggerType?: string) {
   const allowEdit = isAllowEdit(ctx);
   if (!allowEdit) return;
 
+  // works only for https as reading OS clipboard is blocked over http
+  navigator.clipboard.readText().then((clipboardText) => {
+    clipboard.writeHtml(clipboardText);
+  });
+
   const textarea = document.querySelector("#fortune-copy-content");
   // textarea.focus();
   // textarea.select();
 
-  // 等50毫秒，keyPress事件发生了再去处理数据
-  // setTimeout(function () {
-  const data = textarea?.innerHTML;
+  const data = textarea?.innerHTML || textarea?.textContent;
   if (!data) return;
 
   if (
