@@ -68,7 +68,7 @@ export function getDropdownList(ctx: Context, txt: string) {
   const list: (string | number | boolean)[] = [];
   if (iscelldata(txt)) {
     const range = getcellrange(ctx, txt);
-    const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
+    const index = getSheetIndex(ctx, range.sheetId) as number;
     const d = ctx.luckysheetfile[index].data;
     if (!d) return [];
     for (let r = range.row[0]; r <= range.row[1]; r += 1) {
