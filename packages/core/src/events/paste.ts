@@ -318,6 +318,14 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
           value = data[h - minh][c - minc];
         }
 
+        if (x[c]?.ct?.fa != null && x[c]?.ct?.fa !== value.ct?.fa) {
+          value.m = update(x[c]?.ct?.fa!, value.raw || value.v);
+          value.ct = x[c]?.ct;
+          if (x[c]?.ct?.t === "s" && value.raw) {
+            value.v = value.raw;
+          }
+        }
+        delete value.raw;
         x[c] = value;
 
         if (value != null && x?.[c]?.mc) {
@@ -1498,6 +1506,11 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
   // }
   const allowEdit = isAllowEdit(ctx);
   if (!allowEdit) return;
+  if ((ctx.luckysheet_select_save?.length ?? 0) !== 1) return;
+  const minh = ctx.luckysheet_select_save![0].row[0];
+  const minc = ctx.luckysheet_select_save![0].column[0];
+  const flowdata = getFlowdata(ctx);
+  if (!flowdata) return;
 
   if (selectionCache.isPasteAction) {
     ctx.luckysheetCellUpdate = [];
@@ -1719,8 +1732,12 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
             } else {
               const mask = genarate(txt);
               // @ts-ignore
-              [cell.m, cell.ct, cell.v] = mask;
+              [cell.m, cell.ct, cell.v] = flowdata[r + minh][c + minc]?.ct?.fa
+                ? [txt, flowdata[r + minh][c + minc]?.ct, txt]
+                : mask;
             }
+            // @ts-ignore
+            cell.raw = txt;
             const styleString =
               typeof allStyleList[`.${className}`] === "string"
                 ? allStyleList[`.${className}`]
