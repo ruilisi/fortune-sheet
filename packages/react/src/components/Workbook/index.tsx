@@ -416,7 +416,6 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         })
       }
       else{
-        console.log(context.luckysheet_select_save[0].scrollTo);
         setContextWithProduce((draftCtx)=>{
           if(draftCtx.luckysheet_select_save && draftCtx.luckysheet_select_save[0].scrollTo===1){
             draftCtx.luckysheet_select_save[0].scrollTo=2;
