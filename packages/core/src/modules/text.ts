@@ -435,7 +435,7 @@ export function getCellTextInfo(
     let similarIndex = 0;
     for (let i = 0; i < sharedStrings.length; i += 1) {
       const shareCell = sharedStrings[i];
-      const scfontset = getFontSet(shareCell, sheetCtx.defaultFontSize);
+      const scfontset = getFontSet(shareCell, sheetCtx.defaultFontSize, ctx);
       const { fc } = shareCell;
       const { cl } = shareCell;
       const { un } = shareCell;
