@@ -1224,6 +1224,7 @@ export function isAllSelectedCellsInStatus(
   if (!_.isEmpty(ctx.luckysheetCellUpdate)) {
     const w = window.getSelection();
     if (!w) return false;
+    if (w.rangeCount === 0) return false;
     const range = w.getRangeAt(0);
     if (range.collapsed === true) {
       return false;
