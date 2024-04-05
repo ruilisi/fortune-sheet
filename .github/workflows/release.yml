@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
+          cache: "yarn"
+      - run: yarn install --frozen-lockfile
+      - run: yarn tsc
+      - run: yarn lint
+      - run: yarn test
+      - run: yarn build
+      - run: cd packages/core && npm pack
+      - run: cd packages/react && npm pack
+      - run: cd packages/formula-parser && npm pack
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: |
+            packages/core/fortune-sheet-core-*.tgz
+            packages/react/fortune-sheet-react-*.tgz
+            packages/formula-parser/fortune-sheet-formula-parser-*.tgz
+      - run: cd packages/core && npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: cd packages/react && npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: cd packages/formula-parser && npm publish || true
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
