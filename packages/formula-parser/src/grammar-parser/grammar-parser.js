@@ -71,18 +71,7 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-
-/* addresses */
-const simpleSheetName = '[A-Za-z0-9_\u00C0-\u02AF]+';
-const quotedSheetName = "'(?:(?!').|'')*'";
-const sheetNameRegexp = `(?:${simpleSheetName}|${quotedSheetName})!`;
-const ABSOLUTE_CELL = new RegExp(`^(?:${sheetNameRegexp})?(?:[$][A-Za-z]+[$][0-9]+)`);
-const MIXED_CELL_COL = new RegExp(`^(?:${sheetNameRegexp})?(?:[$][A-Za-z]+[0-9]*)`);
-const MIXED_CELL_ROW = new RegExp(`^(?:${sheetNameRegexp})?(?:[A-Za-z]*[$][0-9]+)`);
-const RELATIVE_CELL = new RegExp(`^(?:${sheetNameRegexp})?(?:(?:[A-Za-z]+[0-9]*)|(?:[A-Za-z]*[0-9]+))(?!\\d)(?!\\.)`);
-const NUMONLY = /^(?:[0-9]+$)/
-var stackCache
-
+var grammarParser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,5],$V1=[1,8],$V2=[1,6],$V3=[1,7],$V4=[1,9],$V5=[1,14],$V6=[1,15],$V7=[1,16],$V8=[1,12],$V9=[1,13],$Va=[1,17],$Vb=[1,19],$Vc=[1,20],$Vd=[1,21],$Ve=[1,22],$Vf=[1,23],$Vg=[1,24],$Vh=[1,25],$Vi=[1,26],$Vj=[1,27],$Vk=[1,28],$Vl=[5,9,10,11,13,14,15,16,17,18,19,20,29,30],$Vm=[5,9,10,11,13,14,15,16,17,18,19,20,29,30,32],$Vn=[5,9,10,11,13,14,15,16,17,18,19,20,29,30,34],$Vo=[5,10,11,13,14,15,16,17,29,30],$Vp=[5,10,13,14,15,16,29,30],$Vq=[5,10,11,13,14,15,16,17,18,19,29,30],$Vr=[13,29,30];
 var parser = {trace: function trace () { },
 yy: {},
@@ -97,92 +86,92 @@ switch (yystate) {
 case 1:
 
       return $$[$0-1];
-
+    
 break;
 case 2:
 
       this.$ = yy.callVariable($$[$0][0]);
-
+    
 break;
 case 3:
 
       this.$ = yy.toNumber($$[$0]);
-
+    
 break;
 case 4:
 
       this.$ = yy.trimEdges($$[$0]);
-
+    
 break;
 case 5:
 
       this.$ = yy.evaluateByOperator('&', [$$[$0-2], $$[$0]]);
-
+    
 break;
 case 6:
 
       this.$ = yy.evaluateByOperator('=', [$$[$0-2], $$[$0]]);
-
+    
 break;
 case 7:
 
       this.$ = yy.evaluateByOperator('+', [$$[$0-2], $$[$0]]);
-
+    
 break;
 case 8:
 
       this.$ = $$[$0-1];
-
+    
 break;
 case 9:
 
       this.$ = yy.evaluateByOperator('<=', [$$[$0-3], $$[$0]]);
-
+    
 break;
 case 10:
 
       this.$ = yy.evaluateByOperator('>=', [$$[$0-3], $$[$0]]);
-
+    
 break;
 case 11:
 
       this.$ = yy.evaluateByOperator('<>', [$$[$0-3], $$[$0]]);
-
+    
 break;
 case 12:
 
       this.$ = yy.evaluateByOperator('NOT', [$$[$0-2], $$[$0]]);
-
+    
 break;
 case 13:
 
       this.$ = yy.evaluateByOperator('>', [$$[$0-2], $$[$0]]);
-
+    
 break;
 case 14:
 
       this.$ = yy.evaluateByOperator('<', [$$[$0-2], $$[$0]]);
-
+    
 break;
 case 15:
 
       this.$ = yy.evaluateByOperator('-', [$$[$0-2], $$[$0]]);
-
+    
 break;
 case 16:
 
       this.$ = yy.evaluateByOperator('*', [$$[$0-2], $$[$0]]);
-
+    
 break;
 case 17:
 
       this.$ = yy.evaluateByOperator('/', [$$[$0-2], $$[$0]]);
-
+    
 break;
 case 18:
 
       this.$ = yy.evaluateByOperator('^', [$$[$0-2], $$[$0]]);
-
+    
 break;
 case 19:
 
@@ -193,7 +182,7 @@ case 19:
       if (isNaN(this.$)) {
           this.$ = 0;
       }
-
+    
 break;
 case 20:
 
@@ -204,69 +193,69 @@ case 20:
       if (isNaN(this.$)) {
           this.$ = 0;
       }
-
+    
 break;
 case 21:
 
       this.$ = yy.callFunction($$[$0-2]);
-
+    
 break;
 case 22:
 
       this.$ = yy.callFunction($$[$0-3], $$[$0-1]);
-
+    
 break;
 case 26: case 27: case 28:
 
       this.$ = yy.cellValue($$[$0]);
-
+    
 break;
 case 29: case 30: case 31: case 32: case 33: case 34: case 35: case 36: case 37:
 
       this.$ = yy.rangeValue($$[$0-2], $$[$0]);
-
+    
 break;
 case 38: case 42:
 
       this.$ = [$$[$0]];
-
+    
 break;
 case 39:
 
       this.$ = yy.trimEdges(yytext).split(',');
-
+    
 break;
 case 40: case 41:
 
       $$[$0-2].push($$[$0]);
       this.$ = $$[$0-2];
-
+    
 break;
 case 43:
 
       this.$ = (Array.isArray($$[$0-2]) ? $$[$0-2] : [$$[$0-2]]);
       this.$.push($$[$0]);
-
+    
 break;
 case 44:
 
       this.$ = $$[$0];
-
+    
 break;
 case 45:
 
       this.$ = ($$[$0-2] + '.' + $$[$0]) * 1;
-
+    
 break;
 case 46:
 
       this.$ = $$[$0-1] * 0.01;
-
+    
 break;
 case 47:
 
       this.$ = yy.throwError($$[$0]);
-
+    
 break;
 }
 },
@@ -331,6 +320,7 @@ parse: function parse (input) {
         lstack.length = lstack.length - n;
     }
 
+_token_stack:
     var lex = function () {
         var token;
         token = lexer.lex() || EOF;
@@ -344,7 +334,6 @@ parse: function parse (input) {
     var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
     while (true) {
         // retreive state number from top of stack
-        stackCache = stack
         state = stack[stack.length - 1];
 
         // use default actions if available
@@ -358,6 +347,7 @@ parse: function parse (input) {
             action = table[state] && table[state][symbol];
         }
 
+_handle_error:
         // handle parse error
         if (typeof action === 'undefined' || !action.length || !action[0]) {
             var error_rule_depth;
@@ -755,11 +745,6 @@ next:function () {
             if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
                 match = tempMatch;
                 index = i;
-                const stackLen = stackCache.length
-                if (rules[i] === 8 && match[0].match(NUMONLY) && !(match.input.slice(match[0].length)[0] === ":" || (stackLen > 3 && stackCache[stackLen - 4] === 25 && stackCache[stackLen - 2] === 27))) {
-                  match = false;
-                  continue;
-                }
                 if (this.options.backtrack_lexer) {
                     token = this.test_match(tempMatch, rules[i]);
                     if (token !== false) {
@@ -854,88 +839,109 @@ var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
 case 0:/* skip whitespace */
 break;
-case 1:return 8;
+case 1:return 33;
 break;
 case 2:return 8;
 break;
-case 3:return 21;
+case 3:return 8;
 break;
-case 4:return 35;
+case 4:return 21;
 break;
-case 5:return 24;
+case 5:return 35;
 break;
-case 6:return 26;
+case 6:return 24;
 break;
 case 7:return 26;
 break;
-case 8:return 25;
+case 8:return 26;
 break;
-case 9:return 21;
+case 9:return 25;
 break;
-case 10:return 31;
+case 10:return 21;
 break;
 case 11:return 31;
 break;
-case 12:return 33;
+case 12:return 31;
 break;
-case 13:return 28;
+case 13:return 33;
 break;
-case 14:return 9;
+case 14:return 28;
 break;
-case 15:return ' ';
+case 15:return 9;
 break;
-case 16:return 32;
+case 16:return ' ';
 break;
-case 17:return 27;
+case 17:return 32;
 break;
-case 18:return 29;
+case 18:return 27;
 break;
-case 19:return 30;
+case 19:return 29;
 break;
-case 20:return 18;
+case 20:return 30;
 break;
-case 21:return 19;
+case 21:return 18;
 break;
-case 22:return 17;
+case 22:return 19;
 break;
-case 23:return 11;
+case 23:return 17;
 break;
-case 24:return 20;
+case 24:return 11;
 break;
-case 25:return 12;
+case 25:return 20;
 break;
-case 26:return 13;
+case 26:return 12;
 break;
-case 27:return 15;
+case 27:return 13;
 break;
-case 28:return 14;
+case 28:return 15;
 break;
-case 29:return 16;
+case 29:return 14;
 break;
-case 30:return '"';
+case 30:return 16;
 break;
-case 31:return "'";
+case 31:return '"';
 break;
-case 32:return "!";
+case 32:return "'";
 break;
-case 33:return 10;
+case 33:return "!";
 break;
-case 34:return 34;
+case 34:return 10;
 break;
-case 35:return '#';
+case 35:return 34;
 break;
-case 36:return 5;
+case 36:return '#';
+break;
+case 37:return 5;
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*'[^'!])/,/^(?:[A-Za-z]{1,}[A-Za-z_0-9\.]+(?=[(]))/,/^(?:#[A-Z0-9\/]+(!|\?)?)/,ABSOLUTE_CELL,MIXED_CELL_COL,MIXED_CELL_ROW,RELATIVE_CELL,/^(?:[A-Za-z\.]+(?=[(]))/,/^(?:[A-Za-z]{1,}[A-Za-z_0-9]+)/,/^(?:[A-Za-z_]+)/,/^(?:[0-9]+)/,/^(?:\[(.*)?\])/,/^(?:&)/,/^(?: )/,/^(?:[.])/,/^(?::)/,/^(?:;)/,/^(?:,)/,/^(?:\*)/,/^(?:\/)/,/^(?:-)/,/^(?:\+)/,/^(?:\^)/,/^(?:\()/,/^(?:\))/,/^(?:>)/,/^(?:<)/,/^(?:NOT\b)/,/^(?:")/,/^(?:')/,/^(?:!)/,/^(?:=)/,/^(?:%)/,/^(?:[#])/,/^(?:$)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36],"inclusive":true}}
+rules: [/^(?:\s+)/,/^(?:[0-9]*\.?[0-9]+)/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:[A-Za-z]{1,}[A-Za-z_0-9\.]+(?=[(]))/,/^(?:#[A-Z0-9\/]+(!|\?)?)/,/^(?:\$[A-Za-z]+\$[0-9]+)/,/^(?:\$[A-Za-z]+[0-9]+)/,/^(?:[A-Za-z]+\$[0-9]+)/,/^(?:[A-Za-z]+[0-9]+)/,/^(?:[A-Za-z\.]+(?=[(]))/,/^(?:[A-Za-z]{1,}[A-Za-z_0-9]+)/,/^(?:[A-Za-z_]+)/,/^(?:[0-9]+)/,/^(?:\[(.*)?\])/,/^(?:&)/,/^(?: )/,/^(?:[.])/,/^(?::)/,/^(?:;)/,/^(?:,)/,/^(?:\*)/,/^(?:\/)/,/^(?:-)/,/^(?:\+)/,/^(?:\^)/,/^(?:\()/,/^(?:\))/,/^(?:>)/,/^(?:<)/,/^(?:NOT\b)/,/^(?:")/,/^(?:')/,/^(?:!)/,/^(?:=)/,/^(?:%)/,/^(?:[#])/,/^(?:$)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true}}
 });
 return lexer;
 })();
 parser.lexer = lexer;
-export function Parser () {
+function Parser () {
   this.yy = {};
 }
-Parser.prototype = parser;
-parser.Parser = Parser;
+Parser.prototype = parser;parser.Parser = Parser;
+return new Parser;
+})();
+
+
+if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
+exports.parser = grammarParser;
+exports.Parser = grammarParser.Parser;
+exports.parse = function () { return grammarParser.parse.apply(grammarParser, arguments); };
+exports.main = function commonjsMain (args) {
+    if (!args[1]) {
+        console.log('Usage: '+args[0]+' FILE');
+        process.exit(1);
+    }
+    var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+    return exports.parser.parse(source);
+};
+if (typeof module !== 'undefined' && require.main === module) {
+  exports.main(process.argv.slice(1));
+}
+}

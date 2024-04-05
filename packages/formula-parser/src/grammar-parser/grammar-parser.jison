@@ -3,6 +3,7 @@
 %lex
 %%
 \s+                                                                                             {/* skip whitespace */}
+[0-9]*\.?[0-9]+                                                                                 {return 'NUMBER';}
 '"'("\\"["]|[^"])*'"'                                                                           {return 'STRING';}
 "'"('\\'[']|[^'])*"'"                                                                           {return 'STRING';}
 [A-Za-z]{1,}[A-Za-z_0-9\.]+(?=[(])                                                              {return 'FUNCTION';}
