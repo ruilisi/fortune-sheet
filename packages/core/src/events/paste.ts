@@ -390,7 +390,6 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
       // jfrefreshgrid(d, ctx.luckysheet_select_save, allParam);
       // selectHightlightShow();
     }
-    jfrefreshgrid(ctx, null, undefined);
   } else {
     data = data.replace(/\r/g, "");
     const dataChe = [];
@@ -497,7 +496,6 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
     //   jfrefreshgrid(d, ctx.luckysheet_select_save);
     //   selectHightlightShow();
     // }
-    jfrefreshgrid(ctx, null, undefined);
   }
 }
 
@@ -1955,6 +1953,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
           });
           r += 1;
         });
+
         ctx.luckysheet_selection_range = [];
         pasteHandler(ctx, data, borderInfo);
         // $("#fortune-copy-content").empty();
