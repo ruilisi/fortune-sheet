@@ -1077,10 +1077,7 @@ function pasteHandlerOfCopyPaste(
   // ) {
   //   return;
   // }
-  console.log(
-    ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!]
-      ?.dataVerification
-  );
+  
   const allowEdit = isAllowEdit(ctx);
   if (!allowEdit) return;
 
