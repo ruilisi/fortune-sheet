@@ -18,7 +18,6 @@ import { expandRowsAndColumns, storeSheetParamALL } from "../modules/sheet";
 import { jfrefreshgrid } from "../modules/refresh";
 import { setRowHeight } from "../api";
 import { CFSplitRange } from "../modules";
-import clipboard from "../modules/clipboard";
 
 function postPasteCut(
   ctx: Context,
@@ -391,6 +390,7 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
       // jfrefreshgrid(d, ctx.luckysheet_select_save, allParam);
       // selectHightlightShow();
     }
+    jfrefreshgrid(ctx, null, undefined);
   } else {
     data = data.replace(/\r/g, "");
     const dataChe = [];
@@ -497,6 +497,7 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
     //   jfrefreshgrid(d, ctx.luckysheet_select_save);
     //   selectHightlightShow();
     // }
+    jfrefreshgrid(ctx, null, undefined);
   }
 }
 
@@ -1954,7 +1955,6 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
           });
           r += 1;
         });
-
         ctx.luckysheet_selection_range = [];
         pasteHandler(ctx, data, borderInfo);
         // $("#fortune-copy-content").empty();
@@ -1992,16 +1992,13 @@ export function handlePasteByClick(ctx: Context, triggerType?: string) {
   const allowEdit = isAllowEdit(ctx);
   if (!allowEdit) return;
 
-  // works only for https as reading OS clipboard is blocked over http
-  navigator.clipboard.readText().then((clipboardText) => {
-    clipboard.writeHtml(clipboardText);
-  });
-
   const textarea = document.querySelector("#fortune-copy-content");
   // textarea.focus();
   // textarea.select();
 
-  const data = textarea?.innerHTML || textarea?.textContent;
+  // 等50毫秒，keyPress事件发生了再去处理数据
+  // setTimeout(function () {
+  const data = textarea?.innerHTML;
   if (!data) return;
 
   if (
