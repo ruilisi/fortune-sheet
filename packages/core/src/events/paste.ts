@@ -1077,7 +1077,6 @@ function pasteHandlerOfCopyPaste(
   // ) {
   //   return;
   // }
-  
   const allowEdit = isAllowEdit(ctx);
   if (!allowEdit) return;
 
