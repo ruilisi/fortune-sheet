@@ -1504,14 +1504,14 @@ export class Canvas {
                 horizonAlign,
                 textMetrics
               );
-              const trace_backward = this.cellOverflow_trace(
-                r,
-                c,
-                c + 1,
-                "backward",
-                horizonAlign,
-                textMetrics
-              );
+              // const trace_backward = this.cellOverflow_trace(
+              //   r,
+              //   c,
+              //   c + 1,
+              //   "backward",
+              //   horizonAlign,
+              //   textMetrics
+              // );
 
               if (trace_forward.success) {
                 stc = trace_forward.c;
@@ -1519,11 +1519,11 @@ export class Canvas {
                 stc = trace_forward.c + 1;
               }
 
-              if (trace_backward.success) {
-                edc = trace_backward.c;
-              } else {
-                edc = trace_backward.c - 1;
-              }
+              // if (trace_backward.success) {
+              //   edc = trace_backward.c;
+              // } else {
+              //   edc = trace_backward.c - 1;
+              // }
             } else if (horizonAlign === "1") {
               // 左对齐
               const trace = this.cellOverflow_trace(
