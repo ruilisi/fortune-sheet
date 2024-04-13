@@ -1,6 +1,6 @@
 {
   "name": "@tomerkakou/fortune-sheet-core",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
