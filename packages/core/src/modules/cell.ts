@@ -746,10 +746,6 @@ export function updateCell(
     }
     curv ||= {};
     const fontSize = curv.fs || 10;
-    delete curv.fs;
-    delete curv.f;
-    delete curv.v;
-    delete curv.m;
 
     if (!curv.ct) {
       curv.ct = {};
@@ -757,7 +753,14 @@ export function updateCell(
     }
 
     curv.ct.t = "inlineStr";
-    curv.ct.s = convertSpanToShareString($input!.querySelectorAll("span"));
+    curv.ct.s = convertSpanToShareString(
+      $input!.querySelectorAll("span"),
+      curv
+    );
+    delete curv.fs;
+    delete curv.f;
+    delete curv.v;
+    delete curv.m;
     curv.fs = fontSize;
     if (isCopyVal) {
       curv.ct.s = [
