@@ -622,7 +622,7 @@ const ContextMenu: React.FC = () => {
             onClick={() => {
               setContext((draftCtx) => {
                 const selection=api.getSelection(draftCtx);
-                if(selection && selection.length>1){
+                if(selection && selection.length==0){
                   showAlert(rightclick.cannotUpdateOrAddEntite,"ok");
                 }
                 else{
@@ -664,12 +664,13 @@ const ContextMenu: React.FC = () => {
             onClick={() => {
               setContext((draftCtx) => {
                 const selection=api.getSelection(draftCtx);
-                if(selection && selection.length>1){
+                if(selection && selection.length==0){
                   showAlert(rightclick.cannotUpdateOrAddEntite,"ok");
                 }
                 else{
                   settings.addEntitie(true);
                 }
+           
                 draftCtx.contextMenu = {};
               });
               

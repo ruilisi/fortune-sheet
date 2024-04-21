@@ -11523,7 +11523,7 @@ export default {
     updateEntitie:"Update entity",
     addEntitie:"Add entity",
     revertChanges:"Revert changes",
-    cannotUpdateOrAddEntite:"Please select only one range",
+    cannotUpdateOrAddEntite:"Please select cells",
   },
   comment: {
     insert: "Insert",
@@ -11678,7 +11678,7 @@ export default {
     updateEntitie:"Update entity",
     addEntitie:"Add entity",
     revertChanges:"Revert changes",
-    cannotUpdateOrAddEntite:"Please select only one range",
+    cannotUpdateOrAddEntite:"Please select cells",
   },
   conditionformat: {
     conditionformat_greaterThan: "Conditionformat-GreaterThan",
