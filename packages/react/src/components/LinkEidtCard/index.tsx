@@ -147,7 +147,7 @@ export const LinkEditCard: React.FC<LinkCardProps> = ({
           e.stopPropagation();
         }}
         className="fortune-link-modify-modal link-toolbar"
-        style={{ left: position.cellLeft + 20, top: position.cellBottom + 4 }}
+        style={{ left: position.cellLeft + 20, top: position.cellBottom }}
       >
         <div
           className="link-content"
@@ -241,7 +241,7 @@ export const LinkEditCard: React.FC<LinkCardProps> = ({
       className="fortune-link-modify-modal"
       style={{
         left: position.cellLeft + 20,
-        top: position.cellBottom + 4,
+        top: position.cellBottom,
       }}
       {...containerEvent}
     >
