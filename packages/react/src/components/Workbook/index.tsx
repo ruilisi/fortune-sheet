@@ -408,7 +408,9 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         return;
       }
       if (scrollInside && context.luckysheet_select_save[0].scrollTo===2) {
-        scrollInside({targetRow:context.luckysheet_select_save[0].row[0],targetColumn:context.luckysheet_select_save[0].column[0]});
+        const minRow=Math.min(...context.luckysheet_select_save.map((range)=>range.row[0]));
+        const minCol=Math.min(...context.luckysheet_select_save.map((range)=>range.column[0]));
+        scrollInside({targetRow:minRow,targetColumn:minCol});
         setContextWithProduce((draftCtx)=>{
           if(draftCtx.luckysheet_select_save){
             draftCtx.luckysheet_select_save[0].scrollTo=0;
