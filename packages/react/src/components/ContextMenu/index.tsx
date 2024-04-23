@@ -64,9 +64,10 @@ const ContextMenu: React.FC = () => {
         return (
           <Menu
             key={name}
-            onClick={() => {
+            onClick={async () => {
+              const clipboardText = await navigator.clipboard.readText();
               setContext((draftCtx) => {
-                handlePasteByClick(draftCtx);
+                handlePasteByClick(draftCtx, clipboardText);
                 draftCtx.contextMenu = {};
               });
             }}
