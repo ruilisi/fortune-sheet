@@ -133,7 +133,15 @@ export function generateAPIs(
       setContext((draftCtx) =>
         api.setCellFormat(draftCtx, row, column, attr, value, options)
       ),
-
+    setCellToolTip: (
+      row:number,
+      column:number,
+      text:string,
+      options: api.CommonOptions = {}
+    ) =>
+      setContext((draftCtx)=>
+        api.setCellToolTip(draftCtx, row, column, text, options)
+      ),
     autoFillCell: (
       copyRange: SingleRange,
       applyRange: SingleRange,

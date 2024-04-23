@@ -188,6 +188,23 @@ export function clearCell(
   }
 }
 
+export function setCellToolTip(
+  ctx: Context,
+  row: number,
+  column: number,
+  text:string,
+  options: CommonOptions = {}
+){
+  if (!_.isNumber(row) || !_.isNumber(column)) {
+    throw new Error("row or column cannot be null or undefined");
+  }
+  const sheet = getSheet(ctx, options);
+  if(!sheet.tooltip){
+    sheet.tooltip={}
+  }
+  sheet.tooltip[`${row}_${column}`]=text
+}
+
 export function setCellFormat(
   ctx: Context,
   row: number,

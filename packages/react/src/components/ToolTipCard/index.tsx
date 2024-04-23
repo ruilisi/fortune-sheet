@@ -55,11 +55,11 @@ export const ToolTipCard: React.FC<ToolTipCardProps> = ({
         onKeyDown={(e) => {
           e.stopPropagation();
         }}
-        className="fortune-link-modify-modal link-toolbar"
+        className="fortune-tooltip-modify-modal tooltip-toolbar"
         style={{ left: position.cellLeft + 20, top: position.cellBottom }}
       >
         <div
-          className="link-content"
+          className="tooltip-content"
         >
           {text}
         </div>

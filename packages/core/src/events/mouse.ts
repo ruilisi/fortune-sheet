@@ -65,6 +65,7 @@ import {
   showLinkCard,
   onRangeSelectionModalMove,
   onRangeSelectionModalMoveEnd,
+  showToolTipCard,
 } from "../modules/hyperlink";
 import {
   onSearchDialogMove,
@@ -266,6 +267,7 @@ export function handleCellAreaMouseDown(
   }
 
   showLinkCard(ctx, row_index, col_index, false, true);
+  showToolTipCard(ctx, row_index, col_index, true)
   // //单元格单击之前
   if (
     ctx.hooks.beforeCellMouseDown?.(flowdata[row_index]?.[col_index], {
