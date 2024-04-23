@@ -20,6 +20,7 @@ import {
   locale,
   calcSelectionInfo,
   groupValuesRefresh,
+  api,
 } from "@tomerkakou/fortune-sheet-core";
 import React, {
   useMemo,
@@ -407,10 +408,11 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       if (!sheet || !context.luckysheet_select_save || context.luckysheet_select_save.length <1) {
         return;
       }
-      if (scrollInside && context.luckysheet_select_save[0].scrollTo===2) {
+      if (context.luckysheet_select_save[0].scrollTo===2) {
         const minRow=Math.min(...context.luckysheet_select_save.map((range)=>range.row[0]));
         const minCol=Math.min(...context.luckysheet_select_save.map((range)=>range.column[0]));
-        scrollInside({targetRow:minRow,targetColumn:minCol});
+        api.scroll(context,refs.scrollbarX.current,refs.scrollbarY.current,{targetRow:minRow,targetColumn:minCol})
+        //scrollInside({targetRow:minRow,targetColumn:minCol});
         setContextWithProduce((draftCtx)=>{
           if(draftCtx.luckysheet_select_save){
             draftCtx.luckysheet_select_save[0].scrollTo=0;

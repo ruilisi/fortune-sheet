@@ -142,6 +142,15 @@ export function generateAPIs(
       setContext((draftCtx)=>
         api.setCellToolTip(draftCtx, row, column, text, options)
       ),
+    removeCellToolTip: (
+      row:number,
+      column:number,
+      options: api.CommonOptions = {}
+    ) =>
+      setContext((draftCtx)=>
+        api.removeCellToolTip(draftCtx, row, column, options)
+      ),
+
     autoFillCell: (
       copyRange: SingleRange,
       applyRange: SingleRange,

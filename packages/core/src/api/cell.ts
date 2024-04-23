@@ -205,6 +205,22 @@ export function setCellToolTip(
   sheet.tooltip[`${row}_${column}`]=text
 }
 
+export function removeCellToolTip(
+  ctx: Context,
+  row: number,
+  column: number,
+  options: CommonOptions = {}
+){
+  if (!_.isNumber(row) || !_.isNumber(column)) {
+    throw new Error("row or column cannot be null or undefined");
+  }
+  const sheet = getSheet(ctx, options);
+  if(!sheet.tooltip){
+    return
+  }
+  delete sheet.tooltip[`${row}_${column}`]
+}
+
 export function setCellFormat(
   ctx: Context,
   row: number,
