@@ -2,7 +2,6 @@ import React, {
   useContext,
   useState,
   useMemo,
-  useRef,
   useLayoutEffect,
 } from "react";
 import {
@@ -21,10 +20,6 @@ export const ToolTipCard: React.FC<ToolTipCardProps> = ({
 }) => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const [text, setText] = useState<string>(originText);
-
-  const skipCellRangeSet = useRef(true);
-
-
 
   const containerEvent = useMemo(
     () => ({

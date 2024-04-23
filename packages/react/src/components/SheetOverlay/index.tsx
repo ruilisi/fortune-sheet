@@ -213,7 +213,7 @@ const SheetOverlay: React.FC = () => {
       if (text == null) {
         debouncedShowToolTipCard(globalCache, rc.r, rc.c);
       } else {
-        showToolTipCard(ctx, rc.r, rc.c, false);
+        showToolTipCard(ctx, rc.r, rc.c);
         debouncedShowToolTipCard(globalCache, rc.r, rc.c, true);
       }
     },
@@ -222,6 +222,7 @@ const SheetOverlay: React.FC = () => {
 
   const onMouseMove = useCallback(
     (nativeEvent: MouseEvent) => {
+      
       setContext((draftCtx) => {
         overShowLinkCard(
           draftCtx,
@@ -238,7 +239,7 @@ const SheetOverlay: React.FC = () => {
           containerRef.current!,
           refs.scrollbarX.current!,
           refs.scrollbarY.current!
-        )
+        );
         handleOverlayMouseMove(
           draftCtx,
           refs.globalCache,

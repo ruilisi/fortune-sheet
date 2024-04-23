@@ -152,16 +152,12 @@ export function showToolTipCard(
 ) {
   if (`${r}_${c}` === ctx.tooltipCard?.rc) return;
   const text = getCellTooltip(ctx, r, c);
-  if (
-    text == null &&
-    (isMouseDown ||
-      ctx.tooltipCard?.sheetId !== ctx.currentSheetId)
-  ) {
+  if (text == null ) {
     ctx.tooltipCard = undefined;
     return;
   }
   if (
-    (text != null && (isMouseDown)) ||
+    (text != null) ||
     ctx.tooltipCard?.sheetId !== ctx.currentSheetId
   ) {
     const col_pre = c - 1 === -1 ? 0 : ctx.visibledatacolumn[c - 1];

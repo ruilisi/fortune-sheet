@@ -160,7 +160,7 @@ export type Settings = {
   addEntitie?: (isCell:boolean,sheetId?:string,sheetIndex?:number)=>void;
   revertChanges?: ()=>void;
   onUpdate? : boolean; 
-  scrollInside:(options:any)=>void;
+  //scrollInside:(options:any)=>void;
 };
 
 export const defaultSettings: Required<Settings> = {
@@ -310,7 +310,7 @@ export const defaultSettings: Required<Settings> = {
     throw new Error("Function not implemented.");
   },
   onUpdate: false,
-  scrollInside: function (options:any): void {
-    throw new Error("Function not implemented.");
-  },
+  // scrollInside: function (options:any): void {
+  //   throw new Error("Function not implemented.");
+  // },
 };
