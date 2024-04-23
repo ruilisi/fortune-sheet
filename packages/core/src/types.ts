@@ -151,6 +151,7 @@ export type Sheet = {
   luckysheet_alternateformat_save?: any[];
   dataVerification?: any;
   hyperlink?: Record<string, { linkType: string; linkAddress: string }>;
+  tooltip?: Record<string, string>;
   dynamicArray_compute?: any;
   dynamicArray?: any[];
   frozen?: {
@@ -193,6 +194,15 @@ export type LinkCardProps = {
   position: { cellLeft: number; cellBottom: number };
   isEditing: boolean;
   selectingCellRange?: boolean;
+};
+
+export type ToolTipCardProps = {
+  sheetId: string;
+  r: number;
+  c: number;
+  rc: string;
+  originText:string;
+  position: { cellLeft: number; cellBottom: number };
 };
 
 export type RangeDialogProps = {
@@ -287,6 +297,13 @@ export type GlobalCache = {
     };
   };
   linkCard?: {
+    mouseEnter?: boolean;
+    rangeSelectionModal?: {
+      initialPosition: Rect | undefined;
+      cursorMoveStartPosition: { x: number; y: number } | undefined;
+    };
+  };
+  tooltipCard?: {
     mouseEnter?: boolean;
     rangeSelectionModal?: {
       initialPosition: Rect | undefined;

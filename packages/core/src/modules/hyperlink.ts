@@ -45,6 +45,14 @@ export function getCellHyperlink(ctx: Context, r: number, c: number) {
   return undefined;
 }
 
+export function getCellTooltip(ctx: Context, r: number, c: number) {
+  const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
+  if (sheetIndex != null) {
+    return ctx.luckysheetfile[sheetIndex].tooltip?.[`${r}_${c}`];
+  }
+  return undefined;
+}
+
 export function saveHyperlink(
   ctx: Context,
   r: number,
@@ -132,6 +140,42 @@ export function showLinkCard(
         cellBottom: row,
       },
       isEditing,
+    };
+  }
+}
+
+export function showToolTipCard(
+  ctx: Context,
+  r: number,
+  c: number,
+  isMouseDown = false
+) {
+  if (`${r}_${c}` === ctx.tooltipCard?.rc) return;
+  const text = getCellTooltip(ctx, r, c);
+  if (
+    text == null &&
+    (isMouseDown ||
+      ctx.tooltipCard?.sheetId !== ctx.currentSheetId)
+  ) {
+    ctx.tooltipCard = undefined;
+    return;
+  }
+  if (
+    (text != null && (isMouseDown)) ||
+    ctx.tooltipCard?.sheetId !== ctx.currentSheetId
+  ) {
+    const col_pre = c - 1 === -1 ? 0 : ctx.visibledatacolumn[c - 1];
+    const row = ctx.visibledatarow[r];
+    ctx.tooltipCard = {
+      sheetId: ctx.currentSheetId,
+      r,
+      c,
+      rc: `${r}_${c}`,
+      originText: text ?? '',
+      position: {
+        cellLeft: col_pre,
+        cellBottom: row,
+      },
     };
   }
 }

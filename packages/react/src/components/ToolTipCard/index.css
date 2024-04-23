@@ -1,0 +1,183 @@
+.fortune-link-modify-modal {
+  position: absolute;
+  overflow: hidden;
+  background-color: #fff;
+  z-index: 300;
+  padding: 6px 20px 10px 20px;
+  box-shadow: 0 2px 6px 0 rgb(0 0 0 / 16%);
+  border: solid 0.5px #e5e5e5;
+  border-radius: 6px;
+}
+
+.fortune-link-modify-modal.link-toolbar {
+  display: flex;
+  flex-direction: row;
+  padding: 2px 8px 2px 16px;
+  align-items: center;
+}
+
+
+.fortune-link-modify-modal .link-content {
+  margin-right: 6px;
+}
+
+/* .fortune-link-modify-modal .link-content:hover {
+  color: #2674fb;
+  cursor: pointer;
+} */
+
+.fortune-link-modify-modal .divider {
+  width: 1px;
+  height: 16px;
+  margin: 0px 6px ;
+  background-color: #e0e0e0;
+  flex-shrink: 0;
+}
+
+.fortune-link-modify-modal .fortune-toolbar-button {
+  padding: 6px;
+}
+
+.fortune-link-modify-modal .fortune-toolbar-button:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+}
+
+.fortune-link-modify-modal.range-selection-modal {
+  width: 380px;
+  padding: 22px;
+  user-select: auto;
+  background-color: #fff;
+}
+
+.fortune-link-modify-line {
+  padding-top: 10px;
+}
+
+.fortune-link-modify-title {
+  font-size: 12px;
+  display: inline-block;
+  height: 16px;
+  width: 74px;
+  line-height: 16px;
+  padding: 7px 0;
+  color: #333333;
+  margin-right: 6px;
+}
+
+.fortune-link-modify-input,
+.fortune-link-modify-select {
+  width: 232px;
+  box-sizing: border-box;
+  height: 26px;
+  border-radius: 5px;
+  border: 1px solid #d9d9d9;
+  font-size: 12px;
+  padding: 1px 8px;
+  outline: none;
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+  user-select: auto;
+}
+
+.fortune-link-modify-input:focus,
+.fortune-link-modify-modal .range-selection-input:focus {
+  border-color: #4d90fe;
+}
+
+.fortune-link-modify-input.error-input,
+.fortune-link-modify-modal .range-selection-input.error-input {
+  border: 1px solid #EF4E2F !important;
+}
+
+.fortune-link-modify-cell-selector {
+  width: 20px;
+  right: 24px;
+  padding: 4px;
+  position: absolute;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.fortune-link-modify-modal .modal-title {
+  font-weight: 500;
+  font-size: 16px;
+  color: rgba(0, 0, 0, .88);
+  margin-bottom: 12px;
+  line-height: 24px;
+}
+
+.fortune-link-modify-modal .range-selection-input {
+  display: block;
+  outline: none;
+  font-size: 14px;
+  height: 32px;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 7px 11px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.fortune-link-modify-modal .modal-icon-close {
+  position: absolute;
+  right: 22px;
+  top: 22px;
+  cursor: pointer;
+}
+
+.fortune-link-modify-modal .validation-input-tip {
+  height: 17px;
+  font-size: 12px;
+  color: #EF4E2F;
+  margin: 3px 0px ;
+}
+
+.fortune-link-modify-modal .button-group {
+  display: flex;
+}
+
+.fortune-link-modify-modal .modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0px 0px 5px 0px;
+}
+
+.fortune-link-modify-modal.range-selection-modal .modal-footer {
+  padding: 0px;
+}
+
+.fortune-link-modify-modal .button-basic {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  height: 32px;
+  width: 88px;
+  padding: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.fortune-link-modify-modal .button-default {
+  color: rgb(38, 42, 51);
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(235, 235, 235);
+}
+
+.fortune-link-modify-modal .button-primary {
+  color: white;
+  background-color: #0188FB;
+  margin-left: 14px;
+}

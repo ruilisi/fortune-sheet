@@ -31,6 +31,8 @@ import {
   fixRowStyleOverflowInFreeze,
   fixColumnStyleOverflowInFreeze,
   handleKeydownForZoom,
+  getCellTooltip,
+  showToolTipCard,
 } from "@tomerkakou/fortune-sheet-core";
 import _ from "lodash";
 import WorkbookContext, { SetContextOptions } from "../../context";
@@ -40,6 +42,7 @@ import InputBox from "./InputBox";
 import ScrollBar from "./ScrollBar";
 import SearchReplace from "../SearchReplace";
 import LinkEditCard from "../LinkEidtCard";
+import ToolTipCard from "../ToolTipCard";
 import FilterOptions from "../FilterOption";
 import { useAlert } from "../../hooks/useAlert";
 import ImgBoxs from "../ImgBoxs";
@@ -176,6 +179,47 @@ const SheetOverlay: React.FC = () => {
     [debouncedShowLinkCard]
   );
 
+  const debouncedShowToolTipCard = useMemo(
+    () =>
+      _.debounce(
+        (
+          globalCache: GlobalCache,
+          r: number,
+          c: number,
+          skip = false
+        ) => {
+          if (skip || globalCache.tooltipCard?.mouseEnter) return;
+          setContext((draftCtx) => {
+            showToolTipCard(draftCtx, r, c);
+          });
+        },
+        800
+      ),
+    [setContext]
+  );
+
+  const overShowToolTipCard = useCallback(
+    (
+      ctx: Context,
+      globalCache: GlobalCache,
+      e: MouseEvent,
+      container: HTMLDivElement,
+      scrollX: HTMLDivElement,
+      scrollY: HTMLDivElement
+    ) => {
+      const rc = getCellRowColumn(ctx, e, container, scrollX, scrollY);
+      if (rc == null) return;
+      const text = getCellTooltip(ctx, rc.r, rc.c);
+      if (text == null) {
+        debouncedShowToolTipCard(globalCache, rc.r, rc.c);
+      } else {
+        showToolTipCard(ctx, rc.r, rc.c, false);
+        debouncedShowToolTipCard(globalCache, rc.r, rc.c, true);
+      }
+    },
+    [debouncedShowToolTipCard]
+  );
+
   const onMouseMove = useCallback(
     (nativeEvent: MouseEvent) => {
       setContext((draftCtx) => {
@@ -187,6 +231,14 @@ const SheetOverlay: React.FC = () => {
           refs.scrollbarX.current!,
           refs.scrollbarY.current!
         );
+        overShowToolTipCard(
+          draftCtx,
+          refs.globalCache,
+          nativeEvent,
+          containerRef.current!,
+          refs.scrollbarX.current!,
+          refs.scrollbarY.current!
+        )
         handleOverlayMouseMove(
           draftCtx,
           refs.globalCache,
@@ -201,6 +253,7 @@ const SheetOverlay: React.FC = () => {
     },
     [
       overShowLinkCard,
+      overShowToolTipCard,
       refs.cellInput,
       refs.fxInput,
       refs.globalCache,
@@ -717,6 +770,9 @@ const SheetOverlay: React.FC = () => {
             })}
           {context.linkCard?.sheetId === context.currentSheetId && (
             <LinkEditCard {...context.linkCard} />
+          )}
+          {context.tooltipCard?.sheetId === context.currentSheetId && (
+            <ToolTipCard {...context.tooltipCard} />
           )}
           {context.rangeDialog?.show && <RangeDialog />}
           <FilterOptions getContainer={() => containerRef.current!} />

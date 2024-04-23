@@ -17,6 +17,7 @@ import {
   DataRegulationProps,
   ConditionRulesProps,
   GlobalCache,
+  ToolTipCardProps,
 } from "./types";
 import { getSheetIndex } from "./utils";
 
@@ -50,6 +51,7 @@ export type Context = {
   showSearch?: boolean;
   showReplace?: boolean;
   linkCard?: LinkCardProps;
+  tooltipCard?: ToolTipCardProps;
   rangeDialog?: RangeDialogProps; // 坐标选区鼠标选择
   // 提醒弹窗
   warnDialog?: string;
