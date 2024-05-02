@@ -615,18 +615,25 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if(name === "updateEntitie" && settings.onUpdate){
+      if(name === "updateEntity" && settings.onUpdate){
         return (
           <Menu
             key={name}
             onClick={() => {
               setContext((draftCtx) => {
                 const selection=api.getSelection(draftCtx);
-                if(selection && selection.length==0){
-                  showAlert(rightclick.cannotUpdateOrAddEntite,"ok");
+                if(!selection || selection.length>1){
+                  showAlert(rightclick.cannotUpdateOrAddEntity,"ok");
                 }
                 else{
-                  settings.updateEntitie(true);
+                  const {row:[r,re],column:[c,ce]}=selection[0];
+                  const sheet=api.getSheet(draftCtx,{id:draftCtx.currentSheetId})
+                  const sheetIndex=getSheetIndex(draftCtx,draftCtx.currentSheetId)
+                  const coordinate=api.getSelectionCoordinates(draftCtx)[0]
+                  if(sheetIndex === null){
+                    throw new Error("no sheet index")
+                  }
+                  settings.updateEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate);
                 }
                 draftCtx.contextMenu = {};
               });
@@ -635,7 +642,7 @@ const ContextMenu: React.FC = () => {
             <span className="pre-context-item">
                 <SVGIcon name="check" width={16} height={16} />
             </span>
-            {rightclick.updateEntitie}
+            {rightclick.updateEntity}
           </Menu>
         );
       }
@@ -657,20 +664,26 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if(name === "addEntitie" && !(settings.onUpdate)){
+      if(name === "addEntity" && !(settings.onUpdate)){
         return (
           <Menu
             key={name}
             onClick={() => {
               setContext((draftCtx) => {
                 const selection=api.getSelection(draftCtx);
-                if(selection && selection.length==0){
-                  showAlert(rightclick.cannotUpdateOrAddEntite,"ok");
+                if(!selection || selection.length>1){
+                  showAlert(rightclick.cannotUpdateOrAddEntity,"ok");
                 }
                 else{
-                  settings.addEntitie(true);
+                  const {row:[r,re],column:[c,ce]}=selection[0];
+                  const sheet=api.getSheet(draftCtx,{id:draftCtx.currentSheetId})
+                  const sheetIndex=getSheetIndex(draftCtx,draftCtx.currentSheetId)
+                  const coordinate=api.getSelectionCoordinates(draftCtx)[0]
+                  if(sheetIndex === null){
+                    throw new Error("no sheet index")
+                  }
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate);
                 }
-           
                 draftCtx.contextMenu = {};
               });
               
@@ -679,7 +692,7 @@ const ContextMenu: React.FC = () => {
             <span className="pre-context-item">
                 <SVGIcon name="plus" width={16} height={16} style={{fill:"#74E291"}}/>
               </span>
-            {rightclick.addEntitie}
+            {rightclick.addEntity}
           </Menu>
         );
       }

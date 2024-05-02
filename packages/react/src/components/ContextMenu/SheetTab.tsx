@@ -98,7 +98,7 @@ const SheetTabContextMenu: React.FC = () => {
     });
   }, [context.allowEdit, setContext, sheet?.id]);
 
-  const updateEntitie=useCallback(()=>{
+  const updateEntity=useCallback(()=>{
     setContext((ctx)=>{
       let sheetIndex:number=-1;
       for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
@@ -110,11 +110,11 @@ const SheetTabContextMenu: React.FC = () => {
       if(sheetIndex === -1 || !(sheet?.id)){
         throw Error("Invalid sheet");
       }
-      settings.updateEntitie(false,sheet?.id,sheetIndex)
+      settings.updateEntity(sheetIndex,sheet.name,{r:0,re:0,c:0,ce:0},"A1")
     })
-  },[sheet?.id,setContext,settings.updateEntitie])
+  },[sheet?.id,setContext,settings.updateEntity])
 
-  const addEntitie=useCallback(()=>{
+  const addEntity=useCallback(()=>{
     setContext((ctx)=>{
       let sheetIndex:number=-1;
       for (let i = 0; i < ctx.luckysheetfile.length; i += 1) {
@@ -125,10 +125,10 @@ const SheetTabContextMenu: React.FC = () => {
       }
       if(sheetIndex === -1 || !(sheet?.id)){
         throw Error("Invalid sheet");
-      }
-      settings.addEntitie(false,sheet?.id,sheetIndex)
+      } 
+      settings.addEntity(sheetIndex,sheet.name,{r:0,re:0,c:0,ce:0},"A1")
     })
-  },[sheet?.id,setContext,settings.addEntitie])
+  },[sheet?.id,setContext,settings.addEntity])
 
   if (!sheet || x == null || y == null) return null;
 
@@ -276,19 +276,19 @@ const SheetTabContextMenu: React.FC = () => {
         if (name === "|" && context.allowEdit) {
           return <Divider key={`divide-${i}`} />;
         }
-        if(name === "updateEntitie" && settings.onUpdate){
+        if(name === "updateEntity" && settings.onUpdate){
           return (
             <Menu
               key={name}
               onClick={() => {
-                updateEntitie();
+                updateEntity();
                 close();
               }}
             >
               <span className="pre-context-item">
                 <SVGIcon name="check" width={16} height={16} />
               </span>
-              {sheetconfig.updateEntitie}
+              {sheetconfig.updateEntity}
             </Menu>
           );
         }
@@ -308,19 +308,19 @@ const SheetTabContextMenu: React.FC = () => {
             </Menu>
           );
         }
-        if(name === "addEntitie" && !(settings.onUpdate)){
+        if(name === "addEntity" && !(settings.onUpdate)){
           return (
             <Menu
               key={name}
               onClick={() => {
-                addEntitie();
+                addEntity();
                 close();
               }}
             >
               <span className="pre-context-item">
                 <SVGIcon name="plus" width={16} height={16}/>
               </span>
-              {sheetconfig.addEntitie}
+              {sheetconfig.addEntity}
             </Menu>
           );
         }

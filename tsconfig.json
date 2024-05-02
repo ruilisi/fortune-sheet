@@ -16,7 +16,8 @@
     "baseUrl": "./",
     "paths": {
       "@tomerkakou/fortune-sheet-core": ["packages/core/src"],
-      "@tomerkakou/fortune-sheet-react": ["packages/react/src"]
+      "@tomerkakou/fortune-sheet-react": ["packages/react/src"],
+      "@tomerkakou/fortune-sheet-formula-parser": ["packages/formula-parser/src"]
     }
   },
   "include": ["packages/*/src", "stories/"],

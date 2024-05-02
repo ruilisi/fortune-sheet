@@ -786,7 +786,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                 className="fortune-popover-backdrop"
               />
             )}
-            <div className="fortune-stat-area">
+            {/* <div className="fortune-stat-area">
               <div className="luckysheet-sheet-selection-calInfo">
                 {!!calInfo.count && (
                   <div style={{ width: "60px" }}>
@@ -814,7 +814,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
         </ModalProvider>
       </WorkbookContext.Provider>

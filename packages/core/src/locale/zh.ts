@@ -11554,10 +11554,10 @@ export default {
     cannotInsertOnColumnReadOnly: "无法对只读列插入",
     rowOverLimit: "超出10000行限制",
     columnOverLimit: "超出1000列限制",
-    updateEntitie:"Update entity",
-    addEntitie:"Add entity",
+    updateEntity:"Update entity",
+    addEntity:"Add entity",
     revertChanges:"Revert changes",
-    cannotUpdateOrAddEntite:"Please select cells",
+    cannotUpdateOrAddEntity:"Select only one range!",
   },
   comment: {
     insert: "新建批注",
@@ -11707,10 +11707,10 @@ export default {
     sheetNameSpecCharError:
       "名称不能超过31个字符，首尾不能是' 且名称不能包含:\r\n[ ] : \\ ? * /",
     sheetNamecannotIsEmptyError: "名称不能为空!",
-    updateEntitie:"Update entity",
-    addEntitie:"Add entity",
+    updateEntity:"Update entity",
+    addEntity:"Add entity",
     revertChanges:"Revert changes",
-    cannotUpdateOrAddEntite:"Please select cells",
+    cannotUpdateOrAddEntity:"Select only one range!",
   },
   conditionformat: {
     conditionformat_greaterThan: "条件格式——大于",

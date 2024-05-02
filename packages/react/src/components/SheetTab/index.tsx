@@ -77,11 +77,11 @@ const SheetTab: React.FC = () => {
       id="luckysheet-sheet-area"
     >
       <div id="luckysheet-sheet-content">
-        {context.allowEdit && (
+        {/* {context.allowEdit && (
           <div className="fortune-sheettab-button" onClick={onAddSheetClick}>
             <SVGIcon name="plus" width={16} height={16} />
           </div>
-        )}
+        )} */}
           <div className="sheet-list-container">
             <div
               id="all-sheets"

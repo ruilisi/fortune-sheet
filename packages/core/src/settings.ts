@@ -156,8 +156,8 @@ export type Settings = {
     onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   }[];
 
-  updateEntitie?: (isCell:boolean,sheetId?:string,sheetIndex?:number)=>void;
-  addEntitie?: (isCell:boolean,sheetId?:string,sheetIndex?:number)=>void;
+  updateEntity?: (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string)=>void;
+  addEntity?: (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string)=>void;
   revertChanges?: ()=>void;
   onUpdate? : boolean; 
   //scrollInside:(options:any)=>void;
@@ -226,9 +226,9 @@ export const defaultSettings: Required<Settings> = {
     "search",
   ], // 自定义工具栏
   cellContextMenu: [
-    "updateEntitie",
+    "updateEntity",
     "revertChanges",
-    "addEntitie",
+    "addEntity",
     "|",
     "copy", // 复制
     "paste", // 粘贴
@@ -274,9 +274,9 @@ export const defaultSettings: Required<Settings> = {
     "orderZA", // 降序
   ], // header菜单
   sheetTabContextMenu: [
-    "updateEntitie",
+    "updateEntity",
     "revertChanges",
-    "addEntitie",
+    "addEntity",
     "|",
     "delete",
     "copy",
@@ -300,10 +300,10 @@ export const defaultSettings: Required<Settings> = {
   generateSheetId: () => uuidv4(),
   hooks: {},
   customToolbarItems: [],
-  updateEntitie: function (isCell: boolean, sheetId?: string | undefined, sheetIndex?: number | undefined): void {
+  updateEntity: function (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string): void {
     throw new Error("Function not implemented.");
   },
-  addEntitie: function (isCell: boolean, sheetId?: string | undefined, sheetIndex?: number | undefined): void {
+  addEntity: function (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string): void {
     throw new Error("Function not implemented.");
   },
   revertChanges: function (): void {
