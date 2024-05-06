@@ -13,6 +13,7 @@ import {
   isdatetime,
   isRealNull,
   isRealNum,
+  jfrefreshgrid,
   mergeBorder,
   rowLocationByIndex,
   setCellValue,
@@ -788,6 +789,7 @@ export function setDropcownValue(ctx: Context, value: string, arr: any) {
     ctx.dataVerificationDropDownList = false;
   }
   setCellValue(ctx, rowIndex, colIndex, d, value);
+  jfrefreshgrid(ctx, null, undefined);
 }
 
 // 输入数据验证

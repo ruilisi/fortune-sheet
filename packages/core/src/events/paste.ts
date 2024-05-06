@@ -1441,7 +1441,7 @@ function pasteHandlerOfCopyPaste(
   const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!];
   file.config = cfg;
   file.luckysheet_conditionformat_save = cdformat;
-  file.dataVerification = dataVerification;
+  file.dataVerification = { ...file.dataVerification, ...dataVerification };
 
   // 若选区内包含超链接
   if (
