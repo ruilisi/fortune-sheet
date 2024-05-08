@@ -1343,7 +1343,15 @@ function pasteHandlerOfCopyPaste(
               func = `=${functionCopy(ctx, func, "left", Math.abs(offsetCol))}`;
             }
 
-            const funcV = execfunction(ctx, func, h, c, undefined, true);
+            const funcV = execfunction(
+              ctx,
+              func,
+              h,
+              c,
+              undefined,
+              undefined,
+              true
+            );
 
             if (!_.isNil(value.spl)) {
               // value.f = funcV[2];
