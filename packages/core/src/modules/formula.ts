@@ -1150,10 +1150,21 @@ export function execfunction(
   */
 
   ctx.formulaCache.parser.context = ctx;
-  const { result, error: formulaError } = ctx.formulaCache.parser.parse(
-    txt.substring(1),
-    { sheetId: id || ctx.currentSheetId }
-  );
+  const parsedResponse = ctx.formulaCache.parser.parse(txt.substring(1), {
+    sheetId: id || ctx.currentSheetId,
+  });
+
+  const { error: formulaError } = parsedResponse;
+  let { result } = parsedResponse;
+
+  // https://stackoverflow.com/a/643827/8200626
+  // https://github.com/ruilisi/fortune-sheet/issues/551
+  if (
+    Object.prototype.toString.call(result) === "[object Date]" &&
+    !_.isNil(result)
+  ) {
+    result = result.toString();
+  }
 
   if (!_.isNil(r) && !_.isNil(c)) {
     if (isrefresh) {
