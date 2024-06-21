@@ -74,6 +74,7 @@ export type Context = {
     headerMenu?: boolean;
     pageX?: number;
     pageY?: number;
+    isTable?:boolean;
   };
   sheetTabContextMenu: {
     x?: number;

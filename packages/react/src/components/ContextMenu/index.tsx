@@ -18,7 +18,7 @@ import {
   jfrefreshgrid,
 } from "@tomerkakou/fortune-sheet-core";
 import _ from "lodash";
-import React, { useContext, useRef, useCallback, useLayoutEffect } from "react";
+import React, { useContext, useRef, useCallback, useLayoutEffect, useState } from "react";
 import WorkbookContext, { SetContextOptions } from "../../context";
 import { useAlert } from "../../hooks/useAlert";
 import { useDialog } from "../../hooks/useDialog";
@@ -35,6 +35,7 @@ const ContextMenu: React.FC = () => {
   const { contextMenu } = context;
   const { showAlert } = useAlert();
   const { rightclick, drag, generalDialog, info } = locale(context);
+
   const getMenuElement = useCallback(
     (name: string, i: number) => {
       const selection = context.luckysheet_select_save?.[0];
@@ -615,7 +616,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if(name === "updateEntity" && settings.onUpdate){
+      if(name === "updateEntity"){
         return (
           <Menu
             key={name}
@@ -639,14 +640,11 @@ const ContextMenu: React.FC = () => {
               });
             }}
           >
-            <span className="pre-context-item">
-                <SVGIcon name="check" width={16} height={16} />
-            </span>
             {rightclick.updateEntity}
           </Menu>
         );
       }
-      if(name === "revertChanges" && settings.onUpdate){
+      if(name === "revertChanges"){
         return (
           <Menu
             key={name}
@@ -657,14 +655,46 @@ const ContextMenu: React.FC = () => {
               })
             }}
           >
-            <span className="pre-context-item">
-                <SVGIcon name="undo" width={16} height={16} />
-            </span>
             {rightclick.revertChanges}
           </Menu>
         );
       }
-      if(name === "addEntity" && !(settings.onUpdate)){
+      if(name === "CHECK"){
+        if(contextMenu.isTable || settings.contextMenuState === 'TABLE'){
+          return null
+        }
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                const selection=api.getSelection(draftCtx);
+                if(!selection || selection.length>1){
+                  showAlert(rightclick.cannotUpdateOrAddEntity,"ok");
+                }
+                else{
+                  const {row:[r,re],column:[c,ce]}=selection[0];
+                  const sheet=api.getSheet(draftCtx,{id:draftCtx.currentSheetId})
+                  const sheetIndex=getSheetIndex(draftCtx,draftCtx.currentSheetId)
+                  const coordinate=api.getSelectionCoordinates(draftCtx)[0]
+                  if(sheetIndex === null){
+                    throw new Error("no sheet index")
+                  }
+                  settings.submitRange(sheetIndex,sheet.name,{r,re,c,ce},coordinate);
+                }
+                draftCtx.contextMenu = {};
+              });
+              
+            }}
+          >
+              <SVGIcon name="check" width={20} height={20}/>
+          </Menu>
+        );
+      }
+      if(name === "Add Global Entity"){
+        if(contextMenu.isTable || settings.contextMenuState === 'TABLE'){
+          return null
+        }
         return (
           <Menu
             key={name}
@@ -689,14 +719,168 @@ const ContextMenu: React.FC = () => {
               
             }}
           >
-            <span className="pre-context-item">
-                <SVGIcon name="plus" width={16} height={16} style={{fill:"#74E291"}}/>
-              </span>
-            {rightclick.addEntity}
+              Add Global Entity
           </Menu>
         );
       }
-      return null;
+      if(name === "Add Fee"){
+        if(contextMenu.isTable || settings.contextMenuState === 'TABLE'){
+          return null
+        }
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                const selection=api.getSelection(draftCtx);
+                if(!selection || selection.length>1){
+                  showAlert(rightclick.cannotUpdateOrAddEntity,"ok");
+                }
+                else{
+                  const {row:[r,re],column:[c,ce]}=selection[0];
+                  const sheet=api.getSheet(draftCtx,{id:draftCtx.currentSheetId})
+                  const sheetIndex=getSheetIndex(draftCtx,draftCtx.currentSheetId)
+                  const coordinate=api.getSelectionCoordinates(draftCtx)[0]
+                  if(sheetIndex === null){
+                    throw new Error("no sheet index")
+                  }
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"General fee");
+                }
+                draftCtx.contextMenu = {};
+              });
+              
+            }}
+          >
+              Add Fee
+          </Menu>
+        );
+      }
+      if(name === "Routes Table"){
+        if(!contextMenu.isTable || settings.contextMenuState === 'CELL'){
+          return null
+        }
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                const selection=api.getSelection(draftCtx);
+                if(!selection || selection.length>1){
+                  showAlert(rightclick.cannotUpdateOrAddEntity,"ok");
+                }
+                else{
+                  const {row:[r,re],column:[c,ce]}=selection[0];
+                  const sheet=api.getSheet(draftCtx,{id:draftCtx.currentSheetId})
+                  const sheetIndex=getSheetIndex(draftCtx,draftCtx.currentSheetId)
+                  const coordinate=api.getSelectionCoordinates(draftCtx)[0]
+                  if(sheetIndex === null){
+                    throw new Error("no sheet index")
+                  }
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"Routes Table");
+                }
+                draftCtx.contextMenu = {};
+              });
+              
+            }}
+          >
+              Routes Table
+          </Menu>
+        );
+      }
+      if(name === "Transshipment"){
+        if(!contextMenu.isTable || settings.contextMenuState === 'CELL'){
+          return null
+        }
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                const selection=api.getSelection(draftCtx);
+                if(!selection || selection.length>1){
+                  showAlert(rightclick.cannotUpdateOrAddEntity,"ok");
+                }
+                else{
+                  const {row:[r,re],column:[c,ce]}=selection[0];
+                  const sheet=api.getSheet(draftCtx,{id:draftCtx.currentSheetId})
+                  const sheetIndex=getSheetIndex(draftCtx,draftCtx.currentSheetId)
+                  const coordinate=api.getSelectionCoordinates(draftCtx)[0]
+                  if(sheetIndex === null){
+                    throw new Error("no sheet index")
+                  }
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"Transshipment");
+                }
+                draftCtx.contextMenu = {};
+              });
+              
+            }}
+          >
+              Transshipment
+          </Menu>
+        );
+      }
+      if(name === "Ignore the cells"){
+        if(!contextMenu.isTable || settings.contextMenuState === 'CELL'){
+          return null
+        }
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                const selection=api.getSelection(draftCtx);
+                if(!selection || selection.length>1){
+                  showAlert(rightclick.cannotUpdateOrAddEntity,"ok");
+                }
+                else{
+                  const {row:[r,re],column:[c,ce]}=selection[0];
+                  const sheet=api.getSheet(draftCtx,{id:draftCtx.currentSheetId})
+                  const sheetIndex=getSheetIndex(draftCtx,draftCtx.currentSheetId)
+                  const coordinate=api.getSelectionCoordinates(draftCtx)[0]
+                  if(sheetIndex === null){
+                    throw new Error("no sheet index")
+                  }
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"Ignore the cells");
+                }
+                draftCtx.contextMenu = {};
+              });
+              
+            }}
+          >
+              Ignore the cells
+          </Menu>
+        );
+      }
+      if(!contextMenu.isTable && settings.contextMenuState === 'CELL'){
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                const selection=api.getSelection(draftCtx);
+                if(!selection || selection.length>1){
+                  showAlert(rightclick.cannotUpdateOrAddEntity,"ok");
+                }
+                else{
+                  const {row:[r,re],column:[c,ce]}=selection[0];
+                  const sheet=api.getSheet(draftCtx,{id:draftCtx.currentSheetId})
+                  const sheetIndex=getSheetIndex(draftCtx,draftCtx.currentSheetId)
+                  const coordinate=api.getSelectionCoordinates(draftCtx)[0]
+                  if(sheetIndex === null){
+                    throw new Error("no sheet index")
+                  }
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,name);
+                }
+                draftCtx.contextMenu = {};
+              });
+              
+            }}
+          >
+            {name}
+          </Menu>
+        );
+      }
+      return null
     },
     [
       context.currentSheetId,
@@ -711,6 +895,8 @@ const ContextMenu: React.FC = () => {
       showDialog,
       drag,
       generalDialog,
+      contextMenu.isTable,
+      settings.contextMenuState
     ]
   );
 

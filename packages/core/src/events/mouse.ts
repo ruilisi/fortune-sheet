@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Freezen } from "..";
+import { Freezen, api } from "..";
 import { Context, getFlowdata } from "../context";
 import {
   cancelActiveImgItem,
@@ -71,6 +71,7 @@ import {
   onSearchDialogMove,
   onSearchDialogMoveEnd,
 } from "../modules/searchReplace";
+import { getCellValue } from "src/api";
 
 let mouseWheelUniqueTimeout: ReturnType<typeof setTimeout>;
 
@@ -1396,6 +1397,18 @@ export function handleCellAreaDoubleClick(
   // }
 }
 
+function rangeIsTable(row:number,re:number,col:number,ce:number, mergeCells: any): boolean {
+  if (row === re /*|| range.c===range.ce*/) {
+      return false;
+  }
+  if (mergeCells === null) {
+      //table shape and no mergeCells
+      return true;
+  }
+  const { r, c, rs, cs } = mergeCells;
+  return !(row === r && re === (r + rs - 1) && col === c && ce === (c + cs - 1)) // when false its not a single merge 
+}
+
 export function handleContextMenu(
   ctx: Context,
   settings: Settings,
@@ -1434,12 +1447,20 @@ export function handleContextMenu(
   // relative to the workbook container
   const x = e.pageX - workbookRect.left;
   const y = e.pageY - workbookRect.top;
+  const selection=api.getSelection(ctx);
+  if(!selection){
+    throw new Error("selection is undefined in context menu handler")
+  }
+  const {row:[r,re],column:[c,ce]}=selection[0];
+  const mergeCells=api.getCellValue(ctx,r,c,{id:ctx.currentSheetId,type:'mc'})
+
   // showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
   ctx.contextMenu = {
     x,
     y,
     pageX: e.pageX,
     pageY: e.pageY,
+    isTable:rangeIsTable(r,re,c,ce,mergeCells)
   };
   // select current cell when clicking the right button
   e.preventDefault();

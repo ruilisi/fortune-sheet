@@ -157,9 +157,10 @@ export type Settings = {
   }[];
 
   updateEntity?: (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string)=>void;
-  addEntity?: (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string)=>void;
+  addEntity?: (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string,type?:string)=>void;
+  submitRange?:(sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string)=>void;
   revertChanges?: ()=>void;
-  onUpdate? : boolean; 
+  contextMenuState:"TABLE" | "CELL" | "ALL";
   //scrollInside:(options:any)=>void;
 };
 
@@ -303,13 +304,16 @@ export const defaultSettings: Required<Settings> = {
   updateEntity: function (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string): void {
     throw new Error("Function not implemented.");
   },
-  addEntity: function (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string): void {
+  addEntity: function (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string,type?:string): void {
+    throw new Error("Function not implemented.");
+  },
+  submitRange : function (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string): void {
     throw new Error("Function not implemented.");
   },
   revertChanges: function (): void {
     throw new Error("Function not implemented.");
   },
-  onUpdate: false,
+  contextMenuState :"ALL"
   // scrollInside: function (options:any): void {
   //   throw new Error("Function not implemented.");
   // },

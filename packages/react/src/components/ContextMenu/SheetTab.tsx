@@ -276,7 +276,7 @@ const SheetTabContextMenu: React.FC = () => {
         if (name === "|" && context.allowEdit) {
           return <Divider key={`divide-${i}`} />;
         }
-        if(name === "updateEntity" && settings.onUpdate){
+        if(name === "updateEntity"){
           return (
             <Menu
               key={name}
@@ -292,7 +292,7 @@ const SheetTabContextMenu: React.FC = () => {
             </Menu>
           );
         }
-        if(name === "revertChanges" && settings.onUpdate){
+        if(name === "revertChanges"){
           return (
             <Menu
               key={name}
@@ -308,7 +308,7 @@ const SheetTabContextMenu: React.FC = () => {
             </Menu>
           );
         }
-        if(name === "addEntity" && !(settings.onUpdate)){
+        if(name === "addEntity"){
           return (
             <Menu
               key={name}

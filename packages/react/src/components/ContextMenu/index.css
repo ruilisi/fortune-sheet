@@ -41,8 +41,10 @@
   padding: 1px 6em 1px 20px;
   white-space: nowrap;
   padding-left: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
   vertical-align: middle;
-  padding-right: 24px;
+  padding-right: 8px;
   user-select: none;
 }
 
@@ -54,7 +56,11 @@
 
 .luckysheet-cols-menu .luckysheet-cols-menuitem .luckysheet-cols-menuitem-content {
   position: relative;
-  color: #333;
+  color: #000000;
+  font-weight: 500;
+  font-size: 0.7rem;
+  border:1px solid #CBD6E0;
+  border-radius: 3px;
   cursor: pointer;
   list-style: none;
   margin: 0;
