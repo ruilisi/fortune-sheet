@@ -1688,12 +1688,14 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
           typeof patternName === typeof patternStyle
             ? _.fromPairs(_.zip(patternName, patternStyle))
             : {};
-        _.forEach(trList, (tr) => {
-          let c = 0;
-          const targetR = ctx.luckysheet_select_save![0].row[0] + r;
 
-          const index = getSheetIndex(ctx, ctx.currentSheetId);
-          if (!_.isNil(index)) {
+        const index = getSheetIndex(ctx, ctx.currentSheetId);
+        if (!_.isNil(index)) {
+          const rowHeightList = ctx.luckysheetfile[index].config!.rowlen!;
+          _.forEach(trList, (tr) => {
+            let c = 0;
+            const targetR = ctx.luckysheet_select_save![0].row[0] + r;
+
             if (_.isNil(ctx.luckysheetfile[index].config)) {
               ctx.luckysheetfile[index].config = {};
             }
@@ -1713,257 +1715,259 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
               (!_.has(ctx.luckysheetfile[index].config!.rowlen, targetR) &&
                 ctx.luckysheetfile[index].defaultRowHeight !== targetRowHeight)
             ) {
-              const rowHeightList = ctx.luckysheetfile[index].config!.rowlen!;
               rowHeightList[targetR] = targetRowHeight as number;
-              setRowHeight(ctx, rowHeightList);
-            }
-          }
-
-          _.forEach(tr.querySelectorAll("td"), (td) => {
-            // build cell from td
-            const { className } = td;
-            const cell: Cell = {};
-            const txt = td.innerText || td.innerHTML;
-            if (_.trim(txt).length === 0) {
-              cell.v = undefined;
-              cell.m = "";
-            } else {
-              const mask = genarate(txt);
-              // @ts-ignore
-              [cell.m, cell.ct, cell.v] = mask;
-            }
-            const styleString =
-              typeof allStyleList[`.${className}`] === "string"
-                ? allStyleList[`.${className}`]
-                    .substring(1, allStyleList[`.${className}`].length - 1)
-                    .split("\n\t")
-                : [];
-            const styles: Record<string, string> = {};
-            _.forEach(styleString, (s) => {
-              const styleList = s.split(":");
-              styles[styleList[0]] = styleList?.[1].replace(";", "");
-            });
-            if (!_.isNil(styles.border)) td.style.border = styles.border;
-            let bg: string | undefined =
-              td.style.backgroundColor || styles.background;
-            if (bg === "rgba(0, 0, 0, 0)" || _.isEmpty(bg)) {
-              bg = undefined;
             }
 
-            cell.bg = bg;
-
-            const fontWight = td.style.fontWeight;
-            cell.bl =
-              (fontWight.toString() === "400" ||
-                fontWight === "normal" ||
-                _.isEmpty(fontWight)) &&
-              !_.includes(styles["font-style"], "bold") &&
-              (!styles["font-weight"] || styles["font-weight"] === "400")
-                ? 0
-                : 1;
-
-            cell.it =
-              (td.style.fontStyle === "normal" ||
-                _.isEmpty(td.style.fontStyle)) &&
-              !_.includes(styles["font-style"], "italic")
-                ? 0
-                : 1;
-
-            cell.un = !_.includes(styles["text-decoration"], "underline")
-              ? undefined
-              : 1;
-
-            cell.cl = !_.includes(td.innerHTML, "<s>") ? undefined : 1;
-
-            const ff = td.style.fontFamily || styles["font-family"] || "";
-            const ffs = ff.split(",");
-            for (let i = 0; i < ffs.length; i += 1) {
-              let fa = _.trim(ffs[i].toLowerCase());
-              // @ts-ignore
-              fa = locale_fontjson[fa];
-              if (_.isNil(fa)) {
-                cell.ff = 0;
+            _.forEach(tr.querySelectorAll("td"), (td) => {
+              // build cell from td
+              const { className } = td;
+              const cell: Cell = {};
+              const txt = td.innerText || td.innerHTML;
+              if (_.trim(txt).length === 0) {
+                cell.v = undefined;
+                cell.m = "";
               } else {
-                cell.ff = fa;
-                break;
+                const mask = genarate(txt);
+                // @ts-ignore
+                [cell.m, cell.ct, cell.v] = mask;
               }
-            }
-            const fs = Math.round(
-              styles["font-size"]
-                ? parseInt(styles["font-size"].replace("pt", ""), 10)
-                : (parseInt(td.style.fontSize || "13", 10) * 72) / 96
-            );
-            cell.fs = fs;
-
-            cell.fc = td.style.color || styles.color;
-
-            const ht = td.style.textAlign || styles["text-align"] || "left";
-            if (ht === "center") {
-              cell.ht = 0;
-            } else if (ht === "right") {
-              cell.ht = 2;
-            } else {
-              cell.ht = 1;
-            }
-
-            const regex = /vertical-align:\s*(.*?);/;
-            const vt =
-              td.style.verticalAlign ||
-              styles["vertical-align"] ||
-              (!_.isNil(allStyleList.td) &&
-                allStyleList.td.match(regex).length > 0 &&
-                allStyleList.td.match(regex)[1]) ||
-              "top";
-            if (vt === "middle") {
-              cell.vt = 0;
-            } else if (vt === "top" || vt === "text-top") {
-              cell.vt = 1;
-            } else {
-              cell.vt = 2;
-            }
-
-            if ("mso-rotate" in styles) {
-              const rt = styles["mso-rotate"];
-              cell.rt = parseFloat(rt);
-            }
-
-            while (c < colLen && !_.isNil(data[r][c])) {
-              c += 1;
-            }
-
-            if (c === colLen) {
-              return true;
-            }
-
-            if (_.isNil(data[r][c])) {
-              data[r][c] = cell;
-              // @ts-ignore
-              let rowspan = parseInt(td.getAttribute("rowspan"), 10);
-              // @ts-ignore
-              let colspan = parseInt(td.getAttribute("colspan"), 10);
-
-              if (Number.isNaN(rowspan)) {
-                rowspan = 1;
+              const styleString =
+                typeof allStyleList[`.${className}`] === "string"
+                  ? allStyleList[`.${className}`]
+                      .substring(1, allStyleList[`.${className}`].length - 1)
+                      .split("\n\t")
+                  : [];
+              const styles: Record<string, string> = {};
+              _.forEach(styleString, (s) => {
+                const styleList = s.split(":");
+                styles[styleList[0]] = styleList?.[1].replace(";", "");
+              });
+              if (!_.isNil(styles.border)) td.style.border = styles.border;
+              let bg: string | undefined =
+                td.style.backgroundColor || styles.background;
+              if (bg === "rgba(0, 0, 0, 0)" || _.isEmpty(bg)) {
+                bg = undefined;
               }
 
-              if (Number.isNaN(colspan)) {
-                colspan = 1;
-              }
+              cell.bg = bg;
 
-              const r_ab = ctx.luckysheet_select_save![0].row[0] + r;
-              const c_ab = ctx.luckysheet_select_save![0].column[0] + c;
+              const fontWight = td.style.fontWeight;
+              cell.bl =
+                (fontWight.toString() === "400" ||
+                  fontWight === "normal" ||
+                  _.isEmpty(fontWight)) &&
+                !_.includes(styles["font-style"], "bold") &&
+                (!styles["font-weight"] || styles["font-weight"] === "400")
+                  ? 0
+                  : 1;
 
-              for (let rp = 0; rp < rowspan; rp += 1) {
-                for (let cp = 0; cp < colspan; cp += 1) {
-                  if (rp === 0) {
-                    const bt = td.style.borderTop;
-                    if (
-                      !_.isEmpty(bt) &&
-                      bt.substring(0, 3).toLowerCase() !== "0px"
-                    ) {
-                      const width = td.style.borderTopWidth;
-                      const type = td.style.borderTopStyle;
-                      const color = td.style.borderTopColor;
-                      const borderconfig = getQKBorder(width, type, color);
+              cell.it =
+                (td.style.fontStyle === "normal" ||
+                  _.isEmpty(td.style.fontStyle)) &&
+                !_.includes(styles["font-style"], "italic")
+                  ? 0
+                  : 1;
 
-                      if (!borderInfo[`${r + rp}_${c + cp}`]) {
-                        borderInfo[`${r + rp}_${c + cp}`] = {};
-                      }
+              cell.un = !_.includes(styles["text-decoration"], "underline")
+                ? undefined
+                : 1;
 
-                      borderInfo[`${r + rp}_${c + cp}`].t = {
-                        style: borderconfig[0],
-                        color: borderconfig[1],
-                      };
-                    }
-                  }
+              cell.cl = !_.includes(td.innerHTML, "<s>") ? undefined : 1;
 
-                  if (rp === rowspan - 1) {
-                    const bb = td.style.borderBottom;
-                    if (
-                      !_.isEmpty(bb) &&
-                      bb.substring(0, 3).toLowerCase() !== "0px"
-                    ) {
-                      const width = td.style.borderBottomWidth;
-                      const type = td.style.borderBottomStyle;
-                      const color = td.style.borderBottomColor;
-                      const borderconfig = getQKBorder(width, type, color);
-
-                      if (!borderInfo[`${r + rp}_${c + cp}`]) {
-                        borderInfo[`${r + rp}_${c + cp}`] = {};
-                      }
-
-                      borderInfo[`${r + rp}_${c + cp}`].b = {
-                        style: borderconfig[0],
-                        color: borderconfig[1],
-                      };
-                    }
-                  }
-
-                  if (cp === 0) {
-                    const bl = td.style.borderLeft;
-                    if (
-                      !_.isEmpty(bl) &&
-                      bl.substring(0, 3).toLowerCase() !== "0px"
-                    ) {
-                      const width = td.style.borderLeftWidth;
-                      const type = td.style.borderLeftStyle;
-                      const color = td.style.borderLeftColor;
-                      const borderconfig = getQKBorder(width, type, color);
-
-                      if (!borderInfo[`${r + rp}_${c + cp}`]) {
-                        borderInfo[`${r + rp}_${c + cp}`] = {};
-                      }
-
-                      borderInfo[`${r + rp}_${c + cp}`].l = {
-                        style: borderconfig[0],
-                        color: borderconfig[1],
-                      };
-                    }
-                  }
-
-                  if (cp === colspan - 1) {
-                    const br = td.style.borderLeft;
-                    if (
-                      !_.isEmpty(br) &&
-                      br.substring(0, 3).toLowerCase() !== "0px"
-                    ) {
-                      const width = td.style.borderRightWidth;
-                      const type = td.style.borderRightStyle;
-                      const color = td.style.borderRightColor;
-                      const borderconfig = getQKBorder(width, type, color);
-
-                      if (!borderInfo[`${r + rp}_${c + cp}`]) {
-                        borderInfo[`${r + rp}_${c + cp}`] = {};
-                      }
-
-                      borderInfo[`${r + rp}_${c + cp}`].r = {
-                        style: borderconfig[0],
-                        color: borderconfig[1],
-                      };
-                    }
-                  }
-
-                  if (rp === 0 && cp === 0) {
-                    continue;
-                  }
-
-                  data[r + rp][c + cp] = { mc: { r: r_ab, c: c_ab } };
+              const ff = td.style.fontFamily || styles["font-family"] || "";
+              const ffs = ff.split(",");
+              for (let i = 0; i < ffs.length; i += 1) {
+                let fa = _.trim(ffs[i].toLowerCase());
+                // @ts-ignore
+                fa = locale_fontjson[fa];
+                if (_.isNil(fa)) {
+                  cell.ff = 0;
+                } else {
+                  cell.ff = fa;
+                  break;
                 }
               }
+              const fs = Math.round(
+                styles["font-size"]
+                  ? parseInt(styles["font-size"].replace("pt", ""), 10)
+                  : (parseInt(td.style.fontSize || "13", 10) * 72) / 96
+              );
+              cell.fs = fs;
 
-              if (rowspan > 1 || colspan > 1) {
-                const first = { rs: rowspan, cs: colspan, r: r_ab, c: c_ab };
-                data[r][c].mc = first;
+              cell.fc = td.style.color || styles.color;
+
+              const ht = td.style.textAlign || styles["text-align"] || "left";
+              if (ht === "center") {
+                cell.ht = 0;
+              } else if (ht === "right") {
+                cell.ht = 2;
+              } else {
+                cell.ht = 1;
               }
-            }
-            c += 1;
-            if (c === colLen) {
+
+              const regex = /vertical-align:\s*(.*?);/;
+              const vt =
+                td.style.verticalAlign ||
+                styles["vertical-align"] ||
+                (!_.isNil(allStyleList.td) &&
+                  allStyleList.td.match(regex).length > 0 &&
+                  allStyleList.td.match(regex)[1]) ||
+                "top";
+              if (vt === "middle") {
+                cell.vt = 0;
+              } else if (vt === "top" || vt === "text-top") {
+                cell.vt = 1;
+              } else {
+                cell.vt = 2;
+              }
+
+              if ("mso-rotate" in styles) {
+                const rt = styles["mso-rotate"];
+                cell.rt = parseFloat(rt);
+              }
+
+              while (c < colLen && !_.isNil(data[r][c])) {
+                c += 1;
+              }
+
+              if (c === colLen) {
+                return true;
+              }
+
+              if (_.isNil(data[r][c])) {
+                data[r][c] = cell;
+                // @ts-ignore
+                let rowspan = parseInt(td.getAttribute("rowspan"), 10);
+                // @ts-ignore
+                let colspan = parseInt(td.getAttribute("colspan"), 10);
+
+                if (Number.isNaN(rowspan)) {
+                  rowspan = 1;
+                }
+
+                if (Number.isNaN(colspan)) {
+                  colspan = 1;
+                }
+
+                const r_ab = ctx.luckysheet_select_save![0].row[0] + r;
+                const c_ab = ctx.luckysheet_select_save![0].column[0] + c;
+
+                for (let rp = 0; rp < rowspan; rp += 1) {
+                  for (let cp = 0; cp < colspan; cp += 1) {
+                    if (rp === 0) {
+                      const bt = td.style.borderTop;
+                      if (
+                        !_.isEmpty(bt) &&
+                        bt.substring(0, 3).toLowerCase() !== "0px"
+                      ) {
+                        const width = td.style.borderTopWidth;
+                        const type = td.style.borderTopStyle;
+                        const color = td.style.borderTopColor;
+                        const borderconfig = getQKBorder(width, type, color);
+
+                        if (!borderInfo[`${r + rp}_${c + cp}`]) {
+                          borderInfo[`${r + rp}_${c + cp}`] = {};
+                        }
+
+                        borderInfo[`${r + rp}_${c + cp}`].t = {
+                          style: borderconfig[0],
+                          color: borderconfig[1],
+                        };
+                      }
+                    }
+
+                    if (rp === rowspan - 1) {
+                      const bb = td.style.borderBottom;
+                      if (
+                        !_.isEmpty(bb) &&
+                        bb.substring(0, 3).toLowerCase() !== "0px"
+                      ) {
+                        const width = td.style.borderBottomWidth;
+                        const type = td.style.borderBottomStyle;
+                        const color = td.style.borderBottomColor;
+                        const borderconfig = getQKBorder(width, type, color);
+
+                        if (!borderInfo[`${r + rp}_${c + cp}`]) {
+                          borderInfo[`${r + rp}_${c + cp}`] = {};
+                        }
+
+                        borderInfo[`${r + rp}_${c + cp}`].b = {
+                          style: borderconfig[0],
+                          color: borderconfig[1],
+                        };
+                      }
+                    }
+
+                    if (cp === 0) {
+                      const bl = td.style.borderLeft;
+                      if (
+                        !_.isEmpty(bl) &&
+                        bl.substring(0, 3).toLowerCase() !== "0px"
+                      ) {
+                        const width = td.style.borderLeftWidth;
+                        const type = td.style.borderLeftStyle;
+                        const color = td.style.borderLeftColor;
+                        const borderconfig = getQKBorder(width, type, color);
+
+                        if (!borderInfo[`${r + rp}_${c + cp}`]) {
+                          borderInfo[`${r + rp}_${c + cp}`] = {};
+                        }
+
+                        borderInfo[`${r + rp}_${c + cp}`].l = {
+                          style: borderconfig[0],
+                          color: borderconfig[1],
+                        };
+                      }
+                    }
+
+                    if (cp === colspan - 1) {
+                      const br = td.style.borderLeft;
+                      if (
+                        !_.isEmpty(br) &&
+                        br.substring(0, 3).toLowerCase() !== "0px"
+                      ) {
+                        const width = td.style.borderRightWidth;
+                        const type = td.style.borderRightStyle;
+                        const color = td.style.borderRightColor;
+                        const borderconfig = getQKBorder(width, type, color);
+
+                        if (!borderInfo[`${r + rp}_${c + cp}`]) {
+                          borderInfo[`${r + rp}_${c + cp}`] = {};
+                        }
+
+                        borderInfo[`${r + rp}_${c + cp}`].r = {
+                          style: borderconfig[0],
+                          color: borderconfig[1],
+                        };
+                      }
+                    }
+
+                    if (rp === 0 && cp === 0) {
+                      continue;
+                    }
+
+                    data[r + rp][c + cp] = { mc: { r: r_ab, c: c_ab } };
+                  }
+                }
+
+                if (rowspan > 1 || colspan > 1) {
+                  const first = { rs: rowspan, cs: colspan, r: r_ab, c: c_ab };
+                  data[r][c].mc = first;
+                }
+              }
+              c += 1;
+              if (c === colLen) {
+                return true;
+              }
               return true;
-            }
-            return true;
+            });
+
+            r += 1;
           });
-          r += 1;
-        });
+          // next line is the culprit
+          setRowHeight(ctx, rowHeightList);
+        }
+
         ctx.luckysheet_selection_range = [];
         pasteHandler(ctx, data, borderInfo);
         // $("#fortune-copy-content").empty();
@@ -1977,6 +1981,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
         //   imageCtrl.insertImg(clipboardData.files[0]);
       } else {
         txtdata = clipboardData.getData("text/plain");
+
         pasteHandler(ctx, txtdata);
       }
     }
