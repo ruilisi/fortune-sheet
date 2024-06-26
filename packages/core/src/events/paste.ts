@@ -1691,20 +1691,20 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
         const index = getSheetIndex(ctx, ctx.currentSheetId);
         if (!_.isNil(index)) {
+          if (_.isNil(ctx.luckysheetfile[index].config)) {
+            ctx.luckysheetfile[index].config = {};
+          }
+          if (_.isNil(ctx.luckysheetfile[index].config!.rowlen)) {
+            ctx.luckysheetfile[index].config!.rowlen = {} as Record<
+              number,
+              number
+            >;
+          }
           const rowHeightList = ctx.luckysheetfile[index].config!.rowlen!;
           _.forEach(trList, (tr) => {
             let c = 0;
             const targetR = ctx.luckysheet_select_save![0].row[0] + r;
 
-            if (_.isNil(ctx.luckysheetfile[index].config)) {
-              ctx.luckysheetfile[index].config = {};
-            }
-            if (_.isNil(ctx.luckysheetfile[index].config!.rowlen)) {
-              ctx.luckysheetfile[index].config!.rowlen = {} as Record<
-                number,
-                number
-              >;
-            }
             const targetRowHeight = !_.isNil(tr.getAttribute("height"))
               ? parseInt(tr.getAttribute("height") as string, 10)
               : null;
@@ -1964,7 +1964,6 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
 
             r += 1;
           });
-          // next line is the culprit
           setRowHeight(ctx, rowHeightList);
         }
 
