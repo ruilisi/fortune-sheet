@@ -6045,6 +6045,11 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
+"@types/regenerator-runtime@^0.13.6":
+  version "0.13.6"
+  resolved "https://registry.npmjs.org/@types/regenerator-runtime/-/regenerator-runtime-0.13.6.tgz#3320ca604eda6075b05fb2ed0c17e50753ac671c"
+  integrity sha512-tTvE2t4YvfK6k7IB0wzzpdFDGimfpBhsirSWVvrT0xeawfVckNcOC28MI87HlxQJfqXfvRst7snG/i2NS1KgsQ==
+
 "@types/resolve@1.17.1":
   version "1.17.1"
   resolved "https://registry.npmmirror.com/@types/resolve/-/resolve-1.17.1.tgz#3afd6ad8967c77e4376c598a82ddd58f46ec45d6"
@@ -17672,6 +17677,11 @@ regenerator-runtime@^0.14.0:
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.14.0.tgz#5e19d68eb12d486f797e15a3c6a918f7cec5eb45"
   integrity sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==
+
+regenerator-runtime@^0.14.1:
+  version "0.14.1"
+  resolved "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.14.1.tgz#356ade10263f685dda125100cd862c1db895327f"
+  integrity sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw==
 
 regenerator-transform@^0.14.2:
   version "0.14.5"
