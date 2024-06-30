@@ -660,9 +660,6 @@ const ContextMenu: React.FC = () => {
         );
       }
       if(name === "CHECK"){
-        if(contextMenu.isTable || settings.contextMenuState === 'TABLE'){
-          return null
-        }
         return (
           <Menu
             key={name}
@@ -712,7 +709,7 @@ const ContextMenu: React.FC = () => {
                   if(sheetIndex === null){
                     throw new Error("no sheet index")
                   }
-                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate);
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,'',true);
                 }
                 draftCtx.contextMenu = {};
               });
@@ -744,7 +741,7 @@ const ContextMenu: React.FC = () => {
                   if(sheetIndex === null){
                     throw new Error("no sheet index")
                   }
-                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"General fee");
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"General Fee",true);
                 }
                 draftCtx.contextMenu = {};
               });
@@ -752,6 +749,38 @@ const ContextMenu: React.FC = () => {
             }}
           >
               Add Fee
+          </Menu>
+        );
+      }
+      if(name === "Override Value"){
+        if(contextMenu.isTable || settings.contextMenuState === 'TABLE'){
+          return null
+        }
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                const selection=api.getSelection(draftCtx);
+                if(!selection || selection.length>1){
+                  showAlert(rightclick.cannotUpdateOrAddEntity,"ok");
+                }
+                else{
+                  const {row:[r,re],column:[c,ce]}=selection[0];
+                  const sheet=api.getSheet(draftCtx,{id:draftCtx.currentSheetId})
+                  const sheetIndex=getSheetIndex(draftCtx,draftCtx.currentSheetId)
+                  const coordinate=api.getSelectionCoordinates(draftCtx)[0]
+                  if(sheetIndex === null){
+                    throw new Error("no sheet index")
+                  }
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"Override Value",true);
+                }
+                draftCtx.contextMenu = {};
+              });
+              
+            }}
+          >
+              Override Value
           </Menu>
         );
       }
@@ -783,7 +812,7 @@ const ContextMenu: React.FC = () => {
               
             }}
           >
-              Routes Table
+              Setup Routes Table
           </Menu>
         );
       }
@@ -819,10 +848,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if(name === "Ignore the cells"){
-        if(!contextMenu.isTable || settings.contextMenuState === 'CELL'){
-          return null
-        }
+      if(name === "Ignore cells"){
         return (
           <Menu
             key={name}
@@ -840,14 +866,43 @@ const ContextMenu: React.FC = () => {
                   if(sheetIndex === null){
                     throw new Error("no sheet index")
                   }
-                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"Ignore the cells");
+                  settings.addEntityIgnore(sheetIndex,sheet.name,{r,re,c,ce},coordinate);
                 }
                 draftCtx.contextMenu = {};
               });
               
             }}
           >
-              Ignore the cells
+              Ignore cells
+          </Menu>
+        );
+      }
+      if(name === "Ignore Route"){
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                const selection=api.getSelection(draftCtx);
+                if(!selection || selection.length>1){
+                  showAlert(rightclick.cannotUpdateOrAddEntity,"ok");
+                }
+                else{
+                  const {row:[r,re],column:[c,ce]}=selection[0];
+                  const sheet=api.getSheet(draftCtx,{id:draftCtx.currentSheetId})
+                  const sheetIndex=getSheetIndex(draftCtx,draftCtx.currentSheetId)
+                  const coordinate=api.getSelectionCoordinates(draftCtx)[0]
+                  if(sheetIndex === null){
+                    throw new Error("no sheet index")
+                  }
+                  settings.addEntityIgnore(sheetIndex,sheet.name,{r,re,c,ce},coordinate,true);
+                }
+                draftCtx.contextMenu = {};
+              });
+              
+            }}
+          >
+              Ignore Route
           </Menu>
         );
       }

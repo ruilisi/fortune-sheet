@@ -157,9 +157,10 @@ export type Settings = {
   }[];
 
   updateEntity?: (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string)=>void;
-  addEntity?: (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string,type?:string)=>void;
+  addEntity?: (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string,type:string,global?:boolean)=>void;
   submitRange?:(sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string)=>void;
   revertChanges?: ()=>void;
+  addEntityIgnore?:(sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string,route? :boolean)=>void;
   contextMenuState:"TABLE" | "CELL" | "ALL";
   //scrollInside:(options:any)=>void;
 };
@@ -304,13 +305,16 @@ export const defaultSettings: Required<Settings> = {
   updateEntity: function (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string): void {
     throw new Error("Function not implemented.");
   },
-  addEntity: function (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string,type?:string): void {
+  addEntity: function (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string,type:string,global?:boolean): void {
     throw new Error("Function not implemented.");
   },
   submitRange : function (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string): void {
     throw new Error("Function not implemented.");
   },
   revertChanges: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  addEntityIgnore:function (sheetIndex:number,sheetName:string,range:{r:number,re:number,c:number,ce:number},coordinate:string,route? :boolean):void {
     throw new Error("Function not implemented.");
   },
   contextMenuState :"ALL"

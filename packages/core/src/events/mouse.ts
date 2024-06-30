@@ -1448,20 +1448,27 @@ export function handleContextMenu(
   const x = e.pageX - workbookRect.left;
   const y = e.pageY - workbookRect.top;
   const selection=api.getSelection(ctx);
-  if(!selection){
-    throw new Error("selection is undefined in context menu handler")
-  }
-  const {row:[r,re],column:[c,ce]}=selection[0];
-  const mergeCells=api.getCellValue(ctx,r,c,{id:ctx.currentSheetId,type:'mc'})
+  if(selection){
+    const {row:[r,re],column:[c,ce]}=selection[0];
+    const mergeCells=api.getCellValue(ctx,r,c,{id:ctx.currentSheetId,type:'mc'})
 
-  // showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
-  ctx.contextMenu = {
-    x,
-    y,
-    pageX: e.pageX,
-    pageY: e.pageY,
-    isTable:rangeIsTable(r,re,c,ce,mergeCells)
-  };
+    // showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
+    ctx.contextMenu = {
+      x,
+      y,
+      pageX: e.pageX,
+      pageY: e.pageY,
+      isTable:rangeIsTable(r,re,c,ce,mergeCells)
+    };
+  }else{
+    ctx.contextMenu = {
+      x,
+      y,
+      pageX: e.pageX,
+      pageY: e.pageY,
+    };
+  }
+  
   // select current cell when clicking the right button
   e.preventDefault();
   if (area === "cell") {

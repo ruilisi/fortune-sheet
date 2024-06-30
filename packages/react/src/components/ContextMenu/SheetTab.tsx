@@ -126,7 +126,7 @@ const SheetTabContextMenu: React.FC = () => {
       if(sheetIndex === -1 || !(sheet?.id)){
         throw Error("Invalid sheet");
       } 
-      settings.addEntity(sheetIndex,sheet.name,{r:0,re:0,c:0,ce:0},"A1")
+      //settings.addEntity(sheetIndex,sheet.name,{r:0,re:0,c:0,ce:0},"A1")
     })
   },[sheet?.id,setContext,settings.addEntity])
 
