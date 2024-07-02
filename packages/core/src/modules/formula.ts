@@ -947,7 +947,8 @@ export function insertUpdateFunctionGroup(
   ctx: Context,
   r: number,
   c: number,
-  id?: string
+  id?: string,
+  calcChainSet?: Set<string>
 ) {
   if (_.isNil(id)) {
     id = ctx.currentSheetId;
@@ -971,14 +972,18 @@ export function insertUpdateFunctionGroup(
     calcChain = [];
   }
 
-  for (let i = 0; i < calcChain.length; i += 1) {
-    const calc = calcChain[i];
-    if (calc.r === r && calc.c === c && calc.id === id) {
-      // server.saveParam("fc", index, calc, {
-      //   op: "update",
-      //   pos: i,
-      // });
-      return;
+  if (calcChainSet) {
+    if (calcChainSet.has(`${r}_${c}_${id}`)) return;
+  } else {
+    for (let i = 0; i < calcChain.length; i += 1) {
+      const calc = calcChain[i];
+      if (calc.r === r && calc.c === c && calc.id === id) {
+        // server.saveParam("fc", index, calc, {
+        //   op: "update",
+        //   pos: i,
+        // });
+        return;
+      }
     }
   }
 
@@ -1003,6 +1008,7 @@ export function execfunction(
   r: number,
   c: number,
   id?: string,
+  calcChainSet?: Set<string>,
   isrefresh?: boolean,
   notInsertFunc?: boolean
 ) {
@@ -1144,10 +1150,21 @@ export function execfunction(
   */
 
   ctx.formulaCache.parser.context = ctx;
-  const { result, error: formulaError } = ctx.formulaCache.parser.parse(
-    txt.substring(1),
-    { sheetId: id || ctx.currentSheetId }
-  );
+  const parsedResponse = ctx.formulaCache.parser.parse(txt.substring(1), {
+    sheetId: id || ctx.currentSheetId,
+  });
+
+  const { error: formulaError } = parsedResponse;
+  let { result } = parsedResponse;
+
+  // https://stackoverflow.com/a/643827/8200626
+  // https://github.com/ruilisi/fortune-sheet/issues/551
+  if (
+    Object.prototype.toString.call(result) === "[object Date]" &&
+    !_.isNil(result)
+  ) {
+    result = result.toString();
+  }
 
   if (!_.isNil(r) && !_.isNil(c)) {
     if (isrefresh) {
@@ -1162,7 +1179,7 @@ export function execfunction(
     }
 
     if (!notInsertFunc) {
-      insertUpdateFunctionGroup(ctx, r, c, id);
+      insertUpdateFunctionGroup(ctx, r, c, id, calcChainSet);
     }
   }
 
@@ -1640,6 +1657,11 @@ export function execFunctionGroup(
 
   formulaRunList.reverse();
 
+  const calcChainSet = new Set<string>();
+  calcChains.forEach((item) => {
+    calcChainSet.add(`${item.r}_${item.c}_${item.id}`);
+  });
+
   // console.log(formulaObjects, ii)
   // console.timeEnd("3");
 
@@ -1657,7 +1679,8 @@ export function execFunctionGroup(
       calc_funcStr,
       formulaCell.r,
       formulaCell.c,
-      formulaCell.id
+      formulaCell.id,
+      calcChainSet
     );
 
     ctx.groupValuesRefreshData.push({

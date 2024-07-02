@@ -829,7 +829,7 @@ export function updateCell(
   if (_.isPlainObject(curv)) {
     if (!isCurInline) {
       if (_.isString(value) && value.slice(0, 1) === "=" && value.length > 1) {
-        const v = execfunction(ctx, value, r, c, undefined, true);
+        const v = execfunction(ctx, value, r, c, undefined, undefined, true);
         isRunExecFunction = false;
         curv = _.cloneDeep(d?.[r]?.[c] || {});
         [, curv.v, curv.f] = v;
@@ -859,7 +859,15 @@ export function updateCell(
           valueFunction.slice(0, 1) === "=" &&
           valueFunction.length > 1
         ) {
-          const v = execfunction(ctx, valueFunction, r, c, undefined, true);
+          const v = execfunction(
+            ctx,
+            valueFunction,
+            r,
+            c,
+            undefined,
+            undefined,
+            true
+          );
           isRunExecFunction = false;
           // get v/m/ct
 
@@ -912,7 +920,7 @@ export function updateCell(
     value = curv;
   } else {
     if (_.isString(value) && value.slice(0, 1) === "=" && value.length > 1) {
-      const v = execfunction(ctx, value, r, c, undefined, true);
+      const v = execfunction(ctx, value, r, c, undefined, undefined, true);
       isRunExecFunction = false;
       value = {
         v: v[1],
@@ -941,7 +949,15 @@ export function updateCell(
         valueFunction.slice(0, 1) === "=" &&
         valueFunction.length > 1
       ) {
-        const v = execfunction(ctx, valueFunction, r, c, undefined, true);
+        const v = execfunction(
+          ctx,
+          valueFunction,
+          r,
+          c,
+          undefined,
+          undefined,
+          true
+        );
         isRunExecFunction = false;
         // value = {
         //     "v": v[1],
@@ -1224,6 +1240,7 @@ export function isAllSelectedCellsInStatus(
   if (!_.isEmpty(ctx.luckysheetCellUpdate)) {
     const w = window.getSelection();
     if (!w) return false;
+    if (w.rangeCount === 0) return false;
     const range = w.getRangeAt(0);
     if (range.collapsed === true) {
       return false;
