@@ -823,7 +823,7 @@ const SheetOverlay: React.FC = () => {
                     width: context.ch_width,
                   }}
                 />
-                <div
+                {/* <div
                   id="luckysheet-bottom-controll-row"
                   className="luckysheet-bottom-controll-row"
                   onMouseDown={(e) => e.stopPropagation()}
@@ -870,7 +870,7 @@ const SheetOverlay: React.FC = () => {
                   >
                     {info.backTop}
                   </span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
