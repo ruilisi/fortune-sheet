@@ -733,6 +733,7 @@ const SheetOverlay: React.FC = () => {
                 dataVerificationHintBoxRef.current!.style.display = "none";
               });
             }}
+            style={{ display: "none" }}
           >
             <SVGIcon name="combo-arrow" width={16} />
           </div>
