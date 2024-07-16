@@ -478,7 +478,11 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           draftCtx.hooks = mergedSettings.hooks;
           // draftCtx.fontList = mergedSettings.fontList;
           if (_.isEmpty(draftCtx.currentSheetId)) {
-            initSheetIndex(draftCtx);
+            try{
+              initSheetIndex(draftCtx);
+            }catch(e){
+              //pass
+            }
           }
           let sheetIdx = getSheetIndex(draftCtx, draftCtx.currentSheetId);
           if (sheetIdx == null) {
