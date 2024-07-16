@@ -13,8 +13,8 @@ import {
 } from "../modules/selection";
 import { cancelPaintModel, handleBold } from "../modules/toolbar";
 import { hasPartMC } from "../modules/validation";
-import { GlobalCache } from "../types";
-import { getNowDateTime, isAllowEdit } from "../utils";
+import { CellMatrix, GlobalCache } from "../types";
+import { getNowDateTime, getSheetIndex, isAllowEdit } from "../utils";
 import { handleCopy } from "./copy";
 import { jfrefreshgrid } from "../modules/refresh";
 
@@ -95,29 +95,174 @@ export function handleGlobalEnter(
   }
 }
 
-function handleBatchSelectionWithArrowKey(ctx: Context, e: KeyboardEvent) {
-  if (
-    ctx.luckysheetCellUpdate.length > 0
-    // || $("#luckysheet-singleRange-dialog").is(":visible") ||
-    // $("#luckysheet-multiRange-dialog").is(":visible")
-  ) {
-    return;
+function moveToEdge(
+  sheetData: CellMatrix,
+  key: string,
+  curr: number,
+  rowDelta: 0 | 1 | -1,
+  colDelta: 0 | 1 | -1,
+  startR: number,
+  endR: number,
+  startC: number,
+  endC: number,
+  maxRow: number,
+  maxCol: number
+) {
+  let selectedLimit = -1;
+  if (key === "ArrowUp") selectedLimit = startR - 1;
+  else if (key === "ArrowDown") selectedLimit = endR + 1;
+  else if (key === "ArrowLeft") selectedLimit = startC - 1;
+  else if (key === "ArrowRight") selectedLimit = endC + 1;
+
+  const maxRowCol = colDelta === 0 ? maxRow : maxCol;
+  let r = colDelta === 0 ? selectedLimit : curr;
+  let c = colDelta === 0 ? curr : selectedLimit;
+
+  while (r > 0 && c > 0 && (colDelta === 0 ? r : c) < maxRowCol - 1) {
+    if (
+      !_.isNil(sheetData?.[r]?.[c]?.v) &&
+      (_.isNil(sheetData?.[r - rowDelta]?.[c - colDelta]?.v) ||
+        _.isNil(sheetData?.[r + rowDelta]?.[c + colDelta]?.v))
+    ) {
+      break;
+    } else {
+      r += 1 * rowDelta;
+      c += 1 * colDelta;
+    }
   }
+  return colDelta === 0 ? r : c;
+}
+
+function handleControlPlusArrowKey(
+  ctx: Context,
+  e: KeyboardEvent,
+  shiftPressed: boolean
+) {
+  if (ctx.luckysheetCellUpdate.length > 0) return;
+
+  const idx = getSheetIndex(ctx, ctx.currentSheetId);
+  if (_.isNil(idx)) return;
+
+  const file = ctx.luckysheetfile[idx];
+  if (!file || !file.row || !file.column) return;
+  const maxRow = file.row;
+  const maxCol = file.column;
+  let last;
+  if (ctx.luckysheet_select_save && ctx.luckysheet_select_save.length > 0)
+    last = ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
+  if (!last) return;
+
+  const currR = last.row_focus;
+  const currC = last.column_focus;
+  if (_.isNil(currR) || _.isNil(currC)) return;
+
+  const startR = last.row[0];
+  const endR = last.row[1];
+  const startC = last.column[0];
+  const endC = last.column[1];
+
+  const horizontalOffset = currC - endC !== 0 ? currC - endC : currC - startC;
+  const verticalOffset = currR - endR !== 0 ? currR - endR : currR - startR;
+
+  const sheetData = file.data;
+  if (!sheetData) return;
+  let selectedLimit;
+
   switch (e.key) {
-    /*
     case "ArrowUp":
-      luckysheetMoveHighlightRange2("up", "rangeOfSelect");
+      selectedLimit = moveToEdge(
+        sheetData,
+        e.key,
+        currC,
+        -1,
+        0,
+        startR,
+        endR,
+        startC,
+        endC,
+        maxRow,
+        maxCol
+      );
+      if (shiftPressed) {
+        moveHighlightRange(ctx, "down", verticalOffset, "rangeOfSelect");
+        moveHighlightRange(ctx, "down", selectedLimit - currR, "rangeOfSelect");
+      } else {
+        moveHighlightCell(ctx, "down", selectedLimit - currR, "rangeOfSelect");
+      }
       break;
     case "ArrowDown":
-      luckysheetMoveHighlightRange2("down", "rangeOfSelect");
+      selectedLimit = moveToEdge(
+        sheetData,
+        e.key,
+        currC,
+        1,
+        0,
+        startR,
+        endR,
+        startC,
+        endC,
+        maxRow,
+        maxCol
+      );
+      if (shiftPressed) {
+        moveHighlightRange(ctx, "down", verticalOffset, "rangeOfSelect");
+        moveHighlightRange(ctx, "down", selectedLimit - currR, "rangeOfSelect");
+      } else {
+        moveHighlightCell(ctx, "down", selectedLimit - currR, "rangeOfSelect");
+      }
       break;
     case "ArrowLeft":
-      luckysheetMoveHighlightRange2("left", "rangeOfSelect");
+      selectedLimit = moveToEdge(
+        sheetData,
+        e.key,
+        currR,
+        0,
+        -1,
+        startR,
+        endR,
+        startC,
+        endC,
+        maxRow,
+        maxCol
+      );
+      if (shiftPressed) {
+        moveHighlightRange(ctx, "right", horizontalOffset, "rangeOfSelect");
+        moveHighlightRange(
+          ctx,
+          "right",
+          selectedLimit - currC,
+          "rangeOfSelect"
+        );
+      } else {
+        moveHighlightCell(ctx, "right", selectedLimit - currC, "rangeOfSelect");
+      }
       break;
     case "ArrowRight":
-      luckysheetMoveHighlightRange2("right", "rangeOfSelect");
+      selectedLimit = moveToEdge(
+        sheetData,
+        e.key,
+        currR,
+        0,
+        1,
+        startR,
+        endR,
+        startC,
+        endC,
+        maxRow,
+        maxCol
+      );
+      if (shiftPressed) {
+        moveHighlightRange(ctx, "right", horizontalOffset, "rangeOfSelect");
+        moveHighlightRange(
+          ctx,
+          "right",
+          selectedLimit - currC,
+          "rangeOfSelect"
+        );
+      } else {
+        moveHighlightCell(ctx, "right", selectedLimit - currC, "rangeOfSelect");
+      }
       break;
-  */
     default:
       break;
   }
@@ -143,7 +288,7 @@ export function handleWithCtrlOrMetaKey(
 
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
       // Ctrl + Shift + 方向键  调整选区
-      handleBatchSelectionWithArrowKey(ctx, e);
+      handleControlPlusArrowKey(ctx, e, true);
     } else if (_.includes([";", '"', ":", "'"], e.key)) {
       const last =
         ctx.luckysheet_select_save?.[ctx.luckysheet_select_save.length - 1];
@@ -166,6 +311,10 @@ export function handleWithCtrlOrMetaKey(
       e.stopPropagation();
       return;
     }
+  } else if (
+    ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)
+  ) {
+    handleControlPlusArrowKey(ctx, e, false);
   } else if (e.code === "KeyB") {
     // Ctrl + B  加粗
     handleBold(ctx, cellInput);
