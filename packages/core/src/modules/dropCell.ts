@@ -3011,7 +3011,6 @@ export function onDropCellSelectEnd(
     ]);
 
     try {
-      // cell is updated here
       updateDropCell(ctx);
     } catch (err) {
       console.error(err);
