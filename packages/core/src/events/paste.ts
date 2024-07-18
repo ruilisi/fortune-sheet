@@ -1100,6 +1100,11 @@ function pasteHandlerOfCopyPaste(
   const c_c1 = copyRange.copyRange[0].column[0];
   const c_c2 = copyRange.copyRange[0].column[1];
 
+  const isSingleCellPaste =
+    copyRange.copyRange.length === 1 &&
+    copyRange.copyRange[0].row[0] === copyRange.copyRange[0].row[1] &&
+    copyRange.copyRange[0].column[0] === copyRange.copyRange[0].column[1];
+
   let arr: CellMatrix = [];
   let isSameRow = false;
   for (let i = 0; i < copyRange.copyRange.length; i += 1) {
@@ -1224,6 +1229,12 @@ function pasteHandlerOfCopyPaste(
   let mtc = 0;
   let maxcellCahe = 0;
   let maxrowCache = 0;
+
+  const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!];
+  let hiddenRows;
+  if (isSingleCellPaste)
+    hiddenRows = new Set(Object.keys(file.config?.rowhidden || {}));
+
   for (let th = 1; th <= timesH; th += 1) {
     for (let tc = 1; tc <= timesC; tc += 1) {
       mth = minh + (th - 1) * copyh;
@@ -1237,6 +1248,8 @@ function pasteHandlerOfCopyPaste(
 
       const offsetMC: any = {};
       for (let h = mth; h < maxrowCache; h += 1) {
+        // skip if row is hidden
+        if (isSingleCellPaste && hiddenRows?.has(h.toString())) continue;
         const x = d[h];
 
         for (let c = mtc; c < maxcellCahe; c += 1) {
@@ -1446,7 +1459,6 @@ function pasteHandlerOfCopyPaste(
   last.row = [minh, maxh];
   last.column = [minc, maxc];
 
-  const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!];
   file.config = cfg;
   file.luckysheet_conditionformat_save = cdformat;
   file.dataVerification = { ...file.dataVerification, ...dataVerification };
