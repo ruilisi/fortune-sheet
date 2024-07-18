@@ -10,12 +10,12 @@ import {
   moveHighlightCell,
   escapeScriptTag,
   valueShowEs,
-  updateCell,
   createRangeHightlight,
   isShowHidenCR,
   israngeseleciton,
   escapeHTMLTag,
   isAllowEdit,
+  getrangeseleciton,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -138,6 +138,72 @@ const InputBox: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [context.luckysheet_select_save]);
 
+  const getActiveFormula = useCallback(
+    () => document.querySelector(".luckysheet-formula-search-item-active"),
+    []
+  );
+
+  const clearSearchItemActiveClass = useCallback(() => {
+    const activeFormula = getActiveFormula();
+    if (activeFormula) {
+      activeFormula.classList.remove("luckysheet-formula-search-item-active");
+    }
+  }, [getActiveFormula]);
+
+  const selectActiveFormula = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const activeFormula = getActiveFormula();
+      const formulaNameDiv = activeFormula?.querySelector(
+        ".luckysheet-formula-search-func"
+      );
+      if (formulaNameDiv) {
+        const formulaName = formulaNameDiv.textContent;
+        const textEditor = document.getElementById(
+          "luckysheet-rich-text-editor"
+        );
+        if (textEditor) {
+          // text for which suggestions have been listed
+          const searchTxt = getrangeseleciton()?.textContent || "";
+          const deleteCount = searchTxt.length;
+          textEditor.focus();
+
+          const selection = window.getSelection();
+          if (selection?.rangeCount === 0) return;
+
+          const range = selection?.getRangeAt(0);
+          if (deleteCount !== 0 && range) {
+            const startOffset = Math.max(range.startOffset - deleteCount, 0);
+            const endOffset = range.startOffset;
+
+            // remove searchTxt
+            range.setStart(range.startContainer, startOffset);
+            range.setEnd(range.startContainer, endOffset);
+            range.deleteContents();
+          }
+
+          // insert formulaName
+          // TODO - doesnt work without the space after the formulaName
+          const textNode = document.createTextNode(`${formulaName}( `);
+          range?.insertNode(textNode);
+
+          // move the cursor to the end of the inserted text node
+          range?.setStartAfter(textNode);
+          range?.setEndAfter(textNode);
+          selection?.removeAllRanges();
+          if (range) selection?.addRange(range);
+          setContext((draftCtx) => {
+            // clear functionCandidates and set functionHint
+            draftCtx.functionCandidates = [];
+            draftCtx.functionHint = formulaName;
+          });
+        }
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    },
+    [getActiveFormula, setContext]
+  );
+
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       lastKeyDownEventRef.current = new KeyboardEvent(e.type, e.nativeEvent);
@@ -162,68 +228,82 @@ const InputBox: React.FC = () => {
           document.execCommand("insertHTML", false, "\n "); // 换行符后面的空白符是为了强制让他换行，在下一步的delete中会删掉
           document.execCommand("delete", false);
           e.stopPropagation();
-        }
-        // if (
-        //   $("#luckysheet-formula-search-c").is(":visible") &&
-        //   formula.searchFunctionCell != null
-        // ) {
-        //   formula.searchFunctionEnter(
-        //     $("#luckysheet-formula-search-c").find(
-        //       ".luckysheet-formula-search-item-active"
-        //     )
-        //   );
-        //   event.preventDefault();
-        // }
+        } else selectActiveFormula(e);
       } else if (e.key === "Tab" && context.luckysheetCellUpdate.length > 0) {
-        // if (
-        //   $("#luckysheet-formula-search-c").is(":visible") &&
-        //   formula.searchFunctionCell != null
-        // ) {
-        //   formula.searchFunctionEnter(
-        //     $("#luckysheet-formula-search-c").find(
-        //       ".luckysheet-formula-search-item-active"
-        //     )
-        //   );
-        // } else {
-        setContext((draftCtx) => {
-          updateCell(
-            draftCtx,
-            draftCtx.luckysheetCellUpdate[0],
-            draftCtx.luckysheetCellUpdate[1],
-            refs.cellInput.current!
-          );
-          moveHighlightCell(draftCtx, "right", 1, "rangeOfSelect");
-        });
-        // }
-
+        selectActiveFormula(e);
         e.preventDefault();
-        e.stopPropagation();
       } else if (e.key === "F4" && context.luckysheetCellUpdate.length > 0) {
         // formula.setfreezonFuc(event);
         e.preventDefault();
-      } /* else if (
-            e.key === "ArrowUp" &&
-            draftCtx.luckysheetCellUpdate.length > 0
-          ) {
-            formulaMoveEvent("up", ctrlKey, shiftKey, event);
-          } else if (
-            e.key === "ArrowDown" &&
-            draftCtx.luckysheetCellUpdate.length > 0
-          ) {
-            formulaMoveEvent("down", ctrlKey, shiftKey, event);
-          } else if (
-            e.key === "ArrowLeft" &&
-            draftCtx.luckysheetCellUpdate.length > 0
-          ) {
-            formulaMoveEvent("left", ctrlKey, shiftKey, event);
-          } else if (
-            e.key === "ArrowRight" &&
-            draftCtx.luckysheetCellUpdate.length > 0
-          ) {
-            formulaMoveEvent("right", ctrlKey, shiftKey, event);
-          } */
+      } else if (
+        e.key === "ArrowUp" &&
+        context.luckysheetCellUpdate.length > 0
+      ) {
+        if (document.getElementById("luckysheet-formula-search-c")) {
+          const formulaSearchContainer = document.getElementById(
+            "luckysheet-formula-search-c"
+          );
+          const activeItem = formulaSearchContainer?.querySelector(
+            ".luckysheet-formula-search-item-active"
+          );
+          let previousItem = activeItem
+            ? activeItem.previousElementSibling
+            : null;
+          if (!previousItem) {
+            previousItem =
+              formulaSearchContainer?.querySelector(
+                ".luckysheet-formula-search-item:last-child"
+              ) || null;
+          }
+          clearSearchItemActiveClass();
+          if (previousItem) {
+            previousItem.classList.add("luckysheet-formula-search-item-active");
+          }
+        }
+        e.preventDefault();
+      } else if (
+        e.key === "ArrowDown" &&
+        context.luckysheetCellUpdate.length > 0
+      ) {
+        if (document.getElementById("luckysheet-formula-search-c")) {
+          const formulaSearchContainer = document.getElementById(
+            "luckysheet-formula-search-c"
+          );
+          const activeItem = formulaSearchContainer?.querySelector(
+            ".luckysheet-formula-search-item-active"
+          );
+          let nextItem = activeItem ? activeItem.nextElementSibling : null;
+          if (!nextItem) {
+            nextItem =
+              formulaSearchContainer?.querySelector(
+                ".luckysheet-formula-search-item:first-child"
+              ) || null;
+          }
+          clearSearchItemActiveClass();
+          if (nextItem) {
+            nextItem.classList.add("luckysheet-formula-search-item-active");
+          }
+        }
+        e.preventDefault();
+      }
+      // else if (
+      //   e.key === "ArrowLeft" &&
+      //   draftCtx.luckysheetCellUpdate.length > 0
+      // ) {
+      //   formulaMoveEvent("left", ctrlKey, shiftKey, event);
+      // } else if (
+      //   e.key === "ArrowRight" &&
+      //   draftCtx.luckysheetCellUpdate.length > 0
+      // ) {
+      //   formulaMoveEvent("right", ctrlKey, shiftKey, event);
+      // }
     },
-    [context.luckysheetCellUpdate.length, refs.cellInput, setContext]
+    [
+      clearSearchItemActiveClass,
+      context.luckysheetCellUpdate.length,
+      selectActiveFormula,
+      setContext,
+    ]
   );
 
   const onChange = useCallback(
@@ -275,6 +355,7 @@ const InputBox: React.FC = () => {
             kcode,
             preText.current
           );
+          clearSearchItemActiveClass();
           // formula.functionInputHanddler(
           //   $("#luckysheet-functionbox-cell"),
           //   $("#luckysheet-rich-text-editor"),
@@ -289,7 +370,7 @@ const InputBox: React.FC = () => {
         });
       }
     },
-    [refs.cellInput, refs.fxInput, setContext]
+    [clearSearchItemActiveClass, refs.cellInput, refs.fxInput, setContext]
   );
 
   const onPaste = useCallback(
