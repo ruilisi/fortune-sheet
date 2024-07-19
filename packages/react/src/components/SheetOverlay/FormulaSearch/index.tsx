@@ -15,11 +15,13 @@ const FormulaSearch: React.FC<React.HTMLAttributes<HTMLDivElement>> = (
       id="luckysheet-formula-search-c"
       className="luckysheet-formula-search-c"
     >
-      {context.functionCandidates.map((v) => (
+      {context.functionCandidates.map((v, index) => (
         <div
           key={v.n}
           data-func={v.n}
-          className="luckysheet-formula-search-item"
+          className={`luckysheet-formula-search-item ${
+            index === 0 ? "luckysheet-formula-search-item-active" : ""
+          }`}
         >
           <div className="luckysheet-formula-search-func">{v.n}</div>
           <div className="luckysheet-formula-search-detail">{v.d}</div>
