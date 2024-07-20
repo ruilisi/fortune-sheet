@@ -1448,7 +1448,11 @@ const Toolbar: React.FC<{
   );
 
   return (
-    <div ref={containerRef} className="fortune-toolbar">
+    <div
+      ref={containerRef}
+      className="fortune-toolbar"
+      aria-label={toolbar.toolbar}
+    >
       {settings.customToolbarItems.map((n) => {
         return (
           <CustomButton

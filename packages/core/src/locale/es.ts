@@ -10898,6 +10898,7 @@ export default {
     },
   ],
   toolbar: {
+    toolbar: "Barra de herramientas",
     undo: "Deshacer",
     redo: "Rehacer",
     paintFormat: "Clonar formato",

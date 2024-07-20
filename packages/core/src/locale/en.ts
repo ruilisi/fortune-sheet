@@ -10912,6 +10912,7 @@ export default {
     },
   ],
   toolbar: {
+    toolbar: "Toolbar",
     undo: "Undo",
     redo: "Redo",
     "clear-format": "Clear Format",
