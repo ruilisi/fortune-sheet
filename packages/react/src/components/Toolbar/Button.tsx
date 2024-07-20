@@ -25,6 +25,7 @@ const Button: React.FC<Props> = ({
       onClick={onClick}
       data-tips={tooltip}
       role="button"
+      aria-label={tooltip}
       style={selected ? { backgroundColor: "#E7E5EB" } : {}}
     >
       <SVGIcon name={iconId} style={disabled ? { opacity: 0.3 } : {}} />

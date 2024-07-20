@@ -57,6 +57,7 @@ const Combo: React.FC<Props> = ({
           }}
           data-tips={tooltip}
           role="button"
+          aria-label={tooltip}
           style={style}
         >
           {iconId ? (
@@ -70,6 +71,7 @@ const Combo: React.FC<Props> = ({
           onClick={() => setOpen(!open)}
           data-tips={tooltip}
           role="button"
+          aria-label={tooltip}
           style={style}
         >
           <SVGIcon name="combo-arrow" width={10} />
