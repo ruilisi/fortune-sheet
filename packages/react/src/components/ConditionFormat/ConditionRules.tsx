@@ -325,6 +325,7 @@ const ConditionRules: React.FC<{ type: string }> = ({ type }) => {
           // hideDialog();
           close("confirm");
         }}
+        tabIndex={0}
       >
         {button.confirm}
       </div>
@@ -334,6 +335,7 @@ const ConditionRules: React.FC<{ type: string }> = ({ type }) => {
           // hideDialog();
           close("close");
         }}
+        tabIndex={0}
       >
         {button.cancel}
       </div>

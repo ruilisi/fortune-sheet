@@ -29,6 +29,7 @@ const Option: React.FC<React.PropsWithChildren<OptionProps>> = ({
   return (
     <div
       onClick={onClick}
+      tabIndex={0}
       className="fortune-toolbar-select-option"
       onMouseLeave={(e) => onMouseLeave?.(e)}
       onMouseEnter={(e) => onMouseEnter?.(e)}

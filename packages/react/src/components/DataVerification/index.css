@@ -14,7 +14,7 @@
 
 #fortune-data-verification .box .box-item {
   padding: 10px;
-  border-bottom: 1px solid #E1E4E8;
+  border-bottom: 1px solid #e1e4e8;
 }
 
 #fortune-data-verification .box .box-item .box-item-title {
@@ -38,7 +38,6 @@
   height: 30px;
   line-height: 30px;
   margin-bottom: 10px;
-
 }
 
 #fortune-data-verification .box .box-item .show-box-item .check-box input {
@@ -124,12 +123,11 @@
   margin-right: 10px;
 }
 
-
 #range-dialog {
   box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
   background: #fff;
   background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, .333);
+  border: 1px solid rgba(0, 0, 0, 0.333);
   outline: 0;
   position: absolute;
   color: #000;
@@ -190,5 +188,5 @@
 }
 
 #luckysheet-dataVerification-dropdown-List .dropdown-List-item:hover {
-  background-color: #E1E1E1;
+  background-color: #e1e1e1;
 }

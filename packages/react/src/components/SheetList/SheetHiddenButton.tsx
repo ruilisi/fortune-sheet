@@ -25,6 +25,7 @@ const SheetHiddenButton: React.FC<Props> = ({ style, sheet }) => {
         e.stopPropagation();
         showSheet();
       }}
+      tabIndex={0}
       className="fortune-sheet-hidden-button"
     >
       {sheet?.hide === 1 ? (

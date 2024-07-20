@@ -16,7 +16,6 @@
   align-items: center;
 }
 
-
 .fortune-link-modify-modal .link-content {
   margin-right: 6px;
 }
@@ -29,7 +28,7 @@
 .fortune-link-modify-modal .divider {
   width: 1px;
   height: 16px;
-  margin: 0px 6px ;
+  margin: 0px 6px;
   background-color: #e0e0e0;
   flex-shrink: 0;
 }
@@ -88,7 +87,7 @@
 
 .fortune-link-modify-input.error-input,
 .fortune-link-modify-modal .range-selection-input.error-input {
-  border: 1px solid #EF4E2F !important;
+  border: 1px solid #ef4e2f !important;
 }
 
 .fortune-link-modify-cell-selector {
@@ -107,7 +106,7 @@
 .fortune-link-modify-modal .modal-title {
   font-weight: 500;
   font-size: 16px;
-  color: rgba(0, 0, 0, .88);
+  color: rgba(0, 0, 0, 0.88);
   margin-bottom: 12px;
   line-height: 24px;
 }
@@ -139,8 +138,8 @@
 .fortune-link-modify-modal .validation-input-tip {
   height: 17px;
   font-size: 12px;
-  color: #EF4E2F;
-  margin: 3px 0px ;
+  color: #ef4e2f;
+  margin: 3px 0px;
 }
 
 .fortune-link-modify-modal .button-group {
@@ -178,6 +177,6 @@
 
 .fortune-link-modify-modal .button-primary {
   color: white;
-  background-color: #0188FB;
+  background-color: #0188fb;
   margin-left: 14px;
 }

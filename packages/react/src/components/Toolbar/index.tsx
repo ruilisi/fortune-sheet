@@ -321,6 +321,7 @@ const Toolbar: React.FC<{
                                 v.onclick();
                                 setOpen(false);
                               }}
+                              tabIndex={0}
                             >
                               {v.text}
                             </div>

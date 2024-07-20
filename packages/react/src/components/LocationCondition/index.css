@@ -1,74 +1,74 @@
 label {
-    cursor: default;
+  cursor: default;
 }
 #fortune-location-condition {
-    min-width: 500px;
+  min-width: 500px;
 }
 #fortune-location-condition .title {
-    background-color: #fff;
-    color: #000;
-    cursor: default;
-    font-size: 16px;
-    font-weight: normal;
-    line-height: 48px;
+  background-color: #fff;
+  color: #000;
+  cursor: default;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 48px;
 }
 #fortune-location-condition .listbox {
-    border: 1px solid #dfdfdf;
-    padding: 10px;
-    font-size: 14px;
-    color: #000;
+  border: 1px solid #dfdfdf;
+  padding: 10px;
+  font-size: 14px;
+  color: #000;
 }
 #fortune-location-condition .listbox .listItem {
-    padding: 5px 0;
+  padding: 5px 0;
 }
 #fortune-location-condition .listbox .listItem input[type="radio"] {
-    float: left;
-    margin-top: 5px;
+  float: left;
+  margin-top: 5px;
 }
 #fortune-location-condition .listItem {
-    padding: 5px 0;
+  padding: 5px 0;
 }
 #fortune-location-condition .listItem .subItem {
-    height: 30px;
-    padding: 0 10px;
-    display: block;
+  height: 30px;
+  padding: 0 10px;
+  display: block;
 }
 #fortune-location-condition input[type="radio"] {
-    float: left;
-    margin-top: 3px;
+  float: left;
+  margin-top: 3px;
 }
 #fortune-location-condition .listbox .listItem .subbox {
-    height: 30px;
-    padding: 0 10px;
+  height: 30px;
+  padding: 0 10px;
 }
 #fortune-location-condition .listbox .listItem .subbox .subItem {
-    float: left;
-    margin-right: 5px;
+  float: left;
+  margin-right: 5px;
 }
 #fortune-location-condition .button-basic {
-    display: inline-block;
-    margin-bottom: 0;
-    font-weight: 400;
-    text-align: center;
-    vertical-align: middle;
-    touch-action: manipulation;
-    cursor: pointer;
-    white-space: nowrap;
-    padding: 4px 8px;
-    font-size: 14px;
-    line-height: 1.42857143;
-    border-radius: 2px;
-    user-select: none;
-    margin-top: 10px;
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 2px;
+  user-select: none;
+  margin-top: 10px;
 }
 #fortune-location-condition .button-primary {
-    background: #0188fb;
-    border: 1px solid #0188fb;
-    color: #fff;
-    margin-right: 10px;
+  background: #0188fb;
+  border: 1px solid #0188fb;
+  color: #fff;
+  margin-right: 10px;
 }
 #fortune-location-condition .button-close {
-    color: #333;
-    background-color: #fff;
-    border: 1px solid #ccc;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
 }

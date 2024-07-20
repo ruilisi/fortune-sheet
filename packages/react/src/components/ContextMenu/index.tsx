@@ -135,6 +135,7 @@ const ContextMenu: React.FC = () => {
                   <input
                     onClick={(e) => e.stopPropagation()}
                     onKeyDown={(e) => e.stopPropagation()}
+                    tabIndex={0}
                     type="text"
                     className="luckysheet-mousedown-cancel"
                     placeholder={rightclick.number}
@@ -204,6 +205,7 @@ const ContextMenu: React.FC = () => {
                   <input
                     onClick={(e) => e.stopPropagation()}
                     onKeyDown={(e) => e.stopPropagation()}
+                    tabIndex={0}
                     type="text"
                     className="luckysheet-mousedown-cancel"
                     placeholder={rightclick.number}
@@ -424,6 +426,7 @@ const ContextMenu: React.FC = () => {
             <input
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => e.stopPropagation()}
+              tabIndex={0}
               type="number"
               min={1}
               max={545}
@@ -484,6 +487,7 @@ const ContextMenu: React.FC = () => {
             <input
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => e.stopPropagation()}
+              tabIndex={0}
               type="number"
               min={1}
               max={545}

@@ -169,6 +169,7 @@ const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
               showFilterContextMenu(v_adjusted, i);
             }}
             onDoubleClick={(e) => e.stopPropagation()}
+            tabIndex={0}
             key={i}
             style={_.assign(rowOverflowFreezeStyle, columnOverflowFreezeStyle, {
               left,

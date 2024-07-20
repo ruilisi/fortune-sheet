@@ -81,6 +81,7 @@ const SearchReplace: React.FC<{
         <div
           className="icon-close fortune-modal-dialog-icon-close"
           onClick={closeDialog}
+          tabIndex={0}
         >
           <SVGIcon name="close" style={{ padding: 7, cursor: "pointer" }} />
         </div>
@@ -89,6 +90,7 @@ const SearchReplace: React.FC<{
             id="searchTab"
             className={showReplace ? "" : "on"}
             onClick={() => setShowReplace(false)}
+            tabIndex={0}
           >
             {findAndReplace.find}
           </span>
@@ -96,6 +98,7 @@ const SearchReplace: React.FC<{
             id="replaceTab"
             className={showReplace ? "on" : ""}
             onClick={() => setShowReplace(true)}
+            tabIndex={0}
           >
             {findAndReplace.replace}
           </span>
@@ -170,6 +173,7 @@ const SearchReplace: React.FC<{
                       showAlert(alertMsg);
                     });
                   }}
+                  tabIndex={0}
                 >
                   {findAndReplace.allReplaceBtn}
                 </div>
@@ -190,6 +194,7 @@ const SearchReplace: React.FC<{
                       }
                     })
                   }
+                  tabIndex={0}
                 >
                   {findAndReplace.replaceBtn}
                 </div>
@@ -207,6 +212,7 @@ const SearchReplace: React.FC<{
                   if (_.isEmpty(res)) showAlert(findAndReplace.noFindTip);
                 })
               }
+              tabIndex={0}
             >
               {findAndReplace.allFindBtn}
             </div>
@@ -220,6 +226,7 @@ const SearchReplace: React.FC<{
                   if (alertMsg != null) showAlert(alertMsg);
                 })
               }
+              tabIndex={0}
             >
               {findAndReplace.findBtn}
             </div>
@@ -228,6 +235,7 @@ const SearchReplace: React.FC<{
         <div
           className="close-button fortune-message-box-button button-default"
           onClick={closeDialog}
+          tabIndex={0}
         >
           {button.close}
         </div>
@@ -261,6 +269,7 @@ const SearchReplace: React.FC<{
                       });
                       setSelectedCell({ r: v.r, c: v.c });
                     }}
+                    tabIndex={0}
                   >
                     <span>{v.sheetName}</span>
                     <span>{v.cellPosition}</span>

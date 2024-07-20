@@ -91,6 +91,7 @@ const ZoomControl: React.FC = () => {
           zoomTo(context.zoomRatio - 0.1);
           e.stopPropagation();
         }}
+        tabIndex={0}
       >
         <SVGIcon name="minus" width={16} height={16} />
       </div>
@@ -98,6 +99,7 @@ const ZoomControl: React.FC = () => {
         <div
           className="fortune-zoom-ratio-current fortune-zoom-button"
           onClick={() => setRadioMenuOpen(true)}
+          tabIndex={0}
         >
           {(context.zoomRatio * 100).toFixed(0)}%
         </div>
@@ -111,6 +113,7 @@ const ZoomControl: React.FC = () => {
                   zoomTo(v.value);
                   e.preventDefault();
                 }}
+                tabIndex={0}
               >
                 <div className="fortune-zoom-ratio-text">{v.text}</div>
               </div>
@@ -124,6 +127,7 @@ const ZoomControl: React.FC = () => {
           zoomTo(context.zoomRatio + 0.1);
           e.stopPropagation();
         }}
+        tabIndex={0}
       >
         <SVGIcon name="plus" width={16} height={16} />
       </div>

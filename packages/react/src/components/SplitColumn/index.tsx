@@ -91,6 +91,7 @@ export const SplitColumn: React.FC<{}> = () => {
                   return getRegStr(regStr, splitSymbols.current?.childNodes);
                 })
               }
+              tabIndex={0}
             />
             <label htmlFor={o.value}>{o.name}</label>
           </div>
@@ -106,6 +107,7 @@ export const SplitColumn: React.FC<{}> = () => {
                 return getRegStr(regStr, splitSymbols.current?.childNodes);
               });
             }}
+            tabIndex={0}
           />
           <label htmlFor="other">{splitText.splitOther}</label>
           <input
@@ -131,6 +133,7 @@ export const SplitColumn: React.FC<{}> = () => {
                 return getRegStr(regStr, splitSymbols.current?.childNodes);
               });
             }}
+            tabIndex={0}
           />
           <label htmlFor="splitsimple">{splitText.splitContinueSymbol}</label>
         </div>
@@ -163,6 +166,7 @@ export const SplitColumn: React.FC<{}> = () => {
         onClick={() => {
           certainBtn();
         }}
+        tabIndex={0}
       >
         {button.confirm}
       </div>
@@ -171,6 +175,7 @@ export const SplitColumn: React.FC<{}> = () => {
         onClick={() => {
           hideDialog();
         }}
+        tabIndex={0}
       >
         {button.cancel}
       </div>

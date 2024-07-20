@@ -1,7 +1,7 @@
-import {toNumber} from './../../helper/number';
-import {ERROR_VALUE} from './../../error';
+import { toNumber } from "./../../helper/number";
+import { ERROR_VALUE } from "./../../error";
 
-export const SYMBOL = '^';
+export const SYMBOL = "^";
 
 export default function func(exp1, exp2) {
   const result = Math.pow(toNumber(exp1), toNumber(exp2));
