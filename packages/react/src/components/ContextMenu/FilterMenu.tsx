@@ -180,8 +180,11 @@ const FilterMenu: React.FC = () => {
   const hiddenRows = useRef<number[]>([]);
   const [showValues, setShowValues] = useState<string[]>([]);
   const [searchText, setSearchText] = useState("");
-  const [subMenuPos, setSubMenuPos] =
-    useState<{ left?: number; top: number; right?: number }>();
+  const [subMenuPos, setSubMenuPos] = useState<{
+    left?: number;
+    top: number;
+    right?: number;
+  }>();
   const [filterColors, setFilterColors] = useState<{
     bgColors: FilterColor[];
     fcColors: FilterColor[];
