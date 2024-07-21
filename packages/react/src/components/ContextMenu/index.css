@@ -49,10 +49,12 @@
 /* 右击菜单项目 hover背景色 */
 .luckysheet-cols-menu .luckysheet-cols-menuitem:hover,
 .luckysheet-cols-menu .luckysheet-cols-menuitem-hover {
-  background: #EFEFEF;
+  background: #efefef;
 }
 
-.luckysheet-cols-menu .luckysheet-cols-menuitem .luckysheet-cols-menuitem-content {
+.luckysheet-cols-menu
+  .luckysheet-cols-menuitem
+  .luckysheet-cols-menuitem-content {
   position: relative;
   color: #333;
   cursor: pointer;
@@ -67,7 +69,9 @@
   padding: 0px;
 }
 
-.fortune-filter-menu .luckysheet-cols-menuitem .luckysheet-cols-menuitem-content {
+.fortune-filter-menu
+  .luckysheet-cols-menuitem
+  .luckysheet-cols-menuitem-content {
   padding: 7px 24px;
 }
 
@@ -83,7 +87,6 @@
   color: blue;
   text-decoration: underline;
 }
-
 
 .luckysheet-filter-bycolor-submenu .button-basic,
 .fortune-filter-menu .button-basic {
@@ -117,7 +120,7 @@
 .luckysheet-filter-bycolor-submenu .button-primary,
 .fortune-filter-menu .button-primary {
   color: white;
-  background-color: #0188FB;
+  background-color: #0188fb;
 }
 
 .luckysheet-filter-bycolor-submenu .button-primary:hover,
@@ -163,7 +166,7 @@
 }
 
 .filtermenu-input-container input.luckysheet-mousedown-cancel {
-  border: 1px solid #A1A1A1;
+  border: 1px solid #a1a1a1;
 }
 
 .filtermenu-input-container input.luckysheet-mousedown-cancel:focus {
@@ -226,7 +229,7 @@
   font-size: 12px;
   padding: 5px 0;
   z-index: 1004;
-  border: 1px solid rgba(0, 0, 0, .2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   background-color: #ffffff;
 }
 

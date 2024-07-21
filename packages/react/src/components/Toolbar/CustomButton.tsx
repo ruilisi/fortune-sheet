@@ -23,6 +23,7 @@ const CustomButton: React.FC<Props> = ({
     <div
       className="fortune-toolbar-button fortune-toolbar-item"
       onClick={onClick}
+      tabIndex={0}
       data-tips={tooltip}
       role="button"
       style={selected ? { backgroundColor: "#E7E5EB" } : {}}

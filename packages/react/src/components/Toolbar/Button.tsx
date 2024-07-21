@@ -23,8 +23,10 @@ const Button: React.FC<Props> = ({
     <div
       className="fortune-toolbar-button fortune-toolbar-item"
       onClick={onClick}
+      tabIndex={0}
       data-tips={tooltip}
       role="button"
+      aria-label={tooltip}
       style={selected ? { backgroundColor: "#E7E5EB" } : {}}
     >
       <SVGIcon name={iconId} style={disabled ? { opacity: 0.3 } : {}} />

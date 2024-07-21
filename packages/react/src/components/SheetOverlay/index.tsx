@@ -414,6 +414,7 @@ const SheetOverlay: React.FC = () => {
         <div
           className="fortune-left-top"
           onClick={onLeftTopClick}
+          tabIndex={0}
           style={{
             width: context.rowHeaderWidth - 1.5,
             height: context.columnHeaderHeight - 1.5,
@@ -733,6 +734,7 @@ const SheetOverlay: React.FC = () => {
                 dataVerificationHintBoxRef.current!.style.display = "none";
               });
             }}
+            tabIndex={0}
             style={{ display: "none" }}
           >
             <SVGIcon name="combo-arrow" width={16} />
@@ -781,6 +783,7 @@ const SheetOverlay: React.FC = () => {
                   onKeyPress={(e) => e.stopPropagation()}
                   onClick={(e) => e.stopPropagation()}
                   onDoubleClick={(e) => e.stopPropagation()}
+                  tabIndex={0}
                   style={{
                     left: context.scrollLeft,
                     display: context.allowEdit ? "block" : "none",
@@ -791,6 +794,7 @@ const SheetOverlay: React.FC = () => {
                     onClick={() => {
                       handleBottomAddRow();
                     }}
+                    tabIndex={0}
                   >
                     {info.add}
                   </div>
@@ -811,6 +815,7 @@ const SheetOverlay: React.FC = () => {
                         ctx.scrollTop = 0;
                       });
                     }}
+                    tabIndex={0}
                   >
                     {info.backTop}
                   </span>

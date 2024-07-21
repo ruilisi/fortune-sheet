@@ -7,11 +7,11 @@
 export function toNumber(number) {
   let result;
 
-  if (typeof number === 'number') {
+  if (typeof number === "number") {
     result = number;
-
-  } else if (typeof number === 'string') {
-    result = number.indexOf('.') > -1 ? parseFloat(number) : parseInt(number, 10);
+  } else if (typeof number === "string") {
+    result =
+      number.indexOf(".") > -1 ? parseFloat(number) : parseInt(number, 10);
   }
 
   return result;

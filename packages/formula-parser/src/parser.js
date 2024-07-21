@@ -1,10 +1,15 @@
-import Emitter from 'tiny-emitter';
-import evaluateByOperator from './evaluate-by-operator/evaluate-by-operator';
-import {Parser as GrammarParser} from './grammar-parser/grammar-parser';
-import {trimEdges} from './helper/string';
-import {toNumber, invertNumber} from './helper/number';
-import errorParser, {isValidStrict as isErrorValid, ERROR, ERROR_NAME, ERROR_VALUE} from './error';
-import {extractLabel, toLabel} from './helper/cell';
+import Emitter from "tiny-emitter";
+import evaluateByOperator from "./evaluate-by-operator/evaluate-by-operator";
+import { Parser as GrammarParser } from "./grammar-parser/grammar-parser";
+import { trimEdges } from "./helper/string";
+import { toNumber, invertNumber } from "./helper/number";
+import errorParser, {
+  isValidStrict as isErrorValid,
+  ERROR,
+  ERROR_NAME,
+  ERROR_VALUE,
+} from "./error";
+import { extractLabel, toLabel } from "./helper/cell";
 
 /**
  * @class Parser
@@ -28,10 +33,9 @@ class Parser extends Emitter {
     this.functions = Object.create(null);
     this.options = Object.create(null);
 
-    this
-      .setVariable('TRUE', true)
-      .setVariable('FALSE', false)
-      .setVariable('NULL', null);
+    this.setVariable("TRUE", true)
+      .setVariable("FALSE", false)
+      .setVariable("NULL", null);
   }
 
   /**
@@ -48,8 +52,8 @@ class Parser extends Emitter {
     this.options = options;
 
     try {
-      if (expression === '') {
-        result = '';
+      if (expression === "") {
+        result = "";
       } else {
         result = this.parser.parse(expression);
       }
@@ -107,7 +111,7 @@ class Parser extends Emitter {
   _callVariable(name) {
     let value = this.getVariable(name);
 
-    this.emit('callVariable', name, (newValue) => {
+    this.emit("callVariable", name, (newValue) => {
       if (newValue !== void 0) {
         value = newValue;
       }
@@ -159,7 +163,7 @@ class Parser extends Emitter {
       value = fn(params);
     }
 
-    this.emit('callFunction', name, params, (newValue) => {
+    this.emit("callFunction", name, params, (newValue) => {
       if (newValue !== void 0) {
         value = newValue;
       }
@@ -184,12 +188,17 @@ class Parser extends Emitter {
       return row.index + 1;
     } else if (row?.index === -1) {
       throw Error(ERROR_NAME);
-    } 
+    }
     let value = void 0;
 
-    this.emit('callCellValue', {label, row, column, sheetName}, this.options, (_value) => {
-      value = _value;
-    });
+    this.emit(
+      "callCellValue",
+      { label, row, column, sheetName },
+      this.options,
+      (_value) => {
+        value = _value;
+      }
+    );
 
     return value;
   }
@@ -233,9 +242,15 @@ class Parser extends Emitter {
 
     let value = [];
 
-    this.emit('callRangeValue', startCell, endCell, this.options, (_value = []) => {
-      value = _value;
-    });
+    this.emit(
+      "callRangeValue",
+      startCell,
+      endCell,
+      this.options,
+      (_value = []) => {
+        value = _value;
+      }
+    );
 
     return value;
   }

@@ -541,7 +541,11 @@ export function handleGlobalKeyDown(
       return;
     }
 
-    moveHighlightCell(ctx, "right", 1, "rangeOfSelect");
+    if (e.shiftKey) {
+      moveHighlightCell(ctx, "right", -1, "rangeOfSelect");
+    } else {
+      moveHighlightCell(ctx, "right", 1, "rangeOfSelect");
+    }
     e.preventDefault();
   } else if (kstr === "F2") {
     if (!allowEdit) return;

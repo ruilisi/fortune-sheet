@@ -10883,6 +10883,7 @@ export default {
     },
   ],
   toolbar: {
+    toolbar: "工具栏",
     undo: "撤銷",
     redo: "重做",
     paintFormat: "格式刷",

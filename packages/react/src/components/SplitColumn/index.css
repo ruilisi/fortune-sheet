@@ -1,84 +1,84 @@
 #fortune-split-column {
-    /* position: absolute;
+  /* position: absolute;
     padding: 30px 42px;
     z-index: 1002; */
-    min-width: 500px;
+  min-width: 500px;
 }
 #fortune-split-column label {
-    user-select: none
+  user-select: none;
 }
 #fortune-split-column .title {
-    font-size: 16px;
+  font-size: 16px;
 }
 #fortune-split-column .splitDelimiters {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 #fortune-split-column .splitSymbols {
-    position: relative;
-    border: 1px solid #dfdfdf;
-    padding: 5px;
-    margin: 5px 0px;
+  position: relative;
+  border: 1px solid #dfdfdf;
+  padding: 5px;
+  margin: 5px 0px;
 }
 #fortune-split-column .splitSymbol {
-    font-size: 14px;
+  font-size: 14px;
 }
 #fortune-split-column .splitSimple {
-    position: absolute;
-    top: 114px;
-    left: 0px;
+  position: absolute;
+  top: 114px;
+  left: 0px;
 }
 #fortune-split-column #otherValue {
-    margin-left: 5px;
-    width: 50px;
-    padding: 0 5px;
+  margin-left: 5px;
+  width: 50px;
+  padding: 0 5px;
 }
 #fortune-split-column .splitDataPreview {
-    font-size: 14px;
-    margin-top: 26px;
+  font-size: 14px;
+  margin-top: 26px;
 }
 #fortune-split-column .splitColumnData {
-    border: 1px solid #dfdfdf;
-    padding: 5px;
-    margin: 5px 0px;
-    height: 100px;
-    overflow-y: scroll;
+  border: 1px solid #dfdfdf;
+  padding: 5px;
+  margin: 5px 0px;
+  height: 100px;
+  overflow-y: scroll;
 }
 #fortune-split-column .button-basic {
-    display: inline-block;
-    margin-bottom: 0;
-    font-weight: 400;
-    text-align: center;
-    vertical-align: middle;
-    touch-action: manipulation;
-    cursor: pointer;
-    white-space: nowrap;
-    padding: 4px 8px;
-    font-size: 14px;
-    line-height: 1.42857143;
-    border-radius: 2px;
-    user-select: none;
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 2px;
+  user-select: none;
 }
 #fortune-split-column .button-primary {
-    background: #0188fb;
-    border: 1px solid #0188fb;
-    color: #fff;
-    margin-right: 10px;
+  background: #0188fb;
+  border: 1px solid #0188fb;
+  color: #fff;
+  margin-right: 10px;
 }
 #fortune-split-column .button-close {
-    color: #333;
-    background-color: #fff;
-    border: 1px solid #ccc;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
 }
 #fortune-split-column table {
-    border-collapse: collapse;
+  border-collapse: collapse;
 }
 #fortune-split-column tr {
-    display: table-row;
-    vertical-align: inherit;
-    border-color: inherit;
+  display: table-row;
+  vertical-align: inherit;
+  border-color: inherit;
 }
 #fortune-split-column td {
-    border: 1px solid #333;
-    display: table-cell;
-    vertical-align: inherit;
+  border: 1px solid #333;
+  display: table-cell;
+  vertical-align: inherit;
 }

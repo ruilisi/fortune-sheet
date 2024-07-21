@@ -103,6 +103,7 @@ const DropDownList: React.FC = () => {
       onKeyDown={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}
       onMouseUp={(e) => e.stopPropagation()}
+      tabIndex={0}
     >
       {list.map((v, i) => (
         <div
@@ -121,6 +122,7 @@ const DropDownList: React.FC = () => {
               setDropcownValue(ctx, v, arr);
             });
           }}
+          tabIndex={0}
         >
           <SVGIcon
             name="check"

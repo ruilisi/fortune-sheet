@@ -7,9 +7,7 @@
     "type": "git",
     "url": "https://github.com/handsontable/formula-parser.git"
   },
-  "authors": [
-    "Handsoncode", "Handsoncode <hello@handsontable.com>"
-  ],
+  "authors": ["Handsoncode", "Handsoncode <hello@handsontable.com>"],
   "keywords": [
     "formula",
     "formulas",
@@ -18,10 +16,5 @@
     "excel",
     "spreadsheet"
   ],
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "src",
-    "test"
-  ]
+  "ignore": ["**/.*", "node_modules", "src", "test"]
 }

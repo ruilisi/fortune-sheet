@@ -80,6 +80,7 @@ const DateSelectTreeItem: React.FC<{
           onExpand?.(item.key, !expand);
           setExpand(!expand);
         }}
+        tabIndex={0}
       >
         {_.isEmpty(item.children) ? (
           <div style={{ width: 10 }} />
@@ -97,6 +98,7 @@ const DateSelectTreeItem: React.FC<{
             onChange(item, !checked);
           }}
           onClick={(e) => e.stopPropagation()}
+          tabIndex={0}
         />
         <div>{item.text}</div>
         <span className="count">{`( ${item.rows.length} )`}</span>
@@ -180,8 +182,11 @@ const FilterMenu: React.FC = () => {
   const hiddenRows = useRef<number[]>([]);
   const [showValues, setShowValues] = useState<string[]>([]);
   const [searchText, setSearchText] = useState("");
-  const [subMenuPos, setSubMenuPos] =
-    useState<{ left?: number; top: number; right?: number }>();
+  const [subMenuPos, setSubMenuPos] = useState<{
+    left?: number;
+    top: number;
+    right?: number;
+  }>();
   const [filterColors, setFilterColors] = useState<{
     bgColors: FilterColor[];
     fcColors: FilterColor[];
@@ -302,6 +307,7 @@ const FilterMenu: React.FC = () => {
                 key={v.color}
                 className="item"
                 onClick={() => onSelectChange(key, v.color, !v.checked)}
+                tabIndex={0}
               >
                 <div
                   className="color-label"
@@ -537,17 +543,26 @@ const FilterMenu: React.FC = () => {
                 <div className="luckysheet-filter-byvalue">
                   <div className="fortune-menuitem-row byvalue-btn-row">
                     <div>
-                      <span className="fortune-byvalue-btn" onClick={selectAll}>
+                      <span
+                        className="fortune-byvalue-btn"
+                        onClick={selectAll}
+                        tabIndex={0}
+                      >
                         {filter.filterValueByAllBtn}
                       </span>
                       {" - "}
-                      <span className="fortune-byvalue-btn" onClick={clearAll}>
+                      <span
+                        className="fortune-byvalue-btn"
+                        onClick={clearAll}
+                        tabIndex={0}
+                      >
                         {filter.filterValueByClearBtn}
                       </span>
                       {" - "}
                       <span
                         className="fortune-byvalue-btn"
                         onClick={inverseSelect}
+                        tabIndex={0}
                       >
                         {filter.filterValueByInverseBtn}
                       </span>
@@ -675,6 +690,7 @@ const FilterMenu: React.FC = () => {
                 draftCtx.filterContextMenu = undefined;
               });
             }}
+            tabIndex={0}
           >
             {filter.filterConform}
           </div>
@@ -685,6 +701,7 @@ const FilterMenu: React.FC = () => {
                 draftCtx.filterContextMenu = undefined;
               });
             }}
+            tabIndex={0}
           >
             {filter.filterCancel}
           </div>
@@ -695,6 +712,7 @@ const FilterMenu: React.FC = () => {
                 clearFilter(draftCtx);
               });
             }}
+            tabIndex={0}
           >
             {filter.clearFilter}
           </div>
@@ -767,6 +785,7 @@ const FilterMenu: React.FC = () => {
                     draftCtx.filterContextMenu = undefined;
                   });
                 }}
+                tabIndex={0}
               >
                 {filter.filterConform}
               </div>

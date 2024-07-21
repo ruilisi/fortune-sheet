@@ -87,7 +87,7 @@
 }
 
 .fortune-toolbar-select::-webkit-scrollbar {
-  display: none ;
+  display: none;
 }
 
 .fortune-toolbar-select,
@@ -185,7 +185,7 @@
   padding-top: 1px;
   padding-left: 24px;
   text-align: right;
-  opacity: .5;
+  opacity: 0.5;
   filter: alpha(opacity=50);
   color: #000;
   user-select: none;
@@ -197,7 +197,7 @@
   position: absolute;
   box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
   background: #fff;
-  border: 1px solid rgba(0, 0, 0, .2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   cursor: default;
   font-size: 12px;
   z-index: 1004;
@@ -212,7 +212,7 @@
   background: rgb(240, 240, 240);
   border-radius: 6px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
-  border: 1px solid rgba(0, 0, 0, .2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   font-size: 12px;
 }
 
@@ -271,9 +271,9 @@
   margin-right: -4px;
 }
 
-.fortune-border-select-menu{
-    position: absolute;
-    bottom: 0px;
+.fortune-border-select-menu {
+  position: absolute;
+  bottom: 0px;
 }
 
 .fortune-border-color-preview {
@@ -293,16 +293,16 @@
   cursor: pointer;
 }
 
-.fortune-border-style-preview{
+.fortune-border-style-preview {
   height: 3px;
   overflow: hidden;
 }
 
-.fortune-border-style-picker-menu{
+.fortune-border-style-picker-menu {
   padding: 0px 10px;
 }
 
-.fortune-border-style-picker-menu:hover{
+.fortune-border-style-picker-menu:hover {
   background: #efefef;
   cursor: pointer;
 }

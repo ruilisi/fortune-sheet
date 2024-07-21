@@ -29,6 +29,7 @@ const Menu: React.FC<Props> = ({
       onClick={(e) => onClick?.(e, containerRef.current!)}
       onMouseLeave={(e) => onMouseLeave?.(e, containerRef.current!)}
       onMouseEnter={(e) => onMouseEnter?.(e, containerRef.current!)}
+      tabIndex={0}
     >
       <div className="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
         {children}

@@ -26,8 +26,8 @@
 }
 
 #fortune-search-replace .tabBox span.on {
-  background-color: #8C89FE;
-  border-color: #726EFE;
+  background-color: #8c89fe;
+  border-color: #726efe;
   color: #fff;
 }
 
@@ -129,7 +129,7 @@
 }
 
 #fortune-search-replace #searchAllbox .boxMain .boxItem.on {
-  background-color: #8C89FE;
+  background-color: #8c89fe;
   color: #fff;
 }
 

@@ -165,6 +165,7 @@ export const FormulaSearch: React.FC<{ onCancel: () => void }> = ({
               className={`listBox${index === selectedFuncIndex ? " on" : ""}`}
               key={v.n}
               onClick={() => setSelectedFuncIndex(index)}
+              tabIndex={0}
             >
               <div>{v.n}</div>
               <div>{v.a}</div>
@@ -176,12 +177,14 @@ export const FormulaSearch: React.FC<{ onCancel: () => void }> = ({
         <div
           className="fortune-message-box-button button-primary"
           onClick={onConfirm}
+          tabIndex={0}
         >
           {button.confirm}
         </div>
         <div
           className="fortune-message-box-button button-default"
           onClick={onCancel}
+          tabIndex={0}
         >
           {button.cancel}
         </div>

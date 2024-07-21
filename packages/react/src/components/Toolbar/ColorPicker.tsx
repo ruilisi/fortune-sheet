@@ -97,6 +97,7 @@ const ColorPicker: React.FC<Props> = ({ onPick }) => {
               key={c}
               className="fortune-toolbar-color-picker-item"
               onClick={() => onPick(c)}
+              tabIndex={0}
               style={{ backgroundColor: c }}
             />
           ))}

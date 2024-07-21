@@ -10913,6 +10913,7 @@ export default {
     },
   ],
   toolbar: {
+    toolbar: "उपकरण पट्टी",
     undo: "पूर्ववत करें",
     redo: "फिर से करें",
     "clear-format": "फॉर्मेट साफ़ करें",

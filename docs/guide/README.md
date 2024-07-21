@@ -161,5 +161,5 @@ Please refer to [Overall configuration](./config.md) for detailed information.
 |  ~~SHIFT + Left mouse click~~ | Adjust selection area |
 |  UP/DOWN/LEFT/RIGHT | Move cell selection box |
 |  ENTER | Edit cell |
-|  TAB | Move cell selection box to the right |
+|  TAB / SHIFT + TAB | Move cell selection box to the right and left |
 |  DELETE | Clear cell data |
