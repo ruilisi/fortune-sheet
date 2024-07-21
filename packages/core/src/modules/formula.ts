@@ -2088,7 +2088,7 @@ function searchFunction(ctx: Context, searchtxt: string) {
   // );
 }
 
-function getrangeseleciton() {
+export function getrangeseleciton() {
   const currSelection = window.getSelection();
   if (!currSelection) return null;
   const { anchorNode, anchorOffset } = currSelection;
@@ -2585,11 +2585,12 @@ export function handleFormulaInput(
       if (!currSelection) return;
       if (currSelection.anchorNode?.nodeName.toLowerCase() === "div") {
         const editorlen = $editor.querySelectorAll("span").length;
-        ctx.formulaCache.functionRangeIndex = [
-          editorlen - 1,
-          $editor.querySelectorAll("span").item(editorlen - 1).textContent
-            ?.length!,
-        ];
+        if (editorlen > 0)
+          ctx.formulaCache.functionRangeIndex = [
+            editorlen - 1,
+            $editor.querySelectorAll("span").item(editorlen - 1).textContent
+              ?.length!,
+          ];
       } else {
         ctx.formulaCache.functionRangeIndex = [
           _.indexOf(
