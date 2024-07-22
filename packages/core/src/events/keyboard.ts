@@ -118,7 +118,7 @@ function moveToEdge(
   let r = colDelta === 0 ? selectedLimit : curr;
   let c = colDelta === 0 ? curr : selectedLimit;
 
-  while (r > 0 && c > 0 && (colDelta === 0 ? r : c) < maxRowCol - 1) {
+  while (r >= 0 && c >= 0 && (colDelta === 0 ? r : c) < maxRowCol - 1) {
     if (
       !_.isNil(sheetData?.[r]?.[c]?.v) &&
       (_.isNil(sheetData?.[r - rowDelta]?.[c - colDelta]?.v) ||
