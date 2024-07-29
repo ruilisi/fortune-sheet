@@ -133,7 +133,7 @@ export function handleGlobalWheel(
   let rowscroll = 0;
 
   // TODO const scrollNum = e.deltaFactor < 40 ? 1 : e.deltaFactor < 80 ? 2 : 3;
-  const scrollNum = 1;
+  const scrollNum = 2;//1;
 
   // 一次滚动三行或三列
   if (e.deltaY !== 0) {
