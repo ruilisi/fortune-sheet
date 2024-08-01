@@ -118,6 +118,7 @@ const ImgBoxs: React.FC = () => {
                 });
                 e.stopPropagation();
               }}
+              tabIndex={0}
             >
               <div
                 className="luckysheet-modal-dialog-content"

@@ -20,10 +20,12 @@ jest.addMatchers({
 
           if (a === e || isNaN(a) === isNaN(e)) {
             pass = true;
-
-          } else if (typeof a === 'number' && typeof e === 'number' && Math.abs(a - e) < tolerance(precision)) {
+          } else if (
+            typeof a === "number" &&
+            typeof e === "number" &&
+            Math.abs(a - e) < tolerance(precision)
+          ) {
             pass = true;
-
           } else {
             pass = false;
           }

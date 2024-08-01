@@ -162,6 +162,7 @@ const CustomSort: React.FC<{}> = () => {
             });
             hideDialog();
           }}
+          tabIndex={0}
         >
           {sort.confirm}
         </div>

@@ -26,7 +26,11 @@ const Dialog: React.FC<Props> = ({
   return (
     <div className="fortune-dialog" style={containerStyle}>
       <div className="fortune-modal-dialog-header">
-        <div className="fortune-modal-dialog-icon-close" onClick={onCancel}>
+        <div
+          className="fortune-modal-dialog-icon-close"
+          onClick={onCancel}
+          tabIndex={0}
+        >
           <SVGIcon name="close" style={{ padding: 7, cursor: "pointer" }} />
         </div>
       </div>
@@ -39,6 +43,7 @@ const Dialog: React.FC<Props> = ({
             <div
               className="fortune-message-box-button button-default"
               onClick={onOk}
+              tabIndex={0}
             >
               {button.confirm}
             </div>
@@ -47,12 +52,14 @@ const Dialog: React.FC<Props> = ({
               <div
                 className="fortune-message-box-button button-primary"
                 onClick={onOk}
+                tabIndex={0}
               >
                 {button.confirm}
               </div>
               <div
                 className="fortune-message-box-button button-default"
                 onClick={onCancel}
+                tabIndex={0}
               >
                 {button.cancel}
               </div>

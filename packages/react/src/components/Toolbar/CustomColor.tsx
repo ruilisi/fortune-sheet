@@ -16,7 +16,11 @@ export const CustomColor: React.FC<Props> = ({ onCustomPick, onColorPick }) => {
 
   return (
     <div id="fortune-custom-color">
-      <div className="color-reset" onClick={() => onCustomPick(undefined)}>
+      <div
+        className="color-reset"
+        onClick={() => onCustomPick(undefined)}
+        tabIndex={0}
+      >
         {sheetconfig.resetColor}
       </div>
       <div className="custom-color">
@@ -31,6 +35,7 @@ export const CustomColor: React.FC<Props> = ({ onCustomPick, onColorPick }) => {
           onClick={() => {
             onCustomPick(inputColor);
           }}
+          tabIndex={0}
         >
           {button.confirm}
         </div>

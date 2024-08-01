@@ -72,6 +72,7 @@ const RangeDialog: React.FC = () => {
       onKeyDown={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}
       onMouseUp={(e) => e.stopPropagation()}
+      tabIndex={0}
     >
       <div className="dialog-title">{dataVerification.selectCellRange}</div>
       <input
@@ -88,6 +89,7 @@ const RangeDialog: React.FC = () => {
           });
           close();
         }}
+        tabIndex={0}
       >
         {button.confirm}
       </div>
@@ -96,6 +98,7 @@ const RangeDialog: React.FC = () => {
         onClick={() => {
           close();
         }}
+        tabIndex={0}
       >
         {button.close}
       </div>

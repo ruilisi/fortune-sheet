@@ -66,9 +66,10 @@ const ContextMenu: React.FC = () => {
         return (
           <Menu
             key={name}
-            onClick={() => {
+            onClick={async () => {
+              const clipboardText = await navigator.clipboard.readText();
               setContext((draftCtx) => {
-                handlePasteByClick(draftCtx);
+                handlePasteByClick(draftCtx, clipboardText);
                 draftCtx.contextMenu = {};
               });
             }}
@@ -136,6 +137,7 @@ const ContextMenu: React.FC = () => {
                   <input
                     onClick={(e) => e.stopPropagation()}
                     onKeyDown={(e) => e.stopPropagation()}
+                    tabIndex={0}
                     type="text"
                     className="luckysheet-mousedown-cancel"
                     placeholder={rightclick.number}
@@ -205,6 +207,7 @@ const ContextMenu: React.FC = () => {
                   <input
                     onClick={(e) => e.stopPropagation()}
                     onKeyDown={(e) => e.stopPropagation()}
+                    tabIndex={0}
                     type="text"
                     className="luckysheet-mousedown-cancel"
                     placeholder={rightclick.number}
@@ -425,6 +428,7 @@ const ContextMenu: React.FC = () => {
             <input
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => e.stopPropagation()}
+              tabIndex={0}
               type="number"
               min={1}
               max={545}
@@ -485,6 +489,7 @@ const ContextMenu: React.FC = () => {
             <input
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => e.stopPropagation()}
+              tabIndex={0}
               type="number"
               min={1}
               max={545}

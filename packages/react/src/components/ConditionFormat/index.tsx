@@ -117,6 +117,7 @@ const ConditionalFormat: React.FC<{
                       setOpen(false);
                       showDialog(<ConditionRules type={v.text} />);
                     }}
+                    tabIndex={0}
                   >
                     {(conditionformat as any)[v.text]}
                     <span>{v.value}</span>
@@ -165,6 +166,7 @@ const ConditionalFormat: React.FC<{
                       setOpen(false);
                       showDialog(<ConditionRules type={v.text} />);
                     }}
+                    tabIndex={0}
                   >
                     {(conditionformat as any)[v.text]}
                     <span>{v.value}</span>
@@ -232,6 +234,7 @@ const ConditionalFormat: React.FC<{
                         updateItem(ctx, "delSheet");
                       });
                     }}
+                    tabIndex={0}
                   >
                     {(conditionformat as any)[v]}
                   </div>

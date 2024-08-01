@@ -363,6 +363,7 @@ export function updateInlineStringFormat(
   // let s = ctx.inlineStringEditCache;
   const w = window.getSelection();
   if (!w) return;
+  if (w.rangeCount === 0) return;
 
   const range = w.getRangeAt(0);
 

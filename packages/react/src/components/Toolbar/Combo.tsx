@@ -55,8 +55,10 @@ const Combo: React.FC<Props> = ({
             if (onClick) onClick(e);
             else setOpen(!open);
           }}
+          tabIndex={0}
           data-tips={tooltip}
           role="button"
+          aria-label={tooltip}
           style={style}
         >
           {iconId ? (
@@ -68,8 +70,10 @@ const Combo: React.FC<Props> = ({
         <div
           className="fortune-toolbar-combo-arrow"
           onClick={() => setOpen(!open)}
+          tabIndex={0}
           data-tips={tooltip}
           role="button"
+          aria-label={tooltip}
           style={style}
         >
           <SVGIcon name="combo-arrow" width={10} />

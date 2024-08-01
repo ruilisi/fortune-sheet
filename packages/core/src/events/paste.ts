@@ -18,6 +18,7 @@ import { expandRowsAndColumns, storeSheetParamALL } from "../modules/sheet";
 import { jfrefreshgrid } from "../modules/refresh";
 import { setRowHeight } from "../api";
 import { CFSplitRange } from "../modules";
+import clipboard from "../modules/clipboard";
 
 function postPasteCut(
   ctx: Context,
@@ -390,6 +391,7 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
       // jfrefreshgrid(d, ctx.luckysheet_select_save, allParam);
       // selectHightlightShow();
     }
+    jfrefreshgrid(ctx, null, undefined);
   } else {
     data = data.replace(/\r/g, "");
     const dataChe = [];
@@ -496,6 +498,7 @@ function pasteHandler(ctx: Context, data: any, borderInfo?: any) {
     //   jfrefreshgrid(d, ctx.luckysheet_select_save);
     //   selectHightlightShow();
     // }
+    jfrefreshgrid(ctx, null, undefined);
   }
 }
 
@@ -1097,6 +1100,11 @@ function pasteHandlerOfCopyPaste(
   const c_c1 = copyRange.copyRange[0].column[0];
   const c_c2 = copyRange.copyRange[0].column[1];
 
+  const isSingleCellPaste =
+    copyRange.copyRange.length === 1 &&
+    copyRange.copyRange[0].row[0] === copyRange.copyRange[0].row[1] &&
+    copyRange.copyRange[0].column[0] === copyRange.copyRange[0].column[1];
+
   let arr: CellMatrix = [];
   let isSameRow = false;
   for (let i = 0; i < copyRange.copyRange.length; i += 1) {
@@ -1221,6 +1229,12 @@ function pasteHandlerOfCopyPaste(
   let mtc = 0;
   let maxcellCahe = 0;
   let maxrowCache = 0;
+
+  const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!];
+  let hiddenRows;
+  if (isSingleCellPaste)
+    hiddenRows = new Set(Object.keys(file.config?.rowhidden || {}));
+
   for (let th = 1; th <= timesH; th += 1) {
     for (let tc = 1; tc <= timesC; tc += 1) {
       mth = minh + (th - 1) * copyh;
@@ -1234,6 +1248,8 @@ function pasteHandlerOfCopyPaste(
 
       const offsetMC: any = {};
       for (let h = mth; h < maxrowCache; h += 1) {
+        // skip if row is hidden
+        if (isSingleCellPaste && hiddenRows?.has(h.toString())) continue;
         const x = d[h];
 
         for (let c = mtc; c < maxcellCahe; c += 1) {
@@ -1340,7 +1356,15 @@ function pasteHandlerOfCopyPaste(
               func = `=${functionCopy(ctx, func, "left", Math.abs(offsetCol))}`;
             }
 
-            const funcV = execfunction(ctx, func, h, c, undefined, true);
+            const funcV = execfunction(
+              ctx,
+              func,
+              h,
+              c,
+              undefined,
+              undefined,
+              true
+            );
 
             if (!_.isNil(value.spl)) {
               // value.f = funcV[2];
@@ -1435,10 +1459,9 @@ function pasteHandlerOfCopyPaste(
   last.row = [minh, maxh];
   last.column = [minc, maxc];
 
-  const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!];
   file.config = cfg;
   file.luckysheet_conditionformat_save = cdformat;
-  file.dataVerification = dataVerification;
+  file.dataVerification = { ...file.dataVerification, ...dataVerification };
 
   // 若选区内包含超链接
   if (
@@ -1677,21 +1700,23 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
           typeof patternName === typeof patternStyle
             ? _.fromPairs(_.zip(patternName, patternStyle))
             : {};
-        _.forEach(trList, (tr) => {
-          let c = 0;
-          const targetR = ctx.luckysheet_select_save![0].row[0] + r;
 
-          const index = getSheetIndex(ctx, ctx.currentSheetId);
-          if (!_.isNil(index)) {
-            if (_.isNil(ctx.luckysheetfile[index].config)) {
-              ctx.luckysheetfile[index].config = {};
-            }
-            if (_.isNil(ctx.luckysheetfile[index].config!.rowlen)) {
-              ctx.luckysheetfile[index].config!.rowlen = {} as Record<
-                number,
-                number
-              >;
-            }
+        const index = getSheetIndex(ctx, ctx.currentSheetId);
+        if (!_.isNil(index)) {
+          if (_.isNil(ctx.luckysheetfile[index].config)) {
+            ctx.luckysheetfile[index].config = {};
+          }
+          if (_.isNil(ctx.luckysheetfile[index].config!.rowlen)) {
+            ctx.luckysheetfile[index].config!.rowlen = {} as Record<
+              number,
+              number
+            >;
+          }
+          const rowHeightList = ctx.luckysheetfile[index].config!.rowlen!;
+          _.forEach(trList, (tr) => {
+            let c = 0;
+            const targetR = ctx.luckysheet_select_save![0].row[0] + r;
+
             const targetRowHeight = !_.isNil(tr.getAttribute("height"))
               ? parseInt(tr.getAttribute("height") as string, 10)
               : null;
@@ -1702,257 +1727,257 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
               (!_.has(ctx.luckysheetfile[index].config!.rowlen, targetR) &&
                 ctx.luckysheetfile[index].defaultRowHeight !== targetRowHeight)
             ) {
-              const rowHeightList = ctx.luckysheetfile[index].config!.rowlen!;
               rowHeightList[targetR] = targetRowHeight as number;
-              setRowHeight(ctx, rowHeightList);
-            }
-          }
-
-          _.forEach(tr.querySelectorAll("td"), (td) => {
-            // build cell from td
-            const { className } = td;
-            const cell: Cell = {};
-            const txt = td.innerText || td.innerHTML;
-            if (_.trim(txt).length === 0) {
-              cell.v = undefined;
-              cell.m = "";
-            } else {
-              const mask = genarate(txt);
-              // @ts-ignore
-              [cell.m, cell.ct, cell.v] = mask;
-            }
-            const styleString =
-              typeof allStyleList[`.${className}`] === "string"
-                ? allStyleList[`.${className}`]
-                    .substring(1, allStyleList[`.${className}`].length - 1)
-                    .split("\n\t")
-                : [];
-            const styles: Record<string, string> = {};
-            _.forEach(styleString, (s) => {
-              const styleList = s.split(":");
-              styles[styleList[0]] = styleList?.[1].replace(";", "");
-            });
-            if (!_.isNil(styles.border)) td.style.border = styles.border;
-            let bg: string | undefined =
-              td.style.backgroundColor || styles.background;
-            if (bg === "rgba(0, 0, 0, 0)" || _.isEmpty(bg)) {
-              bg = undefined;
             }
 
-            cell.bg = bg;
-
-            const fontWight = td.style.fontWeight;
-            cell.bl =
-              (fontWight.toString() === "400" ||
-                fontWight === "normal" ||
-                _.isEmpty(fontWight)) &&
-              !_.includes(styles["font-style"], "bold") &&
-              (!styles["font-weight"] || styles["font-weight"] === "400")
-                ? 0
-                : 1;
-
-            cell.it =
-              (td.style.fontStyle === "normal" ||
-                _.isEmpty(td.style.fontStyle)) &&
-              !_.includes(styles["font-style"], "italic")
-                ? 0
-                : 1;
-
-            cell.un = !_.includes(styles["text-decoration"], "underline")
-              ? undefined
-              : 1;
-
-            cell.cl = !_.includes(td.innerHTML, "<s>") ? undefined : 1;
-
-            const ff = td.style.fontFamily || styles["font-family"] || "";
-            const ffs = ff.split(",");
-            for (let i = 0; i < ffs.length; i += 1) {
-              let fa = _.trim(ffs[i].toLowerCase());
-              // @ts-ignore
-              fa = locale_fontjson[fa];
-              if (_.isNil(fa)) {
-                cell.ff = 0;
+            _.forEach(tr.querySelectorAll("td"), (td) => {
+              // build cell from td
+              const { className } = td;
+              const cell: Cell = {};
+              const txt = td.innerText || td.innerHTML;
+              if (_.trim(txt).length === 0) {
+                cell.v = undefined;
+                cell.m = "";
               } else {
-                cell.ff = fa;
-                break;
+                const mask = genarate(txt);
+                // @ts-ignore
+                [cell.m, cell.ct, cell.v] = mask;
               }
-            }
-            const fs = Math.round(
-              styles["font-size"]
-                ? parseInt(styles["font-size"].replace("pt", ""), 10)
-                : (parseInt(td.style.fontSize || "13", 10) * 72) / 96
-            );
-            cell.fs = fs;
-
-            cell.fc = td.style.color || styles.color;
-
-            const ht = td.style.textAlign || styles["text-align"] || "left";
-            if (ht === "center") {
-              cell.ht = 0;
-            } else if (ht === "right") {
-              cell.ht = 2;
-            } else {
-              cell.ht = 1;
-            }
-
-            const regex = /vertical-align:\s*(.*?);/;
-            const vt =
-              td.style.verticalAlign ||
-              styles["vertical-align"] ||
-              (!_.isNil(allStyleList.td) &&
-                allStyleList.td.match(regex).length > 0 &&
-                allStyleList.td.match(regex)[1]) ||
-              "top";
-            if (vt === "middle") {
-              cell.vt = 0;
-            } else if (vt === "top" || vt === "text-top") {
-              cell.vt = 1;
-            } else {
-              cell.vt = 2;
-            }
-
-            if ("mso-rotate" in styles) {
-              const rt = styles["mso-rotate"];
-              cell.rt = parseFloat(rt);
-            }
-
-            while (c < colLen && !_.isNil(data[r][c])) {
-              c += 1;
-            }
-
-            if (c === colLen) {
-              return true;
-            }
-
-            if (_.isNil(data[r][c])) {
-              data[r][c] = cell;
-              // @ts-ignore
-              let rowspan = parseInt(td.getAttribute("rowspan"), 10);
-              // @ts-ignore
-              let colspan = parseInt(td.getAttribute("colspan"), 10);
-
-              if (Number.isNaN(rowspan)) {
-                rowspan = 1;
+              const styleString =
+                typeof allStyleList[`.${className}`] === "string"
+                  ? allStyleList[`.${className}`]
+                      .substring(1, allStyleList[`.${className}`].length - 1)
+                      .split("\n\t")
+                  : [];
+              const styles: Record<string, string> = {};
+              _.forEach(styleString, (s) => {
+                const styleList = s.split(":");
+                styles[styleList[0]] = styleList?.[1].replace(";", "");
+              });
+              if (!_.isNil(styles.border)) td.style.border = styles.border;
+              let bg: string | undefined =
+                td.style.backgroundColor || styles.background;
+              if (bg === "rgba(0, 0, 0, 0)" || _.isEmpty(bg)) {
+                bg = undefined;
               }
 
-              if (Number.isNaN(colspan)) {
-                colspan = 1;
-              }
+              cell.bg = bg;
 
-              const r_ab = ctx.luckysheet_select_save![0].row[0] + r;
-              const c_ab = ctx.luckysheet_select_save![0].column[0] + c;
+              const fontWight = td.style.fontWeight;
+              cell.bl =
+                (fontWight.toString() === "400" ||
+                  fontWight === "normal" ||
+                  _.isEmpty(fontWight)) &&
+                !_.includes(styles["font-style"], "bold") &&
+                (!styles["font-weight"] || styles["font-weight"] === "400")
+                  ? 0
+                  : 1;
 
-              for (let rp = 0; rp < rowspan; rp += 1) {
-                for (let cp = 0; cp < colspan; cp += 1) {
-                  if (rp === 0) {
-                    const bt = td.style.borderTop;
-                    if (
-                      !_.isEmpty(bt) &&
-                      bt.substring(0, 3).toLowerCase() !== "0px"
-                    ) {
-                      const width = td.style.borderTopWidth;
-                      const type = td.style.borderTopStyle;
-                      const color = td.style.borderTopColor;
-                      const borderconfig = getQKBorder(width, type, color);
+              cell.it =
+                (td.style.fontStyle === "normal" ||
+                  _.isEmpty(td.style.fontStyle)) &&
+                !_.includes(styles["font-style"], "italic")
+                  ? 0
+                  : 1;
 
-                      if (!borderInfo[`${r + rp}_${c + cp}`]) {
-                        borderInfo[`${r + rp}_${c + cp}`] = {};
-                      }
+              cell.un = !_.includes(styles["text-decoration"], "underline")
+                ? undefined
+                : 1;
 
-                      borderInfo[`${r + rp}_${c + cp}`].t = {
-                        style: borderconfig[0],
-                        color: borderconfig[1],
-                      };
-                    }
-                  }
+              cell.cl = !_.includes(td.innerHTML, "<s>") ? undefined : 1;
 
-                  if (rp === rowspan - 1) {
-                    const bb = td.style.borderBottom;
-                    if (
-                      !_.isEmpty(bb) &&
-                      bb.substring(0, 3).toLowerCase() !== "0px"
-                    ) {
-                      const width = td.style.borderBottomWidth;
-                      const type = td.style.borderBottomStyle;
-                      const color = td.style.borderBottomColor;
-                      const borderconfig = getQKBorder(width, type, color);
-
-                      if (!borderInfo[`${r + rp}_${c + cp}`]) {
-                        borderInfo[`${r + rp}_${c + cp}`] = {};
-                      }
-
-                      borderInfo[`${r + rp}_${c + cp}`].b = {
-                        style: borderconfig[0],
-                        color: borderconfig[1],
-                      };
-                    }
-                  }
-
-                  if (cp === 0) {
-                    const bl = td.style.borderLeft;
-                    if (
-                      !_.isEmpty(bl) &&
-                      bl.substring(0, 3).toLowerCase() !== "0px"
-                    ) {
-                      const width = td.style.borderLeftWidth;
-                      const type = td.style.borderLeftStyle;
-                      const color = td.style.borderLeftColor;
-                      const borderconfig = getQKBorder(width, type, color);
-
-                      if (!borderInfo[`${r + rp}_${c + cp}`]) {
-                        borderInfo[`${r + rp}_${c + cp}`] = {};
-                      }
-
-                      borderInfo[`${r + rp}_${c + cp}`].l = {
-                        style: borderconfig[0],
-                        color: borderconfig[1],
-                      };
-                    }
-                  }
-
-                  if (cp === colspan - 1) {
-                    const br = td.style.borderLeft;
-                    if (
-                      !_.isEmpty(br) &&
-                      br.substring(0, 3).toLowerCase() !== "0px"
-                    ) {
-                      const width = td.style.borderRightWidth;
-                      const type = td.style.borderRightStyle;
-                      const color = td.style.borderRightColor;
-                      const borderconfig = getQKBorder(width, type, color);
-
-                      if (!borderInfo[`${r + rp}_${c + cp}`]) {
-                        borderInfo[`${r + rp}_${c + cp}`] = {};
-                      }
-
-                      borderInfo[`${r + rp}_${c + cp}`].r = {
-                        style: borderconfig[0],
-                        color: borderconfig[1],
-                      };
-                    }
-                  }
-
-                  if (rp === 0 && cp === 0) {
-                    continue;
-                  }
-
-                  data[r + rp][c + cp] = { mc: { r: r_ab, c: c_ab } };
+              const ff = td.style.fontFamily || styles["font-family"] || "";
+              const ffs = ff.split(",");
+              for (let i = 0; i < ffs.length; i += 1) {
+                let fa = _.trim(ffs[i].toLowerCase());
+                // @ts-ignore
+                fa = locale_fontjson[fa];
+                if (_.isNil(fa)) {
+                  cell.ff = 0;
+                } else {
+                  cell.ff = fa;
+                  break;
                 }
               }
+              const fs = Math.round(
+                styles["font-size"]
+                  ? parseInt(styles["font-size"].replace("pt", ""), 10)
+                  : (parseInt(td.style.fontSize || "13", 10) * 72) / 96
+              );
+              cell.fs = fs;
 
-              if (rowspan > 1 || colspan > 1) {
-                const first = { rs: rowspan, cs: colspan, r: r_ab, c: c_ab };
-                data[r][c].mc = first;
+              cell.fc = td.style.color || styles.color;
+
+              const ht = td.style.textAlign || styles["text-align"] || "left";
+              if (ht === "center") {
+                cell.ht = 0;
+              } else if (ht === "right") {
+                cell.ht = 2;
+              } else {
+                cell.ht = 1;
               }
-            }
-            c += 1;
-            if (c === colLen) {
+
+              const regex = /vertical-align:\s*(.*?);/;
+              const vt =
+                td.style.verticalAlign ||
+                styles["vertical-align"] ||
+                (!_.isNil(allStyleList.td) &&
+                  allStyleList.td.match(regex).length > 0 &&
+                  allStyleList.td.match(regex)[1]) ||
+                "top";
+              if (vt === "middle") {
+                cell.vt = 0;
+              } else if (vt === "top" || vt === "text-top") {
+                cell.vt = 1;
+              } else {
+                cell.vt = 2;
+              }
+
+              if ("mso-rotate" in styles) {
+                const rt = styles["mso-rotate"];
+                cell.rt = parseFloat(rt);
+              }
+
+              while (c < colLen && !_.isNil(data[r][c])) {
+                c += 1;
+              }
+
+              if (c === colLen) {
+                return true;
+              }
+
+              if (_.isNil(data[r][c])) {
+                data[r][c] = cell;
+                // @ts-ignore
+                let rowspan = parseInt(td.getAttribute("rowspan"), 10);
+                // @ts-ignore
+                let colspan = parseInt(td.getAttribute("colspan"), 10);
+
+                if (Number.isNaN(rowspan)) {
+                  rowspan = 1;
+                }
+
+                if (Number.isNaN(colspan)) {
+                  colspan = 1;
+                }
+
+                const r_ab = ctx.luckysheet_select_save![0].row[0] + r;
+                const c_ab = ctx.luckysheet_select_save![0].column[0] + c;
+
+                for (let rp = 0; rp < rowspan; rp += 1) {
+                  for (let cp = 0; cp < colspan; cp += 1) {
+                    if (rp === 0) {
+                      const bt = td.style.borderTop;
+                      if (
+                        !_.isEmpty(bt) &&
+                        bt.substring(0, 3).toLowerCase() !== "0px"
+                      ) {
+                        const width = td.style.borderTopWidth;
+                        const type = td.style.borderTopStyle;
+                        const color = td.style.borderTopColor;
+                        const borderconfig = getQKBorder(width, type, color);
+
+                        if (!borderInfo[`${r + rp}_${c + cp}`]) {
+                          borderInfo[`${r + rp}_${c + cp}`] = {};
+                        }
+
+                        borderInfo[`${r + rp}_${c + cp}`].t = {
+                          style: borderconfig[0],
+                          color: borderconfig[1],
+                        };
+                      }
+                    }
+
+                    if (rp === rowspan - 1) {
+                      const bb = td.style.borderBottom;
+                      if (
+                        !_.isEmpty(bb) &&
+                        bb.substring(0, 3).toLowerCase() !== "0px"
+                      ) {
+                        const width = td.style.borderBottomWidth;
+                        const type = td.style.borderBottomStyle;
+                        const color = td.style.borderBottomColor;
+                        const borderconfig = getQKBorder(width, type, color);
+
+                        if (!borderInfo[`${r + rp}_${c + cp}`]) {
+                          borderInfo[`${r + rp}_${c + cp}`] = {};
+                        }
+
+                        borderInfo[`${r + rp}_${c + cp}`].b = {
+                          style: borderconfig[0],
+                          color: borderconfig[1],
+                        };
+                      }
+                    }
+
+                    if (cp === 0) {
+                      const bl = td.style.borderLeft;
+                      if (
+                        !_.isEmpty(bl) &&
+                        bl.substring(0, 3).toLowerCase() !== "0px"
+                      ) {
+                        const width = td.style.borderLeftWidth;
+                        const type = td.style.borderLeftStyle;
+                        const color = td.style.borderLeftColor;
+                        const borderconfig = getQKBorder(width, type, color);
+
+                        if (!borderInfo[`${r + rp}_${c + cp}`]) {
+                          borderInfo[`${r + rp}_${c + cp}`] = {};
+                        }
+
+                        borderInfo[`${r + rp}_${c + cp}`].l = {
+                          style: borderconfig[0],
+                          color: borderconfig[1],
+                        };
+                      }
+                    }
+
+                    if (cp === colspan - 1) {
+                      const br = td.style.borderLeft;
+                      if (
+                        !_.isEmpty(br) &&
+                        br.substring(0, 3).toLowerCase() !== "0px"
+                      ) {
+                        const width = td.style.borderRightWidth;
+                        const type = td.style.borderRightStyle;
+                        const color = td.style.borderRightColor;
+                        const borderconfig = getQKBorder(width, type, color);
+
+                        if (!borderInfo[`${r + rp}_${c + cp}`]) {
+                          borderInfo[`${r + rp}_${c + cp}`] = {};
+                        }
+
+                        borderInfo[`${r + rp}_${c + cp}`].r = {
+                          style: borderconfig[0],
+                          color: borderconfig[1],
+                        };
+                      }
+                    }
+
+                    if (rp === 0 && cp === 0) {
+                      continue;
+                    }
+
+                    data[r + rp][c + cp] = { mc: { r: r_ab, c: c_ab } };
+                  }
+                }
+
+                if (rowspan > 1 || colspan > 1) {
+                  const first = { rs: rowspan, cs: colspan, r: r_ab, c: c_ab };
+                  data[r][c].mc = first;
+                }
+              }
+              c += 1;
+              if (c === colLen) {
+                return true;
+              }
               return true;
-            }
-            return true;
+            });
+
+            r += 1;
           });
-          r += 1;
-        });
+          setRowHeight(ctx, rowHeightList);
+        }
 
         ctx.luckysheet_selection_range = [];
         pasteHandler(ctx, data, borderInfo);
@@ -1967,6 +1992,7 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
         //   imageCtrl.insertImg(clipboardData.files[0]);
       } else {
         txtdata = clipboardData.getData("text/plain");
+
         pasteHandler(ctx, txtdata);
       }
     }
@@ -1987,9 +2013,15 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
   }
 }
 
-export function handlePasteByClick(ctx: Context, triggerType?: string) {
+export function handlePasteByClick(
+  ctx: Context,
+  clipboardData: string,
+  triggerType?: string
+) {
   const allowEdit = isAllowEdit(ctx);
   if (!allowEdit) return;
+
+  if (clipboardData) clipboard.writeHtml(clipboardData);
 
   const textarea = document.querySelector("#fortune-copy-content");
   // textarea.focus();
@@ -1997,7 +2029,7 @@ export function handlePasteByClick(ctx: Context, triggerType?: string) {
 
   // 等50毫秒，keyPress事件发生了再去处理数据
   // setTimeout(function () {
-  const data = textarea?.innerHTML;
+  const data = textarea?.innerHTML || textarea?.textContent;
   if (!data) return;
 
   if (
@@ -2015,7 +2047,7 @@ export function handlePasteByClick(ctx: Context, triggerType?: string) {
   } else if (data.indexOf("fortune-copy-action-image") > -1) {
     // imageCtrl.pasteImgItem();
   } else if (triggerType !== "btn") {
-    // pasteHandler(data);
+    pasteHandler(ctx, data);
   } else {
     // if (isEditMode()) {
     //   alert(local_drag.pasteMustKeybordAlert);

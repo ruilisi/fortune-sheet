@@ -10896,6 +10896,7 @@ export default {
     },
   ],
   toolbar: {
+    toolbar: "工具栏",
     undo: "撤销",
     redo: "重做",
     "clear-format": "清除格式",

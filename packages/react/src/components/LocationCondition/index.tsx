@@ -264,6 +264,7 @@ export const LocationCondition: React.FC<{}> = () => {
           hideDialog();
           onConfirm();
         }}
+        tabIndex={0}
       >
         {button.confirm}
       </div>
@@ -272,6 +273,7 @@ export const LocationCondition: React.FC<{}> = () => {
         onClick={() => {
           hideDialog();
         }}
+        tabIndex={0}
       >
         {button.cancel}
       </div>

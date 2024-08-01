@@ -1,6 +1,6 @@
-import * as formulajs from '@formulajs/formulajs';
-import SUPPORTED_FORMULAS from './../../supported-formulas';
-import {ERROR_NAME} from './../../error';
+import * as formulajs from "@formulajs/formulajs";
+import SUPPORTED_FORMULAS from "./../../supported-formulas";
+import { ERROR_NAME } from "./../../error";
 
 export const SYMBOL = SUPPORTED_FORMULAS;
 
@@ -8,7 +8,7 @@ export default function func(symbol) {
   return function __formulaFunction(...params) {
     symbol = symbol.toUpperCase();
 
-    const symbolParts = symbol.split('.');
+    const symbolParts = symbol.split(".");
     let foundFormula = false;
     let result;
 

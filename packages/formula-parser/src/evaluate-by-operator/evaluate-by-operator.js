@@ -1,18 +1,18 @@
 /* eslint-disable import/no-named-as-default-member */
-import add from './operator/add';
-import ampersand from './operator/ampersand';
-import divide from './operator/divide';
-import equal from './operator/equal';
-import formulaFunction from './operator/formula-function';
-import greaterThan from './operator/greater-than';
-import greaterThanOrEqual from './operator/greater-than-or-equal';
-import lessThan from './operator/less-than';
-import lessThanOrEqual from './operator/less-than-or-equal';
-import minus from './operator/minus';
-import multiply from './operator/multiply';
-import notEqual from './operator/not-equal';
-import power from './operator/power';
-import {ERROR_NAME} from './../error';
+import add from "./operator/add";
+import ampersand from "./operator/ampersand";
+import divide from "./operator/divide";
+import equal from "./operator/equal";
+import formulaFunction from "./operator/formula-function";
+import greaterThan from "./operator/greater-than";
+import greaterThanOrEqual from "./operator/greater-than-or-equal";
+import lessThan from "./operator/less-than";
+import lessThanOrEqual from "./operator/less-than-or-equal";
+import minus from "./operator/minus";
+import multiply from "./operator/multiply";
+import notEqual from "./operator/not-equal";
+import power from "./operator/power";
+import { ERROR_NAME } from "./../error";
 
 const availableOperators = Object.create(null);
 

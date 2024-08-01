@@ -62,6 +62,7 @@ export type Context = {
     optionLabel_zh: any; // 中文提示消息
     optionLabel_zh_tw: any; // 中文提示消息
     optionLabel_es: any; // 中文提示消息
+    optionLabel_hi: any;
     dataRegulation?: DataRegulationProps; // 数据验证规则
   };
   // 数据验证下拉列表
@@ -268,6 +269,27 @@ export function defaultContext(refs: RefValues): Context {
         noLaterThan: "not later than",
         identificationNumber: "identification number",
         phoneNumber: "phone number",
+      },
+      optionLabel_hi: {
+        number: "संख्यात्मक",
+        number_integer: "पूर्णांक",
+        number_decimal: "दशमलव",
+        between: "के बीच",
+        notBetween: "के बीच नहीं",
+        equal: "के बराबर",
+        notEqualTo: "के बराबर नहीं",
+        moreThanThe: "से अधिक",
+        lessThan: "से कम",
+        greaterOrEqualTo: "के बराबर या अधिक",
+        lessThanOrEqualTo: "के बराबर या कम",
+        include: "शामिल",
+        exclude: "शामिल नहीं",
+        earlierThan: "से पहले",
+        noEarlierThan: "से पहले नहीं",
+        laterThan: "के बाद",
+        noLaterThan: "के बाद नहीं",
+        identificationNumber: "पहचान संख्या",
+        phoneNumber: "फोन नंबर",
       },
       optionLabel_zh: {
         number: "数值",

@@ -209,6 +209,7 @@ const CustomBorder: React.FC<Props> = ({ onPick }) => {
               onPick(changeColor, "1");
               changePreviewStyle("1", "1,0");
             }}
+            tabIndex={0}
           >
             {border.borderDefault}
           </div>
@@ -222,6 +223,7 @@ const CustomBorder: React.FC<Props> = ({ onPick }) => {
                   setchangeStyle(items.Text);
                   changePreviewStyle(items.strokeWidth, items.strokeDasharray);
                 }}
+                tabIndex={0}
               >
                 <svg height="10" width="90">
                   <g fill="none" stroke="black" strokeWidth={items.strokeWidth}>

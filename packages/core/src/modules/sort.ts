@@ -94,7 +94,7 @@ export function sortDataRange(
         } else if (moveOffset < 0) {
           func = `=${functionCopy(ctx, func, "up", -moveOffset)}`;
         }
-        const funcV = execfunction(ctx, func, r, c, undefined, true);
+        const funcV = execfunction(ctx, func, r, c, undefined, undefined, true);
         [, cell!.v, cell!.f] = funcV;
         cell.m = update(cell.ct?.fa || "General", cell.v);
       }

@@ -250,6 +250,7 @@ const DataVerification: React.FC = () => {
                   context.dataVerification!.dataRegulation!.value1
                 );
               }}
+              tabIndex={0}
             >
               <SVGIcon name="tab" width={18} />
             </i>
@@ -328,6 +329,7 @@ const DataVerification: React.FC = () => {
                       context.dataVerification!.dataRegulation!.value1
                     )
                   }
+                  tabIndex={0}
                 >
                   <SVGIcon name="tab" width={18} />
                 </i>
@@ -643,6 +645,7 @@ const DataVerification: React.FC = () => {
           // hideDialog();
           btn("confirm");
         }}
+        tabIndex={0}
       >
         {button.confirm}
       </div>
@@ -651,6 +654,7 @@ const DataVerification: React.FC = () => {
         onClick={() => {
           btn("delete");
         }}
+        tabIndex={0}
       >
         {dataVerification.deleteVerification}
       </div>
@@ -659,6 +663,7 @@ const DataVerification: React.FC = () => {
         onClick={() => {
           btn("close");
         }}
+        tabIndex={0}
       >
         {button.cancel}
       </div>

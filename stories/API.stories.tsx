@@ -27,6 +27,7 @@ const ApiExecContainer: React.FC<{
           onClick={() => {
             setResult(onRun?.());
           }}
+          tabIndex={0}
         >
           Run
         </button>

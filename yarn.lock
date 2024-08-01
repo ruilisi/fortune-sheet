@@ -4351,6 +4351,11 @@
   "resolved" "https://registry.npmjs.org/@types/resolve/-/resolve-1.20.6.tgz"
   "version" "1.20.6"
 
+"@types/regenerator-runtime@^0.13.6":
+  version "0.13.6"
+  resolved "https://registry.npmjs.org/@types/regenerator-runtime/-/regenerator-runtime-0.13.6.tgz#3320ca604eda6075b05fb2ed0c17e50753ac671c"
+  integrity sha512-tTvE2t4YvfK6k7IB0wzzpdFDGimfpBhsirSWVvrT0xeawfVckNcOC28MI87HlxQJfqXfvRst7snG/i2NS1KgsQ==
+
 "@types/resolve@1.17.1":
   "integrity" "sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw=="
   "resolved" "https://registry.npmjs.org/@types/resolve/-/resolve-1.17.1.tgz"
@@ -10444,25 +10449,47 @@
   "resolved" "https://registry.npmjs.org/js-yaml/-/js-yaml-3.14.1.tgz"
   "version" "3.14.1"
   dependencies:
-    "argparse" "^1.0.7"
-    "esprima" "^4.0.0"
+    "@jest/core" "^29.3.1"
+    "@jest/types" "^29.3.1"
+    import-local "^3.0.2"
+    jest-cli "^29.3.1"
 
-"js-yaml@^4.1.0":
-  "integrity" "sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA=="
-  "resolved" "https://registry.npmjs.org/js-yaml/-/js-yaml-4.1.0.tgz"
-  "version" "4.1.0"
+jison-lex@0.3.x:
+  version "0.3.4"
+  resolved "https://registry.npmmirror.com/jison-lex/-/jison-lex-0.3.4.tgz#81ca28d84f84499dfa8c594dcde3d8a3f26ec7a5"
+  integrity sha512-EBh5wrXhls1cUwROd5DcDHR1sG7CdsCFSqY1027+YA1RGxz+BX2TDLAhdsQf40YEtFDGoiO0Qm8PpnBl2EzDJw==
   dependencies:
-    "argparse" "^2.0.1"
+    lex-parser "0.1.x"
+    nomnom "1.5.2"
 
-"jsbn@~0.1.0":
-  "integrity" "sha512-UVU9dibq2JcFWxQPA6KCqj5O42VOmAY3zQUfEKxU0KpTGXwNoCjkX1e13eHNvw/xPynt6pU0rZ1htjWTNTSXsg=="
-  "resolved" "https://registry.npmjs.org/jsbn/-/jsbn-0.1.1.tgz"
-  "version" "0.1.1"
+jison@^0.4.17:
+  version "0.4.18"
+  resolved "https://registry.npmmirror.com/jison/-/jison-0.4.18.tgz#c68a6a54bfe7028fa40bcfc6cc8bbd9ed291f502"
+  integrity sha512-FKkCiJvozgC7VTHhMJ00a0/IApSxhlGsFIshLW6trWJ8ONX2TQJBBz6DlcO1Gffy4w9LT+uL+PA+CVnUSJMF7w==
+  dependencies:
+    JSONSelect "0.4.0"
+    cjson "0.3.0"
+    ebnf-parser "0.1.10"
+    escodegen "1.3.x"
+    esprima "1.1.x"
+    jison-lex "0.3.x"
+    lex-parser "~0.1.3"
+    nomnom "1.5.2"
 
-"jscodeshift@^0.15.1":
-  "integrity" "sha512-hIJfxUy8Rt4HkJn/zZPU9ChKfKZM1342waJ1QC2e2YsPcWhM+3BJ4dcfQCzArTrk1jJeNLB341H+qOcEHRxJZg=="
-  "resolved" "https://registry.npmjs.org/jscodeshift/-/jscodeshift-0.15.1.tgz"
-  "version" "0.15.1"
+js-sdsl@^4.1.4:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/js-sdsl/-/js-sdsl-4.2.0.tgz#278e98b7bea589b8baaf048c20aeb19eb7ad09d0"
+  integrity sha512-dyBIzQBDkCqCu+0upx25Y2jGdbTGxE9fshMsCdK0ViOongpV+n5tXRcZY9v7CaVQ79AGS9KA1KHtojxiM7aXSQ==
+
+"js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmmirror.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
+  integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
+
+js-yaml@^3.13.1:
+  version "3.14.1"
+  resolved "https://registry.npmmirror.com/js-yaml/-/js-yaml-3.14.1.tgz#dae812fdb3825fa306609a8717383c50c36a0537"
+  integrity sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==
   dependencies:
     "@babel/core" "^7.23.0"
     "@babel/parser" "^7.23.0"
@@ -13770,16 +13797,32 @@
   "resolved" "https://registry.npmjs.org/recast/-/recast-0.23.4.tgz"
   "version" "0.23.4"
   dependencies:
-    "assert" "^2.0.0"
-    "ast-types" "^0.16.1"
-    "esprima" "~4.0.0"
-    "source-map" "~0.6.1"
-    "tslib" "^2.0.1"
+    regenerate "^1.4.2"
 
-"redent@^3.0.0":
-  "integrity" "sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg=="
-  "resolved" "https://registry.npmjs.org/redent/-/redent-3.0.0.tgz"
-  "version" "3.0.0"
+regenerate@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.npmmirror.com/regenerate/-/regenerate-1.4.2.tgz#b9346d8827e8f5a32f7ba29637d398b69014848a"
+  integrity sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==
+
+regenerator-runtime@^0.13.11:
+  version "0.13.11"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
+  integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
+
+regenerator-runtime@^0.13.4:
+  version "0.13.9"
+  resolved "https://registry.npmmirror.com/regenerator-runtime/-/regenerator-runtime-0.13.9.tgz#8925742a98ffd90814988d7566ad30ca3b263b52"
+  integrity sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==
+
+regenerator-runtime@^0.14.0:
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.14.0.tgz#5e19d68eb12d486f797e15a3c6a918f7cec5eb45"
+  integrity sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==
+
+regenerator-transform@^0.14.2:
+  version "0.14.5"
+  resolved "https://registry.npmmirror.com/regenerator-transform/-/regenerator-transform-0.14.5.tgz#c98da154683671c9c4dcb16ece736517e1b7feb4"
+  integrity sha512-eOf6vka5IO151Jfsw2NO9WpGX58W6wWmefK3I1zEGr0lOD0u8rwPaNqQL1aRxUaxLeKO3ArNh3VYg1KbaD+FFw==
   dependencies:
     "indent-string" "^4.0.0"
     "strip-indent" "^3.0.0"

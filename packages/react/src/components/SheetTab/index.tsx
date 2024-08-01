@@ -138,6 +138,7 @@ const SheetTab: React.FC = () => {
             onClick={() => {
               scrollBy(-scrollDelta);
             }}
+            tabIndex={0}
           >
             <SVGIcon name="arrow-doubleleft" width={12} height={12} />
           </div>
@@ -150,6 +151,7 @@ const SheetTab: React.FC = () => {
             onClick={() => {
               scrollBy(scrollDelta);
             }}
+            tabIndex={0}
           >
             <SVGIcon name="arrow-doubleright" width={12} height={12} />
           </div>

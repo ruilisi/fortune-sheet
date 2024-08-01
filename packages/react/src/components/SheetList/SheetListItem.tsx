@@ -57,6 +57,7 @@ const SheetListItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
           cancelNormalSelected(draftCtx);
         });
       }}
+      tabIndex={0}
     >
       <span className="fortune-sheet-selected-check-sapce">
         {sheet.id === context.currentSheetId && (

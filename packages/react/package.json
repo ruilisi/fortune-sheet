@@ -15,7 +15,8 @@
   "dependencies": {
     "@tomerkakou/fortune-sheet-core": "^0.7.7",
     "immer": "^9.0.12",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "regenerator-runtime": "^0.14.1"
   },
   "peerDependencies": {
     "react": ">= 18.2",

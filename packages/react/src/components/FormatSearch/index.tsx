@@ -121,6 +121,7 @@ export const FormatSearch: React.FC<{
               onClick={() => {
                 setSelectedFormatIndex(index);
               }}
+              tabIndex={0}
             >
               <div>{v.name}</div>
               <div>{v.value}</div>
@@ -135,12 +136,14 @@ export const FormatSearch: React.FC<{
         <div
           className="fortune-message-box-button button-primary"
           onClick={onConfirm}
+          tabIndex={0}
         >
           {button.confirm}
         </div>
         <div
           className="fortune-message-box-button button-default"
           onClick={onCancel}
+          tabIndex={0}
         >
           {button.cancel}
         </div>

@@ -184,6 +184,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
           cancelNormalSelected(draftCtx);
         });
       }}
+      tabIndex={0}
       onContextMenu={(e) => {
         if (isDropPlaceholder) return;
         const rect = refs.workbookContainer.current!.getBoundingClientRect();
@@ -238,6 +239,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
             };
           });
         }}
+        tabIndex={0}
       >
         <SVGIcon name="downArrow" width={12} style={{ fill: svgColor }} />
       </span>*/}

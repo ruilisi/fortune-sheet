@@ -13,6 +13,7 @@ import {
   isdatetime,
   isRealNull,
   isRealNum,
+  jfrefreshgrid,
   mergeBorder,
   rowLocationByIndex,
   setCellValue,
@@ -512,6 +513,49 @@ export function getFailureText(ctx: Context, item: any) {
     } else if (type === "validity") {
       failureText += `Lo que ingresas no es correcto${optionLabel_es[type2]}`;
     }
+  } else if (lang === "hi") {
+    const optionLabel_hi = ctx.dataVerification?.optionLabel_hi;
+    if (type === "dropdown") {
+      failureText +=
+        "आपने जो चयन किया है वह ड्रॉप-डाउन सूची में एक विकल्प नहीं है";
+    } else if (type === "checkbox") {
+    } else if (
+      type === "number" ||
+      type === "number_integer" ||
+      type === "number_decimal"
+    ) {
+      failureText += `आपने जो दर्ज किया है वह ${optionLabel_hi[item.type]} ${
+        optionLabel_hi[item.type2]
+      } ${item.value1} नहीं है`;
+
+      if (item.type2 === "between" || item.type2 === "notBetween") {
+        failureText += ` and ${item.value2}`;
+      }
+    } else if (type === "text_content") {
+      failureText += `आपने जो दर्ज किया है वह पाठ नहीं है जो ${
+        optionLabel_hi[item.type2]
+      } ${item.value1} है`;
+    } else if (type === "text_length") {
+      failureText += `आपके द्वारा दर्ज किया गया पाठ की लंबाई ${
+        optionLabel_hi[item.type2]
+      } ${item.value1} नहीं है`;
+
+      if (item.type2 === "between" || item.type2 === "notBetween") {
+        failureText += ` और ${item.value2}`;
+      }
+    } else if (type === "date") {
+      failureText += `आपके द्वारा दर्ज की गई तिथि ${
+        optionLabel_hi[item.type2]
+      } ${item.value1} नहीं है।`;
+
+      if (type2 === "between" || type2 === "notBetween") {
+        failureText += ` और ${item.value2}`;
+      }
+    } else if (type === "validity") {
+      failureText += `आपने जो दर्ज किया है वह सही ${
+        optionLabel_hi[item.type2]
+      } नहीं है।`;
+    }
   }
   return failureText;
 }
@@ -732,6 +776,8 @@ export function cellFocus(
       hintText = '<span style="color:#f5a623;">提示：</span>';
     } else if (lang === "es") {
       hintText = '<span style="color:#f5a623;">Consejos：</span>';
+    } else if (lang === "hi") {
+      hintText = '<span style="color:#f5a623;">सुझाव: </span>';
     }
     hintText += getHintText(ctx, item);
     showHintBox.innerHTML = hintText;
@@ -757,6 +803,8 @@ export function cellFocus(
       failureText = '<span style="color:#f72626;">失效：</span>';
     } else if (lang === "es") {
       failureText = '<span style="color:#f72626;">Caducidad: </span>';
+    } else if (lang === "hi") {
+      failureText = '<span style="color:#f72626;">असफलता: </span>';
     }
     failureText += getFailureText(ctx, item);
     showHintBox.innerHTML = failureText;
@@ -788,6 +836,7 @@ export function setDropcownValue(ctx: Context, value: string, arr: any) {
     ctx.dataVerificationDropDownList = false;
   }
   setCellValue(ctx, rowIndex, colIndex, d, value);
+  jfrefreshgrid(ctx, null, undefined);
 }
 
 // 输入数据验证
