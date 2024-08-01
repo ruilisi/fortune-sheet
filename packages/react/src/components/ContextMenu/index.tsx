@@ -714,7 +714,7 @@ const ContextMenu: React.FC = () => {
                   if(sheetIndex === null){
                     throw new Error("no sheet index")
                   }
-                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,'',true);
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,'',Boolean(contextMenu.isTable),true);
                 }
                 draftCtx.contextMenu = {};
               });
@@ -746,7 +746,7 @@ const ContextMenu: React.FC = () => {
                   if(sheetIndex === null){
                     throw new Error("no sheet index")
                   }
-                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"General Fee",true);
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"General Fee",Boolean(contextMenu.isTable),true);
                 }
                 draftCtx.contextMenu = {};
               });
@@ -778,7 +778,7 @@ const ContextMenu: React.FC = () => {
                   if(sheetIndex === null){
                     throw new Error("no sheet index")
                   }
-                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"Override Value",true);
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"Override Value",Boolean(contextMenu.isTable),true);
                 }
                 draftCtx.contextMenu = {};
               });
@@ -810,7 +810,7 @@ const ContextMenu: React.FC = () => {
                   if(sheetIndex === null){
                     throw new Error("no sheet index")
                   }
-                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"Routes Table");
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"Routes Table",Boolean(contextMenu.isTable));
                 }
                 draftCtx.contextMenu = {};
               });
@@ -842,7 +842,7 @@ const ContextMenu: React.FC = () => {
                   if(sheetIndex === null){
                     throw new Error("no sheet index")
                   }
-                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"Transshipment");
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,"Transshipment",Boolean(contextMenu.isTable));
                 }
                 draftCtx.contextMenu = {};
               });
@@ -929,7 +929,7 @@ const ContextMenu: React.FC = () => {
                   if(sheetIndex === null){
                     throw new Error("no sheet index")
                   }
-                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,name);
+                  settings.addEntity(sheetIndex,sheet.name,{r,re,c,ce},coordinate,name,Boolean(contextMenu.isTable));
                 }
                 draftCtx.contextMenu = {};
               });

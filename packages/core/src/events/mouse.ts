@@ -1401,7 +1401,7 @@ function rangeIsTable(row:number,re:number,col:number,ce:number, mergeCells: any
   if (row === re /*|| range.c===range.ce*/) {
       return false;
   }
-  if (mergeCells === null) {
+  if (!mergeCells) {
       //table shape and no mergeCells
       return true;
   }
@@ -1447,29 +1447,7 @@ export function handleContextMenu(
   // relative to the workbook container
   const x = e.pageX - workbookRect.left;
   const y = e.pageY - workbookRect.top;
-  const selection=api.getSelection(ctx);
-  const index=getSheetIndex(ctx,ctx.currentSheetId)
-  if(selection&& index!==null && ctx.luckysheetfile[index] && ctx.luckysheetfile[index].data){
-    const data = ctx.luckysheetfile[index].data as CellMatrix;
-    const {row:[r,re],column:[c,ce]}=selection[0];
-    const mergeCells=getCellValue(r,c,data,"mc")
-
-    // showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
-    ctx.contextMenu = {
-      x,
-      y,
-      pageX: e.pageX,
-      pageY: e.pageY,
-      isTable:rangeIsTable(r,re,c,ce,mergeCells)
-    };
-  }else{
-    ctx.contextMenu = {
-      x,
-      y,
-      pageX: e.pageX,
-      pageY: e.pageY,
-    };
-  }
+  
   
   // select current cell when clicking the right button
   e.preventDefault();
@@ -1538,6 +1516,15 @@ export function handleContextMenu(
             row_focus: (rowseleted as number[])[0],
             column_focus: (columnseleted as number[])[0],
           });
+          const [r,re]=rowseleted as number[];
+          const [c,ce]=columnseleted as number[];
+          ctx.contextMenu = {
+            x,
+            y,
+            pageX: e.pageX,
+            pageY: e.pageY,
+            isTable:rangeIsTable(r,re,c,ce,flowdata[row_index][col_index]?.mc)
+          };
           return;
         }
       }
@@ -1555,9 +1542,26 @@ export function handleContextMenu(
         row_focus: row_index,
         column_focus: col_index,
       });
+      ctx.contextMenu = {
+        x,
+        y,
+        pageX: e.pageX,
+        pageY: e.pageY,
+        isTable:false,
+      };
       return;
     }
-    if (isInSelection) return;
+    if (isInSelection) {
+      const {row:[r,re],column:[c,ce]}=api.getSelection(ctx)![0]
+      ctx.contextMenu = {
+        x,
+        y,
+        pageX: e.pageX,
+        pageY: e.pageY,
+        isTable:rangeIsTable(r,re,c,ce,flowdata[r][c]?.mc)
+      };
+      return;
+    }
     const row_index_ed = row_index;
     const col_index_ed = col_index;
     if (flowdata[row_index][col_index]?.mc) {
@@ -1592,6 +1596,15 @@ export function handleContextMenu(
             column_focus: (columnseleted as number[])[0],
           },
         ];
+        const [r,re]=rowseleted as number[];
+        const [c,ce]=columnseleted as number[];
+        ctx.contextMenu = {
+          x,
+          y,
+          pageX: e.pageX,
+          pageY: e.pageY,
+          isTable:rangeIsTable(r,re,c,ce,flowdata[row_index][col_index]?.mc)
+        };
         return;
       }
     }
@@ -1611,6 +1624,13 @@ export function handleContextMenu(
         column_focus: col_index,
       },
     ];
+    ctx.contextMenu = {
+      x,
+      y,
+      pageX: e.pageX,
+      pageY: e.pageY,
+      isTable:rangeIsTable(row_index,row_index_ed,col_index,col_index_ed,null),
+    };
   } else if (area === "rowHeader") {
     _.set(ctx.contextMenu, "headerMenu", "row");
     const rect = container.getBoundingClientRect();

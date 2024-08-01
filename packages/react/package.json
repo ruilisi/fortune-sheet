@@ -1,6 +1,6 @@
 {
   "name": "@tomerkakou/fortune-sheet-react",
-  "version": "0.7.10",
+  "version": "0.8.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.esm.js",
@@ -13,7 +13,7 @@
     "tsc": "tsc"
   },
   "dependencies": {
-    "@tomerkakou/fortune-sheet-core": "^0.7.7",
+    "@tomerkakou/fortune-sheet-core": "^0.8.4",
     "immer": "^9.0.12",
     "lodash": "^4.17.21",
     "regenerator-runtime": "^0.14.1"

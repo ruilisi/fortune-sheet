@@ -15,6 +15,7 @@ import {
   israngeseleciton,
   escapeHTMLTag,
   isAllowEdit,
+  getrangeseleciton,
 } from "@tomerkakou/fortune-sheet-core";
 import React, {
   useContext,
