@@ -35,6 +35,7 @@ export function getCellValue(
   let ret;
 
   if (cellData && _.isPlainObject(cellData)) {
+    console.log(row,column,cellData);
     ret = cellData[type];
 
     if (type === "f" && ret != null) {

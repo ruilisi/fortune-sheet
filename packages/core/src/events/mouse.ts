@@ -37,6 +37,7 @@ import {
   mergeMoveMain,
   updateCell,
   luckysheetUpdateCell,
+  getCellValue,
 } from "../modules/cell";
 import {
   colLocation,
@@ -53,7 +54,7 @@ import {
   pasteHandlerOfPaintModel,
 } from "../modules/selection";
 import { Settings } from "../settings";
-import { GlobalCache } from "../types";
+import { CellMatrix, GlobalCache } from "../types";
 import { getSheetIndex, isAllowEdit } from "../utils";
 import { onDropCellSelectEnd, onDropCellSelect } from "../modules/dropCell";
 import {
@@ -71,7 +72,6 @@ import {
   onSearchDialogMove,
   onSearchDialogMoveEnd,
 } from "../modules/searchReplace";
-import { getCellValue } from "src/api";
 
 let mouseWheelUniqueTimeout: ReturnType<typeof setTimeout>;
 
@@ -1448,9 +1448,11 @@ export function handleContextMenu(
   const x = e.pageX - workbookRect.left;
   const y = e.pageY - workbookRect.top;
   const selection=api.getSelection(ctx);
-  if(selection){
+  const index=getSheetIndex(ctx,ctx.currentSheetId)
+  if(selection&& index!==null && ctx.luckysheetfile[index] && ctx.luckysheetfile[index].data){
+    const data = ctx.luckysheetfile[index].data as CellMatrix;
     const {row:[r,re],column:[c,ce]}=selection[0];
-    const mergeCells=api.getCellValue(ctx,r,c,{id:ctx.currentSheetId,type:'mc'})
+    const mergeCells=getCellValue(r,c,data,"mc")
 
     // showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
     ctx.contextMenu = {
