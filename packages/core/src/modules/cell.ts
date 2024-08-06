@@ -1371,7 +1371,7 @@ export function getStyleByCell(
   const cf_compute = getComputeMap(ctx);
   const checksCF = checkCF(r, c, cf_compute);
 
-  const cell = d[r][c];
+  const cell = d?.[r]?.[c];
   if (!cell) return {};
 
   const isInline = isInlineStringCell(cell);
