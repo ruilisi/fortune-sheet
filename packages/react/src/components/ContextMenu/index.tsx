@@ -19,6 +19,7 @@ import {
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, { useContext, useRef, useCallback, useLayoutEffect } from "react";
+import regeneratorRuntime from "regenerator-runtime";
 import WorkbookContext, { SetContextOptions } from "../../context";
 import { useAlert } from "../../hooks/useAlert";
 import { useDialog } from "../../hooks/useDialog";
@@ -60,7 +61,7 @@ const ContextMenu: React.FC = () => {
           </Menu>
         );
       }
-      if (name === "paste") {
+      if (name === "paste" && regeneratorRuntime) {
         return (
           <Menu
             key={name}
