@@ -2,7 +2,7 @@
 <p align="center">
   <img align="center" src="logo.png" width="150px" height="150px" />
 </p>
-<h1 align="center">FortuneSheet</h1>
+<h1 align="center">FortuneSheet HAHAHA</h1>
 <p align="center">FortuneSheet是一款开箱即用的类似Excel和Google Sheets的javascript表格组件。</p>
 
 <div align="center">
