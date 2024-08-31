@@ -155,7 +155,7 @@ export type Settings = {
     icon?: React.ReactNode;
     onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   }[];
-  currency: string;
+  currency?: string;
 };
 
 export const defaultSettings: Required<Settings> = {
