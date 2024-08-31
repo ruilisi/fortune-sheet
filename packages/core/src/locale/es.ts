@@ -11199,7 +11199,7 @@ export default {
     ChileanPeso: "Chilean Peso",
     CFAFrancBEAC: "CFA Franc BEAC",
   },
-  defaultFmt: [
+  defaultFmt: (currency: string) => [
     { text: "Automático", value: "General", example: "" },
     { text: "Texto", value: "@", example: "" },
     { text: "", value: "split", example: "" },
@@ -11207,9 +11207,13 @@ export default {
     { text: "Porcentaje", value: "#0.00%", example: "12.21%" },
     { text: "Científico", value: "0.00E+00", example: "1.01E+5" },
     { text: "", value: "split", example: "" },
-    { text: "Contabilidad", value: "¥(0.00)", example: "¥(1200.09)" },
+    {
+      text: "Contabilidad",
+      value: `${currency}(0.00)`,
+      example: `${currency}(1200.09)`,
+    },
 
-    { text: "Moneda", value: "¥0.00", example: "¥1200.09" },
+    { text: "Moneda", value: `${currency}0.00`, example: `${currency}1200.09` },
 
     { text: "", value: "split", example: "" },
     { text: "Fecha", value: "yyyy-MM-dd", example: "2017-11-29" },

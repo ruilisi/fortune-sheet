@@ -53,6 +53,7 @@ export type Context = {
   rangeDialog?: RangeDialogProps; // 坐标选区鼠标选择
   // 提醒弹窗
   warnDialog?: string;
+  currency: string;
   dataVerification?: {
     selectStatus: boolean;
     selectRange: [];
@@ -236,6 +237,7 @@ export function defaultContext(refs: RefValues): Context {
     config: {},
     // 提醒弹窗
     warnDialog: undefined,
+    currency: "$",
     rangeDialog: {
       show: false,
       rangeTxt: "",

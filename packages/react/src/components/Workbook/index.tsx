@@ -502,6 +502,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
 
           draftCtx.config = _.isNil(sheet.config) ? {} : sheet.config;
           draftCtx.insertedImgs = sheet.images;
+          draftCtx.currency = mergedSettings.currency || "¥";
 
           draftCtx.zoomRatio = _.isNil(sheet.zoomRatio) ? 1 : sheet.zoomRatio;
           draftCtx.rowHeaderWidth =
@@ -718,7 +719,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             ref={workbookContainer}
             onKeyDown={onKeyDown}
           >
-            <SVGDefines />
+            <SVGDefines currency={mergedSettings.currency} />
             <div className="fortune-workarea">
               {mergedSettings.showToolbar && (
                 <Toolbar

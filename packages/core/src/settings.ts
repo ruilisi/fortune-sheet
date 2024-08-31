@@ -155,6 +155,7 @@ export type Settings = {
     icon?: React.ReactNode;
     onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   }[];
+  currency: string;
 };
 
 export const defaultSettings: Required<Settings> = {
@@ -286,4 +287,5 @@ export const defaultSettings: Required<Settings> = {
   generateSheetId: () => uuidv4(),
   hooks: {},
   customToolbarItems: [],
+  currency: "¥",
 };
