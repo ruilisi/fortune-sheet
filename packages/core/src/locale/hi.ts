@@ -11232,7 +11232,7 @@ export default {
     { name: "चिली पेसो", pos: "before", value: "$" },
     { name: "सीएफए फ्रैंक बीईएसी", pos: "before", value: "FCFA" },
   ],
-  defaultFmt: [
+  defaultFmt: (currency: string) => [
     { text: "स्वचालित", value: "General", example: "" },
     { text: "सादा टेक्स्ट", value: "@", example: "" },
     { text: "", value: "split", example: "" },
@@ -11240,9 +11240,13 @@ export default {
     { text: "प्रतिशत", value: "#0.00%", example: "12.21%" },
     { text: "वैज्ञानिक", value: "0.00E+00", example: "1.01E+5" },
     { text: "", value: "split", example: "" },
-    { text: "लेखांकन", value: "$(0.00)", example: "$(1200.09)" },
+    {
+      text: "लेखांकन",
+      value: `${currency}(0.00)`,
+      example: `${currency}(1200.09)`,
+    },
 
-    { text: "मुद्रा", value: "$0.00", example: "$1200.09" },
+    { text: "मुद्रा", value: `${currency}0.00`, example: `${currency}1200.09` },
 
     { text: "", value: "split", example: "" },
     { text: "दिनांक", value: "yyyy-MM-dd", example: "2017-11-29" },

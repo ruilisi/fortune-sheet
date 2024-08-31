@@ -93,6 +93,8 @@ const Toolbar: React.FC<{
   } = locale(context);
   const toolbarFormat = locale(context).format;
   const sheetWidth = context.luckysheetTableContentHW[0];
+  const { currency } = settings;
+  const defaultFormat = defaultFmt(currency);
 
   const [customColor, setcustomColor] = useState("#000000");
   const [customStyle, setcustomStyle] = useState("1");
@@ -260,15 +262,15 @@ const Toolbar: React.FC<{
         );
       }
       if (name === "format") {
-        let currentFmt = defaultFmt[0].text;
+        let currentFmt = defaultFormat[0].text;
         if (cell) {
           const curr = normalizedCellAttr(cell, "ct");
-          const format = _.find(defaultFmt, (v) => v.value === curr?.fa);
+          const format = _.find(defaultFormat, (v) => v.value === curr?.fa);
           if (curr?.fa != null) {
             if (format != null) {
               currentFmt = format.text;
             } else {
-              currentFmt = defaultFmt[defaultFmt.length - 1].text;
+              currentFmt = defaultFormat[defaultFormat.length - 1].text;
             }
           }
         }
@@ -276,7 +278,7 @@ const Toolbar: React.FC<{
           <Combo text={currentFmt} key={name} tooltip={tooltip}>
             {(setOpen) => (
               <Select>
-                {defaultFmt.map(({ text, value, example }, ii) => {
+                {defaultFormat.map(({ text, value, example }, ii) => {
                   if (value === "split") {
                     return <MenuDivider key={ii} />;
                   }
@@ -1416,7 +1418,7 @@ const Toolbar: React.FC<{
       refs.cellInput,
       refs.fxInput,
       refs.globalCache,
-      defaultFmt,
+      defaultFormat,
       align,
       handleUndo,
       handleRedo,

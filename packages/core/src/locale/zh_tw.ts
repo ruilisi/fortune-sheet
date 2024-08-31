@@ -11176,7 +11176,7 @@ export default {
     ChileanPeso: "智利比索",
     CFAFrancBEAC: "中非金融合作法郎",
   },
-  defaultFmt: [
+  defaultFmt: (currency: string) => [
     { text: "自動", value: "General", example: "" },
     { text: "純文字", value: "@", example: "" },
     { text: "", value: "split", example: "" },
@@ -11184,10 +11184,14 @@ export default {
     { text: "百分比", value: "#0.00%", example: "12.21%" },
     { text: "科學計數", value: "0.00E+00", example: "1.01E+5" },
     { text: "", value: "split", example: "" },
-    { text: "會計", value: "¥(0.00)", example: "¥(1200.09)" },
+    {
+      text: "會計",
+      value: `${currency}(0.00)`,
+      example: `${currency}(1200.09)`,
+    },
     // { "text": "財務", "value": "(#.####)", "example": "(1200.09)" },
     { text: "萬元", value: "w", example: "1亿2000万2500" },
-    { text: "貨幣", value: "¥0.00", example: "¥1200.09" },
+    { text: "貨幣", value: `${currency}0.00`, example: `${currency}1200.09` },
     // { "text": "貨幣整數", "value": "¥####", "example": "¥1200" },
     { text: "萬元2位小數", value: "w0.00", example: "2万2500.55" },
     { text: "", value: "split", example: "" },
