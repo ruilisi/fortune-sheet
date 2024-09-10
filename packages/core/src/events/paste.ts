@@ -2032,6 +2032,10 @@ export function handlePasteByClick(
   const data = textarea?.innerHTML || textarea?.textContent;
   if (!data) return;
 
+  if (ctx.hooks.beforePaste?.(ctx.luckysheet_select_save, data) === false) {
+    return;
+  }
+
   if (
     data.indexOf("fortune-copy-action-table") > -1 &&
     ctx.luckysheet_copy_save?.copyRange != null &&
