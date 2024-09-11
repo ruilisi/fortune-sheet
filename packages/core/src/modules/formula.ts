@@ -3286,7 +3286,22 @@ export function rangeSetValue(
     const newEle = parseElement(function_str);
     const refEle = ctx.formulaCache.rangeSetValueTo;
     if (refEle && refEle.parentNode) {
-      refEle.parentNode.insertBefore(newEle, refEle.nextSibling);
+      const leftPar = document.getElementsByClassName(
+        "luckysheet-formula-text-lpar"
+      )?.[0];
+
+      // handle case when user autocompletes the formula
+      if (
+        leftPar.parentElement?.classList.contains(
+          "luckysheet-formula-text-color"
+        )
+      ) {
+        document
+          .getElementsByClassName("luckysheet-formula-text-lpar")?.[0]
+          .parentNode?.appendChild(newEle);
+      } else {
+        refEle.parentNode.insertBefore(newEle, refEle.nextSibling);
+      }
     } else {
       $editor.appendChild(newEle);
     }
@@ -3294,6 +3309,7 @@ export function rangeSetValue(
     const span = $editor.querySelector(
       `span[rangeindex='${ctx.formulaCache.rangechangeindex}']`
     ) as HTMLSpanElement;
+
     setCaretPosition(ctx, span, 0, range.length);
     functionHTMLIndex += 1;
   }
