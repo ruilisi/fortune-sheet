@@ -181,16 +181,30 @@ const InputBox: React.FC = () => {
             range.deleteContents();
           }
 
-          // insert formulaName
-          // TODO - doesnt work without the space after the formulaName
-          const textNode = document.createTextNode(`${formulaName}( `);
-          range?.insertNode(textNode);
+          const functionStr = `<span dir="auto" class="luckysheet-formula-text-func">${formulaName}</span>`;
+          const lParStr = `<span dir="auto" class="luckysheet-formula-text-lpar">(</span>`;
+
+          const functionNode = new DOMParser().parseFromString(
+            functionStr,
+            "text/html"
+          ).body.childNodes[0];
+
+          const lParNode = new DOMParser().parseFromString(lParStr, "text/html")
+            .body.childNodes[0];
+
+          if (range?.startContainer.parentNode) {
+            range?.setStart(range.startContainer.parentNode, 1);
+          }
+
+          range?.insertNode(lParNode);
+          range?.insertNode(functionNode);
 
           // move the cursor to the end of the inserted text node
-          range?.setStartAfter(textNode);
-          range?.setEndAfter(textNode);
+          range?.collapse();
           selection?.removeAllRanges();
+
           if (range) selection?.addRange(range);
+
           setContext((draftCtx) => {
             // clear functionCandidates and set functionHint
             draftCtx.functionCandidates = [];
