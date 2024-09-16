@@ -1514,6 +1514,24 @@ function pasteHandlerOfCopyPaste(
   }
 }
 
+function handleFormulaStringPaste(ctx: Context, formulaStr: string) {
+  // plaintext formula is applied only to one cell
+  const r = ctx.luckysheet_select_save![0].row[0];
+  const c = ctx.luckysheet_select_save![0].column[0];
+
+  const funcV = execfunction(ctx, formulaStr, r, c, undefined, undefined, true);
+
+  const val = funcV[1];
+
+  const d = getFlowdata(ctx);
+  if (!d) return;
+
+  if (!d[r][c]) d[r][c] = {};
+  d[r][c].m = val.toString();
+  d[r][c].v = val;
+  d[r][c].f = formulaStr;
+}
+
 export function handlePaste(ctx: Context, e: ClipboardEvent) {
   // if (isEditMode()) {
   //   // 此模式下禁用粘贴
@@ -1992,8 +2010,13 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
         //   imageCtrl.insertImg(clipboardData.files[0]);
       } else {
         txtdata = clipboardData.getData("text/plain");
+        const isExcelFormula = txtdata.startsWith("=");
 
-        pasteHandler(ctx, txtdata);
+        if (isExcelFormula) {
+          handleFormulaStringPaste(ctx, txtdata);
+        } else {
+          pasteHandler(ctx, txtdata);
+        }
       }
     }
   } else if (ctx.luckysheetCellUpdate.length > 0) {
@@ -2051,7 +2074,13 @@ export function handlePasteByClick(
   } else if (data.indexOf("fortune-copy-action-image") > -1) {
     // imageCtrl.pasteImgItem();
   } else if (triggerType !== "btn") {
-    pasteHandler(ctx, data);
+    const isExcelFormula = clipboardData.startsWith("=");
+
+    if (isExcelFormula) {
+      handleFormulaStringPaste(ctx, clipboardData);
+    } else {
+      pasteHandler(ctx, clipboardData);
+    }
   } else {
     // if (isEditMode()) {
     //   alert(local_drag.pasteMustKeybordAlert);
