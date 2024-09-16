@@ -1527,9 +1527,9 @@ function handleFormulaStringPaste(ctx: Context, formulaStr: string) {
   if (!d) return;
 
   if (!d[r][c]) d[r][c] = {};
-  d[r][c].m = val.toString();
-  d[r][c].v = val;
-  d[r][c].f = formulaStr;
+  d[r][c]!.m = val.toString();
+  d[r][c]!.v = val;
+  d[r][c]!.f = formulaStr;
 }
 
 export function handlePaste(ctx: Context, e: ClipboardEvent) {
