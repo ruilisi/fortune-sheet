@@ -369,7 +369,7 @@ const InputBox: React.FC = () => {
             kcode,
             preText.current
           );
-          clearSearchItemActiveClass();
+          // clearSearchItemActiveClass();
           // formula.functionInputHanddler(
           //   $("#luckysheet-functionbox-cell"),
           //   $("#luckysheet-rich-text-editor"),
@@ -384,7 +384,7 @@ const InputBox: React.FC = () => {
         });
       }
     },
-    [clearSearchItemActiveClass, refs.cellInput, refs.fxInput, setContext]
+    [refs.cellInput, refs.fxInput, setContext]
   );
 
   const onPaste = useCallback(
