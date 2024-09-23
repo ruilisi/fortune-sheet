@@ -170,6 +170,16 @@ export function generateAPIs(
         api.deleteRowOrColumn(draftCtx, type, start, end, options)
       ),
 
+    hideRowOrColumn: (rowOrColInfo: string[], type: "row" | "column") =>
+      setContext((draftCtx) =>
+        api.hideRowOrColumn(draftCtx, rowOrColInfo, type)
+      ),
+
+    showRowOrColumn: (rowOrColInfo: string[], type: "row" | "column") =>
+      setContext((draftCtx) =>
+        api.showRowOrColumn(draftCtx, rowOrColInfo, type)
+      ),
+
     setRowHeight: (
       rowInfo: Record<string, number>,
       options: api.CommonOptions = {},
