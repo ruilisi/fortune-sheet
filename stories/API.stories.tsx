@@ -363,6 +363,73 @@ export const SetRowHeight: StoryFn<typeof Workbook> = () => {
   );
 };
 
+export const HideRow: StoryFn<typeof Workbook> = () => {
+  const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      celldata: [
+        { r: 0, c: 0, v: { v: "0" } },
+        { r: 1, c: 0, v: { v: "1" } },
+        { r: 2, c: 0, v: { v: "hide this!" } },
+        { r: 3, c: 0, v: { v: "3" } },
+        { r: 4, c: 0, v: { v: "4" } },
+      ],
+      order: 0,
+      row: 5,
+      column: 1,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
+  return (
+    <ApiExecContainer
+      onRun={() => {
+        ref.current?.hideRowOrColumn(["2"], "row");
+      }}
+    >
+      <Workbook ref={ref} data={data} onChange={onChange} />
+    </ApiExecContainer>
+  );
+};
+
+export const ShowRow: StoryFn<typeof Workbook> = () => {
+  const ref = useRef<WorkbookInstance>(null);
+  const [data, setData] = useState<Sheet[]>([
+    {
+      name: "Sheet1",
+      celldata: [
+        { r: 0, c: 0, v: { v: "0" } },
+        { r: 1, c: 0, v: { v: "1" } },
+        { r: 2, c: 0, v: { v: "show this" } },
+        { r: 3, c: 0, v: { v: "3" } },
+        { r: 4, c: 0, v: { v: "4" } },
+      ],
+      config: {
+        rowhidden: {
+          "2": 0,
+        },
+      },
+      order: 0,
+      row: 5,
+      column: 1,
+    },
+  ]);
+  const onChange = useCallback((d: Sheet[]) => {
+    setData(d);
+  }, []);
+  return (
+    <ApiExecContainer
+      onRun={() => {
+        ref.current?.showRowOrColumn(["2"], "row");
+      }}
+    >
+      <Workbook ref={ref} data={data} onChange={onChange} />
+    </ApiExecContainer>
+  );
+};
+
 export const SetColumnWidth: StoryFn<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
   const [data, setData] = useState<Sheet[]>([

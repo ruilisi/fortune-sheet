@@ -3,6 +3,7 @@ import { Context } from "../context";
 import { deleteRowCol, insertRowCol } from "../modules";
 import { CommonOptions, getSheet } from "./common";
 import { INVALID_PARAMS } from "./errors";
+import { getSheetIndex } from "../utils";
 
 export function freeze(
   ctx: Context,
@@ -79,6 +80,122 @@ export function deleteRowOrColumn(
   const sheet = getSheet(ctx, options);
 
   deleteRowCol(ctx, { type, start, end, id: sheet.id! });
+}
+
+export function hideRowOrColumn(
+  ctx: Context,
+  rowColInfo: string[],
+  type: "row" | "column"
+) {
+  if (!["row", "column"].includes(type)) {
+    throw INVALID_PARAMS;
+  }
+
+  if (!ctx || !ctx.config) return;
+
+  const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
+
+  if (type === "row") {
+    /* TODO: 工作表保护判断
+    if (
+      !checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatRows")
+    ) {
+      return ;
+    } */
+    const rowhidden = ctx.config.rowhidden ?? {};
+
+    rowColInfo.forEach((r) => {
+      rowhidden[r] = 0;
+    });
+
+    /* 保存撤销,luck中保存撤销用以下方式实现，而在本项目中不需要另外处理
+      if(Store.clearjfundo){
+        let redo = {};
+        redo["type"] = "showHidRows";
+        redo["sheetIndex"] = Store.currentSheetIndex;
+        redo["config"] = $.extend(true, {}, Store.config);
+        redo["curconfig"] = cfg;
+
+        Store.jfundo.length  = 0;
+        Store.jfredo.push(redo);
+    } */
+    ctx.config.rowhidden = rowhidden;
+    // const rowLen = ctx.luckysheetfile[index].data!.length;
+    /**
+     * 计算要隐藏的行是否是最后一列
+     * 符合最后一列的条件：要隐藏的index===表格的长度-1 或者
+     * 记录隐藏数组里面的数-1===要隐藏的index
+     */
+  } else if (type === "column") {
+    // 隐藏列
+    const colhidden = ctx.config.colhidden ?? {};
+
+    rowColInfo.forEach((r) => {
+      colhidden[r] = 0;
+    });
+
+    ctx.config.colhidden = colhidden;
+    // const columnLen = ctx.luckysheetfile[index].data![0].length;
+  }
+  ctx.luckysheetfile[index].config = ctx.config;
+}
+
+export function showRowOrColumn(
+  ctx: Context,
+  rowColInfo: string[],
+  type: "row" | "column"
+) {
+  if (!["row", "column"].includes(type)) {
+    throw INVALID_PARAMS;
+  }
+
+  if (!ctx || !ctx.config) return;
+
+  const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
+
+  if (type === "row") {
+    /* TODO: 工作表保护判断
+    if (
+      !checkProtectionAuthorityNormal(Store.currentSheetIndex, "formatRows")
+    ) {
+      return ;
+    } */
+    const rowhidden = ctx.config.rowhidden ?? {};
+
+    rowColInfo.forEach((r) => {
+      delete rowhidden[r];
+    });
+
+    /* 保存撤销,luck中保存撤销用以下方式实现，而在本项目中不需要另外处理
+      if(Store.clearjfundo){
+        let redo = {};
+        redo["type"] = "showHidRows";
+        redo["sheetIndex"] = Store.currentSheetIndex;
+        redo["config"] = $.extend(true, {}, Store.config);
+        redo["curconfig"] = cfg;
+
+        Store.jfundo.length  = 0;
+        Store.jfredo.push(redo);
+    } */
+    ctx.config.rowhidden = rowhidden;
+    // const rowLen = ctx.luckysheetfile[index].data!.length;
+    /**
+     * 计算要隐藏的行是否是最后一列
+     * 符合最后一列的条件：要隐藏的index===表格的长度-1 或者
+     * 记录隐藏数组里面的数-1===要隐藏的index
+     */
+  } else if (type === "column") {
+    // 隐藏列
+    const colhidden = ctx.config.colhidden ?? {};
+
+    rowColInfo.forEach((r) => {
+      delete colhidden[r];
+    });
+
+    ctx.config.colhidden = colhidden;
+    // const columnLen = ctx.luckysheetfile[index].data![0].length;
+  }
+  ctx.luckysheetfile[index].config = ctx.config;
 }
 
 export function setRowHeight(
