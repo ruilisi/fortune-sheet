@@ -3292,7 +3292,7 @@ export function rangeSetValue(
 
       // handle case when user autocompletes the formula
       if (
-        leftPar.parentElement?.classList.contains(
+        leftPar?.parentElement?.classList.contains(
           "luckysheet-formula-text-color"
         )
       ) {
