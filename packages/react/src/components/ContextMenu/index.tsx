@@ -675,7 +675,7 @@ const ContextMenu: React.FC = () => {
         draftCtx.contextMenu.y = top;
       });
     }
-  }, [contextMenu.x, contextMenu.y, setContext]);
+  }, [contextMenu.x, contextMenu.y, refs.workbookContainer, setContext]);
 
   if (_.isEmpty(context.contextMenu)) return null;
 
