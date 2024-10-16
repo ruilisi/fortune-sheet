@@ -2287,6 +2287,7 @@ export function updateDropCell(ctx: Context) {
   if (index == null) return;
   const file = ctx.luckysheetfile[index];
   const hiddenRows = new Set(Object.keys(file.config?.rowhidden || {}));
+  const hiddenCols = new Set(Object.keys(file.config?.colhidden || {}));
 
   const cfg = _.cloneDeep(ctx.config);
   if (cfg.borderInfo == null) {
@@ -2332,6 +2333,7 @@ export function updateDropCell(ctx: Context) {
     const asLen = apply_end_r - apply_str_r + 1;
 
     for (let i = apply_str_c; i <= apply_end_c; i += 1) {
+      if (hiddenCols.has(`${i}`)) continue;
       const copyD = copyData[i - apply_str_c];
 
       const applyData = getApplyData(copyD, csLen, asLen);
@@ -2559,6 +2561,7 @@ export function updateDropCell(ctx: Context) {
 
       if (direction === "right") {
         for (let j = apply_str_c; j <= apply_end_c; j += 1) {
+          if (hiddenCols.has(`${j}`)) continue;
           const cell = applyData[j - apply_str_c];
 
           if (cell?.f != null) {
@@ -2657,6 +2660,7 @@ export function updateDropCell(ctx: Context) {
       }
       if (direction === "left") {
         for (let j = apply_end_c; j >= apply_str_c; j -= 1) {
+          if (hiddenCols.has(`${j}`)) continue;
           const cell = applyData[apply_end_c - j];
 
           if (cell?.f != null) {

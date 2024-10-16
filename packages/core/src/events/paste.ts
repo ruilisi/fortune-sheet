@@ -1227,6 +1227,7 @@ function pasteHandlerOfCopyPaste(
 
   const file = ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!];
   const hiddenRows = new Set(Object.keys(file.config?.rowhidden || {}));
+  const hiddenCols = new Set(Object.keys(file.config?.colhidden || {}));
 
   for (let th = 1; th <= timesH; th += 1) {
     for (let tc = 1; tc <= timesC; tc += 1) {
@@ -1246,6 +1247,7 @@ function pasteHandlerOfCopyPaste(
         const x = d[h];
 
         for (let c = mtc; c < maxcellCahe; c += 1) {
+          if (hiddenCols?.has(c.toString())) continue;
           if (
             borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`] &&
             !borderInfoCompute[`${c_r1 + h - mth}_${c_c1 + c - mtc}`].s
