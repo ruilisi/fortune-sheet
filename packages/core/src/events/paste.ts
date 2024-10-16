@@ -1368,6 +1368,8 @@ function pasteHandlerOfCopyPaste(
 
               if (!_.isNil(value.ct) && !_.isNil(value.ct.fa)) {
                 value.m = update(value.ct.fa, funcV[1]);
+              } else {
+                value.m = update("General", funcV[1]);
               }
             }
           }
