@@ -653,7 +653,7 @@ export function updateContextWithCanvas(
     placeholder.clientHeight,
   ];
   ctx.cellmainHeight = placeholder.clientHeight - ctx.columnHeaderHeight;
-  ctx.cellmainWidth = canvas.clientWidth - ctx.rowHeaderWidth;
+  ctx.cellmainWidth = placeholder.clientWidth - ctx.rowHeaderWidth;
 
   canvas.style.width = `${ctx.luckysheetTableContentHW[0]}px`;
   canvas.style.height = `${ctx.luckysheetTableContentHW[1]}px`;
