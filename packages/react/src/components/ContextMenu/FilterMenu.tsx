@@ -379,7 +379,7 @@ const FilterMenu: React.FC = () => {
       }
       _.set(draftCtx, "filterContextMenu.listBoxMaxHeight", containerH);
     });
-  }, [filterContextMenu, setContext]);
+  }, [filterContextMenu, refs.workbookContainer, setContext]);
 
   useLayoutEffect(() => {
     if (!subMenuPos) return;

@@ -568,6 +568,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
       mergedSettings.rowHeaderWidth,
       mergedSettings.columnHeaderHeight,
       mergedSettings.addRows,
+      mergedSettings.currency,
     ]);
 
     const onKeyDown = useCallback(
