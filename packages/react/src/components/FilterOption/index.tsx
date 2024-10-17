@@ -9,7 +9,9 @@ import React, { useCallback, useContext, useEffect } from "react";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
 
-const FilterOptions: React.FC<{}> = () => {
+const FilterOptions: React.FC<{ getContainer: () => HTMLDivElement }> = ({
+  getContainer,
+}) => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const {
     filterOptions,
@@ -75,7 +77,7 @@ const FilterOptions: React.FC<{}> = () => {
         };
       });
     },
-    [filterOptions, refs.scrollbarX, refs.scrollbarY, setContext]
+    [filterOptions, getContainer, refs.scrollbarX, refs.scrollbarY, setContext]
   );
 
   const freezeType = frozen?.type;
