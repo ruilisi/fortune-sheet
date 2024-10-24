@@ -473,20 +473,15 @@ export function getCellTextInfo(
           });
           similarIndex += 1;
         } else {
-          const newValueArray = newValue.split("");
-          for (let n = 0; n < newValueArray.length; n += 1) {
-            const nv = newValueArray[n];
-
-            inlineStringArr.push({
-              fontset: scfontset,
-              fc: !fc ? "#000" : fc,
-              cl: !cl ? 0 : cl,
-              un: !un ? 0 : un,
-              v: nv,
-              si: similarIndex,
-              fs: !fs ? 11 : fs,
-            });
-          }
+          inlineStringArr.push({
+            fontset: scfontset,
+            fc: !fc ? "#000" : fc,
+            cl: !cl ? 0 : cl,
+            un: !un ? 0 : un,
+            v: newValue,
+            si: similarIndex,
+            fs: !fs ? 11 : fs,
+          });
 
           if (x !== splitArr.length - 1) {
             inlineStringArr.push({
