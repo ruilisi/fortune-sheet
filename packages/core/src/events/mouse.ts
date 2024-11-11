@@ -72,6 +72,7 @@ import {
 } from "../modules/searchReplace";
 
 let mouseWheelUniqueTimeout: ReturnType<typeof setTimeout>;
+let scrollLockTimeout: ReturnType<typeof setTimeout>;
 
 export function handleGlobalWheel(
   ctx: Context,
@@ -97,6 +98,7 @@ export function handleGlobalWheel(
   // }
 
   clearTimeout(mouseWheelUniqueTimeout);
+  clearTimeout(scrollLockTimeout);
 
   // if(ctx.visibledatacolumn.length!=visibledatacolumn_c.length){
   if (cache.visibleColumnsUnique != null) {
@@ -134,7 +136,7 @@ export function handleGlobalWheel(
   const scrollNum = 1;
 
   // 一次滚动三行或三列
-  if (e.deltaY !== 0) {
+  if (e.deltaY !== 0 && !cache.verticalScrollLock) {
     let row_ed;
     let step = Math.round(scrollNum / ctx.zoomRatio);
     step = step < 1 ? 1 : step;
@@ -161,6 +163,7 @@ export function handleGlobalWheel(
     // 通过滚动scrollbar来让浏览器自动控制滚动边界
     scrollbarY.scrollTop = rowscroll;
   } else if (e.deltaX !== 0) {
+    cache.verticalScrollLock = true;
     if (e.deltaX > 0) {
       scrollLeft += 20 * ctx.zoomRatio;
     } else {
@@ -175,6 +178,10 @@ export function handleGlobalWheel(
     delete cache.visibleColumnsUnique;
     delete cache.visibleRowsUnique;
   }, 500);
+
+  scrollLockTimeout = setTimeout(() => {
+    delete cache.verticalScrollLock;
+  }, 50);
 
   e.preventDefault();
 }
