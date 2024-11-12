@@ -137,6 +137,7 @@ export function handleGlobalWheel(
 
   // 一次滚动三行或三列
   if (e.deltaY !== 0 && !cache.verticalScrollLock) {
+    cache.horizontalScrollLock = true;
     let row_ed;
     let step = Math.round(scrollNum / ctx.zoomRatio);
     step = step < 1 ? 1 : step;
@@ -162,7 +163,7 @@ export function handleGlobalWheel(
 
     // 通过滚动scrollbar来让浏览器自动控制滚动边界
     scrollbarY.scrollTop = rowscroll;
-  } else if (e.deltaX !== 0) {
+  } else if (e.deltaX !== 0 && !cache.horizontalScrollLock) {
     cache.verticalScrollLock = true;
     if (e.deltaX > 0) {
       scrollLeft += 20 * ctx.zoomRatio;
@@ -181,6 +182,7 @@ export function handleGlobalWheel(
 
   scrollLockTimeout = setTimeout(() => {
     delete cache.verticalScrollLock;
+    delete cache.horizontalScrollLock;
   }, 50);
 
   e.preventDefault();

@@ -254,6 +254,7 @@ export type Freezen = {
 
 export type GlobalCache = {
   verticalScrollLock?: boolean;
+  horizontalScrollLock?: boolean;
   overwriteCell?: boolean;
   ignoreWriteCell?: boolean;
   doNotFocus?: boolean;
