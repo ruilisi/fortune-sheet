@@ -30,8 +30,9 @@ We aim to make FortuneSheet powerful yet easy to maintain.
 * [Xiemala](https://xiemala.com/s/ctJmUn)
 
 ## Live demo
+> Note: Some part of Storybook is outdated
 
-Take a look at the live demo at [fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/)
+Take a look at the live demo at [fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/).
 
 <p>
   <img align="center" src="screenshot.png" width="400px" />
@@ -58,11 +59,13 @@ Before stable release of 1.0, input data structure and APIs may change during de
 ## Features
 
 - Data structure is mostly compatible with Luckysheet (see [Migration Guide](#migrating-data-from-luckysheet)).
-- **Formatting**: style, text alignment and rotation, text truncation, overflow, automatic line wrapping, multiple data types, cell segmentation style
-- **Cells**: multiple selection, merge cells
-- **Row & column**: insert, delete rows or columns
-- **Operation**: copy, paste, cut, hot key
+- **Formatting**: style, text alignment and rotation, text truncation, overflow, automatic line wrapping, multiple data types, cell segmentation style, hyperlink
+- **Cells**: multiple selection, borders, fill, merge cells
+- **Row & column**: insert, delete, hide, sort and filter rows or columns
+- **Operation**: copy, paste, cut, hot keys
 - **Formulas & Functions**: Built-in formulas
+- **Import/export Excel**: [plugin](https://github.com/corbe30/fortuneexcel) for .xlsx import and export
+- **Additional features**: supports images, comments, data verification and custom tools
 
 ## Roadmap
 - ✅ Support cooperative editing with backend storage.
@@ -77,8 +80,8 @@ Before stable release of 1.0, input data structure and APIs may change during de
   - ✅ comments
   - ✅ insert images
   - ✅ more toolbar buttons
-- Excel import and export.
-- Support Vue.
+- ✅ [Excel import and export plugin](https://github.com/corbe30/fortuneexcel)
+- Support Vue
 - More features:
   - ✅ sort
   - ✅ filter
@@ -86,18 +89,20 @@ Before stable release of 1.0, input data structure and APIs may change during de
   - ✅ conditional formatting
   - ✅ drag and drop
   - ✅ find and replace
-  - location
   - ✅ data verification
   - ✅ freeze
   - ✅ hide, and split text
+  - location
 - More advanced features:
+  - ✅ screenshots
   - pivot tables
   - charts
-  - ✅ screenshots
+  
 
 ## Documentation
+> Note: Some topics in documentation is outdated
 
-See detailed documentation at [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-docs/)
+See detailed documentation at [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-docs/).
 
 ## Get started (react)
 
