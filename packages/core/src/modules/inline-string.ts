@@ -72,6 +72,7 @@ export function convertCssToStyleList(cssText: string, originCell: Cell) {
     un: originCell.un || 0, // underline
     bl: originCell.bl || 0, // blod
     it: originCell.it || 0, // italic
+    ff: originCell.ff || 0, // font family
   };
   cssTextArray.forEach((s) => {
     s = s.toLowerCase();
