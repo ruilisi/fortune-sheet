@@ -30,8 +30,9 @@ We aim to make FortuneSheet powerful yet easy to maintain.
 * [Xiemala](https://xiemala.com/s/ctJmUn)
 
 ## Live demo
+> Note: Some part of Storybook is outdated
 
-Take a look at the live demo at [fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/)
+Take a look at the live demo at [fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/).
 
 <p>
   <img align="center" src="screenshot.png" width="400px" />
@@ -99,6 +100,7 @@ Before stable release of 1.0, input data structure and APIs may change during de
   
 
 ## Documentation
+> Note: Some topics in documentation is outdated
 
 See detailed documentation at [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-docs/).
 
