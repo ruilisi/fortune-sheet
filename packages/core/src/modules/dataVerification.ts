@@ -357,49 +357,7 @@ export function getFailureText(ctx: Context, item: any) {
   const { lang } = ctx;
 
   const { type, type2, value1, value2 } = item;
-  if (lang === "en") {
-    const optionLabel_en = ctx.dataVerification?.optionLabel_en;
-    if (type === "dropdown") {
-      failureText += "what you selected is not an option in the drop-down list";
-    } else if (type === "checkbox") {
-    } else if (
-      type === "number" ||
-      type === "number_integer" ||
-      type === "number_decimal"
-    ) {
-      failureText += `what you entered is not a ${optionLabel_en[item.type]} ${
-        optionLabel_en[item.type2]
-      } ${item.value1}`;
-
-      if (item.type2 === "between" || item.type2 === "notBetween") {
-        failureText += ` and ${item.value2}`;
-      }
-    } else if (type === "text_content") {
-      failureText += `what you entered is not text that ${
-        optionLabel_en[item.type2]
-      } ${item.value1}`;
-    } else if (type === "text_length") {
-      failureText += `the text you entered is not length ${
-        optionLabel_en[item.type2]
-      } ${item.value1}`;
-
-      if (item.type2 === "between" || item.type2 === "notBetween") {
-        failureText += ` and ${item.value2}`;
-      }
-    } else if (type === "date") {
-      failureText += `the date you entered is not ${
-        optionLabel_en[item.type2]
-      } ${item.value1}`;
-
-      if (type2 === "between" || type2 === "notBetween") {
-        failureText += ` and ${item.value2}`;
-      }
-    } else if (type === "validity") {
-      failureText += `what you entered is not a correct ${
-        optionLabel_en[item.type2]
-      }`;
-    }
-  } else if (lang === "zh" || lang === "zh-CN") {
+  if (lang === "zh" || lang === "zh-CN") {
     const optionLabel_zh = ctx.dataVerification?.optionLabel_zh;
     if (type === "dropdown") {
       failureText += "你选择的不是下拉列表中的选项";
@@ -555,6 +513,49 @@ export function getFailureText(ctx: Context, item: any) {
       failureText += `आपने जो दर्ज किया है वह सही ${
         optionLabel_hi[item.type2]
       } नहीं है।`;
+    }
+  } else {
+    // default language english (en, en-US, en-GB, etc.)
+    const optionLabel_en = ctx.dataVerification?.optionLabel_en;
+    if (type === "dropdown") {
+      failureText += "what you selected is not an option in the drop-down list";
+    } else if (type === "checkbox") {
+    } else if (
+      type === "number" ||
+      type === "number_integer" ||
+      type === "number_decimal"
+    ) {
+      failureText += `what you entered is not a ${optionLabel_en[item.type]} ${
+        optionLabel_en[item.type2]
+      } ${item.value1}`;
+
+      if (item.type2 === "between" || item.type2 === "notBetween") {
+        failureText += ` and ${item.value2}`;
+      }
+    } else if (type === "text_content") {
+      failureText += `what you entered is not text that ${
+        optionLabel_en[item.type2]
+      } ${item.value1}`;
+    } else if (type === "text_length") {
+      failureText += `the text you entered is not length ${
+        optionLabel_en[item.type2]
+      } ${item.value1}`;
+
+      if (item.type2 === "between" || item.type2 === "notBetween") {
+        failureText += ` and ${item.value2}`;
+      }
+    } else if (type === "date") {
+      failureText += `the date you entered is not ${
+        optionLabel_en[item.type2]
+      } ${item.value1}`;
+
+      if (type2 === "between" || type2 === "notBetween") {
+        failureText += ` and ${item.value2}`;
+      }
+    } else if (type === "validity") {
+      failureText += `what you entered is not a correct ${
+        optionLabel_en[item.type2]
+      }`;
     }
   }
   return failureText;
