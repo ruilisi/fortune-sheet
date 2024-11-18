@@ -357,7 +357,7 @@ export function getFailureText(ctx: Context, item: any) {
   const { lang } = ctx;
 
   const { type, type2, value1, value2 } = item;
-  if (lang === "en") {
+  if (lang === "en" || lang === "en-GB" || lang === "en-US") {
     const optionLabel_en = ctx.dataVerification?.optionLabel_en;
     if (type === "dropdown") {
       failureText += "what you selected is not an option in the drop-down list";
