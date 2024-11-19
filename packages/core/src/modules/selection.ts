@@ -1,4 +1,4 @@
-import _, { isPlainObject } from "lodash";
+import _  from "lodash";
 import type { Sheet as SheetType, Freezen, Range } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
@@ -404,7 +404,7 @@ export function pasteHandlerOfPaintModel(
               c_dataVerification[`${c_r1 + h - mth}_${c_c1 + c - mtc}`];
           }
 
-          if (isPlainObject(x[c]) && x[c].mc) {
+          if (_.isPlainObject(x[c]) && x[c].mc) {
             if (x[c].mc.rs) {
               delete cfg.merge[`${x[c].mc.r}_${x[c].mc.c}`];
             }
@@ -416,7 +416,7 @@ export function pasteHandlerOfPaintModel(
             value = copyData[h - mth][c - mtc];
           }
 
-          if (isPlainObject(x[c])) {
+          if (_.isPlainObject(x[c])) {
             if (x[c].ct && x[c].ct.t === "inlineStr" && value) {
               delete value.ct;
             } else {
