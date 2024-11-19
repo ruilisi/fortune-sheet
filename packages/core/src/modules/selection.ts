@@ -1,4 +1,4 @@
-import _  from "lodash";
+import _ from "lodash";
 import type { Sheet as SheetType, Freezen, Range } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
