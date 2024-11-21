@@ -38,11 +38,15 @@ export function isRealNum(val: any) {
   return !Number.isNaN(Number(val));
 }
 
-function checkDateTime(str: string) {
+function checkDateTime(str: string, format: string) {
   const reg1 =
-    /^(\d{4})-(\d{1,2})-(\d{1,2})(\s(\d{1,2}):(\d{1,2})(:(\d{1,2}))?)?$/;
+    format === "24"
+      ? /^(\d{4})-(\d{1,2})-(\d{1,2})(\s(\d{1,2}):(\d{1,2})(:(\d{1,2}))?)?$/
+      : /^(\d{4})-(\d{1,2})-(\d{1,2})(\s(\d{1,2}):(\d{1,2})(:(\d{1,2}))?)?\s?(AM|PM)?$/;
   const reg2 =
-    /^(\d{4})\/(\d{1,2})\/(\d{1,2})(\s(\d{1,2}):(\d{1,2})(:(\d{1,2}))?)?$/;
+    format === "24"
+      ? /^(\d{4})\/(\d{1,2})\/(\d{1,2})(\s(\d{1,2}):(\d{1,2})(:(\d{1,2}))?)?$/
+      : /^(\d{4})\/(\d{1,2})\/(\d{1,2})(\s(\d{1,2}):(\d{1,2})(:(\d{1,2}))?)?\s?(AM|PM)?$/;
 
   if (!reg1.test(str) && !reg2.test(str)) {
     return false;
@@ -75,11 +79,11 @@ function checkDateTime(str: string) {
   return true;
 }
 
-export function isdatetime(s: any) {
+export function isdatetime(s: any, format: string = "24") {
   if (s === null || s.toString().length < 5) {
     return false;
   }
-  if (checkDateTime(s)) {
+  if (checkDateTime(s, format)) {
     return true;
   }
   return false;

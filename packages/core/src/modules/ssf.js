@@ -1,6 +1,9 @@
 /* eslint-disable */
 import numeral from "numeral";
 
+const JAN_1_1900 = 1;
+const DEC_31_9999 = 2958465;
+
 var SSF = {};
 const make_ssf = function make_ssf(SSF) {
   SSF.version = "0.11.2";
@@ -201,8 +204,49 @@ const make_ssf = function make_ssf(SSF) {
     return [q, sgn * P - q * Q, Q];
   }
 
+  function convert_to_seconds(timeStr) {
+    let hours, minutes;
+
+    if (timeStr.includes("AM") || timeStr.includes("PM")) {
+      // Handle hh:mm AM/PM format
+      const match = timeStr.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)$/i);
+      if (!match) return NaN;
+
+      hours = parseInt(match[1], 10);
+      minutes = parseInt(match[2], 10);
+      const period = match[3].toUpperCase();
+
+      if (hours < 1 || hours > 12 || minutes < 0 || minutes >= 60) {
+        return NaN;
+      }
+
+      // Convert to 24-hour format
+      if (period === "PM" && hours !== 12) {
+        hours += 12;
+      } else if (period === "AM" && hours === 12) {
+        hours = 0;
+      }
+    } else {
+      // Handle hh:mm format
+      const [hourPart, minutePart] = timeStr.split(":").map(Number);
+      hours = hourPart;
+      minutes = minutePart;
+
+      if (
+        isNaN(hours) || isNaN(minutes) ||
+        hours < 0 || hours > 23 ||
+        minutes < 0 || minutes >= 60
+      ) {
+        return NaN;
+      }
+    }
+
+    // Convert to seconds
+    return hours * 3600 + minutes * 60;
+  }
+
   function parse_date_code(v, opts, b2) {
-    if (v > 2958465 || v < 0) return null;
+    if (v > DEC_31_9999 || v < JAN_1_1900) return null;
     var date = v | 0,
       time = Math.floor(86400 * (v - date)),
       dow = 0;
@@ -245,6 +289,11 @@ const make_ssf = function make_ssf(SSF) {
       if (date < 60) dow = (dow + 6) % 7;
       if (b2) dow = fix_hijri(d, dout);
     }
+
+    if (v?.includes?.(':') && isNaN(time)) {
+      time = convert_to_seconds(v);
+    }
+
     out.y = dout[0];
     out.m = dout[1];
     out.d = dout[2];
