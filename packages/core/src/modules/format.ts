@@ -250,7 +250,7 @@ export function genarate(value: string | number | boolean) {
     ct = { fa: "General", t: "n" };
     v = parseFloat(value as string);
   } else if (
-    isdatetime(value) &&
+    isdatetime(value, "24") &&
     (value.toString().indexOf(".") > -1 ||
       value.toString().indexOf(":") > -1 ||
       value.toString().length < 16)
@@ -262,6 +262,36 @@ export function genarate(value: string | number | boolean) {
         ct.fa = "yyyy-MM-dd hh:mm:ss";
       } else if (value.toString().length > 11) {
         ct.fa = "yyyy-MM-dd hh:mm";
+      } else {
+        ct.fa = "yyyy-MM-dd";
+      }
+    } else {
+      ct.fa = "yyyy-MM-dd";
+    }
+
+    ct.t = "d";
+    m = SSF.format(ct.fa, v);
+  } else if (
+    isdatetime(value, "12") &&
+    (value.toString().indexOf(".") > -1 ||
+      value.toString().indexOf(":") > -1 ||
+      value.toString().length < 20)
+  ) {
+    v = datenum_local(
+      parseDate(
+        value
+          .toString()
+          .replace(/-/g, "/")
+          .replace(/(AM|PM)/gi, " $1")
+          .replace(/  +/g, " ")
+      )
+    );
+
+    if (v.toString().indexOf(".") > -1) {
+      if (value.toString().length > 20) {
+        ct.fa = "yyyy-MM-dd hh:mm:ss AM/PM";
+      } else if (value.toString().length > 13) {
+        ct.fa = "yyyy-MM-dd hh:mm AM/PM";
       } else {
         ct.fa = "yyyy-MM-dd";
       }
