@@ -11232,6 +11232,11 @@ export default {
     { name: "चिली पेसो", pos: "before", value: "$" },
     { name: "सीएफए फ्रैंक बीईएसी", pos: "before", value: "FCFA" },
   ],
+  numberFmtList: [
+    { name: "Volts", pos: "after", value: "V" },
+    { name: "Ampere", pos: "after", value: "A" },
+    { name: "Ohms", pos: "after", value: "Ω" },
+  ],
   defaultFmt: (currency: string) => [
     { text: "स्वचालित", value: "General", example: "" },
     { text: "सादा टेक्स्ट", value: "@", example: "" },

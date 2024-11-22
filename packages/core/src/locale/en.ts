@@ -11217,7 +11217,7 @@ export default {
     { name: "Iraqi Dinar", pos: "before", value: "din" },
     { name: "Iranian Rial", pos: "before", value: "Rial" },
     { name: "New Israeli Shekel", pos: "before", value: "?" },
-    { name: "Indian Rupee", pos: "before", value: "?" },
+    { name: "Indian Rupee", pos: "before", value: "₹" },
     { name: "Indonesian Rupiah", pos: "before", value: "Rp" },
     { name: "Jordanian Dinar", pos: "before", value: "din" },
     { name: "VND", pos: "after", value: "?" },
@@ -11225,6 +11225,11 @@ export default {
     { name: "Gibraltar Pound", pos: "before", value: "￡" },
     { name: "Chilean Peso", pos: "before", value: "$" },
     { name: "CFA Franc BEAC", pos: "before", value: "FCFA" },
+  ],
+  numberFmtList: [
+    { name: "Volts", pos: "after", value: "V" },
+    { name: "Ampere", pos: "after", value: "A" },
+    { name: "Ohms", pos: "after", value: "Ω" },
   ],
   defaultFmt: (currency: string) => [
     { text: "Automatic", value: "General", example: "" },

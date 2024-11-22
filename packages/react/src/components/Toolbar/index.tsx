@@ -315,6 +315,18 @@ const Toolbar: React.FC<{
                                 setOpen(false);
                               },
                             },
+                            {
+                              text: toolbarFormat.moreNumber,
+                              onclick: () => {
+                                showDialog(
+                                  <FormatSearch
+                                    onCancel={hideDialog}
+                                    type="number"
+                                  />
+                                );
+                                setOpen(false);
+                              },
+                            },
                           ].map((v) => (
                             <div
                               className="set-background-item fortune-toolbar-select-option"

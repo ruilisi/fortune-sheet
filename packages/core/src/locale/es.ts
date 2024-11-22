@@ -11199,6 +11199,11 @@ export default {
     ChileanPeso: "Chilean Peso",
     CFAFrancBEAC: "CFA Franc BEAC",
   },
+  numberFmtList: [
+    { name: "Volts", pos: "after", value: "V" },
+    { name: "Ampere", pos: "after", value: "A" },
+    { name: "Ohms", pos: "after", value: "Ω" },
+  ],
   defaultFmt: (currency: string) => [
     { text: "Automático", value: "General", example: "" },
     { text: "Texto", value: "@", example: "" },
