@@ -151,65 +151,51 @@ const DataVerification: React.FC = () => {
 
       // 初始化值
       const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
-      const ctxDataVerification = ctx.luckysheetfile[index].dataVerification;
-      if (ctxDataVerification) {
-        if (!ctx.luckysheet_select_save) return;
-        const last =
-          ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
-        const rowIndex = last.row_focus;
-        const colIndex = last.column_focus;
-        if (rowIndex == null || colIndex == null) return;
-        const item = ctxDataVerification[`${rowIndex}_${colIndex}`];
-        const defaultItem = item ?? {};
-        let rangValue = defaultItem.value1 ?? "";
-        // 选区赋值相关
-        if (
-          ctx.rangeDialog?.type === "dropDown" &&
-          ctx.dataVerification &&
-          ctx.dataVerification.dataRegulation &&
-          ctx.dataVerification.dataRegulation.rangeTxt
-        ) {
-          // 当是下拉列表选区的时候，则下拉选区赋值，范围保持不变
-          rangeT = ctx.dataVerification.dataRegulation.rangeTxt;
-          rangValue = ctx.rangeDialog.rangeTxt;
-        } else if (
-          ctx.rangeDialog?.type === "rangeTxt" &&
-          ctx.dataVerification &&
-          ctx.dataVerification.dataRegulation &&
-          ctx.dataVerification.dataRegulation.value1
-        ) {
-          // 当是选区范围的时候，则范围赋值，下拉选区不变
-          rangValue = ctx.dataVerification.dataRegulation.value1;
-          rangeT = ctx.rangeDialog.rangeTxt;
-        }
-        ctx.rangeDialog!.type = "";
+      const ctxDataVerification =
+        ctx.luckysheetfile[index].dataVerification || {};
+      if (!ctx.luckysheet_select_save) return;
+      const last =
+        ctx.luckysheet_select_save[ctx.luckysheet_select_save.length - 1];
+      const rowIndex = last.row_focus;
+      const colIndex = last.column_focus;
+      if (rowIndex == null || colIndex == null) return;
+      const item = ctxDataVerification[`${rowIndex}_${colIndex}`];
+      const defaultItem = item ?? {};
+      let rangValue = defaultItem.value1 ?? "";
+      // 选区赋值相关
+      if (
+        ctx.rangeDialog?.type === "dropDown" &&
+        ctx.dataVerification &&
+        ctx.dataVerification.dataRegulation &&
+        ctx.dataVerification.dataRegulation.rangeTxt
+      ) {
+        // 当是下拉列表选区的时候，则下拉选区赋值，范围保持不变
+        rangeT = ctx.dataVerification.dataRegulation.rangeTxt;
+        rangValue = ctx.rangeDialog.rangeTxt;
+      } else if (
+        ctx.rangeDialog?.type === "rangeTxt" &&
+        ctx.dataVerification &&
+        ctx.dataVerification.dataRegulation &&
+        ctx.dataVerification.dataRegulation.value1
+      ) {
+        // 当是选区范围的时候，则范围赋值，下拉选区不变
+        rangValue = ctx.dataVerification.dataRegulation.value1;
+        rangeT = ctx.rangeDialog.rangeTxt;
+      }
+      ctx.rangeDialog!.type = "";
 
-        if (item) {
-          ctx.dataVerification!.dataRegulation = {
-            ...item,
-            value1: rangValue,
-            rangeTxt: rangeT,
-          };
-        } else {
-          ctx.dataVerification!.dataRegulation! = {
-            type: "dropdown",
-            type2: "",
-            rangeTxt: rangeT,
-            value1: rangValue,
-            value2: "",
-            validity: "",
-            remote: false,
-            prohibitInput: false,
-            hintShow: false,
-            hintValue: "",
-          };
-        }
+      if (item) {
+        ctx.dataVerification!.dataRegulation = {
+          ...item,
+          value1: rangValue,
+          rangeTxt: rangeT,
+        };
       } else {
         ctx.dataVerification!.dataRegulation! = {
           type: "dropdown",
           type2: "",
           rangeTxt: rangeT,
-          value1: "",
+          value1: rangValue,
           value2: "",
           validity: "",
           remote: false,
