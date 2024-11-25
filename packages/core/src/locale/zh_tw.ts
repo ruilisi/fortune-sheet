@@ -11176,6 +11176,11 @@ export default {
     ChileanPeso: "智利比索",
     CFAFrancBEAC: "中非金融合作法郎",
   },
+  numberFmtList: [
+    { name: "Volts", pos: "after", value: "V" },
+    { name: "Ampere", pos: "after", value: "A" },
+    { name: "Ohms", pos: "after", value: "Ω" },
+  ],
   defaultFmt: (currency: string) => [
     { text: "自動", value: "General", example: "" },
     { text: "純文字", value: "@", example: "" },

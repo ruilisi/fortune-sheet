@@ -11209,6 +11209,11 @@ export default {
     { name: "智利比索", pos: "before", value: "$" },
     { name: "中非金融合作法郎", pos: "before", value: "FCFA" },
   ],
+  numberFmtList: [
+    { name: "Volts", pos: "after", value: "V" },
+    { name: "Ampere", pos: "after", value: "A" },
+    { name: "Ohms", pos: "after", value: "Ω" },
+  ],
   defaultFmt: (currency: string) => [
     { text: "自动", value: "General", example: "" },
     { text: "纯文本", value: "@", example: "" },

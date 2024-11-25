@@ -21,15 +21,16 @@ export const FormatSearch: React.FC<{
   } = useContext(WorkbookContext);
   const [decimalPlace, setDecimalPlace] = useState(2);
   const [selectedFormatIndex, setSelectedFormatIndex] = useState(0);
-  const { button, format, currencyDetail, dateFmtList } = locale(context);
+  const { button, format, currencyDetail, dateFmtList, numberFmtList } =
+    locale(context);
   const { showDialog } = useDialog();
   const toolbarFormatAll = useMemo(
     () => ({
       currency: currencyDetail,
       date: dateFmtList,
-      number: [], // has not been defined
+      number: numberFmtList,
     }),
-    [currencyDetail, dateFmtList]
+    [currencyDetail, dateFmtList, numberFmtList]
   );
   const toolbarFormat = useMemo(
     () => toolbarFormatAll[type],
@@ -46,7 +47,8 @@ export const FormatSearch: React.FC<{
     setContext((ctx) => {
       const index = getSheetIndex(ctx, ctx.currentSheetId);
       if (_.isNil(index)) return;
-      const selectedFormat = toolbarFormat[selectedFormatIndex].value;
+      const selectedFormatVal = toolbarFormat[selectedFormatIndex].value;
+      const selectedFormatPos = toolbarFormat[selectedFormatIndex].pos;
       _.forEach(ctx.luckysheet_select_save, (selection) => {
         for (let r = selection.row[0]; r <= selection.row[1]; r += 1) {
           for (let c = selection.column[0]; c <= selection.column[1]; c += 1) {
@@ -55,12 +57,22 @@ export const FormatSearch: React.FC<{
               ctx.luckysheetfile[index].data?.[r][c]?.ct?.t === "n"
             ) {
               const zero = 0;
-              ctx.luckysheetfile[index].data![r][c]!.ct!.fa =
-                `${selectedFormat}`.concat(zero.toFixed(decimalPlace));
-              ctx.luckysheetfile[index].data![r][c]!.m = update(
-                `${selectedFormat}`.concat(zero.toFixed(decimalPlace)),
-                ctx.luckysheetfile[index].data![r][c]!.v
-              );
+              if (selectedFormatPos === "after") {
+                ctx.luckysheetfile[index].data![r][c]!.ct!.fa = zero
+                  .toFixed(decimalPlace)
+                  .concat(`${selectedFormatVal}`);
+                ctx.luckysheetfile[index].data![r][c]!.m = update(
+                  zero.toFixed(decimalPlace).concat(`${selectedFormatVal}`),
+                  ctx.luckysheetfile[index].data![r][c]!.v
+                );
+              } else {
+                ctx.luckysheetfile[index].data![r][c]!.ct!.fa =
+                  `${selectedFormatVal}`.concat(zero.toFixed(decimalPlace));
+                ctx.luckysheetfile[index].data![r][c]!.m = update(
+                  `${selectedFormatVal}`.concat(zero.toFixed(decimalPlace)),
+                  ctx.luckysheetfile[index].data![r][c]!.v
+                );
+              }
             }
           }
         }
@@ -94,12 +106,7 @@ export const FormatSearch: React.FC<{
           {tips}
           {format.format}：
         </div>
-        <div
-          className="inpbox"
-          style={
-            type === "currency" ? { display: "block" } : { display: "none" }
-          }
-        >
+        <div className="inpbox" style={{ display: "block" }}>
           {format.decimalPlaces}：
           <input
             className="decimal-places-input"
@@ -131,7 +138,7 @@ export const FormatSearch: React.FC<{
       </div>
       <div
         className="fortune-dialog-box-button-container"
-        style={type === "currency" ? { marginTop: 40 } : { marginTop: 30 }}
+        style={{ marginTop: 40 }}
       >
         <div
           className="fortune-message-box-button button-primary"
