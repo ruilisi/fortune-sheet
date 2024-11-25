@@ -129,7 +129,7 @@
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.333);
   outline: 0;
-  position: absolute;
+  position: fixed;
   color: #000;
   padding: 30px 42px;
   z-index: 100003;
