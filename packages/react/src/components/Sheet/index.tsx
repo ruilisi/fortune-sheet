@@ -30,7 +30,9 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
       if (!data) return;
       setContext((draftCtx) => {
         if (settings.devicePixelRatio === 0) {
-          draftCtx.devicePixelRatio = (typeof globalThis !== 'undefined' ? globalThis : window).devicePixelRatio;
+          draftCtx.devicePixelRatio = (
+            typeof globalThis !== "undefined" ? globalThis : window
+          ).devicePixelRatio;
         }
         updateContextWithSheetData(draftCtx, data);
         updateContextWithCanvas(

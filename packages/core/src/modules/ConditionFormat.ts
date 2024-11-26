@@ -761,7 +761,11 @@ export function compute(ctx: Context, ruleArr: any, d: CellMatrix) {
                   continue;
                 }
                 // 符合条件
-                if (cell.v >= vSmall && cell.v <= vBig) {
+                if (
+                  typeof cell.v === "number" &&
+                  cell.v >= vSmall &&
+                  cell.v <= vBig
+                ) {
                   if (`${r}_${c}` in computeMap) {
                     computeMap[`${r}_${c}`].textColor = textColor;
                     computeMap[`${r}_${c}`].cellColor = cellColor;
