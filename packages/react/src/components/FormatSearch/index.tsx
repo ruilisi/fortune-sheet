@@ -32,7 +32,10 @@ export const FormatSearch: React.FC<{
     }),
     [currencyDetail, dateFmtList, numberFmtList]
   );
-  const toolbarFormat = useMemo(
+
+  type toolbarFormatType = { name: string; pos?: string; value: string };
+
+  const toolbarFormat: toolbarFormatType[] = useMemo(
     () => toolbarFormatAll[type],
     [toolbarFormatAll, type]
   );
@@ -48,7 +51,11 @@ export const FormatSearch: React.FC<{
       const index = getSheetIndex(ctx, ctx.currentSheetId);
       if (_.isNil(index)) return;
       const selectedFormatVal = toolbarFormat[selectedFormatIndex].value;
-      const selectedFormatPos = toolbarFormat[selectedFormatIndex].pos;
+
+      let selectedFormatPos: string;
+      if ("pos" in toolbarFormat[selectedFormatIndex])
+        selectedFormatPos = toolbarFormat[selectedFormatIndex].pos || "before";
+
       _.forEach(ctx.luckysheet_select_save, (selection) => {
         for (let r = selection.row[0]; r <= selection.row[1]; r += 1) {
           for (let c = selection.column[0]; c <= selection.column[1]; c += 1) {
