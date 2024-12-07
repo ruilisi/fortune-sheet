@@ -1649,6 +1649,8 @@ export function getCellTextInfo(
           }
 
           cumWordHeight += size.height;
+          // stop processing if rest of the cell isnt visible
+          if (cumWordHeight >= cellHeight) break;
         }
       }
 
