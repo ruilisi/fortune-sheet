@@ -27,7 +27,7 @@
     "@storybook/addon-actions": "^7.3.2",
     "@storybook/addon-essentials": "^7.3.2",
     "@storybook/addon-interactions": "^7.3.2",
-    "@storybook/addon-links": "^7.3.2",
+    "@storybook/addon-links": "^8.1.11",
     "@storybook/addon-postcss": "^2.0.0",
     "@storybook/react": "^7.3.2",
     "@storybook/react-webpack5": "^7.3.2",
