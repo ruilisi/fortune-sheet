@@ -1062,6 +1062,7 @@ export function getCellTextInfo(
         }
       } else {
         value = value.toString();
+        let parsedTextHeight = 0;
         while (i <= value.length) {
           const str = value.substring(anchor, i);
           const measureText = getMeasureText(str, renderCtx, sheetCtx);
@@ -1192,8 +1193,10 @@ export function getCellTextInfo(
                 });
 
                 splitIndex += 1;
-
                 spaceOrTwoByte = null;
+
+                parsedTextHeight += preTextHeight;
+                if (parsedTextHeight >= cellHeight) break;
               } else {
                 spaceOrTwoByte = null;
                 anchor = i - 1;
@@ -1210,10 +1213,10 @@ export function getCellTextInfo(
                   desc: preMeasureText.actualBoundingBoxDescent,
                   fs: fontSize,
                 });
-
-                // console.log(2);
-
                 splitIndex += 1;
+
+                parsedTextHeight += preTextHeight;
+                if (parsedTextHeight >= cellHeight) break;
               }
             } else if (i === value.length) {
               if (_.isNil(text_all_split[splitIndex])) {
@@ -1649,8 +1652,6 @@ export function getCellTextInfo(
           }
 
           cumWordHeight += size.height;
-          // stop processing if rest of the cell isnt visible
-          if (cumWordHeight >= cellHeight) break;
         }
       }
 
