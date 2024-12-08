@@ -210,7 +210,7 @@ const RowHeader: React.FC = () => {
         className="fortune-rows-freeze-handle"
         onMouseDown={onRowFreezeHandleMouseDown}
         style={{
-          top: freezeHandleTop,
+          top: freezeHandleTop || 0,
         }}
       />
       <div
