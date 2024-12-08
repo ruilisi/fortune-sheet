@@ -220,7 +220,7 @@ const ColumnHeader: React.FC = () => {
         className="fortune-cols-freeze-handle"
         onMouseDown={onColFreezeHandleMouseDown}
         style={{
-          left: freezeHandleLeft,
+          left: freezeHandleLeft || 0,
         }}
       />
       <div
