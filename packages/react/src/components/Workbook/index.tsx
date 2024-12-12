@@ -369,6 +369,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             delete inversedOptions!.addSheet!.value!.data;
           }
           emitOp(newContext, history.inversePatches, inversedOptions, true);
+          newContext.formulaCache.updateFormulaCache(newContext, history);
           return newContext;
         });
       }
@@ -381,6 +382,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           const newContext = applyPatches(ctx_, history.patches);
           globalCache.current.undoList.push(history);
           emitOp(newContext, history.patches, history.options);
+          newContext.formulaCache.updateFormulaCache(newContext, history);
           return newContext;
         });
       }

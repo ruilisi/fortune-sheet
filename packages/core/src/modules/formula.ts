@@ -1,7 +1,7 @@
 import _ from "lodash";
 // @ts-ignore
 import { Parser, ERROR_REF } from "@fortune-sheet/formula-parser";
-import type { Cell, Rect, Selection } from "../types";
+import type { Cell, CellMatrix, History, Rect, Selection } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
   columnCharToIndex,
@@ -11,18 +11,19 @@ import {
   getSheetIdByName,
   escapeHTMLTag,
 } from "../utils";
-import {
-  getcellFormula,
-  getRangetxt,
-  mergeMoveMain,
-  setCellValue,
-} from "./cell";
+import { getRangetxt, mergeMoveMain, setCellValue } from "./cell";
 import { error } from "./validation";
 import { moveToEnd } from "./cursor";
 import { locale } from "../locale";
 import { colors } from "./color";
 import { colLocation, mousePosition, rowLocation } from "./location";
 import { cancelFunctionrangeSelected, seletedHighlistByindex } from ".";
+import {
+  arrayMatch,
+  executeAffectedFormulas,
+  setFormulaObject,
+  getFormulaRunList,
+} from "./formulaHelper";
 
 let functionHTMLIndex = 0;
 let rangeIndexes: number[] = [];
@@ -96,12 +97,18 @@ export class FormulaCache {
 
   execFunctionGlobalData: any;
 
+  formulaArrayCache: any;
+
+  formulaObjects: any;
+
   constructor() {
     const that = this;
     this.data_parm_index = 0;
     this.selectingRangeIndex = -1;
     this.functionlistMap = {};
     this.execFunctionGlobalData = {};
+    this.formulaArrayCache = {};
+    this.formulaObjects = null;
     this.cellTextToIndexList = {};
     this.parser = new Parser();
     this.parser.on(
@@ -177,6 +184,29 @@ export class FormulaCache {
       return Number.isNaN(n) ? cell.v : n;
     }
     return cell?.v;
+  }
+
+  updateFormulaCache(ctx: Context, history: History, data?: CellMatrix) {
+    function requestUpdate(value: any) {
+      if (value instanceof Object) {
+        if (value.r !== undefined && value.r !== undefined) {
+          setFormulaObject(
+            ctx,
+            { r: value.r, c: value.c, id: ctx.currentSheetId },
+            data
+          );
+        }
+      }
+    }
+    history.patches.forEach((patch) => {
+      if (Array.isArray(patch.value)) {
+        patch.value.forEach((value) => {
+          requestUpdate(value);
+        });
+      } else {
+        requestUpdate(patch.value);
+      }
+    });
   }
 }
 
@@ -266,11 +296,16 @@ function addToCellIndexList(ctx: Context, txt: string, infoObj: any) {
   }
 }
 
-export function getcellrange(ctx: Context, txt: string, formulaId?: string) {
+export function getcellrange(
+  ctx: Context,
+  txt: string,
+  formulaId?: string,
+  data?: CellMatrix
+) {
   if (_.isNil(txt) || txt.length === 0) {
     return null;
   }
-  const flowdata = getFlowdata(ctx, formulaId);
+  const flowdata = data || getFlowdata(ctx, formulaId);
 
   let sheettxt = "";
   let rangetxt = "";
@@ -448,7 +483,7 @@ function checkSpecialFunctionRange(
   }
 }
 
-function isFunctionRange(
+export function isFunctionRange(
   ctx: Context,
   txt: string,
   r: number | null,
@@ -854,7 +889,7 @@ export function delFunctionGroup(
   const { calcChain } = file;
   if (!_.isNil(calcChain)) {
     let modified = false;
-    const calcChainClone = _.cloneDeep(calcChain);
+    const calcChainClone = calcChain.slice();
     for (let i = 0; i < calcChainClone.length; i += 1) {
       const calc = calcChainClone[i];
       if (calc.r === r && calc.c === c && calc.id === id) {
@@ -875,7 +910,7 @@ export function delFunctionGroup(
   const { dynamicArray } = file;
   if (!_.isNil(dynamicArray)) {
     let modified = false;
-    const dynamicArrayClone = _.cloneDeep(dynamicArray);
+    const dynamicArrayClone = dynamicArray.slice();
     for (let i = 0; i < dynamicArrayClone.length; i += 1) {
       const calc = dynamicArrayClone[i];
       if (
@@ -954,7 +989,7 @@ export function insertUpdateFunctionGroup(
     id = ctx.currentSheetId;
   }
 
-  // let func = getcellFormula(r, c, index);
+  // let func = getcellFormula(ctx, r, c, id);
   // if (_.isNil(func) || func.length==0) {
   //     this.delFunctionGroup(r, c, index);
   //     return;
@@ -1274,6 +1309,17 @@ export function groupValuesRefresh(ctx: Context) {
   }
 }
 
+function setFormulaObjectsCache(
+  ctx: Context,
+  calcChains: any,
+  data: CellMatrix
+) {
+  for (let i = 0; i < calcChains.length; i += 1) {
+    const formulaCell = calcChains[i];
+    setFormulaObject(ctx, formulaCell, data);
+  }
+}
+
 export function execFunctionGroup(
   ctx: Context,
   origin_r: number,
@@ -1283,36 +1329,19 @@ export function execFunctionGroup(
   data?: any,
   isForce = false
 ) {
+  // 0. null checks
   if (_.isNil(data)) {
     data = getFlowdata(ctx);
   }
 
-  // if (!window.luckysheet_compareWith) {
-  //   window.luckysheet_compareWith = luckysheet_compareWith;
-  //   window.luckysheet_getarraydata = luckysheet_getarraydata;
-  //   window.luckysheet_getcelldata = luckysheet_getcelldata;
-  //   window.luckysheet_parseData = luckysheet_parseData;
-  //   window.luckysheet_getValue = luckysheet_getValue;
-  //   window.luckysheet_indirect_check = luckysheet_indirect_check;
-  //   window.luckysheet_indirect_check_return = luckysheet_indirect_check_return;
-  //   window.luckysheet_offset_check = luckysheet_offset_check;
-  //   window.luckysheet_calcADPMM = luckysheet_calcADPMM;
-  //   window.luckysheet_getSpecialReference = luckysheet_getSpecialReference;
-  // }
-
   if (_.isNil(ctx.formulaCache.execFunctionGlobalData)) {
     ctx.formulaCache.execFunctionGlobalData = {};
   }
-  // let luckysheetfile = getluckysheetfile();
-  // let dynamicArray_compute = luckysheetfile[getSheetIndex(ctx.currentSheetId)_.isNil(]["dynamicArray_compute"]) ? {} : luckysheetfile[getSheetIndex(ctx.currentSheetId)]["dynamicArray_compute"];
-
   if (_.isNil(id)) {
     id = ctx.currentSheetId;
   }
 
   if (!_.isNil(value)) {
-    // 此处setcellvalue 中this.execFunctionGroupData会保存想要更新的值，本函数结尾不要设为null,以备后续函数使用
-    // setcellvalue(origin_r, origin_c, _this.execFunctionGroupData, value);
     const cellCache: Cell[][] = [[{ v: undefined }]];
     setCellValue(ctx, 0, 0, cellCache, value);
     [
@@ -1324,282 +1353,50 @@ export function execFunctionGroup(
     ] = cellCache;
   }
 
-  // { "r": r, "c": c, "id": id, "func": func}
-  const calcChains = getAllFunctionGroup(ctx);
-  const formulaObjects: any = {};
+  // 1. get list of all functions in the sheet
+  const calcChains = getAllFunctionGroup(ctx); // { "r": r, "c": c, "id": id, "func": func}
 
-  const sheets = ctx.luckysheetfile;
-  const sheetData: any = {};
-  for (let i = 0; i < sheets.length; i += 1) {
-    const sheet = sheets[i];
-    sheetData[sheet.id!] = sheet.data;
-  }
-
-  // 把修改涉及的单元格存储为对象
-  const updateValueOjects: any = {};
-  const updateValueArray: any = [];
+  // 2. Store the cells involved in the modification
+  const updateValueObjects: any = {};
   if (_.isNil(ctx.formulaCache.execFunctionExist)) {
     const key = `r${origin_r}c${origin_c}i${id}`;
-    updateValueOjects[key] = 1;
+    updateValueObjects[key] = 1;
   } else {
     for (let x = 0; x < ctx.formulaCache.execFunctionExist.length; x += 1) {
       const cell = ctx.formulaCache.execFunctionExist[x] as any;
       const key = `r${cell.r}c${cell.c}i${cell.i}`;
-      updateValueOjects[key] = 1;
+      updateValueObjects[key] = 1;
     }
   }
 
+  // 3. formulaObjects: a cache of ALL formulas vs their ranges
+  if (!ctx.formulaCache.formulaObjects) {
+    ctx.formulaCache.formulaObjects = {};
+    setFormulaObjectsCache(ctx, calcChains, data);
+  }
+  const { formulaObjects } = ctx.formulaCache;
+
+  // 4. Form a graph structure of references between formulas
+  // basically fills parents and children in formulaObjects[i]
+  const updateValueArray: any = [];
   const arrayMatchCache: Record<
     string,
     { key: string; r: number; c: number; sheetId: string }[]
   > = {};
-  const arrayMatch = (
-    formulaArray: any,
-    _formulaObjects: any,
-    _updateValueOjects: any,
-    func: any
-  ) => {
-    for (let a = 0; a < formulaArray.length; a += 1) {
-      const range = formulaArray[a];
-      const cacheKey = `r${range.row[0]}${range.row[1]}c${range.column[0]}${range.column[1]}id${range.sheetId}`;
-      if (cacheKey in arrayMatchCache) {
-        const amc = arrayMatchCache[cacheKey];
-        // console.log(amc);
-        amc.forEach((item) => {
-          func(item.key, item.r, item.c, item.sheetId);
-        });
-      } else {
-        const functionArr = [];
-        for (let r = range.row[0]; r <= range.row[1]; r += 1) {
-          for (let c = range.column[0]; c <= range.column[1]; c += 1) {
-            const key = `r${r}c${c}i${range.sheetId}`;
-            func(key, r, c, range.sheetId);
-            if (
-              (_formulaObjects && key in _formulaObjects) ||
-              (_updateValueOjects && key in _updateValueOjects)
-            ) {
-              functionArr.push({
-                key,
-                r,
-                c,
-                sheetId: range.sheetId,
-              });
-            }
-          }
-        }
-
-        if (_formulaObjects || _updateValueOjects) {
-          arrayMatchCache[cacheKey] = functionArr;
-        }
-      }
-    }
-  };
-
-  // 创建公式缓存及其范围的缓存
-  // console.time("1");
-  for (let i = 0; i < calcChains.length; i += 1) {
-    const formulaCell = calcChains[i];
-    const key = `r${formulaCell.r}c${formulaCell.c}i${formulaCell.id}`;
-    const calc_funcStr = getcellFormula(
-      ctx,
-      formulaCell.r,
-      formulaCell.c,
-      formulaCell.id
-    );
-    if (_.isNil(calc_funcStr)) {
-      continue;
-    }
-    const txt1 = calc_funcStr.toUpperCase();
-    const isOffsetFunc =
-      txt1.indexOf("INDIRECT(") > -1 ||
-      txt1.indexOf("OFFSET(") > -1 ||
-      txt1.indexOf("INDEX(") > -1;
-    const formulaArray = [];
-
-    if (isOffsetFunc) {
-      isFunctionRange(
-        ctx,
-        calc_funcStr,
-        null,
-        null,
-        formulaCell.id,
-        null,
-        (str_nb: string) => {
-          const range = getcellrange(ctx, _.trim(str_nb), formulaCell.id);
-          if (!_.isNil(range)) {
-            formulaArray.push(range);
-          }
-        }
-      );
-    } else if (
-      !(
-        calc_funcStr.substring(0, 2) === '="' &&
-        calc_funcStr.substring(calc_funcStr.length - 1, 1) === '"'
-      )
-    ) {
-      // let formulaTextArray = calc_funcStr.split(/==|!=|<>|<=|>=|[,()=+-\/*%&^><]/g);//无法正确分割单引号或双引号之间有==、!=、-等运算符的情况。导致如='1-2'!A1公式中表名1-2的A1单元格内容更新后，公式的值不更新的bug
-      // 解决='1-2'!A1+5会被calc_funcStr.split(/==|!=|<>|<=|>=|[,()=+-\/*%&^><]/g)分割成["","'1","2'!A1",5]的错误情况
-      let point = 0; // 指针
-      let squote = -1; // 双引号
-      let dquote = -1; // 单引号
-      const formulaTextArray = [];
-      const sq_end_array = []; // 保存了配对的单引号在formulaTextArray的index索引。
-      const calc_funcStr_length = calc_funcStr.length;
-      for (let j = 0; j < calc_funcStr_length; j += 1) {
-        const char = calc_funcStr.charAt(j);
-        if (char === "'" && dquote === -1) {
-          // 如果是单引号开始
-          if (squote === -1) {
-            if (point !== j) {
-              formulaTextArray.push(
-                ...calc_funcStr
-                  .substring(point, j)
-                  .split(/==|!=|<>|<=|>=|[,()=+-/*%&^><]/)
-              );
-            }
-            squote = j;
-            point = j;
-          } // 单引号结束
-          else {
-            // if (squote === i - 1)//配对的单引号后第一个字符不能是单引号
-            // {
-            //    ;//到此处说明公式错误
-            // }
-            // 如果是''代表着输出'
-            if (
-              j < calc_funcStr_length - 1 &&
-              calc_funcStr.charAt(j + 1) === "'"
-            ) {
-              j += 1;
-            } else {
-              // 如果下一个字符不是'代表单引号结束
-              // if (calc_funcStr.charAt(i - 1) === "'") {//配对的单引号后最后一个字符不能是单引号
-              //    ;//到此处说明公式错误
-              point = j + 1;
-              formulaTextArray.push(calc_funcStr.substring(squote, point));
-              sq_end_array.push(formulaTextArray.length - 1);
-              squote = -1;
-              // } else {
-              //    point = i + 1;
-              //    formulaTextArray.push(calc_funcStr.substring(squote, point));
-              //    sq_end_array.push(formulaTextArray.length - 1);
-              //    squote = -1;
-              // }
-            }
-          }
-        }
-        if (char === '"' && squote === -1) {
-          // 如果是双引号开始
-          if (dquote === -1) {
-            if (point !== j) {
-              formulaTextArray.push(
-                ...calc_funcStr
-                  .substring(point, j)
-                  .split(/==|!=|<>|<=|>=|[,()=+-/*%&^><]/)
-              );
-            }
-            dquote = j;
-            point = j;
-          } else {
-            // 如果是""代表着输出"
-            if (
-              j < calc_funcStr_length - 1 &&
-              calc_funcStr.charAt(j + 1) === '"'
-            ) {
-              j += 1;
-            } else {
-              // 双引号结束
-              point = j + 1;
-              formulaTextArray.push(calc_funcStr.substring(dquote, point));
-              dquote = -1;
-            }
-          }
-        }
-      }
-      if (point !== calc_funcStr_length) {
-        formulaTextArray.push(
-          ...calc_funcStr
-            .substring(point, calc_funcStr_length)
-            .split(/==|!=|<>|<=|>=|[,()=+-/*%&^><]/)
-        );
-      }
-      // 拼接所有配对单引号及之后一个单元格内容，例如["'1-2'","!A1"]拼接为["'1-2'!A1"]
-      for (let j = sq_end_array.length - 1; j >= 0; j -= 1) {
-        if (sq_end_array[j] !== formulaTextArray.length - 1) {
-          formulaTextArray[sq_end_array[j]] +=
-            formulaTextArray[sq_end_array[j] + 1];
-          formulaTextArray.splice(sq_end_array[j] + 1, 1);
-        }
-      }
-      // 至此=SUM('1-2'!A1:A2&"'1-2'!A2")由原来的["","SUM","'1","2'!A1:A2","",""'1","2'!A2""]更正为["","SUM","","'1-2'!A1:A2","","",""'1-2'!A2""]
-
-      for (let j = 0; j < formulaTextArray.length; j += 1) {
-        const t = formulaTextArray[j];
-        if (t.length <= 1) {
-          continue;
-        }
-
-        if (
-          (t.substring(0, 1) === '"' && t.substring(t.length - 1, 1) === '"') ||
-          !iscelldata(t)
-        ) {
-          continue;
-        }
-
-        const range = getcellrange(ctx, _.trim(t), formulaCell.id);
-
-        if (_.isNil(range)) {
-          continue;
-        }
-
-        formulaArray.push(range);
-      }
-    }
-
-    const item = {
-      formulaArray,
-      calc_funcStr,
-      key,
-      r: formulaCell.r,
-      c: formulaCell.c,
-      id: formulaCell.id,
-      parents: {},
-      chidren: {},
-      color: "w",
-    };
-
-    formulaObjects[key] = item;
-
-    // if(isForce){
-    //     updateValueArray.push(item);
-    // }
-    // else{
-    //     arrayMatch(formulaArray, null, function(key){
-    //         if(key in updateValueOjects){
-    //             updateValueArray.push(item);
-    //         }
-    //     });
-    // }
-  }
-
-  // console.timeEnd("1");
-
-  // console.time("2");
-  // 形成一个公式之间引用的图结构
   Object.keys(formulaObjects).forEach((key) => {
     const formulaObject = formulaObjects[key];
     arrayMatch(
+      arrayMatchCache,
       formulaObject.formulaArray,
       formulaObjects,
-      updateValueOjects,
+      updateValueObjects,
       (childKey: string) => {
         if (childKey in formulaObjects) {
           const childFormulaObject = formulaObjects[childKey];
-          formulaObject.chidren[childKey] = 1;
+          // formulaObject.chidren[childKey] = 1; not needed
           childFormulaObject.parents[key] = 1;
         }
-        // console.log(childKey,formulaObject.formulaArray);
-        if (!isForce && childKey in updateValueOjects) {
+        if (!isForce && childKey in updateValueObjects) {
           updateValueArray.push(formulaObject);
         }
       }
@@ -1610,98 +1407,11 @@ export function execFunctionGroup(
     }
   });
 
-  // console.log(formulaObjects)
-  // console.timeEnd("2");
+  // 5. Get list of affected formulas using the graph structure by depth-first traversal
+  const formulaRunList = getFormulaRunList(updateValueArray, formulaObjects);
 
-  // console.time("3");
-  const formulaRunList = [];
-  // 计算，采用深度优先遍历公式形成的图结构
-
-  // updateValueArray.forEach((key)=>{
-  //     let formulaObject = formulaObjects[key];
-
-  // });
-
-  let stack = updateValueArray;
-  const existsFormulaRunList: any = {};
-  while (stack.length > 0) {
-    const formulaObject = stack.pop();
-
-    if (_.isNil(formulaObject) || formulaObject.key in existsFormulaRunList) {
-      continue;
-    }
-
-    if (formulaObject.color === "b") {
-      formulaRunList.push(formulaObject);
-      existsFormulaRunList[formulaObject.key] = 1;
-      continue;
-    }
-
-    const cacheStack: any = [];
-    Object.keys(formulaObject.parents).forEach((parentKey) => {
-      const parentFormulaObject = formulaObjects[parentKey];
-      if (!_.isNil(parentFormulaObject)) {
-        cacheStack.push(parentFormulaObject);
-      }
-    });
-
-    if (cacheStack.length === 0) {
-      formulaRunList.push(formulaObject);
-      existsFormulaRunList[formulaObject.key] = 1;
-    } else {
-      formulaObject.color = "b";
-      stack.push(formulaObject);
-      stack = stack.concat(cacheStack);
-    }
-  }
-
-  formulaRunList.reverse();
-
-  const calcChainSet = new Set<string>();
-  calcChains.forEach((item) => {
-    calcChainSet.add(`${item.r}_${item.c}_${item.id}`);
-  });
-
-  // console.log(formulaObjects, ii)
-  // console.timeEnd("3");
-
-  // console.time("4");
-  for (let i = 0; i < formulaRunList.length; i += 1) {
-    const formulaCell = formulaRunList[i];
-    if (formulaCell.level === Math.max) {
-      continue;
-    }
-
-    const { calc_funcStr } = formulaCell;
-
-    const v = execfunction(
-      ctx,
-      calc_funcStr,
-      formulaCell.r,
-      formulaCell.c,
-      formulaCell.id,
-      calcChainSet
-    );
-
-    ctx.groupValuesRefreshData.push({
-      r: formulaCell.r,
-      c: formulaCell.c,
-      v: v[1],
-      f: v[2],
-      spe: v[3],
-      id: formulaCell.id,
-    });
-
-    // _this.execFunctionGroupData[u.r][u.c] = value;
-    ctx.formulaCache.execFunctionGlobalData[
-      `${formulaCell.r}_${formulaCell.c}_${formulaCell.id}`
-    ] = {
-      v: v[1],
-      f: v[2],
-    };
-  }
-  // console.log(formulaRunList);
-  // console.timeEnd("4");
+  // 6. execute relevant formulas
+  executeAffectedFormulas(ctx, formulaRunList, calcChains);
 
   ctx.formulaCache.execFunctionExist = undefined;
 }
