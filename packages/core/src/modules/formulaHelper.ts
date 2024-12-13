@@ -243,7 +243,7 @@ export function getFormulaRunList(
   formulaObjects: any
 ) {
   const formulaRunList = [];
-  let stack = updateValueArray;
+  let stack = _.cloneDeep(updateValueArray);
   const existsFormulaRunList: any = {};
   while (stack.length > 0) {
     const formulaObject = stack.pop();
