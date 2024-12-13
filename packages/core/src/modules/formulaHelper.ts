@@ -9,7 +9,7 @@ import {
   isFunctionRange,
 } from "..";
 
-// make sure to place it *after* the value at cell[r][c] has been modified
+// Make sure setFormulaObject() is executed *after* the cell modifications
 export function setFormulaObject(
   ctx: Context,
   formulaCell: any,
@@ -287,14 +287,11 @@ export const arrayMatch = (
   _updateValueObjects: any,
   func: any
 ) => {
-  // OPTIMIZE_TODO: _updateValueObjects contains the currently edited rows and cols right now.
-  // we can execute it for all cells and store the graphs somewhere?????
   for (let a = 0; a < formulaArray.length; a += 1) {
     const range = formulaArray[a];
     const cacheKey = `r${range.row[0]}${range.row[1]}c${range.column[0]}${range.column[1]}id${range.sheetId}`;
     if (cacheKey in arrayMatchCache) {
       const amc: any[] = arrayMatchCache[cacheKey];
-      // console.log(amc);
       amc.forEach((item) => {
         func(item.key, item.r, item.c, item.sheetId);
       });

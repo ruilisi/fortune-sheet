@@ -97,6 +97,7 @@ export class FormulaCache {
 
   execFunctionGlobalData: any;
 
+  // useful in cut-paste operation where several cells may be affected but the formulas remains the same
   formulaArrayCache: any;
 
   formulaObjects: any;
@@ -1061,129 +1062,6 @@ export function execfunction(
 
   ctx.calculateSheetId = id;
 
-  /*
-  const fp = _.trim(functionParserExe(txt));
-  if (
-    fp.substring(0, 20) === "luckysheet_function." ||
-    fp.substring(0, 22) === "luckysheet_compareWith"
-  ) {
-    functionHTMLIndex = 0;
-  }
-
-  if (!testFunction(txt) || fp === "") {
-    // TODO tooltip.info("", locale_formulaMore.execfunctionError);
-    return [false, error.n, txt];
-  }
-
-  let result = null;
-  window.luckysheetCurrentRow = r;
-  window.luckysheetCurrentColumn = c;
-  window.luckysheetCurrentIndex = index;
-  window.luckysheetCurrentFunction = txt;
-
-  let sparklines = null;
-
-  try {
-    if (fp.indexOf("luckysheet_getcelldata") > -1) {
-      const funcg = fp.split("luckysheet_getcelldata('");
-
-      for (let i = 1; i < funcg.length; i += 1) {
-        const funcgStr = funcg[i].split("')")[0];
-        const funcgRange = getcellrange(ctx, funcgStr);
-
-        if (funcgRange.row[0] < 0 || funcgRange.column[0] < 0) {
-          return [true, error.r, txt];
-        }
-
-        if (
-          funcgRange.sheetId === ctx.calculateSheetId &&
-          r >= funcgRange.row[0] &&
-          r <= funcgRange.row[1] &&
-          c >= funcgRange.column[0] &&
-          c <= funcgRange.column[1]
-        ) {
-          // TODO if (isEditMode()) {
-          //   alert(locale_formulaMore.execfunctionSelfError);
-          // } else {
-          //   tooltip.info("", locale_formulaMore.execfunctionSelfErrorResult);
-          // }
-
-          return [false, 0, txt];
-        }
-      }
-    }
-
-    result = new Function(`return ${fp}`)();
-    if (typeof result === "string") {
-      // 把之前的非打印控制字符DEL替换回一个双引号。
-      result = result.replace(/\x7F/g, '"');
-    }
-
-    // 加入sparklines的参数项目
-    if (fp.indexOf("SPLINES") > -1) {
-      sparklines = result;
-      result = "";
-    }
-  } catch (e) {
-    const err = e;
-    // err错误提示处理
-    console.log(e, fp);
-    result = [error.n, err];
-  }
-
-  // 公式结果是对象，则表示只是选区。如果是单个单元格，则返回其值；如果是多个单元格，则返回 #VALUE!。
-  if (_.isPlainObject(result) && !_.isNil(result.startCell)) {
-    if (_.isArray(result.data)) {
-      result = error.v;
-    } else {
-      if (_.isPlainObject(result.data) && !_.isEmpty(result.data.v)) {
-        result = result.data.v;
-      } else if (!_.isEmpty(result.data)) {
-        // 只有data长或宽大于1才可能是选区
-        if (result.cell > 1 || result.rowl > 1) {
-          result = result.data;
-        } // 否则就是单个不为null的没有值v的单元格
-        else {
-          result = 0;
-        }
-      } else {
-        result = 0;
-      }
-    }
-  }
-
-  // 公式结果是数组，分错误值 和 动态数组 两种情况
-  let dynamicArrayItem = null;
-
-  if (_.isArray(result)) {
-    let isErr = false;
-
-    if (!_.isArray(result[0]) && result.length === 2) {
-      isErr = valueIsError(result[0]);
-    }
-
-    if (!isErr) {
-      if (
-        _.isArray(result[0]) &&
-        result.length === 1 &&
-        result[0].length === 1
-      ) {
-        result = result[0][0];
-      } else {
-        dynamicArrayItem = { r, c, f: txt, id, data: result };
-        result = "";
-      }
-    } else {
-      result = result[0];
-    }
-  }
-
-  window.luckysheetCurrentRow = null;
-  window.luckysheetCurrentColumn = null;
-  window.luckysheetCurrentIndex = null;
-  window.luckysheetCurrentFunction = null;
-  */
-
   ctx.formulaCache.parser.context = ctx;
   const parsedResponse = ctx.formulaCache.parser.parse(txt.substring(1), {
     sheetId: id || ctx.currentSheetId,
@@ -1377,7 +1255,7 @@ export function execFunctionGroup(
   const { formulaObjects } = ctx.formulaCache;
 
   // 4. Form a graph structure of references between formulas
-  // basically fills parents and children in formulaObjects[i]
+  // basically fills parents in formulaObjects[i]
   const updateValueArray: any = [];
   const arrayMatchCache: Record<
     string,
