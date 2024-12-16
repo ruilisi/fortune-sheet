@@ -20,6 +20,7 @@ import {
   locale,
   calcSelectionInfo,
   groupValuesRefresh,
+  setFormulaCellInfoMap,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -440,7 +441,12 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             newData.forEach((newDatum) => {
               const index = getSheetIndex(draftCtx, newDatum.id!) as number;
               const sheet = draftCtx.luckysheetfile?.[index];
-              initSheetData(draftCtx, sheet, index);
+              const cellMatrixData = initSheetData(draftCtx, sheet, index);
+              setFormulaCellInfoMap(
+                draftCtx,
+                sheet.calcChain,
+                cellMatrixData || undefined
+              );
             });
           }
           if (mergedSettings.devicePixelRatio > 0) {

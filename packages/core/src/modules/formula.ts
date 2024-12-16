@@ -1,7 +1,17 @@
 import _ from "lodash";
 // @ts-ignore
 import { Parser, ERROR_REF } from "@fortune-sheet/formula-parser";
-import type { Cell, CellMatrix, History, Rect, Selection } from "../types";
+import type {
+  Cell,
+  CellMatrix,
+  FormulaDependency,
+  FormulaDependenciesMap,
+  FormulaCell,
+  FormulaCellInfoMap,
+  History,
+  Rect,
+  Selection,
+} from "../types";
 import { Context, getFlowdata } from "../context";
 import {
   columnCharToIndex,
@@ -21,7 +31,7 @@ import { cancelFunctionrangeSelected, seletedHighlistByindex } from ".";
 import {
   arrayMatch,
   executeAffectedFormulas,
-  setFormulaObject,
+  setFormulaCellInfo,
   getFormulaRunList,
 } from "./formulaHelper";
 
@@ -98,9 +108,9 @@ export class FormulaCache {
   execFunctionGlobalData: any;
 
   // useful in cut-paste operation where several cells may be affected but the formulas remains the same
-  formulaArrayCache: any;
+  formulaDependenciesMap: FormulaDependenciesMap;
 
-  formulaObjects: any;
+  formulaCellInfoMap: FormulaCellInfoMap | null;
 
   constructor() {
     const that = this;
@@ -108,8 +118,8 @@ export class FormulaCache {
     this.selectingRangeIndex = -1;
     this.functionlistMap = {};
     this.execFunctionGlobalData = {};
-    this.formulaArrayCache = {};
-    this.formulaObjects = null;
+    this.formulaDependenciesMap = {};
+    this.formulaCellInfoMap = null;
     this.cellTextToIndexList = {};
     this.parser = new Parser();
     this.parser.on(
@@ -191,7 +201,7 @@ export class FormulaCache {
     function requestUpdate(value: any) {
       if (value instanceof Object) {
         if (value.r !== undefined && value.r !== undefined) {
-          setFormulaObject(
+          setFormulaCellInfo(
             ctx,
             { r: value.r, c: value.c, id: ctx.currentSheetId },
             data
@@ -302,7 +312,7 @@ export function getcellrange(
   txt: string,
   formulaId?: string,
   data?: CellMatrix
-) {
+): FormulaDependency | null {
   if (_.isNil(txt) || txt.length === 0) {
     return null;
   }
@@ -310,7 +320,7 @@ export function getcellrange(
 
   let sheettxt = "";
   let rangetxt = "";
-  let sheetId = null;
+  let sheetId;
   let sheetdata = null;
 
   const { luckysheetfile } = ctx;
@@ -369,7 +379,7 @@ export function getcellrange(
     const col = columnCharToIndex(rangetxt.replace(/[^A-Za-z]/g, ""));
 
     if (!Number.isNaN(row) && !Number.isNaN(col)) {
-      const item = {
+      const item: FormulaDependency = {
         row: [row, row],
         column: [col, col],
         sheetId,
@@ -380,8 +390,8 @@ export function getcellrange(
     return null;
   }
   const rangetxtArr = rangetxt.split(":");
-  const row = [];
-  const col = [];
+  const row: [number, number] = [-1, -1];
+  const col: [number, number] = [-1, -1];
   row[0] = parseInt(rangetxtArr[0].replace(/[^0-9]/g, ""), 10) - 1;
   row[1] = parseInt(rangetxtArr[1].replace(/[^0-9]/g, ""), 10) - 1;
   if (Number.isNaN(row[0])) {
@@ -405,7 +415,7 @@ export function getcellrange(
     return null;
   }
 
-  const item = {
+  const item: FormulaDependency = {
     row,
     column: col,
     sheetId,
@@ -832,24 +842,10 @@ export function isFunctionRange(
 
 export function getAllFunctionGroup(ctx: Context) {
   const { luckysheetfile } = ctx;
-  let ret: any[] = [];
+  let ret: FormulaCell[] = [];
   for (let i = 0; i < luckysheetfile.length; i += 1) {
     const file = luckysheetfile[i];
     let { calcChain } = file;
-
-    /* 备注：再次加载表格获取的数据可能是JSON字符串格式(需要进行发序列化处理) */
-    // if (calcChain) {
-    //   const tempCalcChain: any[] = [];
-    //   calcChain.forEach((item) => {
-    //     if (typeof item === "string") {
-    //       tempCalcChain.push(JSON.parse(item));
-    //     } else {
-    //       tempCalcChain.push(item);
-    //     }
-    //   });
-    //   calcChain = tempCalcChain;
-    //   file.calcChain = tempCalcChain;
-    // }
 
     let { dynamicArray_compute } = file;
     if (_.isNil(calcChain)) {
@@ -1187,14 +1183,14 @@ export function groupValuesRefresh(ctx: Context) {
   }
 }
 
-function setFormulaObjectsCache(
+export function setFormulaCellInfoMap(
   ctx: Context,
   calcChains: any,
-  data: CellMatrix
+  data?: CellMatrix
 ) {
   for (let i = 0; i < calcChains.length; i += 1) {
     const formulaCell = calcChains[i];
-    setFormulaObject(ctx, formulaCell, data);
+    setFormulaCellInfo(ctx, formulaCell, data);
   }
 }
 
@@ -1232,7 +1228,7 @@ export function execFunctionGroup(
   }
 
   // 1. get list of all functions in the sheet
-  const calcChains = getAllFunctionGroup(ctx); // { "r": r, "c": c, "id": id, "func": func}
+  const calcChains: FormulaCell[] = getAllFunctionGroup(ctx);
 
   // 2. Store the cells involved in the modification
   const updateValueObjects: any = {};
@@ -1247,30 +1243,33 @@ export function execFunctionGroup(
     }
   }
 
-  // 3. formulaObjects: a cache of ALL formulas vs their ranges
-  if (!ctx.formulaCache.formulaObjects) {
-    ctx.formulaCache.formulaObjects = {};
-    setFormulaObjectsCache(ctx, calcChains, data);
+  // 3. formulaCellInfoMap: a cache of ALL formulas vs their ranges
+  if (
+    !ctx.formulaCache.formulaCellInfoMap ||
+    _.isEmpty(ctx.formulaCache.formulaCellInfoMap)
+  ) {
+    ctx.formulaCache.formulaCellInfoMap = {};
+    setFormulaCellInfoMap(ctx, calcChains, data);
   }
-  const { formulaObjects } = ctx.formulaCache;
+  const { formulaCellInfoMap } = ctx.formulaCache;
 
   // 4. Form a graph structure of references between formulas
-  // basically fills parents in formulaObjects[i]
+  // basically fills parents in formulaCellInfoMap[i]
   const updateValueArray: any = [];
   const arrayMatchCache: Record<
     string,
     { key: string; r: number; c: number; sheetId: string }[]
   > = {};
-  Object.keys(formulaObjects).forEach((key) => {
-    const formulaObject = formulaObjects[key];
+  Object.keys(formulaCellInfoMap).forEach((key) => {
+    const formulaObject = formulaCellInfoMap[key];
     arrayMatch(
       arrayMatchCache,
-      formulaObject.formulaArray,
-      formulaObjects,
+      formulaObject.formulaDependency,
+      formulaCellInfoMap,
       updateValueObjects,
       (childKey: string) => {
-        if (childKey in formulaObjects) {
-          const childFormulaObject = formulaObjects[childKey];
+        if (childKey in formulaCellInfoMap) {
+          const childFormulaObject = formulaCellInfoMap[childKey];
           // formulaObject.chidren[childKey] = 1; not needed
           childFormulaObject.parents[key] = 1;
         }
@@ -1286,7 +1285,10 @@ export function execFunctionGroup(
   });
 
   // 5. Get list of affected formulas using the graph structure by depth-first traversal
-  const formulaRunList = getFormulaRunList(updateValueArray, formulaObjects);
+  const formulaRunList = getFormulaRunList(
+    updateValueArray,
+    formulaCellInfoMap
+  );
 
   // 6. execute relevant formulas
   executeAffectedFormulas(ctx, formulaRunList, calcChains);
@@ -1540,7 +1542,7 @@ export function createRangeHightlight(
         return;
       if (
         cellrange.sheetId === ctx.currentSheetId ||
-        (cellrange.sheetId === -1 &&
+        (!cellrange.sheetId &&
           ctx.formulaCache.rangetosheet === ctx.currentSheetId)
       ) {
         const rect = seletedHighlistByindex(

@@ -314,3 +314,45 @@ export type GlobalCache = {
 
 export type SingleRange = { row: number[]; column: number[] };
 export type Range = SingleRange[];
+
+// FORMULA
+export type FormulaDependency = {
+  row: [number, number];
+  column: [number, number];
+  sheetId: string | undefined;
+};
+
+export type FormulaDependenciesMap = {
+  [formula: string]: FormulaDependency[];
+};
+
+type AncestorFormulaCell = {
+  [rxcxix: string]: number;
+};
+
+export type FormulaCellInfo = {
+  formulaDependency: FormulaDependency[];
+  calc_funcStr: string;
+  key: string;
+  r: number;
+  c: number;
+  id: string;
+  parents: AncestorFormulaCell;
+  chidren: AncestorFormulaCell;
+  color: string;
+};
+
+export type FormulaCellInfoMap = {
+  [rxcxix: string]: FormulaCellInfo;
+};
+
+export type FormulaCell = {
+  r: number;
+  c: number;
+  id: string;
+  parent?: AncestorFormulaCell;
+  func?: [boolean, number, string];
+  color?: string;
+  chidren?: AncestorFormulaCell;
+  times?: number;
+};

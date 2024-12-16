@@ -3,6 +3,8 @@ import {
   CellMatrix,
   Context,
   execfunction,
+  FormulaCell,
+  FormulaCellInfo,
   getcellFormula,
   getcellrange,
   iscelldata,
@@ -10,9 +12,9 @@ import {
 } from "..";
 
 // Make sure setFormulaObject() is executed *after* the cell modifications
-export function setFormulaObject(
+export function setFormulaCellInfo(
   ctx: Context,
-  formulaCell: any,
+  formulaCell: FormulaCell,
   data?: CellMatrix
 ) {
   const key = `r${formulaCell.r}c${formulaCell.c}i${formulaCell.id}`;
@@ -24,7 +26,7 @@ export function setFormulaObject(
     data
   );
   if (_.isNil(calc_funcStr)) {
-    delete ctx.formulaCache.formulaObjects?.[key];
+    delete ctx.formulaCache.formulaCellInfoMap?.[key];
     return;
   }
   const txt1 = calc_funcStr.toUpperCase();
@@ -33,8 +35,9 @@ export function setFormulaObject(
     txt1.indexOf("OFFSET(") > -1 ||
     txt1.indexOf("INDEX(") > -1;
 
-  const formulaArray = ctx.formulaCache.formulaArrayCache[calc_funcStr] || [];
-  if (formulaArray.length === 0) {
+  const formulaDependency =
+    ctx.formulaCache.formulaDependenciesMap[calc_funcStr] || [];
+  if (formulaDependency.length === 0) {
     if (isOffsetFunc) {
       isFunctionRange(
         ctx,
@@ -46,7 +49,7 @@ export function setFormulaObject(
         (str_nb: string) => {
           const range = getcellrange(ctx, _.trim(str_nb), formulaCell.id, data);
           if (!_.isNil(range)) {
-            formulaArray.push(range);
+            formulaDependency.push(range);
           }
         }
       );
@@ -170,15 +173,15 @@ export function setFormulaObject(
           continue;
         }
 
-        formulaArray.push(range);
+        formulaDependency.push(range);
       }
     }
   }
-  if (!ctx.formulaCache.formulaArrayCache[calc_funcStr])
-    ctx.formulaCache.formulaArrayCache[calc_funcStr] = formulaArray;
+  if (!ctx.formulaCache.formulaDependenciesMap[calc_funcStr])
+    ctx.formulaCache.formulaDependenciesMap[calc_funcStr] = formulaDependency;
 
-  const item = {
-    formulaArray,
+  const item: FormulaCellInfo = {
+    formulaDependency,
     calc_funcStr,
     key,
     r: formulaCell.r,
@@ -189,8 +192,9 @@ export function setFormulaObject(
     color: "w",
   };
 
-  if (!ctx.formulaCache.formulaObjects) ctx.formulaCache.formulaObjects = {};
-  ctx.formulaCache.formulaObjects[key] = item;
+  if (!ctx.formulaCache.formulaCellInfoMap)
+    ctx.formulaCache.formulaCellInfoMap = {};
+  ctx.formulaCache.formulaCellInfoMap[key] = item;
 }
 
 export function executeAffectedFormulas(
@@ -240,7 +244,7 @@ export function executeAffectedFormulas(
 
 export function getFormulaRunList(
   updateValueArray: any[],
-  formulaObjects: any
+  formulaCellInfoMap: any
 ) {
   const formulaRunList = [];
   let stack = _.cloneDeep(updateValueArray);
@@ -260,7 +264,7 @@ export function getFormulaRunList(
 
     const cacheStack: any = [];
     Object.keys(formulaObject.parents).forEach((parentKey) => {
-      const parentFormulaObject = formulaObjects[parentKey];
+      const parentFormulaObject = formulaCellInfoMap[parentKey];
       if (!_.isNil(parentFormulaObject)) {
         cacheStack.push(parentFormulaObject);
       }
@@ -282,13 +286,13 @@ export function getFormulaRunList(
 
 export const arrayMatch = (
   arrayMatchCache: any,
-  formulaArray: any,
-  _formulaObjects: any,
+  formulaDependency: any,
+  _formulaCellInfoMap: any,
   _updateValueObjects: any,
   func: any
 ) => {
-  for (let a = 0; a < formulaArray.length; a += 1) {
-    const range = formulaArray[a];
+  for (let a = 0; a < formulaDependency.length; a += 1) {
+    const range = formulaDependency[a];
     const cacheKey = `r${range.row[0]}${range.row[1]}c${range.column[0]}${range.column[1]}id${range.sheetId}`;
     if (cacheKey in arrayMatchCache) {
       const amc: any[] = arrayMatchCache[cacheKey];
@@ -302,7 +306,7 @@ export const arrayMatch = (
           const key = `r${r}c${c}i${range.sheetId}`;
           func(key, r, c, range.sheetId);
           if (
-            (_formulaObjects && key in _formulaObjects) ||
+            (_formulaCellInfoMap && key in _formulaCellInfoMap) ||
             (_updateValueObjects && key in _updateValueObjects)
           ) {
             functionArr.push({
@@ -315,7 +319,7 @@ export const arrayMatch = (
         }
       }
 
-      if (_formulaObjects || _updateValueObjects) {
+      if (_formulaCellInfoMap || _updateValueObjects) {
         arrayMatchCache[cacheKey] = functionArr;
       }
     }

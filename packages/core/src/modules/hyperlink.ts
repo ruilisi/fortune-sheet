@@ -175,7 +175,7 @@ export function goToLink(
     scrollbarX.scrollLeft = col_pre;
     scrollbarY.scrollLeft = row_pre;
     ctx.luckysheet_select_save = normalizeSelection(ctx, [range]);
-    changeSheet(ctx, range.sheetId);
+    changeSheet(ctx, range.sheetId || ctx.currentSheetId);
   }
   ctx.linkCard = undefined;
 }

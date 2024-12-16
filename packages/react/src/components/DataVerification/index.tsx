@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {
   getDropdownList,
   getFlowdata,
@@ -83,12 +84,19 @@ const DataVerification: React.FC = () => {
                 getSheetIndex(ctx, ctx.currentSheetId) as number
               ].dataVerification ?? {};
 
-            const str = range[range.length - 1].row[0];
-            const edr = range[range.length - 1].row[1];
-            const stc = range[range.length - 1].column[0];
-            const edc = range[range.length - 1].column[1];
+            const str = range?.[range.length - 1]?.row[0];
+            const edr = range?.[range.length - 1]?.row[1];
+            const stc = range?.[range.length - 1]?.column[0];
+            const edc = range?.[range.length - 1]?.column[1];
             const d = getFlowdata(ctx);
-            if (!d) return;
+            if (
+              !d ||
+              _.isNil(str) ||
+              _.isNil(stc) ||
+              _.isNil(edr) ||
+              _.isNil(edc)
+            )
+              return;
             for (let r = str; r <= edr; r += 1) {
               for (let c = stc; c <= edc; c += 1) {
                 const key = `${r}_${c}`;
@@ -116,10 +124,12 @@ const DataVerification: React.FC = () => {
           const currentDataVerification =
             ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId) as number]
               .dataVerification ?? {};
-          const str = range[range.length - 1].row[0];
-          const edr = range[range.length - 1].row[1];
-          const stc = range[range.length - 1].column[0];
-          const edc = range[range.length - 1].column[1];
+          const str = range?.[range.length - 1]?.row[0];
+          const edr = range?.[range.length - 1]?.row[1];
+          const stc = range?.[range.length - 1]?.column[0];
+          const edc = range?.[range.length - 1]?.column[1];
+          if (_.isNil(str) || _.isNil(stc) || _.isNil(edr) || _.isNil(edc))
+            return;
           for (let r = str; r <= edr; r += 1) {
             for (let c = stc; c <= edc; c += 1) {
               delete currentDataVerification[`${r}_${c}`];

@@ -1,7 +1,7 @@
 import { Context, getFlowdata } from "../context";
 import { CellMatrix, Selection } from "../types";
 import { execFunctionGroup } from "./formula";
-import { setFormulaObject } from "./formulaHelper";
+import { setFormulaCellInfo } from "./formulaHelper";
 
 function runExecFunction(
   ctx: Context,
@@ -13,7 +13,7 @@ function runExecFunction(
   for (let s = 0; s < range.length; s += 1) {
     for (let r = range[s].row[0]; r <= range[s].row[1]; r += 1) {
       for (let c = range[s].column[0]; c <= range[s].column[1]; c += 1) {
-        setFormulaObject(ctx, { r, c, id: index }, data);
+        setFormulaCellInfo(ctx, { r, c, id: index }, data);
         ctx.formulaCache.execFunctionExist.push({ r, c, i: index });
       }
     }

@@ -41,7 +41,7 @@ import {
 import { showLinkCard } from "./hyperlink";
 import { cfSplitRange } from "./conditionalFormat";
 import { getCellTextInfo } from "./text";
-import { setFormulaObject } from "./formulaHelper";
+import { setFormulaCellInfo } from "./formulaHelper";
 
 type ToolbarItemClickHandler = (
   ctx: Context,
@@ -903,7 +903,7 @@ export function autoSelectionFormula(
   if (!isfalse) {
     ctx.formulaCache.execFunctionExist.reverse();
     ctx.formulaCache.execFunctionExist.forEach((formulaCell) => {
-      setFormulaObject(
+      setFormulaCellInfo(
         ctx,
         { r: formulaCell.r, c: formulaCell.c, id: ctx.currentSheetId },
         flowdata

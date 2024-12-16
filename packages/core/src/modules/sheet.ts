@@ -6,6 +6,7 @@ import { locale } from "../locale";
 import { Settings } from "../settings";
 import { CellMatrix, Sheet } from "../types";
 import { generateRandomSheetName, getSheetIndex } from "../utils";
+import { setFormulaCellInfo } from "./formulaHelper";
 
 function storeSheetParam(ctx: Context) {
   const index = getSheetIndex(ctx, ctx.currentSheetId);
@@ -194,7 +195,7 @@ export function updateSheet(ctx: Context, newData: Sheet[]) {
     const { data, row, column } = newDatum;
     const index = getSheetIndex(ctx, newDatum.id!) as number;
     if (data != null) {
-      // 如果row和column存在的话则进行row和column和data进行比较，如果row和column不存在的话则进行data和default进行比较。
+      // If row and column exist, compare row and column with data. If row and column do not exist, compare data with default.
       let lastRowNum = data.length;
       let lastColNum = data[0].length;
       if (row != null && column != null && row > 0 && column > 0) {
@@ -210,6 +211,7 @@ export function updateSheet(ctx: Context, newData: Sheet[]) {
       for (let i = 0; i < data.length; i += 1) {
         for (let j = 0; j < data[i].length; j += 1) {
           expandedData[i][j] = data[i][j];
+          setFormulaCellInfo(ctx, { r: i, c: j, id: newDatum.id! }, data);
         }
       }
       newDatum.data = expandedData;
@@ -220,6 +222,14 @@ export function updateSheet(ctx: Context, newData: Sheet[]) {
       }
     } else if (newDatum.celldata != null) {
       initSheetData(ctx, index, newDatum);
+      const _index = getSheetIndex(ctx, newDatum.id!) as number;
+      newDatum.celldata?.forEach((d) => {
+        setFormulaCellInfo(
+          ctx,
+          { r: d.r, c: d.c, id: newDatum.id! },
+          ctx.luckysheetfile[_index].data
+        );
+      });
     }
   });
 }

@@ -19,7 +19,7 @@ import { jfrefreshgrid } from "../modules/refresh";
 import { setRowHeight } from "../api";
 import { CFSplitRange } from "../modules";
 import clipboard from "../modules/clipboard";
-import { setFormulaObject } from "../modules/formulaHelper";
+import { setFormulaCellInfo } from "../modules/formulaHelper";
 
 function postPasteCut(
   ctx: Context,
@@ -33,7 +33,7 @@ function postPasteCut(
   // clearTimeout(refreshCanvasTimeOut);
   for (let r = source.range.row[0]; r <= source.range.row[1]; r += 1) {
     for (let c = source.range.column[0]; c <= source.range.column[1]; c += 1) {
-      setFormulaObject(ctx, { r, c, id: source.sheetId });
+      setFormulaCellInfo(ctx, { r, c, id: source.sheetId });
       if (`${r}_${c}_${source.sheetId}` in execF_rc) {
         continue;
       }
@@ -45,7 +45,7 @@ function postPasteCut(
 
   for (let r = target.range.row[0]; r <= target.range.row[1]; r += 1) {
     for (let c = target.range.column[0]; c <= target.range.column[1]; c += 1) {
-      setFormulaObject(ctx, { r, c, id: source.sheetId });
+      setFormulaCellInfo(ctx, { r, c, id: source.sheetId });
       if (`${r}_${c}_${target.sheetId}` in execF_rc) {
         continue;
       }

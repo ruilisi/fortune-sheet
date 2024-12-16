@@ -1,6 +1,13 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
-import { Cell, CellMatrix, Range, Selection, SingleRange } from "../types";
+import {
+  Cell,
+  CellMatrix,
+  FormulaDependency,
+  Range,
+  Selection,
+  SingleRange,
+} from "../types";
 import { getSheetIndex, indexToColumnChar, rgbToHex } from "../utils";
 import { checkCF, getComputeMap } from "./ConditionFormat";
 import { getFailureText, validateCellData } from "./dataVerification";
@@ -21,7 +28,7 @@ import {
 } from "./inline-string";
 import { isRealNull, isRealNum, valueIsError } from "./validation";
 import { getCellTextInfo } from "./text";
-import { setFormulaObject } from "./formulaHelper";
+import { setFormulaCellInfo } from "./formulaHelper";
 
 // TODO put these in context ref
 // let rangestart = false;
@@ -1082,7 +1089,7 @@ export function updateCell(
     });
   }
 
-  setFormulaObject(ctx, { r, c, id: ctx.currentSheetId });
+  setFormulaCellInfo(ctx, { r, c, id: ctx.currentSheetId });
   ctx.formulaCache.execFunctionGlobalData = null;
 }
 
@@ -1210,7 +1217,7 @@ export function getRangetxt(
 
 // 把string A1:A2转为选区数组
 export function getRangeByTxt(ctx: Context, txt: string) {
-  let range = [];
+  let range: (FormulaDependency | null)[] = [];
   if (txt.indexOf(",") !== -1) {
     const arr = txt.split(",");
     for (let i = 0; i < arr.length; i += 1) {
