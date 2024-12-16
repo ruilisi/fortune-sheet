@@ -200,7 +200,7 @@ export class FormulaCache {
   updateFormulaCache(ctx: Context, history: History, data?: CellMatrix) {
     function requestUpdate(value: any) {
       if (value instanceof Object) {
-        if (value.r !== undefined && value.r !== undefined) {
+        if (!_.isNil(value.r) && !_.isNil(value.c)) {
           setFormulaCellInfo(
             ctx,
             { r: value.r, c: value.c, id: ctx.currentSheetId },
