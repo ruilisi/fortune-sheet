@@ -322,10 +322,6 @@ export type FormulaDependency = {
   sheetId: string | undefined;
 };
 
-export type FormulaDependenciesMap = {
-  [formula: string]: FormulaDependency[];
-};
-
 type AncestorFormulaCell = {
   [rxcxix: string]: number;
 };

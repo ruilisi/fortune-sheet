@@ -19,6 +19,7 @@ import {
   functionHTMLGenerate,
   getcellrange,
   iscelldata,
+  isFormula,
 } from "./formula";
 import {
   attrToCssName,
@@ -676,10 +677,6 @@ export function cancelNormalSelected(ctx: Context) {
   ctx.formulaCache.rangestart = false;
   ctx.formulaCache.rangedrag_column_start = false;
   ctx.formulaCache.rangedrag_row_start = false;
-}
-
-function isFormula(value: any) {
-  return _.isString(value) && value.slice(0, 1) === "=" && value.length > 1;
 }
 
 // formula.updatecell

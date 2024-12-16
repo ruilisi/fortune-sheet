@@ -5,7 +5,6 @@ import type {
   Cell,
   CellMatrix,
   FormulaDependency,
-  FormulaDependenciesMap,
   FormulaCell,
   FormulaCellInfoMap,
   History,
@@ -59,6 +58,10 @@ const LABEL_EXTRACT_REGEXP = new RegExp(
   `^${rowColumnWithSheetName}(?:[:]${rowColumnWithSheetName})?$`
 );
 
+export function isFormula(value: any) {
+  return _.isString(value) && value.slice(0, 1) === "=" && value.length > 1;
+}
+
 // FormulaCache is defined as class to avoid being frozen by immer
 export class FormulaCache {
   parser: any;
@@ -107,9 +110,6 @@ export class FormulaCache {
 
   execFunctionGlobalData: any;
 
-  // useful in cut-paste operation where several cells may be affected but the formulas remains the same
-  formulaDependenciesMap: FormulaDependenciesMap;
-
   formulaCellInfoMap: FormulaCellInfoMap | null;
 
   constructor() {
@@ -118,7 +118,6 @@ export class FormulaCache {
     this.selectingRangeIndex = -1;
     this.functionlistMap = {};
     this.execFunctionGlobalData = {};
-    this.formulaDependenciesMap = {};
     this.formulaCellInfoMap = null;
     this.cellTextToIndexList = {};
     this.parser = new Parser();
@@ -197,7 +196,12 @@ export class FormulaCache {
     return cell?.v;
   }
 
-  updateFormulaCache(ctx: Context, history: History, data?: CellMatrix) {
+  updateFormulaCache(
+    ctx: Context,
+    history: History,
+    type: "undo" | "redo",
+    data?: CellMatrix
+  ) {
     function requestUpdate(value: any) {
       if (value instanceof Object) {
         if (!_.isNil(value.r) && !_.isNil(value.c)) {
@@ -213,8 +217,14 @@ export class FormulaCache {
         }
       }
     }
-    history.patches.forEach((patch) => {
-      if (patch.path[5] === "f") {
+    const changesHistory =
+      type === "undo" ? history.inversePatches : history.patches;
+    changesHistory.forEach((patch) => {
+      if (
+        isFormula(patch.value?.f) ||
+        patch.value === null ||
+        patch.path[5] === "f"
+      ) {
         requestUpdate({ r: patch.path[3], c: patch.path[4] });
       } else if (Array.isArray(patch.value)) {
         patch.value.forEach((value) => {
