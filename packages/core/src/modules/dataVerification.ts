@@ -40,8 +40,8 @@ export function dataRangeSelection(
     ctx.luckysheetCellUpdate = [row_index, col_index];
 
     const range = getRangeByTxt(ctx, rangT);
-    const r = range?.[0]?.row;
-    const c = range?.[0]?.column;
+    const r = range[0]?.row;
+    const c = range[0]?.column;
     if (_.isNil(r) || _.isNil(c)) return;
     const row_pre = rowLocationByIndex(r[0], ctx.visibledatarow)[0];
     const row = rowLocationByIndex(r[1], ctx.visibledatarow)[1];
@@ -858,10 +858,10 @@ export function confirmMessage(
     ctx.warnDialog = generalDialog.noSeletionError;
     return false;
   }
-  let str = range?.[range.length - 1]?.row[0];
-  let edr = range?.[range.length - 1]?.row[1];
-  let stc = range?.[range.length - 1]?.column[0];
-  let edc = range?.[range.length - 1]?.column[1];
+  let str = range[range.length - 1]?.row[0];
+  let edr = range[range.length - 1]?.row[1];
+  let stc = range[range.length - 1]?.column[0];
+  let edc = range[range.length - 1]?.column[1];
   const d = getFlowdata(ctx);
   if (!d || _.isNil(str) || _.isNil(edr) || _.isNil(stc) || _.isNil(edc))
     return false;

@@ -63,10 +63,10 @@ export function setConditionRules(
     const rangeArr = getRangeByTxt(ctx, v);
     // 判断条件值是不是选区
     if (rangeArr.length > 1) {
-      const r1 = rangeArr?.[0]?.row[0];
-      const r2 = rangeArr?.[0]?.row[1];
-      const c1 = rangeArr?.[0]?.column[0];
-      const c2 = rangeArr?.[0]?.column[1];
+      const r1 = rangeArr[0]?.row[0];
+      const r2 = rangeArr[0]?.row[1];
+      const c1 = rangeArr[0]?.column[0];
+      const c2 = rangeArr[0]?.column[1];
       if (r1 === r2 && c1 === c2) {
         const d = getFlowdata(ctx);
         if (!d || _.isNil(r1) || _.isNil(c1)) return;
@@ -97,10 +97,10 @@ export function setConditionRules(
       return;
     }
     if (rangeArr1.length === 1) {
-      const r1 = rangeArr1?.[0]?.row[0];
-      const r2 = rangeArr1?.[0]?.row[1];
-      const c1 = rangeArr1?.[0]?.column[0];
-      const c2 = rangeArr1?.[0]?.column[1];
+      const r1 = rangeArr1[0]?.row[0];
+      const r2 = rangeArr1[0]?.row[1];
+      const c1 = rangeArr1[0]?.column[0];
+      const c2 = rangeArr1[0]?.column[1];
       if (r1 === r2 && c1 === c2) {
         const d = getFlowdata(ctx);
         if (!d || _.isNil(r1) || _.isNil(c1)) return;
@@ -127,10 +127,10 @@ export function setConditionRules(
       return;
     }
     if (rangeArr2.length === 1) {
-      const r1 = rangeArr2?.[0]?.row[0];
-      const r2 = rangeArr2?.[0]?.row[1];
-      const c1 = rangeArr2?.[0]?.column[0];
-      const c2 = rangeArr2?.[0]?.column[1];
+      const r1 = rangeArr2[0]?.row[0];
+      const r2 = rangeArr2[0]?.row[1];
+      const c1 = rangeArr2[0]?.column[0];
+      const c2 = rangeArr2[0]?.column[1];
       if (r1 === r2 && c1 === c2) {
         const d = getFlowdata(ctx);
         if (!d || _.isNil(r1) || _.isNil(c1)) return;
