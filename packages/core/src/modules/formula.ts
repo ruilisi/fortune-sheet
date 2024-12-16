@@ -1185,9 +1185,10 @@ export function groupValuesRefresh(ctx: Context) {
 
 export function setFormulaCellInfoMap(
   ctx: Context,
-  calcChains: any,
+  calcChains?: any[],
   data?: CellMatrix
 ) {
+  if (_.isNil(calcChains)) return;
   for (let i = 0; i < calcChains.length; i += 1) {
     const formulaCell = calcChains[i];
     setFormulaCellInfo(ctx, formulaCell, data);
