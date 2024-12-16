@@ -203,14 +203,20 @@ export class FormulaCache {
         if (!_.isNil(value.r) && !_.isNil(value.c)) {
           setFormulaCellInfo(
             ctx,
-            { r: value.r, c: value.c, id: ctx.currentSheetId },
+            {
+              r: value.r,
+              c: value.c,
+              id: value.id || history.options?.id || ctx.currentSheetId,
+            },
             data
           );
         }
       }
     }
     history.patches.forEach((patch) => {
-      if (Array.isArray(patch.value)) {
+      if (patch.path[5] === "f") {
+        requestUpdate({ r: patch.path[3], c: patch.path[4] });
+      } else if (Array.isArray(patch.value)) {
         patch.value.forEach((value) => {
           requestUpdate(value);
         });
