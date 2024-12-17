@@ -1,6 +1,13 @@
 import _ from "lodash";
 import { Context, getFlowdata } from "../context";
-import { Cell, CellMatrix, Range, Selection, SingleRange } from "../types";
+import {
+  Cell,
+  CellMatrix,
+  FormulaDependency,
+  Range,
+  Selection,
+  SingleRange,
+} from "../types";
 import { getSheetIndex, indexToColumnChar, rgbToHex } from "../utils";
 import { checkCF, getComputeMap } from "./ConditionFormat";
 import { getFailureText, validateCellData } from "./dataVerification";
@@ -12,6 +19,7 @@ import {
   functionHTMLGenerate,
   getcellrange,
   iscelldata,
+  isFormula,
 } from "./formula";
 import {
   attrToCssName,
@@ -21,6 +29,7 @@ import {
 } from "./inline-string";
 import { isRealNull, isRealNum, valueIsError } from "./validation";
 import { getCellTextInfo } from "./text";
+import { setFormulaCellInfo } from "./formulaHelper";
 
 // TODO put these in context ref
 // let rangestart = false;
@@ -810,11 +819,11 @@ export function updateCell(
       curv.ct.fa !== "@" &&
       !isRealNull(value)
     ) {
-      delete curv.m; // 更新时间m处理 ， 会实际删除单元格数据的参数（flowdata时已删除）
+      delete curv.m; // Update time m processing will actually delete the parameters of the cell data (the flowdata has been deleted)
       if (curv.f) {
-        // 如果原来是公式，而更新的数据不是公式，则把公式删除
+        // If it turns out to be a formula but the updated data is not a formula, delete the formula.
         delete curv.f;
-        delete curv.spl; // 删除单元格的sparklines的配置串
+        delete curv.spl; // Delete the configuration string of sparklines of the cell
       }
     }
   }
@@ -828,7 +837,7 @@ export function updateCell(
 
   if (_.isPlainObject(curv)) {
     if (!isCurInline) {
-      if (_.isString(value) && value.slice(0, 1) === "=" && value.length > 1) {
+      if (isFormula(value)) {
         const v = execfunction(ctx, value, r, c, undefined, undefined, true);
         isRunExecFunction = false;
         curv = _.cloneDeep(d?.[r]?.[c] || {});
@@ -854,11 +863,7 @@ export function updateCell(
       else if (_.isPlainObject(value)) {
         const valueFunction = value.f;
 
-        if (
-          _.isString(valueFunction) &&
-          valueFunction.slice(0, 1) === "=" &&
-          valueFunction.length > 1
-        ) {
+        if (isFormula(valueFunction)) {
           const v = execfunction(
             ctx,
             valueFunction,
@@ -919,7 +924,7 @@ export function updateCell(
     }
     value = curv;
   } else {
-    if (_.isString(value) && value.slice(0, 1) === "=" && value.length > 1) {
+    if (isFormula(value)) {
       const v = execfunction(ctx, value, r, c, undefined, undefined, true);
       isRunExecFunction = false;
       value = {
@@ -944,11 +949,7 @@ export function updateCell(
     else if (_.isPlainObject(value)) {
       const valueFunction = value.f;
 
-      if (
-        _.isString(valueFunction) &&
-        valueFunction.slice(0, 1) === "=" &&
-        valueFunction.length > 1
-      ) {
+      if (isFormula(valueFunction)) {
         const v = execfunction(
           ctx,
           valueFunction,
@@ -1085,6 +1086,7 @@ export function updateCell(
     });
   }
 
+  setFormulaCellInfo(ctx, { r, c, id: ctx.currentSheetId });
   ctx.formulaCache.execFunctionGlobalData = null;
 }
 
@@ -1212,7 +1214,7 @@ export function getRangetxt(
 
 // 把string A1:A2转为选区数组
 export function getRangeByTxt(ctx: Context, txt: string) {
-  let range = [];
+  let range: (FormulaDependency | null)[] = [];
   if (txt.indexOf(",") !== -1) {
     const arr = txt.split(",");
     for (let i = 0; i < arr.length; i += 1) {
