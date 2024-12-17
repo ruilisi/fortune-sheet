@@ -58,7 +58,7 @@
     "jsonc-eslint-parser": "^2.1.0",
     "lerna": "^4.0.0",
     "lint-staged": "^13.1.0",
-    "mongodb": "^4.5.0",
+    "mongodb": "^6.12.0",
     "prettier": "^2.5.1",
     "storybook": "^7.3.2",
     "tsconfig-paths-webpack-plugin": "^4.0.0",
