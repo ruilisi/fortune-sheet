@@ -38,7 +38,7 @@
     "eslint": "^8.31.0",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.14.0",
-    "fs-extra": "^9.0.1",
+    "fs-extra": "^11.2.0",
     "generate-release": "^1.1.1",
     "jest": "^26.6.3",
     "jest-cli": "^29.3.1",
