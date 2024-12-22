@@ -63,17 +63,17 @@ export function setConditionRules(
     const rangeArr = getRangeByTxt(ctx, v);
     // 判断条件值是不是选区
     if (rangeArr.length > 1) {
-      const r1 = rangeArr[0].row[0];
-      const r2 = rangeArr[0].row[1];
-      const c1 = rangeArr[0].column[0];
-      const c2 = rangeArr[0].column[1];
+      const r1 = rangeArr[0]?.row[0];
+      const r2 = rangeArr[0]?.row[1];
+      const c1 = rangeArr[0]?.column[0];
+      const c2 = rangeArr[0]?.column[1];
       if (r1 === r2 && c1 === c2) {
         const d = getFlowdata(ctx);
-        if (!d) return;
+        if (!d || _.isNil(r1) || _.isNil(c1)) return;
         v = getCellValue(r1, c1, d);
         conditionRange.push({
-          row: rangeArr[0].row,
-          column: rangeArr[0].column,
+          row: rangeArr?.[0]?.row,
+          column: rangeArr?.[0]?.column,
         });
         conditionValue.push(v);
       } else {
@@ -97,17 +97,17 @@ export function setConditionRules(
       return;
     }
     if (rangeArr1.length === 1) {
-      const r1 = rangeArr1[0].row[0];
-      const r2 = rangeArr1[0].row[1];
-      const c1 = rangeArr1[0].column[0];
-      const c2 = rangeArr1[0].column[1];
+      const r1 = rangeArr1[0]?.row[0];
+      const r2 = rangeArr1[0]?.row[1];
+      const c1 = rangeArr1[0]?.column[0];
+      const c2 = rangeArr1[0]?.column[1];
       if (r1 === r2 && c1 === c2) {
         const d = getFlowdata(ctx);
-        if (!d) return;
+        if (!d || _.isNil(r1) || _.isNil(c1)) return;
         v1 = getCellValue(r1, c1, d);
         conditionRange.push({
-          row: rangeArr1[0].row,
-          column: rangeArr1[0].column,
+          row: rangeArr1?.[0]?.row,
+          column: rangeArr1?.[0]?.column,
         });
         conditionValue.push(v1);
       } else {
@@ -127,17 +127,17 @@ export function setConditionRules(
       return;
     }
     if (rangeArr2.length === 1) {
-      const r1 = rangeArr2[0].row[0];
-      const r2 = rangeArr2[0].row[1];
-      const c1 = rangeArr2[0].column[0];
-      const c2 = rangeArr2[0].column[1];
+      const r1 = rangeArr2[0]?.row[0];
+      const r2 = rangeArr2[0]?.row[1];
+      const c1 = rangeArr2[0]?.column[0];
+      const c2 = rangeArr2[0]?.column[1];
       if (r1 === r2 && c1 === c2) {
         const d = getFlowdata(ctx);
-        if (!d) return;
+        if (!d || _.isNil(r1) || _.isNil(c1)) return;
         v2 = getCellValue(r1, c1, d);
         conditionRange.push({
-          row: rangeArr2[0].row,
-          column: rangeArr2[0].column,
+          row: rangeArr2?.[0]?.row,
+          column: rangeArr2?.[0]?.column,
         });
       } else {
         ctx.warnDialog = conditionformat.onlySingleCell;

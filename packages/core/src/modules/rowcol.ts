@@ -1152,6 +1152,7 @@ export function insertRowCol(
   }
 
   refreshLocalMergeData(merge_new, file);
+  ctx.formulaCache.formulaCellInfoMap = null;
 
   // if (type === "row") {
   //   const scrollLeft = $("#luckysheet-cell-main").scrollLeft();
@@ -2062,6 +2063,7 @@ export function deleteRowCol(
   file.hyperlink = newHyperlink;
 
   refreshLocalMergeData(merge_new, file);
+  ctx.formulaCache.formulaCellInfoMap = null;
 
   if (file.id === ctx.currentSheetId) {
     ctx.config = cfg;
