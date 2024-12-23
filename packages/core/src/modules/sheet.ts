@@ -211,6 +211,11 @@ export function updateSheet(ctx: Context, newData: Sheet[]) {
       for (let i = 0; i < data.length; i += 1) {
         for (let j = 0; j < data[i].length; j += 1) {
           expandedData[i][j] = data[i][j];
+          ctx.formulaCache.updateVirtualCellRaw(
+            ctx,
+            { r: i, c: j, id: newDatum.id! },
+            data[i][j]?.v
+          );
           setFormulaCellInfo(ctx, { r: i, c: j, id: newDatum.id! }, data);
         }
       }
@@ -224,6 +229,11 @@ export function updateSheet(ctx: Context, newData: Sheet[]) {
       initSheetData(ctx, index, newDatum);
       const _index = getSheetIndex(ctx, newDatum.id!) as number;
       newDatum.celldata?.forEach((d) => {
+        ctx.formulaCache.updateVirtualCellRaw(
+          ctx,
+          { r: d.r, c: d.c, id: newDatum.id! },
+          ctx.luckysheetfile[_index].data?.[d.r][d.c]?.v
+        );
         setFormulaCellInfo(
           ctx,
           { r: d.r, c: d.c, id: newDatum.id! },

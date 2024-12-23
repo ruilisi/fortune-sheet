@@ -1,6 +1,6 @@
 import _ from "lodash";
 // @ts-ignore
-import { Parser, ERROR_REF } from "@fortune-sheet/formula-parser";
+import { HyperFormula } from "hyperformula";
 import type {
   Cell,
   CellMatrix,
@@ -17,7 +17,6 @@ import {
   escapeScriptTag,
   getSheetIndex,
   indexToColumnChar,
-  getSheetIdByName,
   escapeHTMLTag,
 } from "../utils";
 import { getRangetxt, mergeMoveMain, setCellValue } from "./cell";
@@ -62,9 +61,17 @@ export function isFormula(value: any) {
   return _.isString(value) && value.slice(0, 1) === "=" && value.length > 1;
 }
 
+function getSheetNamefromId(ctx: Context, sheetId: string) {
+  const index = getSheetIndex(ctx, sheetId);
+  if (_.isNil(index)) {
+    return null;
+  }
+  return ctx.luckysheetfile[index].name;
+}
+
 // FormulaCache is defined as class to avoid being frozen by immer
 export class FormulaCache {
-  parser: any;
+  parser: HyperFormula;
 
   func_selectedrange?: Selection;
 
@@ -113,79 +120,13 @@ export class FormulaCache {
   formulaCellInfoMap: FormulaCellInfoMap | null;
 
   constructor() {
-    const that = this;
     this.data_parm_index = 0;
     this.selectingRangeIndex = -1;
     this.functionlistMap = {};
     this.execFunctionGlobalData = {};
     this.formulaCellInfoMap = null;
     this.cellTextToIndexList = {};
-    this.parser = new Parser();
-    this.parser.on(
-      "callCellValue",
-      (cellCoord: any, options: any, done: any) => {
-        const context = that.parser.context as Context;
-        const id =
-          cellCoord.sheetName == null
-            ? options.sheetId
-            : getSheetIdByName(context, cellCoord.sheetName);
-        if (id == null) throw Error(ERROR_REF);
-        const flowdata = getFlowdata(context, id);
-        const cell =
-          context?.formulaCache.execFunctionGlobalData?.[
-            `${cellCoord.row.index}_${cellCoord.column.index}_${id}`
-          ] || flowdata?.[cellCoord.row.index]?.[cellCoord.column.index];
-        const v = that.tryGetCellAsNumber(cell);
-        done(v);
-      }
-    );
-
-    this.parser.on(
-      "callRangeValue",
-      (startCellCoord: any, endCellCoord: any, options: any, done: any) => {
-        const context = that.parser.context as Context;
-        const id =
-          startCellCoord.sheetName == null
-            ? options.sheetId
-            : getSheetIdByName(context, startCellCoord.sheetName);
-        if (id == null) throw Error(ERROR_REF);
-        const flowdata = getFlowdata(context, id);
-        const fragment = [];
-        let startRow = startCellCoord.row.index;
-        let endRow = endCellCoord.row.index;
-        let startCol = startCellCoord.column.index;
-        let endCol = endCellCoord.column.index;
-        const emptyRow = startRow === -1 || endRow === -1;
-        const emptyCol = startCol === -1 || endCol === -1;
-        if (emptyRow) {
-          startRow = 0;
-          endRow = flowdata?.length ?? 0;
-        }
-        if (emptyCol) {
-          startCol = 0;
-          endCol = flowdata?.[0].length ?? 0;
-        }
-        if (emptyRow && emptyCol) throw Error(ERROR_REF);
-
-        for (let row = startRow; row <= endRow; row += 1) {
-          const colFragment = [];
-
-          for (let col = startCol; col <= endCol; col += 1) {
-            const cell =
-              context?.formulaCache.execFunctionGlobalData?.[
-                `${row}_${col}_${id}`
-              ] || flowdata?.[row]?.[col];
-            const v = that.tryGetCellAsNumber(cell);
-            colFragment.push(v);
-          }
-          fragment.push(colFragment);
-        }
-
-        if (fragment) {
-          done(fragment);
-        }
-      }
-    );
+    this.parser = HyperFormula.buildEmpty({ licenseKey: "gpl-v3" });
   }
 
   tryGetCellAsNumber(cell: Cell) {
@@ -194,6 +135,40 @@ export class FormulaCache {
       return Number.isNaN(n) ? cell.v : n;
     }
     return cell?.v;
+  }
+
+  transformToVirtualSheet(ctx: Context, data?: CellMatrix | null) {
+    if (_.isNil(data)) {
+      return Array.from({ length: ctx.defaultrowNum }, () =>
+        Array(ctx.defaultcolumnNum).fill(null)
+      );
+    }
+    return data.map((row) => {
+      return row.map((cell) => {
+        if (!cell) return null;
+        return this.tryGetCellAsNumber(cell);
+      });
+    });
+  }
+
+  calculateFormula(ctx: Context, formula: string, sheetId: string) {
+    const sheetName = getSheetNamefromId(ctx, sheetId);
+    if (_.isNil(sheetName)) return { result: null, error: "#REF!" };
+    const vSheetId = this.parser.getSheetId(sheetName);
+    if (_.isNil(vSheetId)) return { result: null, error: "#REF!" };
+    const calculatedFormula: { result: any; error: any } = {
+      result: null,
+      error: null,
+    };
+    try {
+      calculatedFormula.result = this.parser.calculateFormula(
+        formula,
+        vSheetId
+      );
+    } catch (e) {
+      calculatedFormula.error = e;
+    }
+    return calculatedFormula;
   }
 
   updateFormulaCache(
@@ -235,6 +210,95 @@ export class FormulaCache {
       }
     });
   }
+
+  addVirtualSheet(ctx: Context, patch: any) {
+    if (!patch.value || _.isEmpty(patch.value)) return;
+    const sheetId = patch.value.id;
+    const sheetName = getSheetNamefromId(ctx, sheetId);
+    if (_.isNil(sheetName)) return;
+
+    this.parser.addSheet(sheetName);
+    const vSheetId = this.parser.getSheetId(sheetName);
+
+    const vSheetData = this.transformToVirtualSheet(
+      ctx,
+      ctx.luckysheetfile[patch.path[1] as number]?.data
+    );
+
+    if (_.isNil(vSheetId)) return;
+    this.parser.setSheetContent(vSheetId, vSheetData);
+  }
+
+  addVirtualSheetRaw(ctx: Context, sheetName: string, data: CellMatrix | null) {
+    this.parser.addSheet(sheetName);
+    const vSheetId = this.parser.getSheetId(sheetName);
+    const vSheetData = this.transformToVirtualSheet(ctx, data);
+
+    if (_.isNil(vSheetId)) return;
+    this.parser.setSheetContent(vSheetId, vSheetData);
+  }
+
+  // removeVirtualSheet(ctx: Context, patch: Patch) {}
+
+  updateVirtualCell(ctx: Context, patch: any) {
+    const row = patch.path[3] as number;
+    const col = patch.path[4] as number;
+    const sheetIndex = patch.path[1] as number;
+    const cell = ctx.luckysheetfile[sheetIndex].data?.[row][col];
+    const vSheetId = this.parser.getSheetId(
+      ctx.luckysheetfile[sheetIndex].name!
+    );
+    if (_.isNil(vSheetId) || _.isNil(sheetIndex)) return;
+    this.parser.setCellContents(
+      { row, col, sheet: vSheetId },
+      cell ? this.tryGetCellAsNumber(cell)?.toString() : null
+    );
+  }
+
+  updateVirtualCellRaw(
+    ctx: Context,
+    cellInfo: { r: number; c: number; id: string },
+    value: string | number | boolean | null | undefined
+  ) {
+    const sheetName = getSheetNamefromId(ctx, cellInfo.id);
+    if (_.isNil(sheetName)) return;
+    const vSheetId = this.parser.getSheetId(sheetName);
+    if (_.isNil(vSheetId)) return;
+    this.parser.setCellContents(
+      { row: cellInfo.r, col: cellInfo.c, sheet: vSheetId },
+      value
+    );
+  }
+}
+
+export function updateVirtualSheet(
+  ctx: Context,
+  patches: any[],
+  options?: any
+) {
+  const isCellValueModified = (patch: any) => {
+    if (_.isNil(patch.value?.v) && patch.path[5] !== "v") return false;
+    return true;
+  };
+
+  patches?.forEach((patch: any) => {
+    if (options?.addSheetOp) {
+      ctx.formulaCache.addVirtualSheet(ctx, patch);
+    } else if (options?.deleteSheetOp) {
+      // ctx.formulaCache.removeVirtualSheet();
+      console.log("deleteSheetOp op called: ", patch, options);
+    } else if (options?.insertRowColOp) {
+      console.log("insertRowColOp op called: ", patch, options);
+    } else if (options?.deleteRowColOp) {
+      console.log("deleteRowColOp op called: ", patch, options);
+    } else if (options?.restoreDeletedCells) {
+      console.log("restoreDeletedCells op called: ", patch, options);
+    } else {
+      console.log("default immer patch op called: ", patch, options);
+      if (isCellValueModified(patch))
+        ctx.formulaCache.updateVirtualCell(ctx, patch);
+    }
+  });
 }
 
 function parseElement(eleString: string) {
@@ -1074,10 +1138,7 @@ export function execfunction(
 
   ctx.calculateSheetId = id;
 
-  ctx.formulaCache.parser.context = ctx;
-  const parsedResponse = ctx.formulaCache.parser.parse(txt.substring(1), {
-    sheetId: id || ctx.currentSheetId,
-  });
+  const parsedResponse = ctx.formulaCache.calculateFormula(ctx, txt, id);
 
   const { error: formulaError } = parsedResponse;
   let { result } = parsedResponse;
@@ -1091,7 +1152,12 @@ export function execfunction(
     result = result.toString();
   }
 
+  if (!_.isNil(result) && typeof result === "object") {
+    result = result.value;
+  }
+
   if (!_.isNil(r) && !_.isNil(c)) {
+    ctx.formulaCache.updateVirtualCellRaw(ctx, { r, c, id }, result);
     if (isrefresh) {
       // eslint-disable-next-line no-use-before-define
       execFunctionGroup(

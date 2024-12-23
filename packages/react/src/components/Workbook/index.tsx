@@ -21,6 +21,7 @@ import {
   calcSelectionInfo,
   groupValuesRefresh,
   setFormulaCellInfoMap,
+  updateVirtualSheet,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -186,6 +187,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         undo: boolean = false
       ) => {
         if (onOp) {
+          updateVirtualSheet(ctx, patches, options);
           onOp(patchToOp(ctx, patches, options, undo));
         }
       },
@@ -450,6 +452,11 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               const index = getSheetIndex(draftCtx, newDatum.id!) as number;
               const sheet = draftCtx.luckysheetfile?.[index];
               const cellMatrixData = initSheetData(draftCtx, sheet, index);
+              draftCtx.formulaCache.addVirtualSheetRaw(
+                draftCtx,
+                sheet.name,
+                cellMatrixData
+              );
               setFormulaCellInfoMap(
                 draftCtx,
                 sheet.calcChain,
