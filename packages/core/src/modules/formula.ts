@@ -18,6 +18,7 @@ import {
   getSheetIndex,
   indexToColumnChar,
   escapeHTMLTag,
+  PatchOptions,
 } from "../utils";
 import { getRangetxt, mergeMoveMain, setCellValue } from "./cell";
 import { error } from "./validation";
@@ -59,14 +60,6 @@ const LABEL_EXTRACT_REGEXP = new RegExp(
 
 export function isFormula(value: any) {
   return _.isString(value) && value.slice(0, 1) === "=" && value.length > 1;
-}
-
-function getSheetNamefromId(ctx: Context, sheetId: string) {
-  const index = getSheetIndex(ctx, sheetId);
-  if (_.isNil(index)) {
-    return null;
-  }
-  return ctx.luckysheetfile[index].name;
 }
 
 // FormulaCache is defined as class to avoid being frozen by immer
@@ -152,9 +145,7 @@ export class FormulaCache {
   }
 
   calculateFormula(ctx: Context, formula: string, sheetId: string) {
-    const sheetName = getSheetNamefromId(ctx, sheetId);
-    if (_.isNil(sheetName)) return { result: null, error: "#REF!" };
-    const vSheetId = this.parser.getSheetId(sheetName);
+    const vSheetId = this.parser.getSheetId(sheetId);
     if (_.isNil(vSheetId)) return { result: null, error: "#REF!" };
     const calculatedFormula: { result: any; error: any } = {
       result: null,
@@ -214,11 +205,9 @@ export class FormulaCache {
   addVirtualSheet(ctx: Context, patch: any) {
     if (!patch.value || _.isEmpty(patch.value)) return;
     const sheetId = patch.value.id;
-    const sheetName = getSheetNamefromId(ctx, sheetId);
-    if (_.isNil(sheetName)) return;
 
-    this.parser.addSheet(sheetName);
-    const vSheetId = this.parser.getSheetId(sheetName);
+    this.parser.addSheet(sheetId);
+    const vSheetId = this.parser.getSheetId(sheetId);
 
     const vSheetData = this.transformToVirtualSheet(
       ctx,
@@ -229,25 +218,28 @@ export class FormulaCache {
     this.parser.setSheetContent(vSheetId, vSheetData);
   }
 
-  addVirtualSheetRaw(ctx: Context, sheetName: string, data: CellMatrix | null) {
-    this.parser.addSheet(sheetName);
-    const vSheetId = this.parser.getSheetId(sheetName);
+  addVirtualSheetRaw(ctx: Context, sheetId: string, data: CellMatrix | null) {
+    this.parser.addSheet(sheetId);
+    const vSheetId = this.parser.getSheetId(sheetId);
     const vSheetData = this.transformToVirtualSheet(ctx, data);
 
     if (_.isNil(vSheetId)) return;
     this.parser.setSheetContent(vSheetId, vSheetData);
   }
 
-  // removeVirtualSheet(ctx: Context, patch: Patch) {}
+  removeVirtualSheet(ctx: Context, options: any) {
+    const sheetId = options.deleteSheetOp.id || options.deleteSheet.id;
+    const vSheetId = this.parser.getSheetId(sheetId);
+    if (_.isNil(vSheetId)) return;
+    this.parser.removeSheet(vSheetId);
+  }
 
   updateVirtualCell(ctx: Context, patch: any) {
     const row = patch.path[3] as number;
     const col = patch.path[4] as number;
     const sheetIndex = patch.path[1] as number;
     const cell = ctx.luckysheetfile[sheetIndex].data?.[row][col];
-    const vSheetId = this.parser.getSheetId(
-      ctx.luckysheetfile[sheetIndex].name!
-    );
+    const vSheetId = this.parser.getSheetId(ctx.luckysheetfile[sheetIndex].id!);
     if (_.isNil(vSheetId) || _.isNil(sheetIndex)) return;
     this.parser.setCellContents(
       { row, col, sheet: vSheetId },
@@ -255,14 +247,28 @@ export class FormulaCache {
     );
   }
 
+  updateVirtualRow(ctx: Context, patch: any) {
+    const row = patch.path[3] as number;
+
+    const sheetIndex = patch.path[1] as number;
+    const vSheetId = this.parser.getSheetId(ctx.luckysheetfile[sheetIndex].id!);
+    if (_.isNil(vSheetId) || _.isNil(sheetIndex)) return;
+
+    for (let col = 0; col < patch.value.length; col += 1) {
+      const cell = ctx.luckysheetfile[sheetIndex].data?.[row][col];
+      this.parser.setCellContents(
+        { row, col, sheet: vSheetId },
+        cell ? this.tryGetCellAsNumber(cell)?.toString() : null
+      );
+    }
+  }
+
   updateVirtualCellRaw(
     ctx: Context,
     cellInfo: { r: number; c: number; id: string },
     value: string | number | boolean | null | undefined
   ) {
-    const sheetName = getSheetNamefromId(ctx, cellInfo.id);
-    if (_.isNil(sheetName)) return;
-    const vSheetId = this.parser.getSheetId(sheetName);
+    const vSheetId = this.parser.getSheetId(cellInfo.id);
     if (_.isNil(vSheetId)) return;
     this.parser.setCellContents(
       { row: cellInfo.r, col: cellInfo.c, sheet: vSheetId },
@@ -274,29 +280,36 @@ export class FormulaCache {
 export function updateVirtualSheet(
   ctx: Context,
   patches: any[],
-  options?: any
+  options?: PatchOptions
 ) {
+  // Also checks col addition/deletion case:
+  // col deleted/added: patch.value = affected cell
   const isCellValueModified = (patch: any) => {
-    if (_.isNil(patch.value?.v) && patch.path[5] !== "v") return false;
-    return true;
+    const setCellNull =
+      patch.value === null &&
+      !_.isNil(patch.path[3]) &&
+      !_.isNil(patch.path[4]);
+    if (!_.isNil(patch.value?.v) || patch.path[5] === "v" || setCellNull)
+      return true;
+    return false;
+  };
+
+  // row deleted/added: patch.value = affected row (array of cells)
+  const isRowModified = (patch: any) => {
+    const isOnlyRowGiven = patch.path.length === 4;
+    if (Array.isArray(patch.value) && isOnlyRowGiven) return true;
+    return false;
   };
 
   patches?.forEach((patch: any) => {
     if (options?.addSheetOp) {
       ctx.formulaCache.addVirtualSheet(ctx, patch);
     } else if (options?.deleteSheetOp) {
-      // ctx.formulaCache.removeVirtualSheet();
-      console.log("deleteSheetOp op called: ", patch, options);
-    } else if (options?.insertRowColOp) {
-      console.log("insertRowColOp op called: ", patch, options);
-    } else if (options?.deleteRowColOp) {
-      console.log("deleteRowColOp op called: ", patch, options);
-    } else if (options?.restoreDeletedCells) {
-      console.log("restoreDeletedCells op called: ", patch, options);
-    } else {
-      console.log("default immer patch op called: ", patch, options);
-      if (isCellValueModified(patch))
-        ctx.formulaCache.updateVirtualCell(ctx, patch);
+      ctx.formulaCache.removeVirtualSheet(ctx, options);
+    } else if (isCellValueModified(patch)) {
+      ctx.formulaCache.updateVirtualCell(ctx, patch);
+    } else if (isRowModified(patch)) {
+      ctx.formulaCache.updateVirtualRow(ctx, patch);
     }
   });
 }
