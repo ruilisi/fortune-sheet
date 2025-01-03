@@ -1153,7 +1153,7 @@ export function execfunction(
 
   const parsedResponse = ctx.formulaCache.calculateFormula(ctx, txt, id);
 
-  const { error: formulaError } = parsedResponse;
+  let { error: formulaError } = parsedResponse;
   let { result } = parsedResponse;
 
   // https://stackoverflow.com/a/643827/8200626
@@ -1164,9 +1164,17 @@ export function execfunction(
   ) {
     result = result.toString();
   }
-
   if (!_.isNil(result) && typeof result === "object") {
     result = result.value;
+  }
+
+  // hyperformula/src/errors.ts
+  if (
+    !_.isNil(formulaError) &&
+    (Object.prototype.toString.call(formulaError) === "[object Error]" ||
+      typeof formulaError === "object")
+  ) {
+    formulaError = "#ERROR!";
   }
 
   if (!_.isNil(r) && !_.isNil(c)) {
