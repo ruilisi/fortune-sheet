@@ -312,11 +312,9 @@ export function generateAPIs(
     handleUndo,
     handleRedo,
 
-    calculateFormula: () => {
+    calculateFormula: (id?: string, range?: SingleRange) => {
       setContext((draftCtx) => {
-        _.forEach(draftCtx.luckysheetfile, (sheet_obj) => {
-          api.calculateFormula(draftCtx, sheet_obj.id as string);
-        });
+        api.calculateFormula(draftCtx, id, range);
       });
     },
 
