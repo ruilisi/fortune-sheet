@@ -36,6 +36,10 @@ export function generateAPIs(
   scrollbarX: HTMLDivElement | null,
   scrollbarY: HTMLDivElement | null
 ) {
+  type ApiCall = {
+    name: string;
+    args: any[];
+  };
   return {
     applyOp: (ops: Op[]) => {
       setContext(
@@ -311,7 +315,7 @@ export function generateAPIs(
     calculateFormula: () => {
       setContext((draftCtx) => {
         _.forEach(draftCtx.luckysheetfile, (sheet_obj) => {
-          api.calculateSheetFromula(draftCtx, sheet_obj.id as string);
+          api.calculateFormula(draftCtx, sheet_obj.id as string);
         });
       });
     },
@@ -326,6 +330,19 @@ export function generateAPIs(
       colCount?: number
     ) => {
       return api.celldataToData(celldata, rowCount, colCount);
+    },
+
+    batchCallApis: (apiCalls: ApiCall[]) => {
+      setContext((draftCtx) => {
+        apiCalls.forEach((apiCall) => {
+          const { name, args } = apiCall;
+          if (typeof (api as any)[name] === "function") {
+            (api as any)[name](draftCtx, ...args);
+          } else {
+            console.warn(`API ${name} does not exist`);
+          }
+        });
+      });
     },
   };
 }

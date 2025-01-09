@@ -2,7 +2,7 @@ import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import { dataToCelldata, getSheet } from "./common";
 import { Context } from "../context";
-import { CellMatrix, CellWithRowAndCol, Sheet } from "../types";
+import { CellMatrix, CellWithRowAndCol, Sheet, SingleRange } from "../types";
 import { getSheetIndex } from "../utils";
 import { api, execfunction, insertUpdateFunctionGroup, locale } from "..";
 
@@ -137,11 +137,24 @@ export function copySheet(ctx: Context, sheetId: string) {
   api.setSheetOrder(ctx, sheetOrderList);
 }
 
-export function calculateSheetFromula(ctx: Context, id: string) {
+function calculateSheetFromula(ctx: Context, id: string, range?: SingleRange) {
   const index = getSheetIndex(ctx, id) as number;
   if (!ctx.luckysheetfile[index].data) return;
-  for (let r = 0; r < ctx.luckysheetfile[index].data!.length; r += 1) {
-    for (let c = 0; c < ctx.luckysheetfile[index].data![r].length; c += 1) {
+
+  if (!range) {
+    range = {
+      row: [0, ctx.luckysheetfile[index].data!.length - 1],
+      column: [0, ctx.luckysheetfile[index].data![0].length - 1],
+    };
+  }
+  const rowCount = range.row[1] - range.row[0] + 1;
+  const columnCount = range.column[1] - range.column[0] + 1;
+
+  for (let _r = 0; _r < rowCount; _r += 1) {
+    for (let _c = 0; _c < columnCount; _c += 1) {
+      const r = range.row[0] + _r;
+      const c = range.column[0] + _c;
+
       if (!ctx.luckysheetfile[index].data![r][c]?.f) {
         continue;
       }
@@ -156,4 +169,18 @@ export function calculateSheetFromula(ctx: Context, id: string) {
       insertUpdateFunctionGroup(ctx, r, c, id);
     }
   }
+}
+
+export function calculateFormula(
+  ctx: Context,
+  id?: string,
+  range?: SingleRange
+) {
+  if (id) {
+    calculateSheetFromula(ctx, id, range);
+    return;
+  }
+  _.forEach(ctx.luckysheetfile, (sheet_obj) => {
+    calculateSheetFromula(ctx, sheet_obj.id as string, range);
+  });
 }
