@@ -13,7 +13,6 @@ import {
   filterPatch,
   patchToOp,
   Op,
-  inverseRowColOptions,
   ensureSheetIndex,
   CellMatrix,
   insertRowCol,
@@ -21,6 +20,8 @@ import {
   calcSelectionInfo,
   groupValuesRefresh,
   setFormulaCellInfoMap,
+  updateVirtualSheet,
+  getInverseOptions,
 } from "@fortune-sheet/core";
 import React, {
   useMemo,
@@ -186,6 +187,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         undo: boolean = false
       ) => {
         if (onOp) {
+          updateVirtualSheet(ctx, patches, options);
           onOp(patchToOp(ctx, patches, options, undo));
         }
       },
@@ -309,6 +311,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                 patches: filteredPatches,
                 inversePatches: filteredInversePatches,
                 options,
+                inverseOptions: getInverseOptions(ctx_, options),
               });
               globalCache.current.redoList = [];
               emitOp(result, filteredPatches, options);
@@ -350,31 +353,24 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           }
           const newContext = applyPatches(ctx_, history.inversePatches);
           globalCache.current.redoList.push(history);
-          const inversedOptions = inverseRowColOptions(history.options);
-          if (inversedOptions?.insertRowColOp) {
-            inversedOptions.restoreDeletedCells = true;
-          }
-          if (history.options?.addSheetOp) {
-            const index = getSheetIndex(
-              ctx_,
-              history.options.addSheet!.id as string
-            ) as number;
-            inversedOptions!.addSheet = {
-              id: history.options.addSheet!.id as string,
-              index: index as number,
-              value: _.cloneDeep(ctx_.luckysheetfile[index]),
-            };
-            inversedOptions!.addSheet!.value!.celldata = dataToCelldata(
-              inversedOptions!.addSheet!.value?.data as CellMatrix
-            );
-            delete inversedOptions!.addSheet!.value!.data;
-          }
-          emitOp(newContext, history.inversePatches, inversedOptions, true);
-          newContext.formulaCache.updateFormulaCache(
+          emitOp(
             newContext,
-            history,
-            "undo"
+            history.inversePatches,
+            history.inverseOptions,
+            true
           );
+          if (
+            history.options?.deleteRowColOp ||
+            history.options?.insertRowColOp ||
+            history.options?.restoreDeletedCells
+          )
+            newContext.formulaCache.formulaCellInfoMap = null;
+          else
+            newContext.formulaCache.updateFormulaCache(
+              newContext,
+              history,
+              "undo"
+            );
           return newContext;
         });
       }
@@ -387,11 +383,18 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           const newContext = applyPatches(ctx_, history.patches);
           globalCache.current.undoList.push(history);
           emitOp(newContext, history.patches, history.options);
-          newContext.formulaCache.updateFormulaCache(
-            newContext,
-            history,
-            "redo"
-          );
+          if (
+            history.options?.deleteRowColOp ||
+            history.options?.insertRowColOp ||
+            history.options?.restoreDeletedCells
+          )
+            newContext.formulaCache.formulaCellInfoMap = null;
+          else
+            newContext.formulaCache.updateFormulaCache(
+              newContext,
+              history,
+              "redo"
+            );
           return newContext;
         });
       }
@@ -450,6 +453,11 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
               const index = getSheetIndex(draftCtx, newDatum.id!) as number;
               const sheet = draftCtx.luckysheetfile?.[index];
               const cellMatrixData = initSheetData(draftCtx, sheet, index);
+              draftCtx.formulaCache.addVirtualSheetRaw(
+                draftCtx,
+                newDatum.id!,
+                cellMatrixData
+              );
               setFormulaCellInfoMap(
                 draftCtx,
                 sheet.calcChain,

@@ -903,6 +903,11 @@ export function autoSelectionFormula(
   if (!isfalse) {
     ctx.formulaCache.execFunctionExist.reverse();
     ctx.formulaCache.execFunctionExist.forEach((formulaCell) => {
+      ctx.formulaCache.updateVirtualCellRaw(
+        ctx,
+        { r: formulaCell.r, c: formulaCell.c, id: ctx.currentSheetId },
+        flowdata[formulaCell.r][formulaCell.c]?.v
+      );
       setFormulaCellInfo(
         ctx,
         { r: formulaCell.r, c: formulaCell.c, id: ctx.currentSheetId },

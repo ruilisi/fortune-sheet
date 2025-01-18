@@ -2,7 +2,8 @@ import _ from "lodash";
 import { Patch } from "immer";
 import { getSheetIndex } from ".";
 import { Context, getFlowdata } from "../context";
-import { Op, Sheet } from "../types";
+import { CellMatrix, Op, Sheet } from "../types";
+import { dataToCelldata } from "../api";
 
 export type ChangedSheet = {
   index?: number;
@@ -376,6 +377,65 @@ export function patchToOp(
   return ops;
 }
 
+function inverseRowColOptions(options: PatchOptions): PatchOptions | undefined {
+  if (options.insertRowColOp) {
+    let { index } = options.insertRowColOp;
+    if (options.insertRowColOp.direction === "rightbottom") {
+      index += 1;
+    }
+    return {
+      deleteRowColOp: {
+        type: options.insertRowColOp.type,
+        id: options.insertRowColOp.id,
+        start: index,
+        end: index + options.insertRowColOp.count - 1,
+      },
+    };
+  }
+  if (options.deleteRowColOp) {
+    return {
+      insertRowColOp: {
+        type: options.deleteRowColOp.type,
+        id: options.deleteRowColOp.id,
+        index: options.deleteRowColOp.start,
+        count: options.deleteRowColOp.end - options.deleteRowColOp.start + 1,
+        direction: "lefttop",
+      },
+      restoreDeletedCells: true,
+    };
+  }
+  return {};
+}
+
+function inverseAddDelSheetOptions(
+  ctx: Context,
+  options: PatchOptions
+): PatchOptions | undefined {
+  const inversedOptions: PatchOptions = {};
+  if (options.deleteSheetOp) {
+    const index = getSheetIndex(ctx, options.deleteSheetOp.id) as number;
+    inversedOptions.addSheetOp = true;
+    inversedOptions.addSheet = {
+      id: options.deleteSheetOp!.id as string,
+      index: index as number,
+      value: _.cloneDeep(ctx.luckysheetfile[index]),
+    };
+    inversedOptions!.addSheet!.value!.celldata = dataToCelldata(
+      inversedOptions!.addSheet!.value?.data as CellMatrix
+    );
+    delete inversedOptions!.addSheet!.value!.data;
+  }
+  if (options.addSheetOp && options.addSheet) {
+    const index = getSheetIndex(ctx, options.addSheet.id!) as number;
+    inversedOptions.deletedSheet = {
+      id: options.addSheet!.id as string,
+      index: index as number,
+    };
+    inversedOptions.deleteSheetOp = { id: options.addSheet.id as string };
+  }
+  return inversedOptions;
+}
+
 export function opToPatch(ctx: Context, ops: Op[]): [Patch[], Op[]] {
   const [normalOps, specialOps] = _.partition(
     ops,
@@ -404,34 +464,13 @@ export function opToPatch(ctx: Context, ops: Op[]): [Patch[], Op[]] {
   return [patches.concat(additionalPatches), specialOps];
 }
 
-export function inverseRowColOptions(
-  options?: PatchOptions
-): PatchOptions | undefined {
+export function getInverseOptions(ctx: Context, options?: PatchOptions) {
   if (!options) return options;
-  if (options.insertRowColOp) {
-    let { index } = options.insertRowColOp;
-    if (options.insertRowColOp.direction === "rightbottom") {
-      index += 1;
-    }
-    return {
-      deleteRowColOp: {
-        type: options.insertRowColOp.type,
-        id: options.insertRowColOp.id,
-        start: index,
-        end: index + options.insertRowColOp.count - 1,
-      },
-    };
+  if (options.insertRowColOp || options.deleteRowColOp) {
+    return inverseRowColOptions(options);
   }
-  if (options.deleteRowColOp) {
-    return {
-      insertRowColOp: {
-        type: options.deleteRowColOp.type,
-        id: options.deleteRowColOp.id,
-        index: options.deleteRowColOp.start,
-        count: options.deleteRowColOp.end - options.deleteRowColOp.start + 1,
-        direction: "lefttop",
-      },
-    };
+  if (options.addSheetOp || options.deleteSheetOp) {
+    return inverseAddDelSheetOptions(ctx, options);
   }
   return options;
 }
