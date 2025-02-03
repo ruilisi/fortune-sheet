@@ -50,7 +50,7 @@ Before stable release of 1.0, input data structure and APIs may change during de
   ```
 - Multiple instance on the same page is supported.
 - Dropped `jQuery` dependency, uses native `React` / `Vue` + `immer` to manage the dom and state.
-- Formulas are now being parsed by [handsontable/hyperformula](https://github.com/handsontable/hyperformula)
+- Changed to a forked [handsontable/formula-parser](https://github.com/handsontable/formula-parser) to handle formula calculations.
 - Optimized the dom structure.
 - Replaced icons from `iconfont` with SVGs, as `iconfont` icons are inconvenient to update for other maintainers.
 - No visible elements is created outside container.

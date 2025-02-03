@@ -31,20 +31,8 @@ function postPasteCut(
   const execF_rc: any = {};
   ctx.formulaCache.execFunctionExist = [];
   // clearTimeout(refreshCanvasTimeOut);
-
-  let prevSheetId = null;
-  let data = null;
   for (let r = source.range.row[0]; r <= source.range.row[1]; r += 1) {
     for (let c = source.range.column[0]; c <= source.range.column[1]; c += 1) {
-      if (source.sheetId !== prevSheetId) {
-        prevSheetId = source.sheetId;
-        data = getFlowdata(ctx, prevSheetId);
-      }
-      ctx.formulaCache.updateVirtualCellRaw(
-        ctx,
-        { r, c, id: source.sheetId },
-        data?.[r][c]?.v
-      );
       setFormulaCellInfo(ctx, { r, c, id: source.sheetId });
       if (`${r}_${c}_${source.sheetId}` in execF_rc) {
         continue;
@@ -57,15 +45,6 @@ function postPasteCut(
 
   for (let r = target.range.row[0]; r <= target.range.row[1]; r += 1) {
     for (let c = target.range.column[0]; c <= target.range.column[1]; c += 1) {
-      if (source.sheetId !== prevSheetId) {
-        prevSheetId = source.sheetId;
-        data = getFlowdata(ctx, prevSheetId);
-      }
-      ctx.formulaCache.updateVirtualCellRaw(
-        ctx,
-        { r, c, id: source.sheetId },
-        data?.[r][c]?.v
-      );
       setFormulaCellInfo(ctx, { r, c, id: source.sheetId });
       if (`${r}_${c}_${target.sheetId}` in execF_rc) {
         continue;

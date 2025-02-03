@@ -13,11 +13,6 @@ function runExecFunction(
   for (let s = 0; s < range.length; s += 1) {
     for (let r = range[s].row[0]; r <= range[s].row[1]; r += 1) {
       for (let c = range[s].column[0]; c <= range[s].column[1]; c += 1) {
-        ctx.formulaCache.updateVirtualCellRaw(
-          ctx,
-          { r, c, id: index },
-          data?.[r][c]?.v
-        );
         setFormulaCellInfo(ctx, { r, c, id: index }, data);
         ctx.formulaCache.execFunctionExist.push({ r, c, i: index });
       }
