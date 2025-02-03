@@ -38,18 +38,9 @@ describe("auto formula", () => {
     [2, 1],
   ];
 
-  const initVirtualSheets = (ctx) => {
-    ctx.luckysheetfile.forEach((sheet) => {
-      const vSheetId = ctx.formulaCache.parser.getSheetId(sheet.id);
-      if (vSheetId !== undefined) ctx.formulaCache.parser.removeSheet(vSheetId);
-      ctx.formulaCache.addVirtualSheetRaw(ctx, sheet.id, sheet.data);
-    });
-  };
-
   test("sum", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
-    initVirtualSheets(ctx);
     autoSelectionFormula(ctx, cellInput, null, "SUM");
     expectValuesInPositions(
       getFlowdata(ctx),
@@ -61,7 +52,6 @@ describe("auto formula", () => {
   test("min", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
-    initVirtualSheets(ctx);
     autoSelectionFormula(ctx, cellInput, null, "MIN");
     expectValuesInPositions(
       getFlowdata(ctx),
@@ -73,7 +63,6 @@ describe("auto formula", () => {
   test("max", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
-    initVirtualSheets(ctx);
     autoSelectionFormula(ctx, cellInput, null, "max");
     expectValuesInPositions(
       getFlowdata(ctx),
@@ -85,7 +74,6 @@ describe("auto formula", () => {
   test("average", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
-    initVirtualSheets(ctx);
     autoSelectionFormula(ctx, cellInput, null, "AVERAGE");
     expectValuesInPositions(
       getFlowdata(ctx),
@@ -97,7 +85,6 @@ describe("auto formula", () => {
   test("count", async () => {
     const cellInput = document.createElement("div");
     const ctx = getContext();
-    initVirtualSheets(ctx);
     autoSelectionFormula(ctx, cellInput, null, "COUNT");
     expectValuesInPositions(getFlowdata(ctx), [2, 2, 2, 2], expectPositions);
   });

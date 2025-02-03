@@ -1,4 +1,8 @@
-import { patchToOp, opToPatch, getInverseOptions } from "../../src/utils/patch";
+import {
+  patchToOp,
+  opToPatch,
+  inverseRowColOptions,
+} from "../../src/utils/patch";
 
 describe("patch", () => {
   const context = {
@@ -412,8 +416,8 @@ describe("patch", () => {
     ]);
   });
 
-  it("getInverseOptions insertRowCol", async () => {
-    const reverseOp = getInverseOptions(context, {
+  it("inverseRowColOptions insertRowCol", async () => {
+    const reverseOp = inverseRowColOptions({
       insertRowColOp: {
         type: "row",
         index: 2,
@@ -432,8 +436,8 @@ describe("patch", () => {
     });
   });
 
-  it("getInverseOptions insertRowCol rightbottom", async () => {
-    const reverseOp = getInverseOptions(context, {
+  it("inverseRowColOptions insertRowCol rightbottom", async () => {
+    const reverseOp = inverseRowColOptions({
       insertRowColOp: {
         type: "row",
         index: 2,
@@ -452,8 +456,8 @@ describe("patch", () => {
     });
   });
 
-  it("getInverseOptions deleteRowCol", async () => {
-    const reverseOp = getInverseOptions(context, {
+  it("inverseRowColOptions deleteRowCol", async () => {
+    const reverseOp = inverseRowColOptions({
       deleteRowColOp: {
         type: "row",
         start: 2,
@@ -469,12 +473,11 @@ describe("patch", () => {
         direction: "lefttop",
         id: "id_1",
       },
-      restoreDeletedCells: true,
     });
   });
 
-  it("getInverseOptions returns original object if row/col op not exist", async () => {
-    const reverseOp = getInverseOptions(context, {});
+  it("inverseRowColOptions returns original object if row/col op not exist", async () => {
+    const reverseOp = inverseRowColOptions({});
     expect(reverseOp).toEqual({});
   });
 });

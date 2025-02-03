@@ -243,7 +243,7 @@ export function getFormulaRunList(
   formulaCellInfoMap: any
 ) {
   const formulaRunList = [];
-  let stack = updateValueArray;
+  let stack = _.cloneDeep(updateValueArray);
   const existsFormulaRunList: any = {};
   while (stack.length > 0) {
     const formulaObject = stack.pop();
@@ -253,7 +253,6 @@ export function getFormulaRunList(
     }
 
     if (formulaObject.color === "b") {
-      formulaObject.color = "w";
       formulaRunList.push(formulaObject);
       existsFormulaRunList[formulaObject.key] = 1;
       continue;
@@ -276,6 +275,7 @@ export function getFormulaRunList(
       stack = stack.concat(cacheStack);
     }
   }
+
   formulaRunList.reverse();
   return formulaRunList;
 }

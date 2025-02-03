@@ -224,13 +224,12 @@ describe("keyboard", () => {
         v4: 240,
       },
     ].forEach((item) => {
-      const id = "id_1";
-      const data = [[{ v: 120 }, { v: 210 }, null]];
-      ctx.luckysheetfile = [{ id, data }];
-      const vSheetId = ctx.formulaCache.parser.getSheetId(id);
-      if (vSheetId !== undefined) ctx.formulaCache.parser.removeSheet(vSheetId);
-      ctx.formulaCache.addVirtualSheetRaw(ctx, id, data);
-
+      ctx.luckysheetfile = [
+        {
+          id: "id_1",
+          data: [[{ v: 120 }, { v: 210 }, null]],
+        },
+      ];
       const cellInput = document.createElement("div");
       cellInput.innerText = `=${item.f1}(A1:B1)`;
       ctx.luckysheetCellUpdate = [0, 2];

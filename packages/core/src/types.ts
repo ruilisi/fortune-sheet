@@ -245,7 +245,6 @@ export type History = {
   patches: ImmerPatch[];
   inversePatches: ImmerPatch[];
   options?: PatchOptions;
-  inverseOptions?: PatchOptions;
 };
 
 export type Freezen = {

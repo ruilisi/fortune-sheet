@@ -21,15 +21,20 @@ jobs:
       - run: yarn build
       - run: cd packages/core && npm pack
       - run: cd packages/react && npm pack
+      - run: cd packages/formula-parser && npm pack
       - uses: actions/upload-artifact@v4
         with:
           name: packages
           path: |
             packages/core/fortune-sheet-core-*.tgz
             packages/react/fortune-sheet-react-*.tgz
+            packages/formula-parser/fortune-sheet-formula-parser-*.tgz
       - run: cd packages/core && npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: cd packages/react && npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: cd packages/formula-parser && npm publish || true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

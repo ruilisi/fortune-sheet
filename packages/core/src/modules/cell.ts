@@ -902,11 +902,6 @@ export function updateCell(
           });
         }
       } else {
-        ctx.formulaCache.updateVirtualCellRaw(
-          ctx,
-          { r, c, id: ctx.currentSheetId },
-          value
-        );
         delFunctionGroup(ctx, r, c);
         execFunctionGroup(ctx, r, c, value);
         isRunExecFunction = false;
@@ -993,11 +988,6 @@ export function updateCell(
         }
       }
     } else {
-      ctx.formulaCache.updateVirtualCellRaw(
-        ctx,
-        { r, c, id: ctx.currentSheetId },
-        value
-      );
       delFunctionGroup(ctx, r, c);
       execFunctionGroup(ctx, r, c, value);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1095,12 +1085,6 @@ export function updateCell(
       afterUpdateCell?.(r, c, oldValue, newValue);
     });
   }
-
-  ctx.formulaCache.updateVirtualCellRaw(
-    ctx,
-    { r, c, id: ctx.currentSheetId },
-    flowdata?.[r][c]?.v
-  );
 
   setFormulaCellInfo(ctx, { r, c, id: ctx.currentSheetId });
   ctx.formulaCache.execFunctionGlobalData = null;
