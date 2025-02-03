@@ -370,11 +370,18 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             delete inversedOptions!.addSheet!.value!.data;
           }
           emitOp(newContext, history.inversePatches, inversedOptions, true);
-          newContext.formulaCache.updateFormulaCache(
-            newContext,
-            history,
-            "undo"
-          );
+          if (
+            history.options?.deleteRowColOp ||
+            history.options?.insertRowColOp ||
+            history.options?.restoreDeletedCells
+          )
+            newContext.formulaCache.formulaCellInfoMap = null;
+          else
+            newContext.formulaCache.updateFormulaCache(
+              newContext,
+              history,
+              "undo"
+            );
           return newContext;
         });
       }
@@ -387,11 +394,19 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           const newContext = applyPatches(ctx_, history.patches);
           globalCache.current.undoList.push(history);
           emitOp(newContext, history.patches, history.options);
-          newContext.formulaCache.updateFormulaCache(
-            newContext,
-            history,
-            "redo"
-          );
+
+          if (
+            history.options?.deleteRowColOp ||
+            history.options?.insertRowColOp ||
+            history.options?.restoreDeletedCells
+          )
+            newContext.formulaCache.formulaCellInfoMap = null;
+          else
+            newContext.formulaCache.updateFormulaCache(
+              newContext,
+              history,
+              "redo"
+            );
           return newContext;
         });
       }
