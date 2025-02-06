@@ -11069,6 +11069,9 @@ export default {
     tipRowHeightLimit: "पंक्ति की ऊँचाई 0 ~ 545 के बीच होनी चाहिए",
     tipColumnWidthLimit: "कॉलम की चौड़ाई 0 ~ 2038 के बीच होनी चाहिए",
     pageInfoFull: "कुल ${total}，${totalPage} पृष्ठ，सभी डेटा प्रदर्शित",
+
+    sheetIsFocused: "शीट फोकस लॉक सक्षम।",
+    sheetNotFocused: "शीट फ़ोकस लॉक अक्षम किया गया.",
   },
   currencyDetail: [
     { name: "चीनी युआन", pos: "before", value: "¥" },

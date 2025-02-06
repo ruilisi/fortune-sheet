@@ -11050,6 +11050,9 @@ export default {
     tipRowHeightLimit: "行高必须在0 ~ 545之间",
     tipColumnWidthLimit: "列宽必须在0 ~ 2038之间",
     pageInfoFull: "共${total}条，${totalPage}页，已显示全部数据",
+
+    sheetIsFocused: "已启用工作表焦点锁定。",
+    sheetNotFocused: "工作表焦点锁定已禁用。",
   },
   currencyDetail: [
     { name: "人民币", pos: "before", value: "¥" },

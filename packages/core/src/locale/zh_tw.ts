@@ -11016,6 +11016,9 @@ export default {
     tipRowHeightLimit: "行高必須在0 ~ 545之間",
     tipColumnWidthLimit: "列寬必須在0 ~ 2038之間",
     pageInfoFull: "共${total}條,${totalPage}頁,已顯示全部數據",
+
+    sheetIsFocused: "已啟用工作表焦點鎖定。",
+    sheetNotFocused: "工作表焦點鎖定已停用。",
   },
   currencyDetail: {
     RMB: "人民幣",

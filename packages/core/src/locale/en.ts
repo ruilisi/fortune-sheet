@@ -11067,6 +11067,9 @@ export default {
     tipRowHeightLimit: "Row height must be between 0 ~ 545",
     tipColumnWidthLimit: "The column width must be between 0 ~ 2038",
     pageInfoFull: "Total ${total}，${totalPage} page，All data displayed",
+
+    sheetIsFocused: "Sheet focus lock enabled.",
+    sheetNotFocused: "Sheet focus lock disabled.",
   },
   currencyDetail: [
     { name: "RMB", pos: "before", value: "¥" },

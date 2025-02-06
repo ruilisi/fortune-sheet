@@ -5,9 +5,11 @@ import React, {
   useEffect,
   useLayoutEffect,
   useMemo,
+  useState,
 } from "react";
 import "./index.css";
 import {
+  getRangetxt,
   locale,
   drawArrow,
   handleCellAreaDoubleClick,
@@ -20,6 +22,7 @@ import {
   handleOverlayTouchMove,
   handleOverlayTouchStart,
   createDropCellRange,
+  updateDropCell,
   getCellRowColumn,
   getCellHyperlink,
   showLinkCard,
@@ -56,6 +59,8 @@ const SheetOverlay: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const bottomAddRowInputRef = useRef<HTMLInputElement>(null);
   const dataVerificationHintBoxRef = useRef<HTMLDivElement>(null);
+  const [lastRangeText, setLastRangeText] = useState("");
+  const [lastCellValue, setLastCellValue] = useState("");
   const { showAlert } = useAlert();
   // const isMobile = browser.mobilecheck();
   const cellAreaMouseDown = useCallback(
@@ -94,6 +99,13 @@ const SheetOverlay: React.FC = () => {
       refs.canvas,
     ]
   );
+
+  useEffect(() => {
+    if (context.sheetFocused) {
+      setLastRangeText(String(rangeText));
+      setLastCellValue(String(cellValue()));
+    }
+  }, [context.sheetFocused]); // Runs only when sheet focus toggles
 
   const cellAreaContextMenu = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -397,6 +409,42 @@ const SheetOverlay: React.FC = () => {
     };
   }, [onKeyDownForZoom]);
 
+  const rangeText = useMemo(() => {
+    const lastSelection = _.last(context.luckysheet_select_save);
+    if (
+      !(
+        lastSelection &&
+        lastSelection.row_focus != null &&
+        lastSelection.column_focus != null
+      )
+    )
+      return "";
+    const rf = lastSelection.row_focus;
+    const cf = lastSelection.column_focus;
+    if (context.config.merge != null && `${rf}_${cf}` in context.config.merge) {
+      return getRangetxt(context, context.currentSheetId, {
+        column: [cf, cf],
+        row: [rf, rf],
+      });
+    }
+    return getRangetxt(context, context.currentSheetId, lastSelection);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [context.currentSheetId, context.luckysheet_select_save]);
+
+  const cellValue = () => {
+    if ((context.luckysheet_select_save?.length ?? 0) > 0) {
+      const selection = context.luckysheet_select_save?.[context.luckysheet_select_save.length - 1];
+      if (!selection) return "";
+      const sheetIndex = getSheetIndex(context, context.currentSheetId);
+      if (sheetIndex === undefined || sheetIndex === null) return "";
+      const rowFocus = selection.row_focus ?? 0;
+      const columnFocus = selection.column_focus ?? 0;
+      const cellValue = context.luckysheetfile[sheetIndex]?.data?.[rowFocus]?.[columnFocus]?.m || "";
+      return cellValue;
+    }
+    return "";
+  };
+
   return (
     <div
       className="fortune-sheet-overlay"
@@ -517,29 +565,29 @@ const SheetOverlay: React.FC = () => {
             style={
               (context.luckysheet_select_save?.length ?? 0) > 0
                 ? (() => {
-                    const selection = _.last(context.luckysheet_select_save)!;
-                    return _.assign(
-                      {
-                        left: selection.left,
-                        top: selection.top,
-                        width: selection.width,
-                        height: selection.height,
-                        display: "block",
-                      },
-                      fixRowStyleOverflowInFreeze(
-                        context,
-                        selection.row_focus || 0,
-                        selection.row_focus || 0,
-                        refs.globalCache.freezen?.[context.currentSheetId]
-                      ),
-                      fixColumnStyleOverflowInFreeze(
-                        context,
-                        selection.column_focus || 0,
-                        selection.column_focus || 0,
-                        refs.globalCache.freezen?.[context.currentSheetId]
-                      )
-                    );
-                  })()
+                  const selection = _.last(context.luckysheet_select_save)!;
+                  return _.assign(
+                    {
+                      left: selection.left,
+                      top: selection.top,
+                      width: selection.width,
+                      height: selection.height,
+                      display: "block",
+                    },
+                    fixRowStyleOverflowInFreeze(
+                      context,
+                      selection.row_focus || 0,
+                      selection.row_focus || 0,
+                      refs.globalCache.freezen?.[context.currentSheetId]
+                    ),
+                    fixColumnStyleOverflowInFreeze(
+                      context,
+                      selection.column_focus || 0,
+                      selection.column_focus || 0,
+                      refs.globalCache.freezen?.[context.currentSheetId]
+                    )
+                  );
+                })()
                 : {}
             }
             onMouseDown={(e) => e.preventDefault()}
@@ -824,6 +872,14 @@ const SheetOverlay: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div id="sr-selection" className="sr-only" role="alert">
+        {`${rangeText} ${cellValue()}`}
+      </div>
+      <div id="sr-sheetFocus" className="sr-only" role="alert">
+        {context.sheetFocused ?
+          `${lastRangeText} ${lastCellValue}. ${info.sheetIsFocused}` :
+          `Toolbar. ${info.sheetNotFocused}`}
       </div>
     </div>
   );

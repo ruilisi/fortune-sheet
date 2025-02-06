@@ -11039,6 +11039,9 @@ export default {
     tipColumnWidthLimit: "El ancho de la columna debe estar entre 0 ~ 2038",
     pageInfoFull:
       "Total ${total}，página ${totalPage}，Se muestran todos los datos",
+
+    sheetIsFocused: "Bloqueo de enfoque de hoja habilitado.",
+    sheetNotFocused: "Bloqueo de enfoque de hoja desactivado.",
   },
   currencyDetail: {
     RMB: "RMB",

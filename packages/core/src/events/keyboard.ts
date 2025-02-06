@@ -505,6 +505,89 @@ export function handleWithCtrlOrMetaKey(
     selectAll(ctx);
   }
 
+  else if (e.code === "KeyD") {
+    if (!ctx.luckysheet_select_save || ctx.luckysheet_select_save.length === 0) {
+      return;
+    }
+
+    const selectedRange = ctx.luckysheet_select_save[0];
+    const { row, column } = selectedRange;
+
+    if (!row || !column) return;
+
+    const sheetData = getFlowdata(ctx);
+    if (!sheetData) return;
+
+    // Loop through selected columns
+    for (let col = column[0]; col <= column[1]; col++) {
+      const sourceCell = sheetData?.[row[0]]?.[col];
+
+      if (!sourceCell) continue;
+
+      const sourceValue = sourceCell.v;
+      const sourceFormula = sourceCell.f;
+
+      for (let r = row[0] + 1; r <= row[1]; r++) {
+        if (sourceFormula) {
+          // Adjust formula for new row references
+          const newFormula = sourceFormula.replace(/(\$?[A-Z]+)(\$?)(\d+)/g, (match, colRef, dollar, rowNum) => {
+            return dollar ? match : `${colRef}${parseInt(rowNum) + (r - row[0])}`;
+          });
+
+          updateCell(ctx, r, col, null, newFormula);
+        } else {
+          updateCell(ctx, r, col, null, sourceValue);
+        }
+      }
+    }
+
+    jfrefreshgrid(ctx, null, undefined);
+    e.stopPropagation();
+  }
+  else if (e.code === "KeyR") {
+    if (!ctx.luckysheet_select_save || ctx.luckysheet_select_save.length === 0) {
+      return;
+    }
+
+    const selectedRange = ctx.luckysheet_select_save[0];
+    const { row, column } = selectedRange;
+
+    if (!row || !column) return;
+
+    const sheetData = getFlowdata(ctx);
+    if (!sheetData) return;
+
+    // Loop through selected rows
+    for (let r = row[0]; r <= row[1]; r++) {
+      const sourceCell = sheetData?.[r]?.[column[0]];
+
+      if (!sourceCell) continue;
+
+      const sourceValue = sourceCell.v;
+      const sourceFormula = sourceCell.f;
+
+      for (let c = column[0] + 1; c <= column[1]; c++) {
+        if (sourceFormula) {
+          // Adjust formula for new column references
+          const newFormula = sourceFormula.replace(/(\$?[A-Z]+)(\$?)(\d+)/g, (match, colRef, dollar, rowNum) => {
+            if (dollar) return match; // Keep absolute column references unchanged
+            const colIndex = colRef.charCodeAt(0) - 65 + (c - column[0]); // Convert column to index (A=0, B=1, ...)
+            return `${String.fromCharCode(65 + colIndex)}${rowNum}`; // Convert index back to column letter
+          });
+
+          updateCell(ctx, r, c, null, newFormula);
+        } else {
+          updateCell(ctx, r, c, null, sourceValue);
+        }
+      }
+    }
+
+    jfrefreshgrid(ctx, null, undefined);
+    e.stopPropagation();
+  }
+
+
+
   e.preventDefault();
 }
 
@@ -682,7 +765,34 @@ export function handleGlobalKeyDown(
   //   return;
   // }
 
-  if (kstr === "Enter") {
+
+  // Toggle focus with Ctrl + Shift + F (independent of sheet focus state)
+  if (e.ctrlKey && e.shiftKey && kstr === "F") {
+    ctx.sheetFocused = !ctx.sheetFocused; // Toggle sheet focus
+    e.preventDefault();
+
+    if (ctx.sheetFocused) {
+      // Focus back to the selected cell
+      const selectedCell = document.querySelector(".luckysheet-cell-input") as HTMLElement | null;
+      if (selectedCell) {
+        selectedCell.setAttribute("tabindex", "-1"); // Ensure it is focusable
+        selectedCell.focus();
+      }
+    } else {
+      // Focus on the fortune-toolbar
+      const toolbar = document.querySelector(".fortune-toolbar") as HTMLElement | null;
+      if (toolbar) {
+        toolbar.setAttribute("tabindex", "-1"); // Make it focusable if needed
+        toolbar.focus();
+      }
+    }
+
+    return;
+  }
+  // Ensure key events only trigger when sheet focus is ON
+  else if (!ctx.sheetFocused) {
+    return;
+  } else if (kstr === "Enter") {
     if (!allowEdit) return;
     handleGlobalEnter(ctx, cellInput, e, canvas);
   } else if (kstr === "Tab") {
