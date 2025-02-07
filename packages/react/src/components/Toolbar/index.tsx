@@ -1459,6 +1459,7 @@ const Toolbar: React.FC<{
       customColor,
       customStyle,
       toolbarFormat.moreCurrency,
+      toolbarFormat.moreNumber,
     ]
   );
 

@@ -503,10 +503,11 @@ export function handleWithCtrlOrMetaKey(
     // $("#luckysheet-left-top").trigger("mousedown");
     // $(document).trigger("mouseup");
     selectAll(ctx);
-  }
-
-  else if (e.code === "KeyD") {
-    if (!ctx.luckysheet_select_save || ctx.luckysheet_select_save.length === 0) {
+  } else if (e.code === "KeyD") {
+    if (
+      !ctx.luckysheet_select_save ||
+      ctx.luckysheet_select_save.length === 0
+    ) {
       return;
     }
 
@@ -519,7 +520,7 @@ export function handleWithCtrlOrMetaKey(
     if (!sheetData) return;
 
     // Loop through selected columns
-    for (let col = column[0]; col <= column[1]; col++) {
+    for (let col = column[0]; col <= column[1]; col += 1) {
       const sourceCell = sheetData?.[row[0]]?.[col];
 
       if (!sourceCell) continue;
@@ -527,12 +528,17 @@ export function handleWithCtrlOrMetaKey(
       const sourceValue = sourceCell.v;
       const sourceFormula = sourceCell.f;
 
-      for (let r = row[0] + 1; r <= row[1]; r++) {
+      for (let r = row[0] + 1; r <= row[1]; r += 1) {
         if (sourceFormula) {
           // Adjust formula for new row references
-          const newFormula = sourceFormula.replace(/(\$?[A-Z]+)(\$?)(\d+)/g, (match, colRef, dollar, rowNum) => {
-            return dollar ? match : `${colRef}${parseInt(rowNum) + (r - row[0])}`;
-          });
+          const newFormula = sourceFormula.replace(
+            /(\$?[A-Z]+)(\$?)(\d+)/g,
+            (match, colRef, dollar, rowNum) => {
+              return dollar
+                ? match
+                : `${colRef}${parseInt(rowNum, 10) + (r - row[0])}`;
+            }
+          );
 
           updateCell(ctx, r, col, null, newFormula);
         } else {
@@ -543,9 +549,11 @@ export function handleWithCtrlOrMetaKey(
 
     jfrefreshgrid(ctx, null, undefined);
     e.stopPropagation();
-  }
-  else if (e.code === "KeyR") {
-    if (!ctx.luckysheet_select_save || ctx.luckysheet_select_save.length === 0) {
+  } else if (e.code === "KeyR") {
+    if (
+      !ctx.luckysheet_select_save ||
+      ctx.luckysheet_select_save.length === 0
+    ) {
       return;
     }
 
@@ -558,7 +566,7 @@ export function handleWithCtrlOrMetaKey(
     if (!sheetData) return;
 
     // Loop through selected rows
-    for (let r = row[0]; r <= row[1]; r++) {
+    for (let r = row[0]; r <= row[1]; r += 1) {
       const sourceCell = sheetData?.[r]?.[column[0]];
 
       if (!sourceCell) continue;
@@ -566,14 +574,17 @@ export function handleWithCtrlOrMetaKey(
       const sourceValue = sourceCell.v;
       const sourceFormula = sourceCell.f;
 
-      for (let c = column[0] + 1; c <= column[1]; c++) {
+      for (let c = column[0] + 1; c <= column[1]; c += 1) {
         if (sourceFormula) {
           // Adjust formula for new column references
-          const newFormula = sourceFormula.replace(/(\$?[A-Z]+)(\$?)(\d+)/g, (match, colRef, dollar, rowNum) => {
-            if (dollar) return match; // Keep absolute column references unchanged
-            const colIndex = colRef.charCodeAt(0) - 65 + (c - column[0]); // Convert column to index (A=0, B=1, ...)
-            return `${String.fromCharCode(65 + colIndex)}${rowNum}`; // Convert index back to column letter
-          });
+          const newFormula = sourceFormula.replace(
+            /(\$?[A-Z]+)(\$?)(\d+)/g,
+            (match, colRef, dollar, rowNum) => {
+              if (dollar) return match; // Keep absolute column references unchanged
+              const colIndex = colRef.charCodeAt(0) - 65 + (c - column[0]); // Convert column to index (A=0, B=1, ...)
+              return `${String.fromCharCode(65 + colIndex)}${rowNum}`; // Convert index back to column letter
+            }
+          );
 
           updateCell(ctx, r, c, null, newFormula);
         } else {
@@ -585,8 +596,6 @@ export function handleWithCtrlOrMetaKey(
     jfrefreshgrid(ctx, null, undefined);
     e.stopPropagation();
   }
-
-
 
   e.preventDefault();
 }
@@ -765,7 +774,6 @@ export function handleGlobalKeyDown(
   //   return;
   // }
 
-
   // Toggle focus with Ctrl + Shift + F (independent of sheet focus state)
   if (e.ctrlKey && e.shiftKey && kstr === "F") {
     ctx.sheetFocused = !ctx.sheetFocused; // Toggle sheet focus
@@ -773,14 +781,18 @@ export function handleGlobalKeyDown(
 
     if (ctx.sheetFocused) {
       // Focus back to the selected cell
-      const selectedCell = document.querySelector(".luckysheet-cell-input") as HTMLElement | null;
+      const selectedCell = document.querySelector(
+        ".luckysheet-cell-input"
+      ) as HTMLElement | null;
       if (selectedCell) {
         selectedCell.setAttribute("tabindex", "-1"); // Ensure it is focusable
         selectedCell.focus();
       }
     } else {
       // Focus on the fortune-toolbar
-      const toolbar = document.querySelector(".fortune-toolbar") as HTMLElement | null;
+      const toolbar = document.querySelector(
+        ".fortune-toolbar"
+      ) as HTMLElement | null;
       if (toolbar) {
         toolbar.setAttribute("tabindex", "-1"); // Make it focusable if needed
         toolbar.focus();
@@ -790,9 +802,10 @@ export function handleGlobalKeyDown(
     return;
   }
   // Ensure key events only trigger when sheet focus is ON
-  else if (!ctx.sheetFocused) {
+  if (!ctx.sheetFocused) {
     return;
-  } else if (kstr === "Enter") {
+  }
+  if (kstr === "Enter") {
     if (!allowEdit) return;
     handleGlobalEnter(ctx, cellInput, e, canvas);
   } else if (kstr === "Tab") {
