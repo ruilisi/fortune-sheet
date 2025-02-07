@@ -516,12 +516,9 @@ export function handleWithCtrlOrMetaKey(
 
     if (!row || !column) return;
 
-    const sheetData = getFlowdata(ctx);
-    if (!sheetData) return;
-
     // Loop through selected columns
     for (let col = column[0]; col <= column[1]; col += 1) {
-      const sourceCell = sheetData?.[row[0]]?.[col];
+      const sourceCell = flowdata?.[row[0]]?.[col];
 
       if (!sourceCell) continue;
 
@@ -562,12 +559,9 @@ export function handleWithCtrlOrMetaKey(
 
     if (!row || !column) return;
 
-    const sheetData = getFlowdata(ctx);
-    if (!sheetData) return;
-
     // Loop through selected rows
     for (let r = row[0]; r <= row[1]; r += 1) {
-      const sourceCell = sheetData?.[r]?.[column[0]];
+      const sourceCell = flowdata?.[r]?.[column[0]];
 
       if (!sourceCell) continue;
 
