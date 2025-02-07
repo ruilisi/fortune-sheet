@@ -2053,7 +2053,7 @@ export function copy(ctx: Context) {
 
 export function deleteSelectedCellText(ctx: Context): string {
   const allowEdit = isAllowEdit(ctx);
-  if (!allowEdit) {
+  if (allowEdit === false) {
     return "allowEdit";
   }
 
@@ -2078,24 +2078,25 @@ export function deleteSelectedCellText(ctx: Context): string {
     if (has_PartMC) {
       return "partMC";
     }
-    const hyperlinkMap =
-      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!].hyperlink;
 
     for (let s = 0; s < selection.length; s += 1) {
       const r1 = selection[s].row[0];
       const r2 = selection[s].row[1];
       const c1 = selection[s].column[0];
       const c2 = selection[s].column[1];
+      const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
+      if (sheetIndex !== null && ctx.luckysheetfile[sheetIndex].data) {
+        const { data } = ctx.luckysheetfile[sheetIndex];
 
-      for (let r = r1; r <= r2; r += 1) {
-        for (let c = c1; c <= c2; c += 1) {
-          // Fully reset the cell to an empty object
-          d[r][c] = {};
+        for (let r = r1; r <= r2; r += 1) {
+          for (let c = c1; c <= c2; c += 1) {
+            // Ensure the row exists
+            if (!data[r]) data[r] = [];
 
-          // Remove hyperlink if it exists
-          // 同步清除 hyperlink
-          if (hyperlinkMap && hyperlinkMap[`${r}_${c}`]) {
-            delete hyperlinkMap[`${r}_${c}`];
+            // Replace the entire cell with an empty object
+            if (data[r] && data[r][c]) {
+              data[r][c] = {}; // ✅ Fully replace cell with empty object
+            }
           }
         }
       }

@@ -866,7 +866,10 @@ export function handleGlobalKeyDown(
       // }
 
       // selectHightlightShow();
-    } else if (kstr === "Delete" || kstr === "Backspace") {
+    } else if (
+      kstr.toLowerCase() === "delete" ||
+      kstr.toLowerCase() === "backspace"
+    ) {
       if (!allowEdit) return;
       if (ctx.activeImg != null) {
         removeActiveImage(ctx);
