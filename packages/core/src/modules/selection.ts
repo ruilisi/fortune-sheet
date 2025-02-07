@@ -2086,7 +2086,7 @@ export function deleteSelectedCellText(ctx: Context): string {
       const c2 = selection[s].column[1];
       const sheetIndex = getSheetIndex(ctx, ctx.currentSheetId);
       if (sheetIndex !== null && ctx.luckysheetfile[sheetIndex].data) {
-        const { data } = ctx.luckysheetfile[sheetIndex];
+        const { data = [] } = ctx.luckysheetfile[sheetIndex] ?? {};
 
         for (let r = r1; r <= r2; r += 1) {
           for (let c = c1; c <= c2; c += 1) {
@@ -2095,7 +2095,7 @@ export function deleteSelectedCellText(ctx: Context): string {
 
             // Replace the entire cell with an empty object
             if (data[r] && data[r][c]) {
-              data[r][c] = {}; // ✅ Fully replace cell with empty object
+              data[r][c] = {}; // Fully replace cell with empty object
             }
           }
         }
