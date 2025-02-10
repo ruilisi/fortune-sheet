@@ -11079,6 +11079,22 @@ export default {
     Dropdown: "Dropdown",
     zoomIn: "Zoom in",
     zoomOut: "Zoom out",
+    toggleSheetFocusShortcut: "Toggle sheet focus lock: Shift, Control, F.",
+    selectRangeShortcut: "Select range: Shift, arrow keys.",
+    autoFillDownShortcut:
+      "Auto-fill selection down from first cell: Control or Meta key, D.",
+    autoFillRightShortcut:
+      "Auto-fill selection right from first cell: Control or Meta key, R.",
+    boldTextShortcut: "Bold text: Control or Meta key, B.",
+    copyShortcut: "Copy: Control or Meta key, C.",
+    pasteShortcut: "Paste: Control or Meta key, V.",
+    undoShortcut: "Undo: Control or Meta key, Z.",
+    redoShortcut: "Redo: Control or Meta key, Shift, Z.",
+    deleteCellContentShortcut: "Delete cell content: Delete or Backspace.",
+    confirmCellEditShortcut: "Confirm cell edit and move down: Enter.",
+    moveRightShortcut: "Move right: Tab.",
+    moveLeftShortcut: "Move left: Shift, Tab.",
+    shortcuts: "Keyboard Shortcuts",
   },
   currencyDetail: [
     { name: "RMB", pos: "before", value: "¥" },

@@ -11081,6 +11081,25 @@ export default {
     Dropdown: "ड्रॉप डाउन",
     zoomIn: "ज़ूम इन",
     zoomOut: "ज़ूम आउट",
+    toggleSheetFocusShortcut:
+      "Alternar bloqueo de enfoque de hoja: Shift, Control, F.",
+    selectRangeShortcut: "Seleccionar rango: Shift, teclas de flecha.",
+    autoFillDownShortcut:
+      "Autocompletar selección hacia abajo desde la primera celda: Control o Meta, D.",
+    autoFillRightShortcut:
+      "Autocompletar selección hacia la derecha desde la primera celda: Control o Meta, R.",
+    boldTextShortcut: "Texto en negrita: Control o Meta, B.",
+    copyShortcut: "Copiar: Control o Meta, C.",
+    pasteShortcut: "Pegar: Control o Meta, V.",
+    undoShortcut: "Deshacer: Control o Meta, Z.",
+    redoShortcut: "Rehacer: Control o Meta, Shift, Z.",
+    deleteCellContentShortcut:
+      "Eliminar contenido de celda: Delete o Backspace.",
+    confirmCellEditShortcut:
+      "Confirmar edición de celda y mover hacia abajo: Enter.",
+    moveRightShortcut: "Mover a la derecha: Tab.",
+    moveLeftShortcut: "Mover a la izquierda: Shift, Tab.",
+    shortcuts: "कुंजीपटल अल्प मार्ग",
   },
   currencyDetail: [
     { name: "चीनी युआन", pos: "before", value: "¥" },

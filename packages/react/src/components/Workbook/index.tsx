@@ -102,7 +102,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
     );
 
     const [context, setContext] = useState(defaultContext(refs));
-    const { formula } = locale(context);
+    const { formula, info } = locale(context);
 
     const [moreToolbarItems, setMoreToolbarItems] =
       useState<React.ReactNode>(null);
@@ -744,6 +744,30 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
             ref={workbookContainer}
             onKeyDown={onKeyDown}
           >
+            <section
+              aria-labelledby="shortcuts-heading"
+              id="shortcut-list"
+              className="sr-only"
+              tabIndex={0}
+              aria-live="polite"
+            >
+              <h2 id="shortcuts-heading">{info.shortcuts}</h2>
+              <ul>
+                <li>{info.toggleSheetFocusShortcut}</li>
+                <li>{info.selectRangeShortcut}</li>
+                <li>{info.autoFillDownShortcut}</li>
+                <li>{info.autoFillRightShortcut}</li>
+                <li>{info.boldTextShortcut}</li>
+                <li>{info.copyShortcut}</li>
+                <li>{info.pasteShortcut}</li>
+                <li>{info.undoShortcut}</li>
+                <li>{info.redoShortcut}</li>
+                <li>{info.deleteCellContentShortcut}</li>
+                <li>{info.confirmCellEditShortcut}</li>
+                <li>{info.moveRightShortcut}</li>
+                <li>{info.moveLeftShortcut}</li>
+              </ul>
+            </section>
             <SVGDefines currency={mergedSettings.currency} />
             <div className="fortune-workarea">
               {mergedSettings.showToolbar && (
