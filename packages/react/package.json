@@ -15,7 +15,7 @@
   "dependencies": {
     "@fortune-sheet/core": "^1.0.1",
     "@types/regenerator-runtime": "^0.13.6",
-    "immer": "^9.0.12",
+    "immer": "^10.1.1",
     "lodash": "^4.17.21",
     "regenerator-runtime": "^0.14.1"
   },
