@@ -10907,6 +10907,7 @@ export default {
     numberDecrease: "Menos decimales",
     numberIncrease: "Más decimales",
     moreFormats: "Más formatos",
+    format: "Formato",
     font: "Fuente",
     "font-size": "Tamaño Fuente",
     bold: "Negrita (Ctrl+B)",
@@ -11042,6 +11043,14 @@ export default {
 
     sheetIsFocused: "Bloqueo de enfoque de hoja habilitado.",
     sheetNotFocused: "Bloqueo de enfoque de hoja desactivado.",
+    sheetSrIntro:
+      "Para alternar el foco de la hoja para ayudar con la barra de herramientas y otra navegación que no sea de hoja, use Mayús, Control, F.",
+    currentCellInput: "Entrada de celda actual",
+    newSheet: "Nueva hoja",
+    sheetOptions: "Opciones de hoja",
+    Dropdown: "Menú desplegable",
+    zoomIn: "Dar un golpe de zoom",
+    zoomOut: "alejar",
   },
   currencyDetail: {
     RMB: "RMB",

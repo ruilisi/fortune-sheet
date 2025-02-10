@@ -1,4 +1,5 @@
 import {
+  locale,
   getFlowdata,
   cancelNormalSelected,
   getCellValue,
@@ -42,6 +43,7 @@ const FxEditor: React.FC = () => {
   const prevFirstSelection = usePrevious(firstSelection);
   const prevSheetId = usePrevious(context.currentSheetId);
   const recentText = useRef("");
+  const { info } = locale(context);
 
   useEffect(() => {
     // 当选中行列是处于隐藏状态的话则不允许编辑
@@ -307,6 +309,7 @@ const FxEditor: React.FC = () => {
           className="fortune-fx-input"
           id="luckysheet-functionbox-cell"
           aria-autocomplete="list"
+          aria-label={info.currentCellInput}
           onFocus={onFocus}
           onKeyDown={onKeyDown}
           onChange={onChange}

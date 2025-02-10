@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 
 type Props = React.PropsWithChildren<{
   onClick?: (
@@ -21,6 +21,14 @@ const Menu: React.FC<Props> = ({
   onMouseEnter,
   children,
 }) => {
+  useEffect(() => {
+    // focus on mount for keyboard nav
+    const element = document.querySelector(".luckysheet-cols-menuitem");
+    if (element) {
+      (element as HTMLDivElement).focus();
+    }
+  }, []);
+
   const containerRef = useRef<HTMLDivElement>(null);
   return (
     <div

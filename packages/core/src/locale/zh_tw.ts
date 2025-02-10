@@ -10892,6 +10892,7 @@ export default {
     numberDecrease: "减少小數位數",
     numberIncrease: "新增小數位數",
     moreFormats: "更多格式",
+    format: "格式",
     font: "字體",
     "font-size": "字型大小",
     bold: "粗體（Ctrl+B）",
@@ -11019,6 +11020,14 @@ export default {
 
     sheetIsFocused: "已啟用工作表焦點鎖定。",
     sheetNotFocused: "工作表焦點鎖定已停用。",
+    sheetSrIntro:
+      "若要切換工作表焦點以輔助工具列和其他非工作表導航，請使用 Shift、Control、F。",
+    currentCellInput: "目前儲存格輸入",
+    newSheet: "新表",
+    sheetOptions: "圖紙選項",
+    Dropdown: "下拉式選單",
+    zoomIn: "放大",
+    zoomOut: "縮小",
   },
   currencyDetail: {
     RMB: "人民幣",

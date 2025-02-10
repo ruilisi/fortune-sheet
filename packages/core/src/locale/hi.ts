@@ -10924,6 +10924,7 @@ export default {
     "number-decrease": "दशमलव स्थान घटाएँ",
     "number-increase": "दशमलव स्थान बढ़ाएँ",
     moreFormats: "अधिक फॉर्मेट",
+    format: "प्रारूप",
     "border-all": "सभी सीमाएँ",
     "merge-all": "सभी सेल मिलाएँ",
     font: "फ़ॉन्ट",
@@ -11072,6 +11073,14 @@ export default {
 
     sheetIsFocused: "शीट फोकस लॉक सक्षम।",
     sheetNotFocused: "शीट फ़ोकस लॉक अक्षम किया गया.",
+    sheetSrIntro:
+      "टूलबार और अन्य गैर-शीट नेविगेशन में सहायता के लिए शीट फ़ोकस को टॉगल करने के लिए, Shift, Control, F का उपयोग करें।",
+    currentCellInput: "वर्तमान सेल इनपुट",
+    newSheet: "नई शीट",
+    sheetOptions: "शीट विकल्प",
+    Dropdown: "ड्रॉप डाउन",
+    zoomIn: "ज़ूम इन",
+    zoomOut: "ज़ूम आउट",
   },
   currencyDetail: [
     { name: "चीनी युआन", pos: "before", value: "¥" },

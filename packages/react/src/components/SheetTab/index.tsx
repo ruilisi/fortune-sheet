@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { updateCell, addSheet } from "@fortune-sheet/core";
+import { updateCell, addSheet, locale } from "@fortune-sheet/core";
 // @ts-ignore
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
@@ -21,6 +21,7 @@ const SheetTab: React.FC = () => {
   const rightScrollRef = useRef<HTMLDivElement>(null);
   const [isShowScrollBtn, setIsShowScrollBtn] = useState<boolean>(false);
   const [isShowBoundary, setIsShowBoundary] = useState<boolean>(true);
+  const { info } = locale(context);
 
   const scrollDelta = 150;
 
@@ -78,7 +79,12 @@ const SheetTab: React.FC = () => {
     >
       <div id="luckysheet-sheet-content">
         {context.allowEdit && (
-          <div className="fortune-sheettab-button" onClick={onAddSheetClick}>
+          <div
+            className="fortune-sheettab-button"
+            onClick={onAddSheetClick}
+            tabIndex={0}
+            aria-label={info.newSheet}
+          >
             <SVGIcon name="plus" width={16} height={16} />
           </div>
         )}

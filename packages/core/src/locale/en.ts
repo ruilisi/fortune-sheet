@@ -10925,6 +10925,7 @@ export default {
     moreFormats: "More formats",
     "border-all": "Border All",
     "merge-all": "Merge All Cell",
+    format: "Format",
     font: "Font",
     "font-size": "Font size",
     bold: "Bold (Ctrl+B)",
@@ -11070,6 +11071,14 @@ export default {
 
     sheetIsFocused: "Sheet focus lock enabled.",
     sheetNotFocused: "Sheet focus lock disabled.",
+    sheetSrIntro:
+      "To toggle sheet focus to assist with toolbar and other non-sheet navigation, use Shift, Control, F.",
+    currentCellInput: "Current cell input",
+    newSheet: "New sheet",
+    sheetOptions: "Sheet options",
+    Dropdown: "Dropdown",
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
   },
   currencyDetail: [
     { name: "RMB", pos: "before", value: "¥" },

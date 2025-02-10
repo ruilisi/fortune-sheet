@@ -10908,6 +10908,7 @@ export default {
     moreFormats: "更多格式",
     "border-all": "所有边框",
     "merge-all": "全部合并单元格",
+    format: "格式",
     font: "字体",
     "font-size": "字号",
     bold: "粗体 (Ctrl+B)",
@@ -11053,6 +11054,14 @@ export default {
 
     sheetIsFocused: "已启用工作表焦点锁定。",
     sheetNotFocused: "工作表焦点锁定已禁用。",
+    sheetSrIntro:
+      "要切换工作表焦点以辅助工具栏和其他非工作表导航，请使用 Shift、Control、F。",
+    currentCellInput: "当前单元格输入",
+    newSheet: "新表",
+    sheetOptions: "图纸选项",
+    Dropdown: "下拉菜单",
+    zoomIn: "放大",
+    zoomOut: "缩小",
   },
   currencyDetail: [
     { name: "人民币", pos: "before", value: "¥" },

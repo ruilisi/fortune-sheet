@@ -33,6 +33,7 @@ import {
   fixRowStyleOverflowInFreeze,
   fixColumnStyleOverflowInFreeze,
   handleKeydownForZoom,
+  api,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext, { SetContextOptions } from "../../context";
@@ -325,6 +326,12 @@ const SheetOverlay: React.FC = () => {
     );
   }, [context, rightclick.rowOverLimit, setContext, showAlert]);
 
+  useEffect(() => {
+    setContext((draftCtx) =>
+      api.setSelection(draftCtx, [{ row: [0], column: [0] }], {})
+    );
+  }, [context.currentSheetId]);
+
   // 提醒弹窗
   useEffect(() => {
     if (context.warnDialog) {
@@ -419,7 +426,16 @@ const SheetOverlay: React.FC = () => {
         row: [rf, rf],
       });
     }
-    return getRangetxt(context, context.currentSheetId, lastSelection);
+
+    const rawRangeTxt = getRangetxt(
+      context,
+      context.currentSheetId,
+      lastSelection
+    );
+    // Return with formatting for better screen reading
+    // Format single-cell selections (e.g., "AA12" → "AA. 12")
+    // Format range selections (e.g., "A1:BB100" → "A. 1: BB. 100")
+    return rawRangeTxt.replace(/([A-Z]+)(\d+)/g, "$1. $2");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [context.currentSheetId, context.luckysheet_select_save]);
 
@@ -441,6 +457,8 @@ const SheetOverlay: React.FC = () => {
     }
     return "";
   };
+
+  const computedCellValue = cellValue();
 
   useEffect(() => {
     if (context.sheetFocused) {
@@ -878,11 +896,15 @@ const SheetOverlay: React.FC = () => {
         </div>
       </div>
       <div id="sr-selection" className="sr-only" role="alert">
-        {`${rangeText} ${cellValue()}`}
+        {!rangeText.includes("NaN")
+          ? `${rangeText} ${computedCellValue}`
+          : `A1. ${info.sheetSrIntro}`}
       </div>
       <div id="sr-sheetFocus" className="sr-only" role="alert">
         {context.sheetFocused
-          ? `${lastRangeText} ${lastCellValue}. ${info.sheetIsFocused}`
+          ? `${lastRangeText} ${lastCellValue ? `${lastCellValue}.` : ""} ${
+              info.sheetIsFocused
+            }`
           : `Toolbar. ${info.sheetNotFocused}`}
       </div>
     </div>
