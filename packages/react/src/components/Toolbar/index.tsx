@@ -1464,50 +1464,53 @@ const Toolbar: React.FC<{
   );
 
   return (
-    <div
-      ref={containerRef}
-      className="fortune-toolbar"
-      aria-label={toolbar.toolbar}
-    >
-      {settings.customToolbarItems.map((n) => {
-        return (
-          <CustomButton
-            tooltip={n.tooltip}
-            onClick={n.onClick}
-            key={n.key}
-            icon={n.icon}
-            iconName={n.iconName}
-          >
-            {n.children}
-          </CustomButton>
-        );
-      })}
-      {settings.customToolbarItems?.length > 0 ? (
-        <Divider key="customDivider" />
-      ) : null}
-      {(toolbarWrapIndex === -1
-        ? settings.toolbarItems
-        : settings.toolbarItems.slice(0, toolbarWrapIndex + 1)
-      ).map((name, i) => getToolbarItem(name, i))}
-      {toolbarWrapIndex !== -1 &&
-      toolbarWrapIndex < settings.toolbarItems.length - 1 ? (
-        <Button
-          iconId="more"
-          tooltip={toolbar.toolMore}
-          onClick={() => {
-            if (moreItemsOpen) {
-              setMoreItems(null);
-            } else {
-              setMoreItems(
-                settings.toolbarItems
-                  .slice(toolbarWrapIndex + 1)
-                  .map((name, i) => getToolbarItem(name, i))
-              );
-            }
-          }}
-        />
-      ) : null}
-    </div>
+    <header>
+      <div
+        ref={containerRef}
+        className="fortune-toolbar"
+        role="toolbar"
+        aria-label={toolbar.toolbar}
+      >
+        {settings.customToolbarItems.map((n) => {
+          return (
+            <CustomButton
+              tooltip={n.tooltip}
+              onClick={n.onClick}
+              key={n.key}
+              icon={n.icon}
+              iconName={n.iconName}
+            >
+              {n.children}
+            </CustomButton>
+          );
+        })}
+        {settings.customToolbarItems?.length > 0 ? (
+          <Divider key="customDivider" />
+        ) : null}
+        {(toolbarWrapIndex === -1
+          ? settings.toolbarItems
+          : settings.toolbarItems.slice(0, toolbarWrapIndex + 1)
+        ).map((name, i) => getToolbarItem(name, i))}
+        {toolbarWrapIndex !== -1 &&
+        toolbarWrapIndex < settings.toolbarItems.length - 1 ? (
+          <Button
+            iconId="more"
+            tooltip={toolbar.toolMore}
+            onClick={() => {
+              if (moreItemsOpen) {
+                setMoreItems(null);
+              } else {
+                setMoreItems(
+                  settings.toolbarItems
+                    .slice(toolbarWrapIndex + 1)
+                    .map((name, i) => getToolbarItem(name, i))
+                );
+              }
+            }}
+          />
+        ) : null}
+      </div>
+    </header>
   );
 };
 

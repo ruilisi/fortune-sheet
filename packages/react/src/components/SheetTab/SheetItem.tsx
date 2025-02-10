@@ -138,101 +138,65 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
   );
 
   return (
-    <div
-      onDragOver={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }}
-      onDragEnter={(e) => {
-        setDragOver(true);
-        e.stopPropagation();
-      }}
-      onDragLeave={(e) => {
-        setDragOver(false);
-        e.stopPropagation();
-      }}
-      onDragEnd={(e) => {
-        setDragOver(false);
-        e.stopPropagation();
-      }}
-      onDrop={onDrop}
-      onDragStart={onDragStart}
-      draggable={context.allowEdit && !editing}
-      key={sheet.id}
-      ref={containerRef}
-      className={
-        isDropPlaceholder
-          ? "fortune-sheettab-placeholder"
-          : `luckysheet-sheets-item${
-              context.currentSheetId === sheet.id
-                ? " luckysheet-sheets-item-active"
-                : ""
-            }`
-      }
-      onClick={() => {
-        if (isDropPlaceholder) return;
-        setContext((draftCtx) => {
-          draftCtx.sheetScrollRecord[draftCtx.currentSheetId] = {
-            scrollLeft: draftCtx.scrollLeft,
-            scrollTop: draftCtx.scrollTop,
-            luckysheet_select_status: draftCtx.luckysheet_select_status,
-            luckysheet_select_save: draftCtx.luckysheet_select_save,
-            luckysheet_selection_range: draftCtx.luckysheet_selection_range,
-          };
-          draftCtx.dataVerificationDropDownList = false;
-          draftCtx.currentSheetId = sheet.id!;
-          draftCtx.zoomRatio = sheet.zoomRatio || 1;
-          cancelActiveImgItem(draftCtx, refs.globalCache);
-          cancelNormalSelected(draftCtx);
-        });
-      }}
-      tabIndex={0}
-      onContextMenu={(e) => {
-        if (isDropPlaceholder) return;
-        const rect = refs.workbookContainer.current!.getBoundingClientRect();
-        const { pageX, pageY } = e;
-        setContext((ctx) => {
-          // 右击的时候先进行跳转
-          ctx.dataVerificationDropDownList = false;
-          ctx.currentSheetId = sheet.id!;
-          ctx.zoomRatio = sheet.zoomRatio || 1;
-          ctx.sheetTabContextMenu = {
-            x: pageX - rect.left - window.scrollX,
-            y: pageY - rect.top - window.scrollY,
-            sheet,
-            onRename: () => setEditing(true),
-          };
-        });
-      }}
-      style={{
-        borderLeft: dragOver ? "2px solid #0188fb" : "",
-        display: sheet.hide === 1 ? "none" : "",
-      }}
-    >
-      <span
-        className="luckysheet-sheets-item-name"
-        spellCheck="false"
-        suppressContentEditableWarning
-        contentEditable={isDropPlaceholder ? false : editing}
-        onDoubleClick={() => setEditing(true)}
-        onBlur={onBlur}
-        onKeyDown={onKeyDown}
-        ref={editable}
-        style={dragOver ? { pointerEvents: "none" } : {}}
-      >
-        {sheet.name}
-      </span>
-      <span
-        className="luckysheet-sheets-item-function"
-        onMouseEnter={() => setSvgColor("#5c5c5c")}
-        onMouseLeave={() => setSvgColor("#c3c3c3")}
-        onClick={(e) => {
-          if (isDropPlaceholder || context.allowEdit === false) return;
+    <nav>
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        onDragEnter={(e) => {
+          setDragOver(true);
+          e.stopPropagation();
+        }}
+        onDragLeave={(e) => {
+          setDragOver(false);
+          e.stopPropagation();
+        }}
+        onDragEnd={(e) => {
+          setDragOver(false);
+          e.stopPropagation();
+        }}
+        onDrop={onDrop}
+        onDragStart={onDragStart}
+        draggable={context.allowEdit && !editing}
+        key={sheet.id}
+        ref={containerRef}
+        className={
+          isDropPlaceholder
+            ? "fortune-sheettab-placeholder"
+            : `luckysheet-sheets-item${
+                context.currentSheetId === sheet.id
+                  ? " luckysheet-sheets-item-active"
+                  : ""
+              }`
+        }
+        onClick={() => {
+          if (isDropPlaceholder) return;
+          setContext((draftCtx) => {
+            draftCtx.sheetScrollRecord[draftCtx.currentSheetId] = {
+              scrollLeft: draftCtx.scrollLeft,
+              scrollTop: draftCtx.scrollTop,
+              luckysheet_select_status: draftCtx.luckysheet_select_status,
+              luckysheet_select_save: draftCtx.luckysheet_select_save,
+              luckysheet_selection_range: draftCtx.luckysheet_selection_range,
+            };
+            draftCtx.dataVerificationDropDownList = false;
+            draftCtx.currentSheetId = sheet.id!;
+            draftCtx.zoomRatio = sheet.zoomRatio || 1;
+            cancelActiveImgItem(draftCtx, refs.globalCache);
+            cancelNormalSelected(draftCtx);
+          });
+        }}
+        tabIndex={0}
+        onContextMenu={(e) => {
+          if (isDropPlaceholder) return;
           const rect = refs.workbookContainer.current!.getBoundingClientRect();
           const { pageX, pageY } = e;
           setContext((ctx) => {
             // 右击的时候先进行跳转
+            ctx.dataVerificationDropDownList = false;
             ctx.currentSheetId = sheet.id!;
+            ctx.zoomRatio = sheet.zoomRatio || 1;
             ctx.sheetTabContextMenu = {
               x: pageX - rect.left - window.scrollX,
               y: pageY - rect.top - window.scrollY,
@@ -241,19 +205,58 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
             };
           });
         }}
-        tabIndex={0}
-        role="button"
-        aria-label={info.sheetOptions}
+        style={{
+          borderLeft: dragOver ? "2px solid #0188fb" : "",
+          display: sheet.hide === 1 ? "none" : "",
+        }}
       >
-        <SVGIcon name="downArrow" width={12} style={{ fill: svgColor }} />
-      </span>
-      {!!sheet.color && (
-        <div
-          className="luckysheet-sheets-item-color"
-          style={{ background: sheet.color }}
-        />
-      )}
-    </div>
+        <span
+          className="luckysheet-sheets-item-name"
+          spellCheck="false"
+          suppressContentEditableWarning
+          contentEditable={isDropPlaceholder ? false : editing}
+          onDoubleClick={() => setEditing(true)}
+          onBlur={onBlur}
+          onKeyDown={onKeyDown}
+          ref={editable}
+          style={dragOver ? { pointerEvents: "none" } : {}}
+        >
+          {sheet.name}
+        </span>
+        <span
+          className="luckysheet-sheets-item-function"
+          onMouseEnter={() => setSvgColor("#5c5c5c")}
+          onMouseLeave={() => setSvgColor("#c3c3c3")}
+          onClick={(e) => {
+            if (isDropPlaceholder || context.allowEdit === false) return;
+            const rect =
+              refs.workbookContainer.current!.getBoundingClientRect();
+            const { pageX, pageY } = e;
+            setContext((ctx) => {
+              // 右击的时候先进行跳转
+              ctx.currentSheetId = sheet.id!;
+              ctx.sheetTabContextMenu = {
+                x: pageX - rect.left - window.scrollX,
+                y: pageY - rect.top - window.scrollY,
+                sheet,
+                onRename: () => setEditing(true),
+              };
+            });
+          }}
+          tabIndex={0}
+          role="button"
+          aria-label={info.sheetOptions}
+        >
+          <SVGIcon name="downArrow" width={12} style={{ fill: svgColor }} />
+        </span>
+        {!!sheet.color && (
+          <div
+            className="luckysheet-sheets-item-color"
+            style={{ background: sheet.color }}
+          />
+        )}
+      </div>
+    </nav>
   );
 };
 

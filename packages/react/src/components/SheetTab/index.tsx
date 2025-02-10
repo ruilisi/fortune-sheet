@@ -84,6 +84,7 @@ const SheetTab: React.FC = () => {
             onClick={onAddSheetClick}
             tabIndex={0}
             aria-label={info.newSheet}
+            role="button"
           >
             <SVGIcon name="plus" width={16} height={16} />
           </div>

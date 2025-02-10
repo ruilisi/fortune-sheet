@@ -86,7 +86,7 @@ const ZoomControl: React.FC = () => {
   );
 
   return (
-    <div className="fortune-zoom-container">
+    <aside title="Zoom settings" className="fortune-zoom-container">
       <div
         className="fortune-zoom-button"
         aria-label={info.zoomOut}
@@ -95,6 +95,7 @@ const ZoomControl: React.FC = () => {
           e.stopPropagation();
         }}
         tabIndex={0}
+        role="button"
       >
         <SVGIcon name="minus" width={16} height={16} />
       </div>
@@ -132,10 +133,11 @@ const ZoomControl: React.FC = () => {
           e.stopPropagation();
         }}
         tabIndex={0}
+        role="button"
       >
         <SVGIcon name="plus" width={16} height={16} />
       </div>
-    </div>
+    </aside>
   );
 };
 

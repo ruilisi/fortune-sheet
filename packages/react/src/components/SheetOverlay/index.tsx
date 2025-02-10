@@ -468,7 +468,7 @@ const SheetOverlay: React.FC = () => {
   }, [context.sheetFocused]); // Runs only when sheet focus toggles
 
   return (
-    <div
+    <main
       className="fortune-sheet-overlay"
       ref={containerRef}
       onTouchStart={onTouchStart}
@@ -907,7 +907,7 @@ const SheetOverlay: React.FC = () => {
             }`
           : `Toolbar. ${info.sheetNotFocused}`}
       </div>
-    </div>
+    </main>
   );
 };
 
