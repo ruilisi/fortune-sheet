@@ -4694,7 +4694,7 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@storybook/addon-actions@7.3.2", "@storybook/addon-actions@^7.3.2":
+"@storybook/addon-actions@7.3.2":
   version "7.3.2"
   resolved "https://registry.yarnpkg.com/@storybook/addon-actions/-/addon-actions-7.3.2.tgz#36b8e15a851a12a6fff543d9785307ae02934a8f"
   integrity sha512-TsTOHGmwBHRsWS9kaG/bu6haP2dMeiETeGwOgfB5qmukodenXlmi1RujtUdJCNwW3APa0utEFYFKtZVEu9f7WQ==
@@ -4714,6 +4714,18 @@
     react-inspector "^6.0.0"
     telejson "^7.0.3"
     ts-dedent "^2.0.0"
+    uuid "^9.0.0"
+
+"@storybook/addon-actions@^8.1.11":
+  version "8.1.11"
+  resolved "https://registry.yarnpkg.com/@storybook/addon-actions/-/addon-actions-8.1.11.tgz#dafa4e84e01924372feda003c449e827347e4afd"
+  integrity sha512-jqYXgBgOVInStOCk//AA+dGkrfN8R7rDXA4lyu82zM59kvICtG9iqgmkSRDn0Z3zUkM+lIHZGoz0aLVQ8pxsgw==
+  dependencies:
+    "@storybook/core-events" "8.1.11"
+    "@storybook/global" "^5.0.0"
+    "@types/uuid" "^9.0.1"
+    dequal "^2.0.2"
+    polished "^4.2.2"
     uuid "^9.0.0"
 
 "@storybook/addon-backgrounds@7.3.2":
@@ -5165,6 +5177,14 @@
   resolved "https://registry.yarnpkg.com/@storybook/core-events/-/core-events-7.3.2.tgz#9d18df7ceb6901225218e538a3d1d720a2f49b46"
   integrity sha512-DCrM3s+sxLKS8vl0zB+1tZEtcl5XQTOGl46XgRRV/SIBabFbsC0l5pQPswWkTUsIqdREtiT0YUHcXB1+YDyFvA==
 
+"@storybook/core-events@8.1.11":
+  version "8.1.11"
+  resolved "https://registry.yarnpkg.com/@storybook/core-events/-/core-events-8.1.11.tgz#e72f9563aef3286c106021d9926723bc24614f4a"
+  integrity sha512-vXaNe2KEW9BGlLrg0lzmf5cJ0xt+suPjWmEODH5JqBbrdZ67X6ApA2nb6WcxDQhykesWCuFN5gp1l+JuDOBi7A==
+  dependencies:
+    "@storybook/csf" "^0.1.7"
+    ts-dedent "^2.0.0"
+
 "@storybook/core-server@7.3.2":
   version "7.3.2"
   resolved "https://registry.yarnpkg.com/@storybook/core-server/-/core-server-7.3.2.tgz#b5abc90c7ed3900531b79a63c8f4059e4702f7d4"
@@ -5258,6 +5278,13 @@
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@storybook/csf/-/csf-0.1.1.tgz#abccc8c3e49aed0a6a7e87beb0d1c262b1921c06"
   integrity sha512-4hE3AlNVxR60Wc5KSC68ASYzUobjPqtSKyhV6G+ge0FIXU55N5nTY7dXGRZHQGDBPq+XqchMkIdlkHPRs8nTHg==
+  dependencies:
+    type-fest "^2.19.0"
+
+"@storybook/csf@^0.1.7":
+  version "0.1.13"
+  resolved "https://registry.yarnpkg.com/@storybook/csf/-/csf-0.1.13.tgz#c8a9bea2ae518a3d9700546748fa30a8b07f7f80"
+  integrity sha512-7xOOwCLGB3ebM87eemep89MYRFTko+D8qE7EdAAq74lgdqRR5cOUtYWJLjO2dLtP94nqoOdHJo6MdLLKzg412Q==
   dependencies:
     type-fest "^2.19.0"
 
@@ -6152,6 +6179,11 @@
   version "8.3.4"
   resolved "https://registry.npmmirror.com/@types/uuid/-/uuid-8.3.4.tgz#bd86a43617df0594787d38b735f55c805becf1bc"
   integrity sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==
+
+"@types/uuid@^9.0.1":
+  version "9.0.8"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-9.0.8.tgz#7545ba4fc3c003d6c756f651f3bf163d8f0f29ba"
+  integrity sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==
 
 "@types/webidl-conversions@*":
   version "6.1.1"
