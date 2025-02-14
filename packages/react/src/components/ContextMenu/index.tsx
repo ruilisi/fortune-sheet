@@ -67,12 +67,15 @@ const ContextMenu: React.FC = () => {
             key={name}
             onClick={async () => {
               let clipboardText = "";
-              let sessionClipboardText = sessionStorage.getItem("localClipboard") || "";
+              const sessionClipboardText =
+                sessionStorage.getItem("localClipboard") || "";
 
               try {
                 clipboardText = await navigator.clipboard.readText();
               } catch (err) {
-                console.warn("Clipboard access blocked. Attempting to use sessionStorage fallback.");
+                console.warn(
+                  "Clipboard access blocked. Attempting to use sessionStorage fallback."
+                );
               }
 
               const finalText = clipboardText || sessionClipboardText;
