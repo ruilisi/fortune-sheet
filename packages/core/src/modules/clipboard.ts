@@ -18,6 +18,11 @@ export default class clipboard {
       ele.focus({ preventScroll: true });
       document.execCommand("selectAll");
       document.execCommand("copy");
+
+      // Fallback setup
+      const plainText = ele.innerText || ele.textContent || ""; // In order to match the clipboard which only stores the visible text without formatting
+      sessionStorage.setItem("localClipboard", plainText); // Also store in sessionStorage for fallback access
+
       setTimeout(() => {
         ele?.blur();
         previouslyFocusedElement?.focus?.();
