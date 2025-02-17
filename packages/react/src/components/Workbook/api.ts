@@ -260,7 +260,18 @@ export function generateAPIs(
     getSheet: (options: api.CommonOptions = {}) =>
       api.getSheetWithLatestCelldata(context, options),
 
-    addSheet: () => setContext((draftCtx) => api.addSheet(draftCtx, settings)),
+    addSheet: (sheetId?: string) => {
+      const existingSheetIds = api
+        .getAllSheets(context)
+        .map((sheet) => sheet.id || "");
+      if (sheetId && existingSheetIds.includes(sheetId)) {
+        console.error(
+          `Failed to add new sheet: A sheet with the id "${sheetId}" already exists. Please use a unique sheet id.`
+        );
+      } else {
+        setContext((draftCtx) => api.addSheet(draftCtx, settings, sheetId));
+      }
+    },
 
     deleteSheet: (options: api.CommonOptions = {}) =>
       setContext((draftCtx) => api.deleteSheet(draftCtx, options)),
