@@ -447,7 +447,6 @@ const InputBox: React.FC = () => {
             width: `${100 / context.zoomRatio}%`,
             height: `${100 / context.zoomRatio}%`,
           }}
-          aria-autocomplete="list"
           onChange={onChange}
           onKeyDown={onKeyDown}
           onPaste={onPaste}

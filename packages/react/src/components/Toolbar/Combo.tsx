@@ -1,6 +1,14 @@
-import React, { CSSProperties, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  CSSProperties,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useContext,
+} from "react";
+import { locale } from "@fortune-sheet/core";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 import SVGIcon from "../SVGIcon";
+import WorkbookContext from "../../context";
 
 type Props = {
   tooltip: string;
@@ -19,11 +27,13 @@ const Combo: React.FC<Props> = ({
   iconId,
   children,
 }) => {
+  const { context } = useContext(WorkbookContext);
   const style: CSSProperties = { userSelect: "none" };
   const [open, setOpen] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ left: 0 });
   const popupRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
+  const { info } = locale(context);
 
   useOutsideClick(popupRef, () => {
     setOpen(false);
@@ -58,13 +68,15 @@ const Combo: React.FC<Props> = ({
           tabIndex={0}
           data-tips={tooltip}
           role="button"
-          aria-label={tooltip}
+          aria-label={`${tooltip}: ${text !== undefined ? text : ""}`}
           style={style}
         >
           {iconId ? (
             <SVGIcon name={iconId} />
           ) : (
-            <span className="fortune-toolbar-combo-text">{text}</span>
+            <span className="fortune-toolbar-combo-text">
+              {text !== undefined ? text : ""}
+            </span>
           )}
         </div>
         <div
@@ -73,7 +85,7 @@ const Combo: React.FC<Props> = ({
           tabIndex={0}
           data-tips={tooltip}
           role="button"
-          aria-label={tooltip}
+          aria-label={`${tooltip}: ${info.Dropdown}`}
           style={style}
         >
           <SVGIcon name="combo-arrow" width={10} />

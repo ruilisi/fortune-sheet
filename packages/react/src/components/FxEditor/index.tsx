@@ -1,4 +1,5 @@
 import {
+  locale,
   getFlowdata,
   cancelNormalSelected,
   getCellValue,
@@ -42,6 +43,7 @@ const FxEditor: React.FC = () => {
   const prevFirstSelection = usePrevious(firstSelection);
   const prevSheetId = usePrevious(context.currentSheetId);
   const recentText = useRef("");
+  const { info } = locale(context);
 
   useEffect(() => {
     // 当选中行列是处于隐藏状态的话则不允许编辑
@@ -294,42 +296,45 @@ const FxEditor: React.FC = () => {
   ]);
 
   return (
-    <div className="fortune-fx-editor">
-      <NameBox />
-      <div className="fortune-fx-icon">
-        <SVGIcon name="fx" width={18} height={18} />
+    <aside>
+      <div className="fortune-fx-editor">
+        <NameBox />
+        <div className="fortune-fx-icon">
+          <SVGIcon name="fx" width={18} height={18} />
+        </div>
+        <div ref={inputContainerRef} className="fortune-fx-input-container">
+          <ContentEditable
+            innerRef={(e) => {
+              refs.fxInput.current = e;
+            }}
+            className="fortune-fx-input"
+            role="textbox"
+            id="luckysheet-functionbox-cell"
+            aria-label={info.currentCellInput}
+            onFocus={onFocus}
+            onKeyDown={onKeyDown}
+            onChange={onChange}
+            onBlur={() => setFocused(false)}
+            tabIndex={0}
+            allowEdit={allowEdit}
+          />
+          {focused && (
+            <>
+              <FormulaSearch
+                style={{
+                  top: inputContainerRef.current!.clientHeight,
+                }}
+              />
+              <FormulaHint
+                style={{
+                  top: inputContainerRef.current!.clientHeight,
+                }}
+              />
+            </>
+          )}
+        </div>
       </div>
-      <div ref={inputContainerRef} className="fortune-fx-input-container">
-        <ContentEditable
-          innerRef={(e) => {
-            refs.fxInput.current = e;
-          }}
-          className="fortune-fx-input"
-          id="luckysheet-functionbox-cell"
-          aria-autocomplete="list"
-          onFocus={onFocus}
-          onKeyDown={onKeyDown}
-          onChange={onChange}
-          onBlur={() => setFocused(false)}
-          tabIndex={0}
-          allowEdit={allowEdit}
-        />
-        {focused && (
-          <>
-            <FormulaSearch
-              style={{
-                top: inputContainerRef.current!.clientHeight,
-              }}
-            />
-            <FormulaHint
-              style={{
-                top: inputContainerRef.current!.clientHeight,
-              }}
-            />
-          </>
-        )}
-      </div>
-    </div>
+    </aside>
   );
 };
 

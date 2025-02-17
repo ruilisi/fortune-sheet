@@ -3,6 +3,7 @@ import {
   editSheetName,
   cancelNormalSelected,
   cancelActiveImgItem,
+  locale,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import React, {
@@ -29,6 +30,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
   const [dragOver, setDragOver] = useState(false);
   const [svgColor, setSvgColor] = useState<string>("#c3c3c3");
   const { showAlert } = useAlert();
+  const { info } = locale(context);
 
   useEffect(() => {
     setContext((draftCtx) => {
@@ -137,6 +139,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
 
   return (
     <div
+      role="button"
       onDragOver={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -240,6 +243,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
           });
         }}
         tabIndex={0}
+        aria-label={info.sheetOptions}
       >
         <SVGIcon name="downArrow" width={12} style={{ fill: svgColor }} />
       </span>
