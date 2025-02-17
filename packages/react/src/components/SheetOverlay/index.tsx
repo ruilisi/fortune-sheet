@@ -31,6 +31,7 @@ import {
   fixRowStyleOverflowInFreeze,
   fixColumnStyleOverflowInFreeze,
   handleKeydownForZoom,
+  insertImage,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext, { SetContextOptions } from "../../context";
@@ -429,6 +430,31 @@ const SheetOverlay: React.FC = () => {
         <RowHeader />
         <ScrollBar axis="x" />
         <ScrollBar axis="y" />
+        <input
+          id="fortune-img-upload"
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          onChange={(e) => {
+            const file = e.currentTarget.files?.[0];
+            if (!file) return;
+
+            const render = new FileReader();
+            render.readAsDataURL(file);
+            render.onload = (event) => {
+              if (event.target == null) return;
+              const src = event.target?.result;
+              const image = new Image();
+              image.onload = () => {
+                setContext((draftCtx) => {
+                  insertImage(draftCtx, image);
+                });
+              };
+              image.src = src as string;
+            };
+            e.currentTarget.value = "";
+          }}
+        />
         <div
           ref={refs.cellArea}
           className="fortune-cell-area"
