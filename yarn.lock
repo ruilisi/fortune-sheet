@@ -6095,9 +6095,9 @@
     csstype "^3.0.2"
 
 "@types/regenerator-runtime@^0.13.6":
-  version "0.13.6"
-  resolved "https://registry.npmjs.org/@types/regenerator-runtime/-/regenerator-runtime-0.13.6.tgz#3320ca604eda6075b05fb2ed0c17e50753ac671c"
-  integrity sha512-tTvE2t4YvfK6k7IB0wzzpdFDGimfpBhsirSWVvrT0xeawfVckNcOC28MI87HlxQJfqXfvRst7snG/i2NS1KgsQ==
+  version "0.13.8"
+  resolved "https://registry.yarnpkg.com/@types/regenerator-runtime/-/regenerator-runtime-0.13.8.tgz#14c4913f2e79886f73191889bda53ed3dd9ae4c0"
+  integrity sha512-jjKoBekfYDH331060tZhosdJVDnXIXx+T8Iw2h2T4HEds6Ddb2lr0JxD15+XPKlXwRHRNgZoY+4Fb2ykoqzHBg==
 
 "@types/resolve@1.17.1":
   version "1.17.1"
