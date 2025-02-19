@@ -327,10 +327,18 @@ const SheetOverlay: React.FC = () => {
   }, [context, rightclick.rowOverLimit, setContext, showAlert]);
 
   useEffect(() => {
-    setContext((draftCtx) =>
-      api.setSelection(draftCtx, [{ row: [0], column: [0] }], {})
-    );
-  }, [context.currentSheetId]);
+    setContext((draftCtx) => {
+      const sheetIndex = getSheetIndex(draftCtx, draftCtx.currentSheetId);
+      if (sheetIndex === undefined || sheetIndex === null) return;
+
+      const currentSheet = draftCtx.luckysheetfile[sheetIndex];
+
+      // Only reset selection if there's no existing selection
+      if (!currentSheet.luckysheet_select_save?.length) {
+        api.setSelection(draftCtx, [{ row: [0], column: [0] }], {});
+      }
+    });
+  }, [context.currentSheetId, setContext]);
 
   // 提醒弹窗
   useEffect(() => {

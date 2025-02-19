@@ -2079,6 +2079,9 @@ export function deleteSelectedCellText(ctx: Context): string {
       return "partMC";
     }
 
+    const hyperlinkMap =
+      ctx.luckysheetfile[getSheetIndex(ctx, ctx.currentSheetId)!].hyperlink;
+
     for (let s = 0; s < selection.length; s += 1) {
       const r1 = selection[s].row[0];
       const r2 = selection[s].row[1];
@@ -2096,6 +2099,10 @@ export function deleteSelectedCellText(ctx: Context): string {
             // Replace the entire cell with an empty object
             if (data[r] && data[r][c]) {
               data[r][c] = {}; // Fully replace cell with empty object
+            }
+
+            if (hyperlinkMap && hyperlinkMap[`${r}_${c}`]) {
+              delete hyperlinkMap[`${r}_${c}`];
             }
           }
         }

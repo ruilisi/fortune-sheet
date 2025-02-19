@@ -511,10 +511,14 @@ export function handleWithCtrlOrMetaKey(
       return;
     }
 
+    e.preventDefault();
+    e.stopPropagation();
+
     const selectedRange = ctx.luckysheet_select_save[0];
     const { row, column } = selectedRange;
 
     if (!row || !column) return;
+    if (!isAllowEdit(ctx)) return;
 
     // Loop through selected columns
     for (let col = column[0]; col <= column[1]; col += 1) {
@@ -545,7 +549,6 @@ export function handleWithCtrlOrMetaKey(
     }
 
     jfrefreshgrid(ctx, null, undefined);
-    e.stopPropagation();
   } else if (e.code === "KeyR") {
     if (
       !ctx.luckysheet_select_save ||
@@ -554,10 +557,14 @@ export function handleWithCtrlOrMetaKey(
       return;
     }
 
+    e.preventDefault();
+    e.stopPropagation();
+
     const selectedRange = ctx.luckysheet_select_save[0];
     const { row, column } = selectedRange;
 
     if (!row || !column) return;
+    if (!isAllowEdit(ctx)) return;
 
     // Loop through selected rows
     for (let r = row[0]; r <= row[1]; r += 1) {
@@ -588,7 +595,6 @@ export function handleWithCtrlOrMetaKey(
     }
 
     jfrefreshgrid(ctx, null, undefined);
-    e.stopPropagation();
   }
 
   e.preventDefault();
