@@ -5,9 +5,11 @@ import React, {
   useEffect,
   useLayoutEffect,
   useMemo,
+  useState,
 } from "react";
 import "./index.css";
 import {
+  getRangetxt,
   locale,
   drawArrow,
   handleCellAreaDoubleClick,
@@ -31,6 +33,7 @@ import {
   fixRowStyleOverflowInFreeze,
   fixColumnStyleOverflowInFreeze,
   handleKeydownForZoom,
+  api,
 } from "@fortune-sheet/core";
 import _ from "lodash";
 import WorkbookContext, { SetContextOptions } from "../../context";
@@ -56,6 +59,8 @@ const SheetOverlay: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const bottomAddRowInputRef = useRef<HTMLInputElement>(null);
   const dataVerificationHintBoxRef = useRef<HTMLDivElement>(null);
+  const [lastRangeText, setLastRangeText] = useState("");
+  const [lastCellValue, setLastCellValue] = useState("");
   const { showAlert } = useAlert();
   // const isMobile = browser.mobilecheck();
   const cellAreaMouseDown = useCallback(
@@ -321,6 +326,20 @@ const SheetOverlay: React.FC = () => {
     );
   }, [context, rightclick.rowOverLimit, setContext, showAlert]);
 
+  useEffect(() => {
+    setContext((draftCtx) => {
+      const sheetIndex = getSheetIndex(draftCtx, draftCtx.currentSheetId);
+      if (sheetIndex === undefined || sheetIndex === null) return;
+
+      const currentSheet = draftCtx.luckysheetfile[sheetIndex];
+
+      // Only reset selection if there's no existing selection
+      if (!currentSheet.luckysheet_select_save?.length) {
+        api.setSelection(draftCtx, [{ row: [0], column: [0] }], {});
+      }
+    });
+  }, [context.currentSheetId, setContext]);
+
   // 提醒弹窗
   useEffect(() => {
     if (context.warnDialog) {
@@ -397,8 +416,67 @@ const SheetOverlay: React.FC = () => {
     };
   }, [onKeyDownForZoom]);
 
+  const rangeText = useMemo(() => {
+    const lastSelection = _.last(context.luckysheet_select_save);
+    if (
+      !(
+        lastSelection &&
+        lastSelection.row_focus != null &&
+        lastSelection.column_focus != null
+      )
+    )
+      return "";
+    const rf = lastSelection.row_focus;
+    const cf = lastSelection.column_focus;
+    if (context.config.merge != null && `${rf}_${cf}` in context.config.merge) {
+      return getRangetxt(context, context.currentSheetId, {
+        column: [cf, cf],
+        row: [rf, rf],
+      });
+    }
+
+    const rawRangeTxt = getRangetxt(
+      context,
+      context.currentSheetId,
+      lastSelection
+    );
+    // Return with formatting for better screen reading
+    // Format single-cell selections (e.g., "AA12" → "AA. 12")
+    // Format range selections (e.g., "A1:BB100" → "A. 1: BB. 100")
+    return rawRangeTxt.replace(/([A-Z]+)(\d+)/g, "$1. $2");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [context.currentSheetId, context.luckysheet_select_save]);
+
+  const cellValue = () => {
+    if ((context.luckysheet_select_save?.length ?? 0) > 0) {
+      const selection =
+        context.luckysheet_select_save?.[
+          context.luckysheet_select_save.length - 1
+        ];
+      if (!selection) return "";
+      const sheetIndex = getSheetIndex(context, context.currentSheetId);
+      if (sheetIndex === undefined || sheetIndex === null) return "";
+      const rowFocus = selection.row_focus ?? 0;
+      const columnFocus = selection.column_focus ?? 0;
+      const cellVal =
+        context.luckysheetfile[sheetIndex]?.data?.[rowFocus]?.[columnFocus]
+          ?.m || "";
+      return cellVal;
+    }
+    return "";
+  };
+
+  const computedCellValue = cellValue();
+
+  useEffect(() => {
+    if (context.sheetFocused) {
+      setLastRangeText(String(rangeText));
+      setLastCellValue(String(cellValue()));
+    }
+  }, [context.sheetFocused]); // Runs only when sheet focus toggles
+
   return (
-    <div
+    <main
       className="fortune-sheet-overlay"
       ref={containerRef}
       onTouchStart={onTouchStart}
@@ -825,7 +903,19 @@ const SheetOverlay: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+      <div id="sr-selection" className="sr-only" role="alert">
+        {!rangeText.includes("NaN")
+          ? `${rangeText} ${computedCellValue}`
+          : `A1. ${info.sheetSrIntro}`}
+      </div>
+      <div id="sr-sheetFocus" className="sr-only" role="alert">
+        {context.sheetFocused
+          ? `${lastRangeText} ${lastCellValue ? `${lastCellValue}.` : ""} ${
+              info.sheetIsFocused
+            }`
+          : `Toolbar. ${info.sheetNotFocused}`}
+      </div>
+    </main>
   );
 };
 

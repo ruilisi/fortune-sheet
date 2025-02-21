@@ -4,6 +4,7 @@ import {
   MAX_ZOOM_RATIO,
   MIN_ZOOM_RATIO,
   getSheetIndex,
+  locale,
 } from "@fortune-sheet/core";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
@@ -53,6 +54,7 @@ const ZoomControl: React.FC = () => {
   const { context, setContext } = useContext(WorkbookContext);
   const menuRef = useRef<HTMLDivElement>(null);
   const [radioMenuOpen, setRadioMenuOpen] = useState(false);
+  const { info } = locale(context);
 
   useOutsideClick(
     menuRef,
@@ -84,14 +86,16 @@ const ZoomControl: React.FC = () => {
   );
 
   return (
-    <div className="fortune-zoom-container">
+    <aside title="Zoom settings" className="fortune-zoom-container">
       <div
         className="fortune-zoom-button"
+        aria-label={info.zoomOut}
         onClick={(e) => {
           zoomTo(context.zoomRatio - 0.1);
           e.stopPropagation();
         }}
         tabIndex={0}
+        role="button"
       >
         <SVGIcon name="minus" width={16} height={16} />
       </div>
@@ -123,15 +127,17 @@ const ZoomControl: React.FC = () => {
       </div>
       <div
         className="fortune-zoom-button"
+        aria-label={info.zoomIn}
         onClick={(e) => {
           zoomTo(context.zoomRatio + 0.1);
           e.stopPropagation();
         }}
         tabIndex={0}
+        role="button"
       >
         <SVGIcon name="plus" width={16} height={16} />
       </div>
-    </div>
+    </aside>
   );
 };
 

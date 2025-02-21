@@ -30,12 +30,7 @@ const LocationBox: React.FC = () => {
 
   return (
     <div className="fortune-name-box-container">
-      <div
-        className="fortune-name-box"
-        tabIndex={0}
-        dir="ltr"
-        aria-autocomplete="list"
-      >
+      <div className="fortune-name-box" tabIndex={0} dir="ltr">
         {rangeText}
       </div>
     </div>

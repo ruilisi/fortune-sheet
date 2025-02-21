@@ -271,7 +271,11 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
     <div ref={containerRef} className="fortune-sheet-container">
       {/* this is a placeholder div to help measure the empty space between toolbar and footer, directly measuring the canvas element is inaccurate, don't know why */}
       <div ref={placeholderRef} className="fortune-sheet-canvas-placeholder" />
-      <canvas className="fortune-sheet-canvas" ref={refs.canvas} />
+      <canvas
+        className="fortune-sheet-canvas"
+        ref={refs.canvas}
+        aria-hidden="true"
+      />
       <SheetOverlay />
     </div>
   );
