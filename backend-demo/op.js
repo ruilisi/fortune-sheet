@@ -31,6 +31,8 @@ async function applyOp(collection, ops) {
           arrayFilters: [{ [`e.${field}`]: { $gte: insertPos } }],
         },
       });
+      await collection.bulkWrite(operations);
+      operations.length = 0;
     } else if (op.op === "deleteRowCol") {
       /**
        * special op: deleteRowCol
@@ -70,16 +72,22 @@ async function applyOp(collection, ops) {
           },
         }
       );
+      await collection.bulkWrite(operations);
+      operations.length = 0;
     } else if (op.op === "addSheet") {
       /**
        * special op: addSheet
        */
       operations.push({ insertOne: { document: op.value } });
+      await collection.bulkWrite(operations);
+      operations.length = 0;
     } else if (op.op === "deleteSheet") {
       /**
        * special op: deleteSheet
        */
       operations.push({ deleteOne: { filter } });
+      await collection.bulkWrite(operations);
+      operations.length = 0;
     } else if (
       path.length >= 3 &&
       path[0] === "data" &&
