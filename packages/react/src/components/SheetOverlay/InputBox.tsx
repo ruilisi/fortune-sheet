@@ -426,8 +426,8 @@ const InputBox: React.FC = () => {
         style={
           firstSelection
             ? {
-                minWidth: firstSelection.width,
-                minHeight: firstSelection.height,
+                minWidth: firstSelection?.width || 0,
+                minHeight: firstSelection?.height || 0,
                 ...inputBoxStyle,
               }
             : {}
