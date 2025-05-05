@@ -1,10 +1,11 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
 import {
   getDataArr,
   getFlowdata,
   getRegStr,
   locale,
   updateMoreCell,
-} from "@fortune-sheet/core";
+} from "@mritunjaygoutam12/core-mod";
 import _ from "lodash";
 import React, {
   useContext,

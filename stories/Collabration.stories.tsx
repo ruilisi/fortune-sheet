@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from "react";
 import { Meta, StoryFn } from "@storybook/react";
-import { Sheet, Op, Selection, colors } from "@fortune-sheet/core";
+import { Sheet, Op, Selection, colors } from "@mritunjaygoutam12/core-mod";
 import { Workbook, WorkbookInstance } from "@fortune-sheet/react";
 import { v4 as uuidv4 } from "uuid";
 import { hashCode } from "./utils";

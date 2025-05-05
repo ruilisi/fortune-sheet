@@ -4,7 +4,7 @@ import {
   getOptionValue,
   getSelectRange,
   locale,
-} from "@fortune-sheet/core";
+} from "@mritunjaygoutam12/core-mod";
 import produce from "immer";
 import _ from "lodash";
 import React, { useContext, useState, useCallback } from "react";

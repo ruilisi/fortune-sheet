@@ -1,0 +1,21 @@
+name: Deprecate Packages
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deprecate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
+
+      - run: npm deprecate @fortune-sheet/react@1.0.0 "license conflict due to hyperformula"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - run: npm deprecate @mritunjaygoutam12/core-mod@1.0.0 "license conflict due to hyperformula"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

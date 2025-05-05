@@ -3,7 +3,7 @@ import {
   cancelNormalSelected,
   locale,
   setCaretPosition,
-} from "@fortune-sheet/core";
+} from "@mritunjaygoutam12/core-mod";
 import _ from "lodash";
 import WorkbookContext from "../../context";
 import "./index.css";

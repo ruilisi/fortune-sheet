@@ -1,9 +1,9 @@
 .fortune-toolbar {
   display: flex;
   flex-direction: row;
-  background: #fafafc;
+  /* background: #fafafc; */
   position: relative;
-  padding: 5px 0px 3px 15px;
+  padding: 10px 0px 8px 15px;
   border-bottom: 1px solid #d4d4d4;
   white-space: nowrap;
   align-items: center;
@@ -48,7 +48,7 @@
   display: flex;
   align-items: center;
   padding: 2px;
-  margin: 2px 4px;
+  margin: 2px 8px;
 }
 
 .fortune-toolbar-combo-button,

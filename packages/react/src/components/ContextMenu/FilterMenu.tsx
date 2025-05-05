@@ -9,7 +9,7 @@ import {
   FilterDate,
   FilterColor,
   Context,
-} from "@fortune-sheet/core";
+} from "@mritunjaygoutam12/core-mod";
 import React, {
   useCallback,
   useContext,

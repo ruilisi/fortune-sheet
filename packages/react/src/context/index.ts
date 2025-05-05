@@ -6,7 +6,7 @@ import {
   Settings,
   GlobalCache,
   PatchOptions,
-} from "@fortune-sheet/core";
+} from "@mritunjaygoutam12/core-mod";
 
 export type RefValues = {
   globalCache: GlobalCache;

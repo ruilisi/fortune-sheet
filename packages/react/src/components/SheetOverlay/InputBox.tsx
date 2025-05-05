@@ -16,7 +16,7 @@ import {
   escapeHTMLTag,
   isAllowEdit,
   getrangeseleciton,
-} from "@fortune-sheet/core";
+} from "@mritunjaygoutam12/core-mod";
 import React, {
   useContext,
   useEffect,
@@ -36,7 +36,7 @@ import usePrevious from "../../hooks/usePrevious";
 const InputBox: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const inputRef = useRef<HTMLDivElement>(null);
-  const lastKeyDownEventRef = useRef<KeyboardEvent>();
+  const lastKeyDownEventRef = useRef<KeyboardEvent>(null);
   const prevCellUpdate = usePrevious<any[]>(context.luckysheetCellUpdate);
   const prevSheetId = usePrevious<string>(context.currentSheetId);
   const [isHidenRC, setIsHidenRC] = useState<boolean>(false);
@@ -220,6 +220,7 @@ const InputBox: React.FC = () => {
 
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
+      // console.log("onKeyDown", e.key);
       lastKeyDownEventRef.current = new KeyboardEvent(e.type, e.nativeEvent);
       preText.current = inputRef.current!.innerText;
       // if (
@@ -323,6 +324,7 @@ const InputBox: React.FC = () => {
   const onChange = useCallback(
     (__: any, isBlur?: boolean) => {
       // setInputHTML(html);
+      // console.log("onChange", __);
       const e = lastKeyDownEventRef.current;
       if (!e) return;
       const kcode = e.keyCode;

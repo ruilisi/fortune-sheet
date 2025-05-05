@@ -11227,8 +11227,8 @@ export default {
     { name: "CFA Franc BEAC", pos: "before", value: "FCFA" },
   ],
   defaultFmt: (currency: string) => [
-    { text: "Automatic", value: "General", example: "" },
-    { text: "Plain text", value: "@", example: "" },
+    { text: "Auto", value: "General", example: "" },
+    { text: "Plain", value: "@", example: "" },
     { text: "", value: "split", example: "" },
     { text: "Number", value: "##0.00", example: "1000.12" },
     { text: "Percent", value: "#0.00%", example: "12.21%" },
@@ -11313,7 +11313,7 @@ export default {
   fontFamily: {
     MicrosoftYaHei: "YaHei",
   },
-  fontarray: ["Times New Roman", "Arial", "Tahoma", "Verdana"],
+  fontarray: ["Arial", "Times New Roman", "Tahoma", "Verdana"],
   fontjson: { "times new roman": 0, arial: 1, tahoma: 2, verdana: 3 },
   border: {
     borderTop: "Top border",

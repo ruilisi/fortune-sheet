@@ -2150,33 +2150,35 @@ export function deleteSelectedCellText(ctx: Context): string {
 
 // 选区是否重叠
 export function selectIsOverlap(ctx: Context, range?: any) {
-  if (range == null) {
-    range = ctx.luckysheet_select_save;
-  }
-  range = _.cloneDeep(range);
+  console.log("selectIsOverlap", ctx, range);
+  return false;
+  // if (range == null) {
+  //   range = ctx.luckysheet_select_save;
+  // }
+  // range = _.cloneDeep(range);
 
-  let overlap = false;
-  const map: any = {};
+  // let overlap = false;
+  // const map: any = {};
 
-  for (let s = 0; s < range.length; s += 1) {
-    const str_r = range[s].row[0];
-    const end_r = range[s].row[1];
-    const str_c = range[s].column[0];
-    const end_c = range[s].column[1];
+  // for (let s = 0; s < range?.length; s += 1) {
+  //   const str_r = range[s].row[0];
+  //   const end_r = range[s].row[1];
+  //   const str_c = range[s].column[0];
+  //   const end_c = range[s].column[1];
 
-    for (let r = str_r; r <= end_r; r += 1) {
-      for (let c = str_c; c <= end_c; c += 1) {
-        if (`${r}_${c}` in map) {
-          overlap = true;
-          break;
-        } else {
-          map[`${r}_${c}`] = 0;
-        }
-      }
-    }
-  }
+  //   for (let r = str_r; r <= end_r; r += 1) {
+  //     for (let c = str_c; c <= end_c; c += 1) {
+  //       if (`${r}_${c}` in map) {
+  //         overlap = true;
+  //         break;
+  //       } else {
+  //         map[`${r}_${c}`] = 0;
+  //       }
+  //     }
+  //   }
+  // }
 
-  return overlap;
+  // return overlap;
 }
 
 export function selectAll(ctx: Context) {

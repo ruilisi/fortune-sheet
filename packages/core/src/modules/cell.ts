@@ -739,6 +739,7 @@ export function updateCell(
     delete curv.ct.s;
     curv.ct.t = "g";
     curv.ct.fa = "General";
+    curv.tb = "1";
     value = "";
   } else if (isCurInline) {
     if (!_.isPlainObject(curv)) {
@@ -750,6 +751,7 @@ export function updateCell(
     if (!curv.ct) {
       curv.ct = {};
       curv.ct.fa = "General";
+      curv.tb = "1";
     }
 
     curv.ct.t = "inlineStr";

@@ -1,4 +1,4 @@
-import { getRangetxt, locale } from "@fortune-sheet/core";
+import { getRangetxt, locale } from "@mritunjaygoutam12/core-mod";
 
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import DataVerification from ".";

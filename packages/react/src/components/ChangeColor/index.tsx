@@ -1,4 +1,4 @@
-import { Context, getSheetIndex, locale } from "@fortune-sheet/core";
+import { Context, getSheetIndex, locale } from "@mritunjaygoutam12/core-mod";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import WorkbookContext from "../../context";
 import ColorPicker from "../Toolbar/ColorPicker";

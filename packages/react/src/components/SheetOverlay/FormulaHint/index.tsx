@@ -1,4 +1,4 @@
-import { locale } from "@fortune-sheet/core";
+import { locale } from "@mritunjaygoutam12/core-mod";
 import React, { useContext } from "react";
 import WorkbookContext from "../../../context";
 import "./index.css";

@@ -13,7 +13,7 @@ import {
   isShowHidenCR,
   escapeHTMLTag,
   isAllowEdit,
-} from "@fortune-sheet/core";
+} from "@mritunjaygoutam12/core-mod";
 import React, {
   useContext,
   useState,
@@ -35,7 +35,7 @@ import usePrevious from "../../hooks/usePrevious";
 const FxEditor: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const [focused, setFocused] = useState(false);
-  const lastKeyDownEventRef = useRef<KeyboardEvent>();
+  const lastKeyDownEventRef = useRef<KeyboardEvent>(null);
   const inputContainerRef = useRef<HTMLDivElement>(null);
   const [isHidenRC, setIsHidenRC] = useState<boolean>(false);
   const firstSelection = context.luckysheet_select_save?.[0];

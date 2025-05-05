@@ -1,6 +1,6 @@
 import _ from "lodash";
 // @ts-ignore
-import { Parser, ERROR_REF } from "@fortune-sheet/formula-parser";
+import { Parser, ERROR_REF } from "@mritunjaygoutam12/formula-parser";
 import type { Cell, Rect, Selection } from "../types";
 import { Context, getFlowdata } from "../context";
 import {
