@@ -1,5 +1,5 @@
 {
-  "name": "@mritunjaygoutam12/formula-parser",
+  "name": "@fileverse-dev/formula-parser",
   "description": "Formula parser",
   "main": "dist/formula-parser.js",
   "homepage": "https://github.com/handsontable/formula-parser",

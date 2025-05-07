@@ -13,8 +13,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "tsc": "tsc --noEmit",
-    "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx,.json ./packages",
-    "postinstall": "lerna run build --scope=@mritunjaygoutam12/formula-parser",
+    "lint": "eslint --cache --fix --ext .js,.jsx,.ts,.tsx,.json ./packages",
+    "postinstall": "lerna run build --scope=@fileverse-dev/formula-parser",
     "publish": "npm publish packages/core --registry 'https://registry.npmjs.org' && npm publish packages/react --registry 'https://registry.npmjs.org'",
     "test": "jest",
     "coverage": "jest --coverage"

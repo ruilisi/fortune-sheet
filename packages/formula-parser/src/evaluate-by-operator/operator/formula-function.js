@@ -1,4 +1,4 @@
-import * as formulajs from "@mritunjaygoutam12/formulajs";
+import * as formulajs from "@fileverse-dev/formulajs";
 import SUPPORTED_FORMULAS from "./../../supported-formulas";
 import { ERROR_NAME } from "./../../error";
 

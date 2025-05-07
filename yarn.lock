@@ -2044,6 +2044,14 @@
   resolved "https://registry.yarnpkg.com/@fal-works/esbuild-plugin-global-externals/-/esbuild-plugin-global-externals-2.1.2.tgz#c05ed35ad82df8e6ac616c68b92c2282bd083ba4"
   integrity sha512-cEee/Z+I12mZcFJshKcCqC8tuX5hG3s+d+9nZ3LabqKF1vKdF41B92pJVCBggjAGORAeOzyyDDKrZwIkLffeOQ==
 
+"@fileverse-dev/formulajs@^4.4.11-mod-0":
+  version "4.4.11-mod-0"
+  resolved "https://registry.yarnpkg.com/@fileverse-dev/formulajs/-/formulajs-4.4.11-mod-0.tgz#05f0e39d456d2890d5d8ec0e72b17d3c1c858911"
+  integrity sha512-HdYtAROKCA30v+AwirmOZ2FYAWfX2+LLmRQImMn/QljNnF1y8u+oWb+IXrcgOVmEDLRuKMcnFrFrY1KBUv1Grg==
+  dependencies:
+    bessel "^1.0.2"
+    jstat "^1.9.6"
+
 "@floating-ui/core@^1.7.0":
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.7.0.tgz#1aff27a993ea1b254a586318c29c3b16ea0f4d0a"
@@ -3233,10 +3241,30 @@
   dependencies:
     sparse-bitfield "^3.0.3"
 
-"@mritunjaygoutam12/formulajs@^4.4.11-mri-6":
-  version "4.4.11-mri-6"
-  resolved "https://registry.yarnpkg.com/@mritunjaygoutam12/formulajs/-/formulajs-4.4.11-mri-6.tgz#dd5ec5bd8d051d2add40d7d8e089c453447bcfbc"
-  integrity sha512-PHn/7tP4jY3/nC9/0FzqytTR9PA64CTFZH+oXSyhqSspJfw2VcJGdhBPCCkXkzGOdX07s0CzkzyzlYXK7UclXA==
+"@mritunjaygoutam12/core-mod@^1.0.2-mri-4":
+  version "1.0.2-mri-5"
+  resolved "https://registry.yarnpkg.com/@mritunjaygoutam12/core-mod/-/core-mod-1.0.2-mri-5.tgz#1a46b13554225b779ef8469d1457cc338251718c"
+  integrity sha512-sBP/itZppKmeEdYv4cvCnQLgHeIG8HyRV1oqHpq6FiO34oQFj3Iuvq5YV4U6Uejzj6FBKDky1VVrZYv10GHY3Q==
+  dependencies:
+    "@mritunjaygoutam12/formula-parser" "^0.2.13-mri-5"
+    dayjs "^1.11.0"
+    immer "^9.0.12"
+    lodash "^4.17.21"
+    numeral "^2.0.6"
+    uuid "^8.3.2"
+
+"@mritunjaygoutam12/formula-parser@^0.2.13-mri-5":
+  version "0.2.13-mri-5"
+  resolved "https://registry.yarnpkg.com/@mritunjaygoutam12/formula-parser/-/formula-parser-0.2.13-mri-5.tgz#ff0413820015754ded403040013aef696b9bc09c"
+  integrity sha512-XvVZLGV5A29O+vidDSXlgEORZ6wFjwgC8zWjXwPwOu0lx/rpK5eFdqN+6V+Wm8tKij28m/Pp1nnqpmuZi6MARA==
+  dependencies:
+    "@mritunjaygoutam12/formulajs" "^4.4.11-mri-8"
+    tiny-emitter "^2.1.0"
+
+"@mritunjaygoutam12/formulajs@^4.4.11-mri-8":
+  version "4.4.11-mri-8"
+  resolved "https://registry.yarnpkg.com/@mritunjaygoutam12/formulajs/-/formulajs-4.4.11-mri-8.tgz#9ff329fc8a78064b405cf28ddd7cb996b4fb89dd"
+  integrity sha512-Yh3OvDGxcbO4MhtcLb0Qxks7MsiFueL4WSswGV8grW5r3nUhfMsdcv6+nzFYCVmgVa/hzcAiXt9B0nPqZc/N1Q==
   dependencies:
     bessel "^1.0.2"
     jstat "^1.9.6"

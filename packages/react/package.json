@@ -1,6 +1,6 @@
 {
-  "name": "@mritunjaygoutam12/react",
-  "version": "1.0.2-mri-4",
+  "name": "@fileverse-dev/react",
+  "version": "1.0.2-mod-0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.esm.js",

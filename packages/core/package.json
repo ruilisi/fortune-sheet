@@ -1,6 +1,6 @@
 {
-  "name": "@mritunjaygoutam12/core-mod",
-  "version": "1.0.2-mri-4",
+  "name": "@fileverse-dev/core-mod",
+  "version": "1.0.2-mod-0",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
@@ -10,7 +10,7 @@
   "repository": "https://github.com/ruilisi/fortune-sheet",
   "license": "MIT",
   "dependencies": {
-    "@mritunjaygoutam12/formula-parser": "^0.2.13-mri-4",
+    "@fileverse-dev/formula-parser": "^0.2.13-mod-0",
     "dayjs": "^1.11.0",
     "immer": "^9.0.12",
     "lodash": "^4.17.21",

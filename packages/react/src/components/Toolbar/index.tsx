@@ -1456,19 +1456,21 @@ const Toolbar: React.FC<{
       className="fortune-toolbar"
       aria-label={toolbar.toolbar}
     >
-      {settings.customToolbarItems.map((n) => {
-        return (
-          <CustomButton
-            tooltip={n.tooltip}
-            onClick={n.onClick}
-            key={n.key}
-            icon={n.icon}
-            iconName={n.iconName}
-          >
-            {n.children}
-          </CustomButton>
-        );
-      })}
+      {settings.customToolbarItems
+        .filter((n) => n.key !== "templates")
+        .map((n) => {
+          return (
+            <CustomButton
+              tooltip={n.tooltip}
+              onClick={n.onClick}
+              key={n.key}
+              icon={n.icon}
+              iconName={n.iconName}
+            >
+              {n.children}
+            </CustomButton>
+          );
+        })}
       {settings.customToolbarItems?.length > 0 ? (
         <Divider key="customDivider" />
       ) : null}
@@ -1494,6 +1496,22 @@ const Toolbar: React.FC<{
           }}
         />
       ) : null}
+      <Divider key="templateDivider" />
+      {settings.customToolbarItems
+        .filter((n) => n.key === "templates")
+        .map((n) => {
+          return (
+            <CustomButton
+              tooltip={n.tooltip}
+              onClick={n.onClick}
+              key={n.key}
+              icon={n.icon}
+              iconName={n.iconName}
+            >
+              {n.children}
+            </CustomButton>
+          );
+        })}
     </div>
   );
 };

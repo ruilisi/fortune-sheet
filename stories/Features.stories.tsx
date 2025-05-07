@@ -24,7 +24,13 @@ const Template: StoryFn<typeof Workbook> = ({
   }, []);
   return (
     <div style={{ width: "100%", height: "100vh" }}>
-      <Workbook {...args} data={data} onChange={onChange} />
+      <Workbook {...args} data={data} onChange={onChange} 
+      customToolbarItems={[{
+        key: 'templates',
+        tooltip: "Templates",
+        // onClick: toggleTemplateSidebar,
+      }]}
+      />
     </div>
   );
 };
