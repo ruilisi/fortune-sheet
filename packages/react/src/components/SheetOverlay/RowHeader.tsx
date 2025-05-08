@@ -10,7 +10,7 @@ import {
   handleRowFreezeHandleMouseDown,
   getSheetIndex,
   fixPositionOnFrozenCells,
-} from "@mritunjaygoutam12/core-mod";
+} from "@fileverse-dev/fortune-core";
 import _ from "lodash";
 import React, {
   useContext,

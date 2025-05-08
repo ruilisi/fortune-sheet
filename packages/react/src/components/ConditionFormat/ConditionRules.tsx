@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import "./index.css";
-import { locale, setConditionRules } from "@mritunjaygoutam12/core-mod";
+import { locale, setConditionRules } from "@fileverse-dev/fortune-core";
 import produce from "immer";
 import WorkbookContext from "../../context";
 import { useDialog } from "../../hooks/useDialog";

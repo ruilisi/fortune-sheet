@@ -16,7 +16,7 @@ import {
   api,
   isAllowEdit,
   jfrefreshgrid,
-} from "@mritunjaygoutam12/core-mod";
+} from "@fileverse-dev/fortune-core";
 import _ from "lodash";
 import React, { useContext, useRef, useCallback, useLayoutEffect } from "react";
 import regeneratorRuntime from "regenerator-runtime";

@@ -18,7 +18,7 @@ import {
   Sheet,
   CellMatrix,
   CellWithRowAndCol,
-} from "@mritunjaygoutam12/core-mod";
+} from "@fileverse-dev/fortune-core";
 import { applyPatches } from "immer";
 import _ from "lodash";
 import { SetContextOptions } from "../../context";

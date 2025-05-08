@@ -1,4 +1,4 @@
-import { locale, deleteSheet, api } from "@mritunjaygoutam12/core-mod";
+import { locale, deleteSheet, api } from "@fileverse-dev/fortune-core";
 import _ from "lodash";
 import React, {
   useContext,

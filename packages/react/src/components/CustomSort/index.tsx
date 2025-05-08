@@ -4,7 +4,7 @@ import {
   indexToColumnChar,
   locale,
   sortSelection,
-} from "@mritunjaygoutam12/core-mod";
+} from "@fileverse-dev/fortune-core";
 import React, {
   ChangeEvent,
   useCallback,

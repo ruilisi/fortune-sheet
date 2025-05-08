@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useRef, useState } from "react";
 import "./index.css";
-import { locale } from "@mritunjaygoutam12/core-mod";
+import { locale } from "@fileverse-dev/fortune-core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";

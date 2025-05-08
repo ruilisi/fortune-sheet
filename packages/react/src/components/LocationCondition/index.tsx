@@ -4,7 +4,7 @@ import {
   getOptionValue,
   getSelectRange,
   locale,
-} from "@mritunjaygoutam12/core-mod";
+} from "@fileverse-dev/fortune-core";
 import produce from "immer";
 import _ from "lodash";
 import React, { useContext, useState, useCallback } from "react";

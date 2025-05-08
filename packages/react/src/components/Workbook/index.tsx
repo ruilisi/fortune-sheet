@@ -20,7 +20,7 @@ import {
   locale,
   calcSelectionInfo,
   groupValuesRefresh,
-} from "@mritunjaygoutam12/core-mod";
+} from "@fileverse-dev/fortune-core";
 import React, {
   useMemo,
   useState,

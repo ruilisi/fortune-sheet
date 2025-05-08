@@ -16,7 +16,7 @@ import {
   escapeHTMLTag,
   isAllowEdit,
   getrangeseleciton,
-} from "@mritunjaygoutam12/core-mod";
+} from "@fileverse-dev/fortune-core";
 import React, {
   useContext,
   useEffect,

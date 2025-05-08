@@ -8,7 +8,7 @@ import {
   replace,
   replaceAll,
   scrollToHighlightCell,
-} from "@mritunjaygoutam12/core-mod";
+} from "@fileverse-dev/fortune-core";
 import produce from "immer";
 import React, { useContext, useState, useCallback } from "react";
 import _ from "lodash";

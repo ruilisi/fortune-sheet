@@ -6,7 +6,7 @@ import {
   handleGlobalWheel,
   initFreeze,
   Sheet as SheetType,
-} from "@mritunjaygoutam12/core-mod";
+} from "@fileverse-dev/fortune-core";
 import "./index.css";
 import WorkbookContext from "../../context";
 import SheetOverlay from "../SheetOverlay";

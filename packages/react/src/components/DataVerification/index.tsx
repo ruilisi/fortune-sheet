@@ -7,7 +7,7 @@ import {
   locale,
   setCellValue,
   confirmMessage,
-} from "@mritunjaygoutam12/core-mod";
+} from "@fileverse-dev/fortune-core";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import WorkbookContext from "../../context";
 import { useDialog } from "../../hooks/useDialog";

@@ -1,4 +1,4 @@
-import { Sheet, api } from "@mritunjaygoutam12/core-mod";
+import { Sheet, api } from "@fileverse-dev/fortune-core";
 import React, { CSSProperties, useCallback, useContext } from "react";
 import SVGIcon from "../SVGIcon";
 import WorkbookContext from "../../context";

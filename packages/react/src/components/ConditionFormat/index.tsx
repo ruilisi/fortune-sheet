@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from "react";
 import "./index.css";
-import { locale, updateItem } from "@mritunjaygoutam12/core-mod";
+import { locale, updateItem } from "@fileverse-dev/fortune-core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
 import Select, { Option } from "../Toolbar/Select";

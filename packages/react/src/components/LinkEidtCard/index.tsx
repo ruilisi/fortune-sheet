@@ -17,7 +17,7 @@ import {
   isLinkValid,
   normalizeSelection,
   onRangeSelectionModalMoveStart,
-} from "@mritunjaygoutam12/core-mod";
+} from "@fileverse-dev/fortune-core";
 import "./index.css";
 import _ from "lodash";
 import WorkbookContext from "../../context";

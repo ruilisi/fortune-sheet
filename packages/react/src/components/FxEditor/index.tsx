@@ -13,7 +13,7 @@ import {
   isShowHidenCR,
   escapeHTMLTag,
   isAllowEdit,
-} from "@mritunjaygoutam12/core-mod";
+} from "@fileverse-dev/fortune-core";
 import React, {
   useContext,
   useState,
