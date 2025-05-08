@@ -16,6 +16,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - run: npm deprecate @mritunjaygoutam12/core-mod@1.0.0 "license conflict due to hyperformula"
+      - run: npm deprecate @fileverse-dev/fortune-core@1.0.0 "license conflict due to hyperformula"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

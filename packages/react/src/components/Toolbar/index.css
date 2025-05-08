@@ -132,6 +132,8 @@
 
 .fortune-toolbar-combo-text {
   margin: 0 4px;
+  font-weight: 500;
+  font-size: 14px;
 }
 
 .fortune-toolbar-color-picker-item {
@@ -150,7 +152,8 @@
   padding: 6px;
   font-size: 12px;
   position: absolute;
-  z-index: 25; /* higher than toolbar tips */
+  z-index: 25;
+  /* higher than toolbar tips */
   top: 40px;
   white-space: nowrap;
 }

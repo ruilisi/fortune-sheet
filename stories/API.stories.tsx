@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import { Meta, StoryFn } from "@storybook/react";
 import { Workbook, WorkbookInstance } from "@fortune-sheet/react";
-import { Sheet } from "@mritunjaygoutam12/core-mod";
+import { Sheet } from "@fileverse-dev/fortune-core";
 
 export default {
   component: Workbook,

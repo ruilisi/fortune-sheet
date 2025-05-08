@@ -15,7 +15,7 @@
     "lib": ["es5", "dom"],
     "baseUrl": "./",
     "paths": {
-      "@mritunjaygoutam12/core-mod": ["packages/core/src"],
+      "@fileverse-dev/fortune-core": ["packages/core/src"],
       "@fortune-sheet/react": ["packages/react/src"]
     }
   },
