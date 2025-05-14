@@ -67,9 +67,7 @@ const InputBox: React.FC = () => {
 
   useLayoutEffect(() => {
     // @ts-ignore
-    if (
-      firstSelection.column_focus === 2 &&
-      firstSelection.row_focus === 4 &&
+    if (firstSelection && firstSelection.column_focus === 2 && firstSelection.row_focus === 4 &&
       localStorage.getItem("onboardingComplete") !== "true"
     ) {
       if (inputRef.current?.innerHTML !== "") return;
@@ -235,7 +233,7 @@ const InputBox: React.FC = () => {
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       // @ts-ignore
-      if (
+      if (firstSelection &&
         e.key === "Backspace" &&
         firstSelection.column_focus === 2 &&
         firstSelection.row_focus === 4 &&
