@@ -66,6 +66,20 @@ const InputBox: React.FC = () => {
   ]);
 
   useLayoutEffect(() => {
+    // @ts-ignore
+    if (
+      firstSelection.column_focus === 2 &&
+      firstSelection.row_focus === 4 &&
+      localStorage.getItem("onboardingComplete") !== "true"
+    ) {
+      if (inputRef.current?.innerHTML !== "") return;
+      const flowdata = getFlowdata(context);
+      // @ts-ignore
+      const value = getCellValue(row_index, col_index, flowdata, "f");
+      inputRef.current!.innerHTML = escapeHTMLTag(escapeScriptTag(value));
+      return;
+    }
+
     if (!context.allowEdit) {
       setContext((ctx) => {
         const flowdata = getFlowdata(ctx);
@@ -220,7 +234,15 @@ const InputBox: React.FC = () => {
 
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      // console.log("onKeyDown", e.key);
+      // @ts-ignore
+      if (
+        e.key === "Backspace" &&
+        firstSelection.column_focus === 2 &&
+        firstSelection.row_focus === 4 &&
+        localStorage.getItem("onboardingComplete") !== "true"
+      ) {
+        inputRef.current!.innerHTML = "";
+      }
       lastKeyDownEventRef.current = new KeyboardEvent(e.type, e.nativeEvent);
       preText.current = inputRef.current!.innerText;
       // if (
@@ -318,6 +340,7 @@ const InputBox: React.FC = () => {
       context.luckysheetCellUpdate.length,
       selectActiveFormula,
       setContext,
+      firstSelection,
     ]
   );
 
@@ -415,7 +438,13 @@ const InputBox: React.FC = () => {
           ? {
               left: firstSelection.left,
               top: firstSelection.top,
-              zIndex: _.isEmpty(context.luckysheetCellUpdate) ? -1 : 19,
+              zIndex: _.isEmpty(context.luckysheetCellUpdate)
+                ? firstSelection.column_focus === 2 &&
+                  firstSelection.row_focus === 4 &&
+                  localStorage.getItem("onboardingComplete") !== "true"
+                  ? 19
+                  : -1
+                : 19,
               display: "block",
             }
           : { left: -10000, top: -10000, display: "block" }
