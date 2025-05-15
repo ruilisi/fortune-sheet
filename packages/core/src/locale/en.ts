@@ -1,5 +1,5 @@
 // @ts-ignore
-import { FUNCTION_LOCALE } from "@fileverse-dev/formulajs/crypto-constants";
+// import { FUNCTION_LOCALE } from "@fileverse-dev/formulajs/crypto-constants";
 
 export default {
   generalDialog: {
@@ -10,7 +10,7 @@ export default {
     cannotSelectMultiple: "Cannot select multiple selections",
   },
   functionlist: [
-    ...FUNCTION_LOCALE,
+    // ...FUNCTION_LOCALE,
     {
       n: "SUMIF",
       t: 0,

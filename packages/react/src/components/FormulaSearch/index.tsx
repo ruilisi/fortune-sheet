@@ -1,5 +1,5 @@
 import React, { useContext, useState, useMemo, useCallback } from "react";
-import { FUNCTION_LOCALE } from "@fileverse-dev/formulajs";
+// import { FUNCTION_LOCALE } from "@fileverse-dev/formulajs";
 import {
   cancelNormalSelected,
   locale,
@@ -65,7 +65,7 @@ export const FormulaSearch: React.FC<{ onCancel: () => void }> = ({
   }, [functionlist, selectedType, searchText]);
 
   const onConfirm = useCallback(() => {
-    console.log(FUNCTION_LOCALE, functionlist);
+    // console.log(FUNCTION_LOCALE, functionlist);
     // return
     const last =
       context.luckysheet_select_save?.[
