@@ -1,3 +1,6 @@
+// @ts-ignore
+import { FUNCTION_LOCALE } from "@fileverse-dev/formulajs/crypto-constants";
+
 export default {
   generalDialog: {
     partiallyError: "Cannot perform this operation on partially merged cells",
@@ -7,6 +10,7 @@ export default {
     cannotSelectMultiple: "Cannot select multiple selections",
   },
   functionlist: [
+    ...FUNCTION_LOCALE,
     {
       n: "SUMIF",
       t: 0,
@@ -571,37 +575,6 @@ export default {
           require: "o",
           repeat: "y",
           type: "rangeall",
-        },
-      ],
-    },
-    {
-      n: "GETTXLIST",
-      t: 0,
-      d: "Returns the list of transactions performed by an address, with optional pagination.",
-      a: "Returns the list of transactions performed by an address, with optional pagination.",
-      p: [
-        {
-          name: "value1",
-          detail:
-            "The address string representing the addresses to check for balance",
-          example: `"0xc5102fE9359FD9a28f877a67E36B0F050d81a3CC"`,
-          require: "m",
-        },
-        {
-          name: "value2",
-          detail: "Page number.",
-          example: "1",
-          require: "o",
-          repeat: "n",
-          type: "rangenumber",
-        },
-        {
-          name: "value3",
-          detail: "Page size(offset).",
-          example: "100",
-          require: "o",
-          repeat: "n",
-          type: "rangenumber",
         },
       ],
     },
@@ -12020,6 +11993,7 @@ export default {
     Date: "Date",
     Engineering: "Engineering",
     Filter: "Filter",
+    Crypto: "Crypto",
     Financial: "Financial",
     luckysheet: "Luckysheet",
     other: "Other",
