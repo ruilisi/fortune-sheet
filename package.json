@@ -66,6 +66,7 @@
     "yorkie": "^2.0.0"
   },
   "dependencies": {
+    "@babel/helper-get-function-arity": "^7.16.7",
     "react": ">= 18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^4.9.4"
