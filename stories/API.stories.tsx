@@ -63,6 +63,9 @@ export const GetCellValue: StoryFn<typeof Workbook> = () => {
         onChange={onChange}
         selectClick={(row, column) => {
           console.log("selectClick", row, column);
+          if (column === 0) {
+            return Promise.resolve([]);
+          }
           const ret = [
             {
               label: "a",

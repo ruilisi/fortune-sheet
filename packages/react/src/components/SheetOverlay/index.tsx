@@ -837,7 +837,7 @@ const SheetOverlay: React.FC = () => {
 
               if (item.type !== "dropdown") {
                 setContext((ctx) => {
-                  ctx.dataVerificationDropDownList = false;
+                  ctx.dataVerificationDropDownList = true;
                   dataVerificationHintBoxRef.current!.style.display = "none";
                 });
                 return;
@@ -847,7 +847,7 @@ const SheetOverlay: React.FC = () => {
               // 如果没有数据, 显示默认列表
               if (!list || list.length === 0) {
                 setContext((ctx) => {
-                  ctx.dataVerificationDropDownList = false;
+                  ctx.dataVerificationDropDownList = true;
                   dataVerificationHintBoxRef.current!.style.display = "none";
                 });
                 return;
