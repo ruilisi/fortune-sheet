@@ -59,6 +59,10 @@ export type WorkbookInstance = ReturnType<typeof generateAPIs>;
 type AdditionalProps = {
   onChange?: (data: SheetType[]) => void;
   onOp?: (op: Op[]) => void;
+  selectClick?: (
+    row: number,
+    column: number
+  ) => Promise<{ label: string; value: string }[]>;
 };
 
 const triggerGroupValuesRefresh = (ctx: Context) => {
@@ -76,7 +80,7 @@ const concatProducer = (...producers: ((ctx: Context) => void)[]) => {
 };
 
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
-  ({ onChange, onOp, data: originalData, ...props }, ref) => {
+  ({ onChange, onOp, selectClick, data: originalData, ...props }, ref) => {
     const globalCache = useRef<GlobalCache>({ undoList: [], redoList: [] });
     const cellInput = useRef<HTMLDivElement>(null);
     const fxInput = useRef<HTMLDivElement>(null);
@@ -449,6 +453,14 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         onChange?.(context.luckysheetfile);
       }
     }, [context.luckysheetfile, onChange]);
+
+    useEffect(() => {
+      if (selectClick) {
+        setContextWithProduce((draftCtx) => {
+          draftCtx.selectClick = selectClick;
+        });
+      }
+    }, [selectClick, setContextWithProduce]);
 
     useEffect(() => {
       setContextWithProduce(

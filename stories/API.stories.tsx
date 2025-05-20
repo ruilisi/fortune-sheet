@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from "react";
 import { Meta, StoryFn } from "@storybook/react";
 import { Workbook, WorkbookInstance } from "@fortune-sheet/react";
 import { Sheet } from "@fortune-sheet/core";
-
+import dataVerification from "./data/dataVerification";
 export default {
   component: Workbook,
 } as Meta<typeof Workbook>;
@@ -46,15 +46,7 @@ const ApiExecContainer: React.FC<{
 
 export const GetCellValue: StoryFn<typeof Workbook> = () => {
   const ref = useRef<WorkbookInstance>(null);
-  const [data, setData] = useState<Sheet[]>([
-    {
-      name: "Sheet1",
-      celldata: [{ r: 0, c: 0, v: { v: "fortune" } }],
-      order: 0,
-      row: 1,
-      column: 1,
-    },
-  ]);
+  const [data, setData] = useState<Sheet[]>([dataVerification]);
   const onChange = useCallback((d: Sheet[]) => {
     setData(d);
   }, []);
@@ -64,7 +56,37 @@ export const GetCellValue: StoryFn<typeof Workbook> = () => {
         return ref.current?.getCellValue(0, 0);
       }}
     >
-      <Workbook ref={ref} data={data} onChange={onChange} />
+      <Workbook
+        ref={ref}
+        data={data}
+        onChange={onChange}
+        selectClick={(row, column) => {
+          console.log("selectClick", row, column);
+          const ret = [
+            {
+              label: "a",
+              value: "1",
+            },
+            {
+              label: "b",
+              value: "2",
+            },
+            {
+              label: "c",
+              value: "3",
+            },
+            {
+              label: "aaa",
+              value: "4",
+            },
+          ];
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              resolve(ret);
+            }, 1000);
+          });
+        }}
+      />
     </ApiExecContainer>
   );
 };
@@ -145,7 +167,7 @@ export const SetCellFormat: StoryFn<typeof Workbook> = () => {
   return (
     <ApiExecContainer
       onRun={() => {
-        ref.current?.setCellFormat(0, 0, "bg", "green");
+        ref.current?.setCellFormat(0, 0, "bg", "red");
       }}
     >
       <Workbook ref={ref} data={data} onChange={onChange} />
@@ -201,7 +223,7 @@ export const Freeze: StoryFn<typeof Workbook> = () => {
   return (
     <ApiExecContainer
       onRun={() => {
-        ref.current?.freeze("both", { row: 1, column: 1 });
+        ref.current?.freeze("both", { row: 3, column: 3 });
       }}
     >
       <Workbook ref={ref} data={data} onChange={onChange} />
@@ -227,9 +249,9 @@ export const InsertRowCol: StoryFn<typeof Workbook> = () => {
     <ApiExecContainer
       onRun={() => {
         ref.current?.insertRowOrColumn("row", 0, 1);
-        ref.current?.setCellValue(1, 0, "inserted");
+        ref.current?.setCellValue(1, 0, "inserted1");
         ref.current?.insertRowOrColumn("column", 0, 1);
-        ref.current?.setCellValue(0, 1, "inserted");
+        ref.current?.setCellValue(0, 1, "inserted2");
       }}
     >
       <Workbook ref={ref} data={data} onChange={onChange} />
@@ -883,7 +905,7 @@ export const Scroll: StoryFn<typeof Workbook> = () => {
     <ApiExecContainer
       onRun={() => {
         ref.current?.scroll({
-          targetRow: 60,
+          targetColumn: 12,
         });
       }}
     >

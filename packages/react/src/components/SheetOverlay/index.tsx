@@ -1,56 +1,57 @@
-import React, {
-  useContext,
-  useCallback,
-  useRef,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState,
-} from "react";
-import "./index.css";
 import {
-  getRangetxt,
-  locale,
+  api,
+  Context,
+  createDropCellRange,
   drawArrow,
+  fixColumnStyleOverflowInFreeze,
+  fixRowStyleOverflowInFreeze,
+  getCellHyperlink,
+  getCellRowColumn,
+  getRangetxt,
+  getSheetIndex,
+  GlobalCache,
   handleCellAreaDoubleClick,
   handleCellAreaMouseDown,
   handleContextMenu,
+  handleKeydownForZoom,
   handleOverlayMouseMove,
   handleOverlayMouseUp,
-  selectAll,
   handleOverlayTouchEnd,
   handleOverlayTouchMove,
   handleOverlayTouchStart,
-  createDropCellRange,
-  getCellRowColumn,
-  getCellHyperlink,
-  showLinkCard,
-  Context,
-  GlobalCache,
-  onCellsMoveStart,
   insertRowCol,
-  getSheetIndex,
-  fixRowStyleOverflowInFreeze,
-  fixColumnStyleOverflowInFreeze,
-  handleKeydownForZoom,
-  api,
+  jfrefreshgrid,
+  locale,
+  onCellsMoveStart,
+  selectAll,
+  showLinkCard,
 } from "@fortune-sheet/core";
 import _ from "lodash";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import "./index.css";
 import WorkbookContext, { SetContextOptions } from "../../context";
-import ColumnHeader from "./ColumnHeader";
-import RowHeader from "./RowHeader";
-import InputBox from "./InputBox";
-import ScrollBar from "./ScrollBar";
-import SearchReplace from "../SearchReplace";
-import LinkEditCard from "../LinkEidtCard";
-import FilterOptions from "../FilterOption";
 import { useAlert } from "../../hooks/useAlert";
-import ImgBoxs from "../ImgBoxs";
-import NotationBoxes from "../NotationBoxes";
-import RangeDialog from "../DataVerification/RangeDialog";
 import { useDialog } from "../../hooks/useDialog";
-import SVGIcon from "../SVGIcon";
 import DropDownList from "../DataVerification/DropdownList";
+import RangeDialog from "../DataVerification/RangeDialog";
+import FilterOptions from "../FilterOption";
+import ImgBoxs from "../ImgBoxs";
+import LinkEditCard from "../LinkEidtCard";
+import NotationBoxes from "../NotationBoxes";
+import SearchReplace from "../SearchReplace";
+import SVGIcon from "../SVGIcon";
+import ColumnHeader from "./ColumnHeader";
+import InputBox from "./InputBox";
+import RowHeader from "./RowHeader";
+import ScrollBar from "./ScrollBar";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
@@ -806,8 +807,51 @@ const SheetOverlay: React.FC = () => {
           <ImgBoxs />
           <div
             id="luckysheet-dataVerification-dropdown-btn"
-            onClick={() => {
-              setContext((ctx) => {
+            onClick={async () => {
+              if (!context.luckysheet_select_save) return;
+              const last =
+                context.luckysheet_select_save[
+                  context.luckysheet_select_save.length - 1
+                ];
+              const rowIndex = last.row_focus;
+              const colIndex = last.column_focus;
+              console.log("rowIndex, colIndex", rowIndex, colIndex);
+              if (
+                !context.selectClick ||
+                rowIndex === undefined ||
+                colIndex === undefined
+              ) {
+                setContext((ctx) => {
+                  ctx.dataVerificationDropDownList = true;
+                  dataVerificationHintBoxRef.current!.style.display = "none";
+                });
+                return;
+              }
+              // 判断该单元格是否有下拉列表
+              const index = getSheetIndex(
+                context,
+                context.currentSheetId
+              ) as number;
+              const { dataVerification } = context.luckysheetfile[index];
+              const item = dataVerification[`${rowIndex}_${colIndex}`];
+
+              if (item.type !== "dropdown") {
+                setContext((ctx) => {
+                  ctx.dataVerificationDropDownList = false;
+                  dataVerificationHintBoxRef.current!.style.display = "none";
+                });
+                return;
+              }
+              // 实时获取下拉列表数据
+              const list = await context.selectClick(rowIndex, colIndex);
+              setContext(async (ctx) => {
+                // 获取原来的下拉列表
+                const i = getSheetIndex(ctx, ctx.currentSheetId) as number;
+                const { dataVerification: verification } =
+                  ctx.luckysheetfile[i];
+                const cellItem = verification[`${rowIndex}_${colIndex}`];
+                cellItem.value1 = list.map((child) => child.label).join(",");
+                cellItem.value2 = list.map((child) => child.value).join(",");
                 ctx.dataVerificationDropDownList = true;
                 dataVerificationHintBoxRef.current!.style.display = "none";
               });

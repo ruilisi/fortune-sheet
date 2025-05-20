@@ -220,6 +220,12 @@ export type Context = {
   sheetFocused: boolean; // property to track sheet focus for keyboard navigation
 
   getRefs: () => RefValues;
+
+  // 单元格点击回调事件
+  selectClick?: (
+    row: number,
+    column: number
+  ) => Promise<{ label: string; value: string }[]>;
 };
 
 export function defaultContext(refs: RefValues): Context {
