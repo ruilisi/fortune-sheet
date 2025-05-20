@@ -20,10 +20,12 @@ import SVGIcon from "../SVGIcon";
 import "./index.css";
 
 interface IDropDownListProps {
-  width?: number;
+  width?: number | undefined;
 }
 
-const DropDownList: React.FC = (props: IDropDownListProps) => {
+const DropDownList: React.FC<IDropDownListProps> = (
+  props: IDropDownListProps
+) => {
   const { width } = props;
   const { context, setContext } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
