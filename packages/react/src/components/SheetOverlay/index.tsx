@@ -844,6 +844,14 @@ const SheetOverlay: React.FC = () => {
               }
               // 实时获取下拉列表数据
               const list = await context.selectClick(rowIndex, colIndex);
+              // 如果没有数据, 显示默认列表
+              if (!list || list.length === 0) {
+                setContext((ctx) => {
+                  ctx.dataVerificationDropDownList = false;
+                  dataVerificationHintBoxRef.current!.style.display = "none";
+                });
+                return;
+              }
               setContext(async (ctx) => {
                 // 获取原来的下拉列表
                 const i = getSheetIndex(ctx, ctx.currentSheetId) as number;
