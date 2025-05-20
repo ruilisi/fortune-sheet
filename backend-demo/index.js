@@ -19,7 +19,7 @@ const defaultData = {
   status: 0,
 };
 
-const dbName = "fortune-sheet";
+const dbName = "online-sheet";
 const collectionName = "workbook";
 const uri = "mongodb://localhost:27017";
 const client = new MongoClient(uri);

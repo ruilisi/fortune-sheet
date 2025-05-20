@@ -7,8 +7,8 @@
 
 <div align="center">
 
-[![CircleCI Status](https://circleci.com/gh/ruilisi/fortune-sheet.svg?style=shield)](https://circleci.com/gh/ruilisi/fortune-sheet)
-[![Known Vulnerabilities](https://snyk.io/test/github/ruilisi/fortune-sheet/badge.svg)](https://snyk.io/test/github/ruilisi/fortune-sheet)
+[![CircleCI Status](https://circleci.com/gh/ruilisi/online-sheet.svg?style=shield)](https://circleci.com/gh/ruilisi/online-sheet)
+[![Known Vulnerabilities](https://snyk.io/test/github/ruilisi/online-sheet/badge.svg)](https://snyk.io/test/github/ruilisi/online-sheet)
 [![Build with father](https://img.shields.io/badge/build%20with-father-028fe4.svg)](https://github.com/umijs/father/)
 [![xiemala](https://img.shields.io/badge/maintained%20by-xiemala-cc00ff.svg)](https://xiemala.com/)
 
@@ -31,7 +31,7 @@
 
 ## 在线样例
 
-项目的在线Demo：[fortune-sheet-demo](https://ruilisi.github.io/fortune-sheet-demo/)
+项目的在线Demo：[online-sheet-demo](https://ruilisi.github.io/online-sheet-demo/)
 
 ## 注意
 在稳定版1.0发布之前，输入的数据结构和API可能会发生变动。如果你在升级版本后遇到了错误，可以查看[Changelog](./CHANGELOG.md) 和 [迁移指南](#迁移luckysheet数据).
@@ -41,7 +41,7 @@
 - 完全使用typescript编写。
 - 可以用 `import` / `require` 导入本库了。
   ```js
-  import { Workbook } from '@fortune-sheet/react'
+  import { Workbook } from '@online-sheet/react'
   ```
 - 同页面支持多个实例。
 - 去掉了 `jQuery` 的依赖, 用原生 `React` / `Vue` + `immer` 来管理Dom和状态。
@@ -94,7 +94,7 @@
 
 ## 文档
 
-请参考详细文档 [fortune-sheet-doc](https://ruilisi.github.io/fortune-sheet-docs/)
+请参考详细文档 [online-sheet-doc](https://ruilisi.github.io/online-sheet-docs/)
 
 ## 快速开始 (react)
 
@@ -104,7 +104,7 @@
 <summary>使用 npm</summary>
 
 ```shell
-npm install @fortune-sheet/react
+npm install @online-sheet/react
 ```
 </details>
 
@@ -112,7 +112,7 @@ npm install @fortune-sheet/react
 <summary>使用 pnpm</summary>
 
 ```shell
-pnpm install @fortune-sheet/react
+pnpm install @online-sheet/react
 ```
 </details>
 
@@ -120,7 +120,7 @@ pnpm install @fortune-sheet/react
 <summary>使用 yarn</summary>
 
 ```shell
-yarn add @fortune-sheet/react
+yarn add @online-sheet/react
 ```
 </details>
 
@@ -142,8 +142,8 @@ yarn add @fortune-sheet/react
 ```js
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Workbook } from "@fortune-sheet/react";
-import "@fortune-sheet/react/dist/index.css"
+import { Workbook } from "@online-sheet/react";
+import "@online-sheet/react/dist/index.css"
 
 ReactDOM.render(
   <Workbook data={[{ name: "Sheet1" }]} />,
@@ -170,9 +170,9 @@ op对后端数据修改和同步在线协同数据非常有用。
 
 我们在 `backend-demo` 目录中展示了一个例子，使用 `Express` (后端) and `MongoDB` (数据库) 实现。
 
-通过 `node index.js` 运行后端服务器，然后访问 [Collabration example](https://ruilisi.github.io/fortune-sheet-demo/?path=/story/collabration--example) 即可体验。(可通过 http://localhost:8081/init 初始化数据)
+通过 `node index.js` 运行后端服务器，然后访问 [Collabration example](https://ruilisi.github.io/online-sheet-demo/?path=/story/collabration--example) 即可体验。(可通过 http://localhost:8081/init 初始化数据)
 
-详细的 `Op` 文档, 请参考 [fortune-sheet-doc](./docs/zh/guide/op.md)
+详细的 `Op` 文档, 请参考 [online-sheet-doc](./docs/zh/guide/op.md)
 
 ## 迁移Luckysheet数据
 FortuneSheet的总体数据结构与Luckysheet相同，只有几处命名的区别：

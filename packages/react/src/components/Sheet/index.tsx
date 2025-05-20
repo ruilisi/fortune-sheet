@@ -6,7 +6,7 @@ import {
   handleGlobalWheel,
   initFreeze,
   Sheet as SheetType,
-} from "@fortune-sheet/core";
+} from "@online-sheet/core";
 import "./index.css";
 import WorkbookContext from "../../context";
 import SheetOverlay from "../SheetOverlay";
@@ -268,11 +268,11 @@ const Sheet: React.FC<Props> = ({ sheet }) => {
   }, [onWheel]);
 
   return (
-    <div ref={containerRef} className="fortune-sheet-container">
+    <div ref={containerRef} className="online-sheet-container">
       {/* this is a placeholder div to help measure the empty space between toolbar and footer, directly measuring the canvas element is inaccurate, don't know why */}
-      <div ref={placeholderRef} className="fortune-sheet-canvas-placeholder" />
+      <div ref={placeholderRef} className="online-sheet-canvas-placeholder" />
       <canvas
-        className="fortune-sheet-canvas"
+        className="online-sheet-canvas"
         ref={refs.canvas}
         aria-hidden="true"
       />

@@ -6,7 +6,7 @@ FortuneSheet is a drop-in javascript spreadsheet library that provides rich feat
 This project is originated from [Luckysheet](https://github.com/mengshukeji/Luckysheet) and has inherited many code from it. Lots of efforts have done to translate the whole project to typescript (still in progress), and solved problems in project level.
 
 ## Demo
-[Online demo](https://ruilisi.github.io/fortune-sheet-demo/)
+[Online demo](https://ruilisi.github.io/online-sheet-demo/)
 
 ## Features
 (~~Cross line~~ means planned but not yet implemented)
@@ -86,11 +86,11 @@ This project is originated from [Luckysheet](https://github.com/mengshukeji/Luck
 
 ### Download and install the library
 ```shell
-yarn add @fortune-sheet/react
+yarn add @online-sheet/react
 ```
 or using npm:
 ```shell
-npm install @fortune-sheet/react
+npm install @online-sheet/react
 ```
 
 ### Create an HTML placeholder
@@ -111,8 +111,8 @@ npm install @fortune-sheet/react
 ```js
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Workbook } from "@fortune-sheet/react";
-import "@fortune-sheet/react/dist/index.css"
+import { Workbook } from "@online-sheet/react";
+import "@online-sheet/react/dist/index.css"
 
 ReactDOM.render(
   <Workbook data={[{ name: "Sheet1" }]} />,

@@ -1,16 +1,20 @@
 {
-  "name": "@fortune-sheet/core",
-  "version": "1.0.2",
+  "name": "@online-sheet/core",
+  "version": "1.0.4",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "repository": "https://github.com/ruilisi/fortune-sheet",
+  "repository": "https://github.com/eoncn/online-sheet",
   "license": "MIT",
+  "scripts": {
+    "build": "father-build",
+    "publish": "npm publish --registry 'https://registry.npmjs.org'"
+  },
   "dependencies": {
-    "@fortune-sheet/formula-parser": "^0.2.13",
+    "@online-sheet/formula-parser": "^0.2.14",
     "dayjs": "^1.11.0",
     "immer": "^9.0.12",
     "lodash": "^4.17.21",

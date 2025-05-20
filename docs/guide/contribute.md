@@ -14,8 +14,8 @@ Welcome! We are very happy that you are here and look forward to your interest i
 <!-- ## How to participate in contributing?
 
 * Contributed documents: Browsing the document can deepen your understanding of FortuneSheet. Once you find that the document is not clearly written or the logic is confusing, you can correct, modify, and supplement. You can go to [Google Forum](https://groups.google.com/g/FortuneSheet) to give feedback
-* Contributing code: Welcome everyone to contribute code to the FortuneSheet community, you are welcome to claim the Open state [Issues](https://github.com/ruilisi/fortune-sheet/issues) and unfinished features, submit a PR, and become one of the contributors If you find that some functions cannot meet your needs or have problems during use, please record in Issues
-* Participate in the issue discussion: you can post your suggestions under any [Issues](https://github.com/ruilisi/fortune-sheet/issues)
+* Contributing code: Welcome everyone to contribute code to the FortuneSheet community, you are welcome to claim the Open state [Issues](https://github.com/eoncn/online-sheet/issues) and unfinished features, submit a PR, and become one of the contributors If you find that some functions cannot meet your needs or have problems during use, please record in Issues
+* Participate in the issue discussion: you can post your suggestions under any [Issues](https://github.com/eoncn/online-sheet/issues)
 * Review code: You can see PR submitted by all contributors on [Github](https://github.com/mengshukeji/FortuneSheet), you can review their code and post your suggestions -->
 
 ## How to submit issues
@@ -30,13 +30,13 @@ Before you submit features/improvements, you should pay attention to the followi
 
 Specific steps:
 
-* Create [Issues](https://github.com/ruilisi/fortune-sheet/issues) and describe the issue clearly
+* Create [Issues](https://github.com/eoncn/online-sheet/issues) and describe the issue clearly
 * If you want to solve the issue, assign the issue to your own name. If you just submit a bug/feature/improvement and don’t have time to contribute code, set assignne to empty
 <!-- * If it is a relatively large feature/improvement, try to output the design document first and follow the [FortuneSheet RFC](https://github.com/mengshukeji/FortuneSheet-rfcs) process for others to review -->
 
 ## How to claim Issues
 
-In FortuneSheet's [Issues](https://github.com/ruilisi/fortune-sheet/issues) list, there are many issues created by others that have not been repaired. If you are interested, you can claim these issues. The steps to claim are as follows:
+In FortuneSheet's [Issues](https://github.com/eoncn/online-sheet/issues) list, there are many issues created by others that have not been repaired. If you are interested, you can claim these issues. The steps to claim are as follows:
 
 * Leave a message under the issue, express the idea of claiming the task, and specify **@I can solve it**
 * If the submitter has no comments, assign the issue to your own name and update the progress in time

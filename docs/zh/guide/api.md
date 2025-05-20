@@ -68,7 +68,7 @@ _applyOp(ops)_
 
 通常用于在线协同场景，用来同步数据。
 
-更多可见 [Collabration demo](https://github.com/ruilisi/fortune-sheet/blob/master/stories/Collabration.stories.tsx) for an example usage.
+更多可见 [Collabration demo](https://github.com/eoncn/online-sheet/blob/master/stories/Collabration.stories.tsx) for an example usage.
 
 | 参数 | 类型 | 描述 |
 | ----- | ----- | ------ |
@@ -117,7 +117,7 @@ _setCellValue(row, column, value, [options])_
 | value | any | 要设置的值 |
 | [options] | [可选参数](#commonoptions) & { type: string } | `type`: 单元格属性，默认是'v' |
 
-如果需要更新公式，也可以在这里赋值，fortune-sheet在内部会主动把这个公式做计算并加入到公式链中，最后重刷计算。
+如果需要更新公式，也可以在这里赋值，online-sheet在内部会主动把这个公式做计算并加入到公式链中，最后重刷计算。
 
 - **示例**:
 
@@ -125,7 +125,7 @@ _setCellValue(row, column, value, [options])_
 
   - 设置当前工作表"B1"单元格的值为公式"=sum(A1)"    `workbookRef.current.setCellValue(0, 1, "=sum(A1)");`
 
-  - 设置当前工作表"C1"单元格的值为公式"=sum(A1:B1)"，并带有红色背景，单元格对象可以不带`v`和`m`值，fortune-sheet会根据公式信息自动计算结果，如果带了未更新或者是非公式结果的`v`和`m`值，fortune-sheet也仍然会根据公式实际关联的数据计算出准备的结果。    `workbookRef.current.setCellValue(0, 2, {f: "=sum(A1:B1)", bg:"#FF0000"})`
+  - 设置当前工作表"C1"单元格的值为公式"=sum(A1:B1)"，并带有红色背景，单元格对象可以不带`v`和`m`值，online-sheet会根据公式信息自动计算结果，如果带了未更新或者是非公式结果的`v`和`m`值，online-sheet也仍然会根据公式实际关联的数据计算出准备的结果。    `workbookRef.current.setCellValue(0, 2, {f: "=sum(A1:B1)", bg:"#FF0000"})`
 
     再次设置"C1"单元格新的公式仍然可以生效
 
@@ -635,7 +635,7 @@ _redo()_
 
 ---​    
 
-使用例子请查看 [Collabration demo](https://github.com/ruilisi/fortune-sheet/blob/master/stories/Collabration.stories.tsx).
+使用例子请查看 [Collabration demo](https://github.com/eoncn/online-sheet/blob/master/stories/Collabration.stories.tsx).
 
 
 ---

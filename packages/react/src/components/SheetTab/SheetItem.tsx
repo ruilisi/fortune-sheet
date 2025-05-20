@@ -4,7 +4,7 @@ import {
   cancelNormalSelected,
   cancelActiveImgItem,
   locale,
-} from "@fortune-sheet/core";
+} from "@online-sheet/core";
 import _ from "lodash";
 import React, {
   useContext,
@@ -163,7 +163,7 @@ const SheetItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
       ref={containerRef}
       className={
         isDropPlaceholder
-          ? "fortune-sheettab-placeholder"
+          ? "online-sheettab-placeholder"
           : `luckysheet-sheets-item${
               context.currentSheetId === sheet.id
                 ? " luckysheet-sheets-item-active"

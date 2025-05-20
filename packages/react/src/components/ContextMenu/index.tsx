@@ -16,7 +16,7 @@ import {
   api,
   isAllowEdit,
   jfrefreshgrid,
-} from "@fortune-sheet/core";
+} from "@online-sheet/core";
 import _ from "lodash";
 import React, { useContext, useRef, useCallback, useLayoutEffect } from "react";
 import regeneratorRuntime from "regenerator-runtime";

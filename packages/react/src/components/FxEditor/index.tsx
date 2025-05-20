@@ -14,7 +14,7 @@ import {
   isShowHidenCR,
   escapeHTMLTag,
   isAllowEdit,
-} from "@fortune-sheet/core";
+} from "@online-sheet/core";
 import React, {
   useContext,
   useState,

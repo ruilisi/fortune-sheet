@@ -1,19 +1,21 @@
 {
-  "name": "@fortune-sheet/react",
-  "version": "1.0.2",
+  "name": "@online-sheet/react",
+  "version": "1.0.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.esm.js",
   "files": [
     "dist"
   ],
-  "repository": "https://github.com/ruilisi/fortune-sheet",
+  "repository": "https://github.com/eoncn/online-sheet",
   "license": "MIT",
   "scripts": {
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "build": "father-build",
+    "publish": "npm publish --registry 'https://registry.npmjs.org'"
   },
   "dependencies": {
-    "@fortune-sheet/core": "^1.0.2",
+    "@online-sheet/core": "^1.0.4",
     "@types/regenerator-runtime": "^0.13.6",
     "immer": "^9.0.12",
     "lodash": "^4.17.21",

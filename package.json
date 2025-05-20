@@ -1,11 +1,11 @@
 {
-  "name": "fortune-sheet",
-  "private": true,
-  "version": "0.1.0",
+  "name": "online-sheet",
+  "private": false,
+  "version": "0.1.2",
   "workspaces": [
     "packages/*"
   ],
-  "repository": "https://github.com/ruilisi/fortune-sheet",
+  "repository": "https://github.com/eoncn/online-sheet",
   "license": "MIT",
   "scripts": {
     "dev": "npx yarn storybook",
@@ -14,8 +14,10 @@
     "build-storybook": "storybook build",
     "tsc": "tsc --noEmit",
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx,.json ./packages",
-    "postinstall": "lerna run build --scope=@fortune-sheet/formula-parser",
-    "publish": "npm publish packages/core --registry 'https://registry.npmjs.org' && npm publish packages/react --registry 'https://registry.npmjs.org'",
+    "build:core": "lerna run build --scope=@online-sheet/core",
+    "build:react": "lerna run build --scope=@online-sheet/react",
+    "build:formula-parser": "lerna run build --scope=@online-sheet/formula-parser",
+    "postinstall": "lerna run build --scope=@online-sheet/formula-parser",
     "test": "jest",
     "coverage": "jest --coverage"
   },

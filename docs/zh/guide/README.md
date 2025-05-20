@@ -6,7 +6,7 @@ FortuneSheet是一款开箱即用的类似Excel和Google Sheets的javascript表�
 本项目源于 [Luckysheet](https://github.com/mengshukeji/Luckysheet)，并继承了它的很多代码。我们为将其转换为typescript做了很多努力，并且解决了一些项目层面的问题。
 
 ## Demo
-[在线demo](https://ruilisi.github.io/fortune-sheet-demo/)
+[在线demo](https://ruilisi.github.io/online-sheet-demo/)
 
 ## 特性
 (~~划线~~ 表示已计划但尚未实现)
@@ -86,11 +86,11 @@ FortuneSheet是一款开箱即用的类似Excel和Google Sheets的javascript表�
 
 ### 安装库
 ```shell
-yarn add @fortune-sheet/react
+yarn add @online-sheet/react
 ```
 或使用 npm:
 ```shell
-npm install @fortune-sheet/react
+npm install @online-sheet/react
 ```
 
 ### 创建一个HTML容器
@@ -111,8 +111,8 @@ npm install @fortune-sheet/react
 ```js
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Workbook } from "@fortune-sheet/react";
-import "@fortune-sheet/react/dist/index.css"
+import { Workbook } from "@online-sheet/react";
+import "@online-sheet/react/dist/index.css"
 
 ReactDOM.render(
   <Workbook data={[{ name: "Sheet1" }]} />,

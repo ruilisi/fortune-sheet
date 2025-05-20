@@ -2,7 +2,7 @@ import {
   Sheet,
   cancelNormalSelected,
   cancelActiveImgItem,
-} from "@fortune-sheet/core";
+} from "@online-sheet/core";
 import React, { useContext, useEffect, useRef } from "react";
 import WorkbookContext from "../../context";
 import "./index.css";
@@ -38,7 +38,7 @@ const SheetListItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
 
   return (
     <div
-      className="fortune-sheet-list-item"
+      className="online-sheet-list-item"
       key={sheet.id}
       ref={containerRef}
       onClick={() => {
@@ -59,7 +59,7 @@ const SheetListItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
       }}
       tabIndex={0}
     >
-      <span className="fortune-sheet-selected-check-sapce">
+      <span className="online-sheet-selected-check-sapce">
         {sheet.id === context.currentSheetId && (
           <SVGIcon
             name="check"
@@ -70,7 +70,7 @@ const SheetListItem: React.FC<Props> = ({ sheet, isDropPlaceholder }) => {
         )}
       </span>
       <span
-        className="luckysheet-sheets-item-name fortune-sheet-list-item-name"
+        className="luckysheet-sheets-item-name online-sheet-list-item-name"
         spellCheck="false"
       >
         {!!sheet.color && (

@@ -1,8 +1,9 @@
 import React, { useCallback, useRef, useState } from "react";
 import { Meta, StoryFn } from "@storybook/react";
-import { Workbook, WorkbookInstance } from "@fortune-sheet/react";
-import { Sheet } from "@fortune-sheet/core";
+import { Workbook, WorkbookInstance } from "@online-sheet/react";
+import { Sheet } from "@online-sheet/core";
 import dataVerification from "./data/dataVerification";
+
 export default {
   component: Workbook,
 } as Meta<typeof Workbook>;

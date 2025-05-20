@@ -12,7 +12,7 @@ import {
   handleColFreezeHandleMouseDown,
   getSheetIndex,
   fixPositionOnFrozenCells,
-} from "@fortune-sheet/core";
+} from "@online-sheet/core";
 import _ from "lodash";
 import React, {
   useContext,

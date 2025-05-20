@@ -1,4 +1,4 @@
-import { Sheet, api } from "@fortune-sheet/core";
+import { Sheet, api } from "@online-sheet/core";
 import React, { CSSProperties, useCallback, useContext } from "react";
 import SVGIcon from "../SVGIcon";
 import WorkbookContext from "../../context";
@@ -26,7 +26,7 @@ const SheetHiddenButton: React.FC<Props> = ({ style, sheet }) => {
         showSheet();
       }}
       tabIndex={0}
-      className="fortune-sheet-hidden-button"
+      className="online-sheet-hidden-button"
     >
       {sheet?.hide === 1 ? (
         <SVGIcon

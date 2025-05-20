@@ -34,7 +34,7 @@ import {
   createFilter,
   clearFilter,
   applyLocation,
-} from "@fortune-sheet/core";
+} from "@online-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
 import "./index.css";

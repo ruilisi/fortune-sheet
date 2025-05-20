@@ -1,4 +1,4 @@
-.fortune-sheet-container {
+.online-sheet-container {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -10,18 +10,18 @@
   flex-direction: row;
 }
 
-.fortune-sheet-area {
+.online-sheet-area {
   flex: 1;
   position: relative;
 }
 
-.fortune-sheet-canvas-placeholder,
-.fortune-sheet-canvas {
+.online-sheet-canvas-placeholder,
+.online-sheet-canvas {
   width: 100%;
   height: 100%;
   display: block;
 }
 
-.fortune-sheet-canvas {
+.online-sheet-canvas {
   position: absolute;
 }

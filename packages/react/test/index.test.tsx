@@ -7,7 +7,7 @@ describe("Worksheet", () => {
     const { queryByText, container } = render(
       <Workbook data={[{ name: "Sheet1" }]} />
     );
-    expect(container.querySelector(".fortune-sheet-container")).toBeTruthy();
+    expect(container.querySelector(".online-sheet-container")).toBeTruthy();
     expect(queryByText("Sheet1")).toBeTruthy();
   });
 });

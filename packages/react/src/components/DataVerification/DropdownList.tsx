@@ -5,7 +5,7 @@ import {
   getSheetIndex,
   mergeBorder,
   setDropcownValue,
-} from "@fortune-sheet/core";
+} from "@online-sheet/core";
 import React, {
   useCallback,
   useContext,

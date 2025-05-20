@@ -1,6 +1,6 @@
 import _ from "lodash";
 // @ts-ignore
-import { Parser, ERROR_REF } from "@fortune-sheet/formula-parser";
+import { Parser, ERROR_REF } from "@online-sheet/formula-parser";
 import type {
   Cell,
   CellMatrix,
@@ -1083,7 +1083,7 @@ export function execfunction(
   let { result } = parsedResponse;
 
   // https://stackoverflow.com/a/643827/8200626
-  // https://github.com/ruilisi/fortune-sheet/issues/551
+  // https://github.com/eoncn/online-sheet/issues/551
   if (
     Object.prototype.toString.call(result) === "[object Date]" &&
     !_.isNil(result)

@@ -5,7 +5,7 @@ import React, {
   useState,
   useContext,
 } from "react";
-import { locale } from "@fortune-sheet/core";
+import { locale } from "@online-sheet/core";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 import SVGIcon from "../SVGIcon";
 import WorkbookContext from "../../context";

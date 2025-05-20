@@ -25,7 +25,7 @@ import {
   onCellsMoveStart,
   selectAll,
   showLinkCard,
-} from "@fortune-sheet/core";
+} from "@online-sheet/core";
 import _ from "lodash";
 import React, {
   useCallback,
@@ -478,7 +478,7 @@ const SheetOverlay: React.FC = () => {
 
   return (
     <main
-      className="fortune-sheet-overlay"
+      className="online-sheet-overlay"
       ref={containerRef}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}

@@ -17,7 +17,7 @@ The op is useful for database modification and syncing state in online collabrat
 
 A working example with `Express` (backend server) and `MongoDB` (data persistence) is avaiable in `backend-demo` folder.
 
-Run it with `node index.js` and visit [Collabration example](https://ruilisi.github.io/fortune-sheet-demo/?path=/story/collabration--example)
+Run it with `node index.js` and visit [Collabration example](https://ruilisi.github.io/online-sheet-demo/?path=/story/collabration--example)
 
 > You can initialize data by visiting http://localhost:8081/init
 

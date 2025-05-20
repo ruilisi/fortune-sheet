@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import _ from "lodash";
-import { getRangetxt } from "@fortune-sheet/core";
+import { getRangetxt } from "@online-sheet/core";
 import WorkbookContext from "../../context";
 
 const LocationBox: React.FC = () => {

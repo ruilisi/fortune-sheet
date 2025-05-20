@@ -1,4 +1,4 @@
-.fortune-sheet-list {
+.online-sheet-list {
   overflow-y: auto;
   overflow-x: hidden;
   min-width: 120px;
@@ -9,7 +9,7 @@
   max-height: 60%;
 }
 
-.fortune-sheet-list-item {
+.online-sheet-list-item {
   height: 30px;
   line-height: 30px;
   width: 100%;
@@ -17,12 +17,12 @@
   cursor: pointer;
 }
 
-.fortune-sheet-list-item-name {
+.online-sheet-list-item-name {
   margin-right: 15px;
   position: relative;
 }
 
-.fortune-sheet-list-item-name .luckysheet-sheets-list-item-color {
+.online-sheet-list-item-name .luckysheet-sheets-list-item-color {
   width: 6%;
   height: 100%;
   position: absolute;
@@ -30,11 +30,11 @@
   left: -6px;
 }
 
-.fortune-sheet-list :hover {
+.online-sheet-list :hover {
   background-color: #efefef;
 }
 
-.fortune-sheet-hidden-button {
+.online-sheet-hidden-button {
   margin-right: 15px;
   display: inline-flex;
   position: absolute;
@@ -42,11 +42,11 @@
   justify-content: flex-end;
 }
 
-.fortune-sheet-hidden-button :hover {
+.online-sheet-hidden-button :hover {
   background-color: #d0d0d0;
 }
 
-.fortune-sheet-selected-check-sapce {
+.online-sheet-selected-check-sapce {
   width: 20px;
   display: inline-block;
   margin-left: 15px;

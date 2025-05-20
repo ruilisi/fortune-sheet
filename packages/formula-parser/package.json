@@ -1,6 +1,6 @@
 {
-  "name": "@fortune-sheet/formula-parser",
-  "version": "0.2.13",
+  "name": "@online-sheet/formula-parser",
+  "version": "0.2.14",
   "description": "Formula parser",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -15,6 +15,7 @@
     "test": "cross-env BABEL_ENV=commonjs jest",
     "coverage": "cross-env BABEL_ENV=commonjs jest --coverage",
     "build": "father-build",
+    "publish": "npm publish --registry 'https://registry.npmjs.org'",
     "generate-parser": "cd src/grammar-parser && jison-es -m es grammar-parser.jison",
     "release": "generate-release"
   },

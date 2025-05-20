@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { updateCell, addSheet, locale } from "@fortune-sheet/core";
+import { updateCell, addSheet, locale } from "@online-sheet/core";
 // @ts-ignore
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
@@ -80,7 +80,7 @@ const SheetTab: React.FC = () => {
       <div id="luckysheet-sheet-content">
         {context.allowEdit && (
           <div
-            className="fortune-sheettab-button"
+            className="online-sheettab-button"
             onClick={onAddSheetClick}
             tabIndex={0}
             aria-label={info.newSheet}
@@ -93,7 +93,7 @@ const SheetTab: React.FC = () => {
           <div className="sheet-list-container">
             <div
               id="all-sheets"
-              className="fortune-sheettab-button"
+              className="online-sheettab-button"
               ref={tabContainerRef}
               onMouseDown={(e) => {
                 e.stopPropagation();
@@ -116,13 +116,13 @@ const SheetTab: React.FC = () => {
           <i className="iconfont luckysheet-iconfont-caidan2" />
         </div>
         <div
-          className="fortune-sheettab-container"
-          id="fortune-sheettab-container"
+          className="online-sheettab-container"
+          id="online-sheettab-container"
         >
           {!isShowBoundary && <div className="boundary boundary-left" />}
           <div
-            className="fortune-sheettab-container-c"
-            id="fortune-sheettab-container-c"
+            className="online-sheettab-container-c"
+            id="online-sheettab-container-c"
             ref={tabContainerRef}
           >
             {_.sortBy(context.luckysheetfile, (s) => Number(s.order)).map(
@@ -141,8 +141,8 @@ const SheetTab: React.FC = () => {
         </div>
         {isShowScrollBtn && (
           <div
-            id="fortune-sheettab-leftscroll"
-            className="fortune-sheettab-scroll"
+            id="online-sheettab-leftscroll"
+            className="online-sheettab-scroll"
             ref={leftScrollRef}
             onClick={() => {
               scrollBy(-scrollDelta);
@@ -154,8 +154,8 @@ const SheetTab: React.FC = () => {
         )}
         {isShowScrollBtn && (
           <div
-            id="fortune-sheettab-rightscroll"
-            className="fortune-sheettab-scroll"
+            id="online-sheettab-rightscroll"
+            className="online-sheettab-scroll"
             ref={rightScrollRef}
             onClick={() => {
               scrollBy(scrollDelta);
@@ -166,7 +166,7 @@ const SheetTab: React.FC = () => {
           </div>
         )}
       </div>
-      <div className="fortune-sheet-area-right">
+      <div className="online-sheet-area-right">
         <ZoomControl />
       </div>
     </div>

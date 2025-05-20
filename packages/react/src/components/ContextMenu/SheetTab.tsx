@@ -1,4 +1,4 @@
-import { locale, deleteSheet, api } from "@fortune-sheet/core";
+import { locale, deleteSheet, api } from "@online-sheet/core";
 import _ from "lodash";
 import React, {
   useContext,

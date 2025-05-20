@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from "react";
 import "./index.css";
-import { locale, updateItem } from "@fortune-sheet/core";
+import { locale, updateItem } from "@online-sheet/core";
 import _ from "lodash";
 import WorkbookContext from "../../context";
 import Select, { Option } from "../Toolbar/Select";

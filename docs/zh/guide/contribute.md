@@ -31,13 +31,13 @@
 
 具体步骤：
 
-* 创建 [Issues](https://github.com/ruilisi/fortune-sheet/issues) ，描述清楚问题
+* 创建 [Issues](https://github.com/eoncn/online-sheet/issues) ，描述清楚问题
 * 如果你要解决该issue则将issue assign到自己名下，如果你仅仅是提交Bug/特性/改进，并没有时间去贡献代码，则assignne设置为空
 <!-- * 如果是比较大的特性/改进，尽量先输出设计文档，走 [Luckysheet RFC](https://github.com/mengshukeji/Luckysheet-rfcs) 流程，供其他人review -->
 
 ## 如何认领 Issues
 
-在 FortuneSheet 的 [Issues](https://github.com/ruilisi/fortune-sheet/issues) 列表中，有很多由其他人创建的issue并未被修复，如果你感兴趣的话，可以认领这些issue。认领步骤如下：
+在 FortuneSheet 的 [Issues](https://github.com/eoncn/online-sheet/issues) 列表中，有很多由其他人创建的issue并未被修复，如果你感兴趣的话，可以认领这些issue。认领步骤如下：
 
 * 在该issue下留言，表达想认领该任务的想法，另注明 **@I can solve it** 即可
 * 如果提交者没有意见，则将该issue assign到自己名下并及时更新进度

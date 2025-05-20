@@ -26,9 +26,9 @@ jobs:
         with:
           name: packages
           path: |
-            packages/core/fortune-sheet-core-*.tgz
-            packages/react/fortune-sheet-react-*.tgz
-            packages/formula-parser/fortune-sheet-formula-parser-*.tgz
+            packages/core/online-sheet-core-*.tgz
+            packages/react/online-sheet-react-*.tgz
+            packages/formula-parser/online-sheet-formula-parser-*.tgz
       - run: cd packages/core && npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

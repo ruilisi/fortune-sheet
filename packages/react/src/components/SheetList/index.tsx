@@ -18,7 +18,7 @@ const SheetList: React.FC = () => {
 
   return (
     <div
-      className="fortune-context-menu luckysheet-cols-menu fortune-sheet-list"
+      className="fortune-context-menu luckysheet-cols-menu online-sheet-list"
       ref={containerRef}
     >
       {_.sortBy(context.luckysheetfile, (s) => Number(s.order)).map(

@@ -12,19 +12,20 @@
     "strict": true,
     "strictNullChecks": true,
     "skipLibCheck": true,
-    "lib": ["es5", "dom"],
-    "baseUrl": "./",
-    "paths": {
-      "@online-sheet/core": ["packages/core/src"],
-      "@online-sheet/react": ["packages/react/src"]
-    }
+    "lib": [
+      "es5",
+      "dom"
+    ],
+    "baseUrl": "./"
   },
-  "include": ["packages/*/src", "stories/"],
+  "include": [
+    "./src"
+  ],
   "exclude": [
     "node_modules",
-    "packages/*/lib",
-    "packages/*/dist",
+    "**/*.test.ts",
     "**/*.spec.ts",
-    "**/*.test.ts"
+    "dist",
+    "lib"
   ]
 }
