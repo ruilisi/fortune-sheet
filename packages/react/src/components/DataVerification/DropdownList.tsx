@@ -19,7 +19,12 @@ import SVGIcon from "../SVGIcon";
 
 import "./index.css";
 
-const DropDownList: React.FC = () => {
+interface IDropDownListProps {
+  width?: number;
+}
+
+const DropDownList: React.FC = (props: IDropDownListProps) => {
+  const { width } = props;
   const { context, setContext } = useContext(WorkbookContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const [list, setList] = useState<any[]>([]);
@@ -96,7 +101,7 @@ const DropDownList: React.FC = () => {
   return (
     <div
       id="luckysheet-dataVerification-dropdown-List"
-      style={position}
+      style={width ? { ...position, width } : { ...position }}
       ref={containerRef}
       onClick={(e) => e.stopPropagation()}
       onChange={(e) => e.stopPropagation()}

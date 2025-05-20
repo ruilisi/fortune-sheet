@@ -84,6 +84,8 @@ export const GetCellValue: StoryFn<typeof Workbook> = () => {
               value: "4",
             },
           ];
+          // 显示loading状态
+          // 模拟异步请求
           return new Promise((resolve) => {
             setTimeout(() => {
               resolve(ret);

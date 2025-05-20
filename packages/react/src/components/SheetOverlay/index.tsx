@@ -62,6 +62,7 @@ const SheetOverlay: React.FC = () => {
   const dataVerificationHintBoxRef = useRef<HTMLDivElement>(null);
   const [lastRangeText, setLastRangeText] = useState("");
   const [lastCellValue, setLastCellValue] = useState("");
+  const [listWidth, setListWidth] = useState<number | undefined>();
   const { showAlert } = useAlert();
   // const isMobile = browser.mobilecheck();
   const cellAreaMouseDown = useCallback(
@@ -809,12 +810,18 @@ const SheetOverlay: React.FC = () => {
             id="luckysheet-dataVerification-dropdown-btn"
             onClick={async () => {
               if (!context.luckysheet_select_save) return;
+              // 获取当前选中的单元格的宽度,下拉列表要跟单元格保持一致
               const last =
                 context.luckysheet_select_save[
                   context.luckysheet_select_save.length - 1
                 ];
-              const rowIndex = last.row_focus;
-              const colIndex = last.column_focus;
+              const {
+                width,
+                row_focus: rowIndex,
+                column_focus: colIndex,
+              } = last;
+              setListWidth(width);
+              // 获取当前选中的单元格的行列索引
               console.log("rowIndex, colIndex", rowIndex, colIndex);
               if (
                 !context.selectClick ||
@@ -869,7 +876,9 @@ const SheetOverlay: React.FC = () => {
           >
             <SVGIcon name="combo-arrow" width={16} />
           </div>
-          {context.dataVerificationDropDownList && <DropDownList />}
+          {context.dataVerificationDropDownList && (
+            <DropDownList width={listWidth} />
+          )}
           {/* <div
             id="luckysheet-dataVerification-dropdown-List"
             className="luckysheet-mousedown-cancel"
