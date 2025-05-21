@@ -2,7 +2,7 @@ import {
   Sheet,
   cancelNormalSelected,
   cancelActiveImgItem,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import React, { useContext, useEffect, useRef } from "react";
 import WorkbookContext from "../../context";
 import "./index.css";

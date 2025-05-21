@@ -8,7 +8,7 @@ import {
   replace,
   replaceAll,
   scrollToHighlightCell,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import produce from "immer";
 import React, { useContext, useState, useCallback } from "react";
 import _ from "lodash";

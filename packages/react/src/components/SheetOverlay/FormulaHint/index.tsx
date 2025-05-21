@@ -1,4 +1,4 @@
-import { locale } from "@online-sheet/core";
+import { locale } from "@jadinec/core-sheet";
 import React, { useContext } from "react";
 import WorkbookContext from "../../../context";
 import "./index.css";

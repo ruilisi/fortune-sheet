@@ -4,7 +4,7 @@ import {
   cancelNormalSelected,
   cancelActiveImgItem,
   locale,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import _ from "lodash";
 import React, {
   useContext,

@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from "react";
 import "./index.css";
-import { locale, updateItem } from "@online-sheet/core";
+import { locale, updateItem } from "@jadinec/core-sheet";
 import _ from "lodash";
 import WorkbookContext from "../../context";
 import Select, { Option } from "../Toolbar/Select";

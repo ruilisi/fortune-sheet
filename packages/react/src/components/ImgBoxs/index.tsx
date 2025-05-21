@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { onImageMoveStart, onImageResizeStart } from "@online-sheet/core";
+import { onImageMoveStart, onImageResizeStart } from "@jadinec/core-sheet";
 import React, { useContext, useMemo } from "react";
 import WorkbookContext from "../../context";
 

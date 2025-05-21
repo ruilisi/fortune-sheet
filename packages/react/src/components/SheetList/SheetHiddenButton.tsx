@@ -1,4 +1,4 @@
-import { Sheet, api } from "@online-sheet/core";
+import { Sheet, api } from "@jadinec/core-sheet";
 import React, { CSSProperties, useCallback, useContext } from "react";
 import SVGIcon from "../SVGIcon";
 import WorkbookContext from "../../context";

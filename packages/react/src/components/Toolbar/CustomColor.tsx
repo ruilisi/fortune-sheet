@@ -1,4 +1,4 @@
-import { locale } from "@online-sheet/core";
+import { locale } from "@jadinec/core-sheet";
 import React, { useContext, useState } from "react";
 import WorkbookContext from "../../context";
 import ColorPicker from "../Toolbar/ColorPicker";

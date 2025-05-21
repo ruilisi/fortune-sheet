@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useRef, useState } from "react";
 import "./index.css";
-import { locale } from "@online-sheet/core";
+import { locale } from "@jadinec/core-sheet";
 import _ from "lodash";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";

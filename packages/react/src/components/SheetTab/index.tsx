@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { updateCell, addSheet, locale } from "@online-sheet/core";
+import { updateCell, addSheet, locale } from "@jadinec/core-sheet";
 // @ts-ignore
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";

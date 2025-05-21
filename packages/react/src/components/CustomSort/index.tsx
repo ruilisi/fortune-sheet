@@ -4,7 +4,7 @@ import {
   indexToColumnChar,
   locale,
   sortSelection,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import React, {
   ChangeEvent,
   useCallback,

@@ -5,7 +5,7 @@ import {
   MIN_ZOOM_RATIO,
   getSheetIndex,
   locale,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import WorkbookContext from "../../context";
 import SVGIcon from "../SVGIcon";
 import { useOutsideClick } from "../../hooks/useOutsideClick";

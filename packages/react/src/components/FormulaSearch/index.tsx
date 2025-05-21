@@ -3,7 +3,7 @@ import {
   cancelNormalSelected,
   locale,
   setCaretPosition,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import _ from "lodash";
 import WorkbookContext from "../../context";
 import "./index.css";

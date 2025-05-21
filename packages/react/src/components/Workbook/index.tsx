@@ -21,7 +21,7 @@ import {
   calcSelectionInfo,
   groupValuesRefresh,
   setFormulaCellInfoMap,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import React, {
   useMemo,
   useState,

@@ -3,7 +3,7 @@ import {
   fixColumnStyleOverflowInFreeze,
   fixRowStyleOverflowInFreeze,
   getSheetIndex,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import _ from "lodash";
 import React, { useCallback, useContext, useEffect } from "react";
 import WorkbookContext from "../../context";

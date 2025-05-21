@@ -1,4 +1,4 @@
-import { getRangetxt, locale } from "@online-sheet/core";
+import { getRangetxt, locale } from "@jadinec/core-sheet";
 
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import DataVerification from ".";

@@ -1,6 +1,6 @@
 import _ from "lodash";
 // @ts-ignore
-import { Parser, ERROR_REF } from "@online-sheet/formula-parser";
+import { Parser, ERROR_REF } from "@jadinec/formula-parser";
 import type {
   Cell,
   CellMatrix,

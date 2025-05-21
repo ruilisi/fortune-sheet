@@ -6,7 +6,7 @@ import {
   Settings,
   GlobalCache,
   PatchOptions,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 
 export type RefValues = {
   globalCache: GlobalCache;

@@ -5,7 +5,7 @@ import {
   getSheetIndex,
   mergeBorder,
   setDropcownValue,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import React, {
   useCallback,
   useContext,

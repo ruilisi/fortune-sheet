@@ -1,4 +1,4 @@
-import { locale, deleteSheet, api } from "@online-sheet/core";
+import { locale, deleteSheet, api } from "@jadinec/core-sheet";
 import _ from "lodash";
 import React, {
   useContext,

@@ -16,7 +16,7 @@ import {
   api,
   isAllowEdit,
   jfrefreshgrid,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import _ from "lodash";
 import React, { useContext, useRef, useCallback, useLayoutEffect } from "react";
 import regeneratorRuntime from "regenerator-runtime";

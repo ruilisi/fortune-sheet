@@ -4,7 +4,7 @@ import {
   getOptionValue,
   getSelectRange,
   locale,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import produce from "immer";
 import _ from "lodash";
 import React, { useContext, useState, useCallback } from "react";

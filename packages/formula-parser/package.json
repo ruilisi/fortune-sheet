@@ -1,5 +1,5 @@
 {
-  "name": "@online-sheet/formula-parser",
+  "name": "@jadinec/formula-parser",
   "version": "0.2.14",
   "description": "Formula parser",
   "main": "lib/index.js",

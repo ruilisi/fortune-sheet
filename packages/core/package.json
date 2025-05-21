@@ -1,6 +1,6 @@
 {
-  "name": "@online-sheet/core",
-  "version": "1.0.5",
+  "name": "@jadinec/core-sheet",
+  "version": "1.1.9",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
@@ -14,7 +14,7 @@
     "publish": "npm publish --registry 'https://registry.npmjs.org'"
   },
   "dependencies": {
-    "@online-sheet/formula-parser": "^0.2.14",
+    "@jadinec/formula-parser": "0.2.14",
     "dayjs": "^1.11.0",
     "immer": "^9.0.12",
     "lodash": "^4.17.21",

@@ -9,7 +9,7 @@ import {
   FilterDate,
   FilterColor,
   Context,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import React, {
   useCallback,
   useContext,

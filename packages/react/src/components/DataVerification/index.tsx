@@ -8,7 +8,7 @@ import {
   locale,
   setCellValue,
   confirmMessage,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import WorkbookContext from "../../context";
 import { useDialog } from "../../hooks/useDialog";

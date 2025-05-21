@@ -5,7 +5,7 @@ import React, {
   useState,
   useContext,
 } from "react";
-import { locale } from "@online-sheet/core";
+import { locale } from "@jadinec/core-sheet";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 import SVGIcon from "../SVGIcon";
 import WorkbookContext from "../../context";

@@ -16,7 +16,7 @@ import {
   escapeHTMLTag,
   isAllowEdit,
   getrangeseleciton,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import React, {
   useContext,
   useEffect,

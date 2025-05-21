@@ -17,7 +17,7 @@ import {
   isLinkValid,
   normalizeSelection,
   onRangeSelectionModalMoveStart,
-} from "@online-sheet/core";
+} from "@jadinec/core-sheet";
 import "./index.css";
 import _ from "lodash";
 import WorkbookContext from "../../context";
