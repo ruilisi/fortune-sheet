@@ -710,10 +710,9 @@ const data = {
     },
   ],
   frozen: {
-    type: "rangeBoth",
+    type: "row",
     range: {
-      row_focus: 3,
-      column_focus: 1,
+      row_focus: 0,
     },
   },
 };

@@ -20,7 +20,6 @@ import {
   handleOverlayTouchMove,
   handleOverlayTouchStart,
   insertRowCol,
-  jfrefreshgrid,
   locale,
   onCellsMoveStart,
   selectAll,
@@ -866,7 +865,12 @@ const SheetOverlay: React.FC = () => {
                   ctx.luckysheetfile[i];
                 const cellItem = verification[`${rowIndex}_${colIndex}`];
                 cellItem.value1 = list.map((child) => child.label).join(",");
-                cellItem.value2 = list.map((child) => child.value).join(",");
+                try {
+                  cellItem.value2 = JSON.stringify(list);
+                } catch (e) {
+                  console.error("JSON.stringify error", e);
+                  cellItem.value2 = "[]";
+                }
                 ctx.dataVerificationDropDownList = true;
                 dataVerificationHintBoxRef.current!.style.display = "none";
               });
