@@ -1,6 +1,6 @@
 {
   "name": "@online-sheet/react",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.esm.js",
@@ -15,7 +15,7 @@
     "publish": "npm publish --registry 'https://registry.npmjs.org'"
   },
   "dependencies": {
-    "@online-sheet/core": "^1.0.4",
+    "@online-sheet/core": "^1.0.5",
     "@types/regenerator-runtime": "^0.13.6",
     "immer": "^9.0.12",
     "lodash": "^4.17.21",

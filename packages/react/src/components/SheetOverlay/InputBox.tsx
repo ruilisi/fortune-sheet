@@ -82,7 +82,8 @@ const InputBox: React.FC = () => {
       }
       if (
         _.isEqual(prevCellUpdate, context.luckysheetCellUpdate) &&
-        prevSheetId === context.currentSheetId
+        prevSheetId === context.currentSheetId &&
+        !context.updateTime
       ) {
         // data change by a collabrative update should not trigger this effect
         return;
@@ -122,6 +123,7 @@ const InputBox: React.FC = () => {
     context.luckysheetfile,
     context.currentSheetId,
     firstSelection,
+    context.updateTime,
   ]);
 
   useEffect(() => {
@@ -361,6 +363,7 @@ const InputBox: React.FC = () => {
           if (!isAllowEdit(draftCtx, draftCtx.luckysheet_select_save)) {
             return;
           }
+          draftCtx.editValue = refs.cellInput.current?.innerText || "";
           // if(event.target.id!="luckysheet-input-box" && event.target.id!="luckysheet-rich-text-editor"){
           handleFormulaInput(
             draftCtx,
@@ -426,8 +429,8 @@ const InputBox: React.FC = () => {
         style={
           firstSelection
             ? {
-                minWidth: firstSelection?.width || 0,
-                minHeight: firstSelection?.height || 0,
+                minWidth: firstSelection?.width,
+                minHeight: firstSelection?.height,
                 ...inputBoxStyle,
               }
             : {}

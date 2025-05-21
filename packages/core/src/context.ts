@@ -220,7 +220,9 @@ export type Context = {
   sheetFocused: boolean; // property to track sheet focus for keyboard navigation
 
   getRefs: () => RefValues;
-
+  // 编辑时单元格里的值
+  editValue?: string;
+  updateTime?: string;
   // 单元格点击回调事件
   selectClick?: (
     row: number,

@@ -10,6 +10,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -41,6 +42,13 @@ const DropDownList: React.FC<IDropDownListProps> = (
   }, [setContext]);
 
   useOutsideClick(containerRef, close, [close]);
+
+  const showList = useMemo(() => {
+    if (context.editValue) {
+      return [...list].filter((el) => el.includes(context.editValue!));
+    }
+    return list;
+  }, [context.editValue, list]);
 
   // 初始化
   useEffect(() => {
@@ -112,7 +120,7 @@ const DropDownList: React.FC<IDropDownListProps> = (
       onMouseUp={(e) => e.stopPropagation()}
       tabIndex={0}
     >
-      {list.map((v, i) => (
+      {showList.map((v, i) => (
         <div
           className="dropdown-List-item"
           key={i}
@@ -127,6 +135,7 @@ const DropDownList: React.FC<IDropDownListProps> = (
               }
               setSelected(arr);
               setDropcownValue(ctx, v, arr);
+              ctx.updateTime = Date.now().toString();
             });
           }}
           tabIndex={0}
