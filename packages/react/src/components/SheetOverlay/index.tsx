@@ -62,6 +62,9 @@ const SheetOverlay: React.FC = () => {
   const [lastRangeText, setLastRangeText] = useState("");
   const [lastCellValue, setLastCellValue] = useState("");
   const [listWidth, setListWidth] = useState<number | undefined>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [left, setLeft] = useState<number>(0);
+  const [top, setTop] = useState<number>(0);
   const { showAlert } = useAlert();
   // const isMobile = browser.mobilecheck();
   const cellAreaMouseDown = useCallback(
@@ -815,6 +818,9 @@ const SheetOverlay: React.FC = () => {
                   context.luckysheet_select_save.length - 1
                 ];
               const {
+                left: loadingLeft,
+                top: loadingTop,
+                height,
                 width,
                 row_focus: rowIndex,
                 column_focus: colIndex,
@@ -849,7 +855,11 @@ const SheetOverlay: React.FC = () => {
                 return;
               }
               // 实时获取下拉列表数据
+              setLeft(loadingLeft || 0);
+              setTop((loadingTop || 0) + (height || 0));
+              setLoading(true);
               const list = await context.selectClick(rowIndex, colIndex);
+              setLoading(false);
               // 如果没有数据, 显示默认列表
               if (!list || list.length === 0) {
                 setContext((ctx) => {
@@ -883,6 +893,26 @@ const SheetOverlay: React.FC = () => {
           {context.dataVerificationDropDownList && (
             <DropDownList width={listWidth} />
           )}
+          {}
+          {loading ? (
+            <div
+              style={{
+                position: "absolute",
+                left,
+                top,
+                width: "100px",
+                height: "22px",
+                padding: "0px",
+                paddingLeft: "5px",
+                border: "1px solid #f0f1f3",
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <div style={{ fontSize: 12, height: "22px", lineHeight: "22px" }}>
+                正在加载数据...
+              </div>
+            </div>
+          ) : null}
           {/* <div
             id="luckysheet-dataVerification-dropdown-List"
             className="luckysheet-mousedown-cancel"

@@ -80,7 +80,11 @@ export const GetCellValue: StoryFn<typeof Workbook> = () => {
               value: "3",
             },
             {
-              label: "aaa",
+              label: "bbb",
+              value: "4",
+            },
+            {
+              label: "eee",
               value: "4",
             },
           ];
