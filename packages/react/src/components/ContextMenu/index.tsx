@@ -16,6 +16,7 @@ import {
   api,
   isAllowEdit,
   jfrefreshgrid,
+  newComment,
 } from "@fileverse-dev/fortune-core";
 import _ from "lodash";
 import React, { useContext, useRef, useCallback, useLayoutEffect } from "react";
@@ -40,6 +41,26 @@ const ContextMenu: React.FC = () => {
       const selection = context.luckysheet_select_save?.[0];
       if (name === "|") {
         return <Divider key={`divider-${i}`} />;
+      }
+      if (name === "comment") {
+        return (
+          <Menu
+            key={name}
+            onClick={() => {
+              setContext((draftCtx) => {
+                newComment(
+                  draftCtx,
+                  refs.globalCache,
+                  selection?.row_focus!,
+                  selection?.column_focus!
+                );
+                draftCtx.contextMenu = {};
+              });
+            }}
+          >
+            Comment
+          </Menu>
+        );
       }
       if (name === "copy") {
         return (

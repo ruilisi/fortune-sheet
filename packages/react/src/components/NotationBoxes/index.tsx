@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   getFlowdata,
   onCommentBoxMoveStart,
@@ -11,7 +11,7 @@ import ContentEditable from "../SheetOverlay/ContentEditable";
 import WorkbookContext from "../../context";
 
 const NotationBoxes: React.FC = () => {
-  const { context, setContext, refs } = useContext(WorkbookContext);
+  const { context, setContext, refs, settings } = useContext(WorkbookContext);
   const flowdata = getFlowdata(context);
 
   // TODO use patch to detect ps isShow change may be more effecient
@@ -37,14 +37,14 @@ const NotationBoxes: React.FC = () => {
           (v) => v?.rc !== context.editingCommentBox?.rc
         ),
         [context.editingCommentBox, context.hoveredCommentBox]
-      ).map((commentBox) => {
+      ).map((commentBox, index) => {
         if (!commentBox) return null;
         const { r, c, rc, left, top, width, height, value, autoFocus, size } =
           commentBox;
         const isEditing = context.editingCommentBox?.rc === rc;
         const commentId = `comment-box-${rc}`;
         return (
-          <div key={rc}>
+          <div key={rc + index}>
             <canvas
               id={`arrowCanvas-${rc}`}
               className="arrowCanvas"
@@ -92,7 +92,7 @@ const NotationBoxes: React.FC = () => {
                 e.stopPropagation();
               }}
             >
-              <div className="luckysheet-postil-dialog-move">
+              {/* <div className="luckysheet-postil-dialog-move">
                 {["t", "r", "b", "l"].map((v) => (
                   <div
                     key={v}
@@ -100,8 +100,8 @@ const NotationBoxes: React.FC = () => {
                     data-type={v}
                   />
                 ))}
-              </div>
-              {isEditing && (
+              </div> */}
+              {/* {isEditing && (
                 <div className="luckysheet-postil-dialog-resize">
                   {["lt", "mt", "lm", "rm", "rt", "lb", "mb", "rb"].map((v) => (
                     <div
@@ -123,7 +123,7 @@ const NotationBoxes: React.FC = () => {
                     />
                   ))}
                 </div>
-              )}
+              )} */}
               <div
                 style={{
                   width: "100%",
@@ -131,7 +131,8 @@ const NotationBoxes: React.FC = () => {
                   overflow: "hidden",
                 }}
               >
-                <ContentEditable
+                {settings.getCommentCellUI?.(r, c)}
+                {/* <ContentEditable
                   id={`comment-editor-${rc}`}
                   autoFocus={autoFocus}
                   style={{
@@ -165,7 +166,7 @@ const NotationBoxes: React.FC = () => {
                     e.stopPropagation();
                   }}
                   initialContent={value}
-                />
+                /> */}
               </div>
             </div>
           </div>

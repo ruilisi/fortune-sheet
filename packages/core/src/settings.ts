@@ -145,6 +145,7 @@ export type Settings = {
   headerContextMenu?: string[];
   sheetTabContextMenu?: string[];
   filterContextMenu?: string[];
+  getCommentCellUI?: ((row: number, column: number) => React.ReactNode) | null;
   generateSheetId?: () => string;
   hooks?: Hooks;
   customToolbarItems?: {
@@ -180,7 +181,7 @@ export const defaultSettings: Required<Settings> = {
     "undo",
     "redo",
     "format-painter",
-    // "clear-format",
+    "clear-format",
     "|",
     "currency-format",
     "percentage-format",
@@ -195,7 +196,7 @@ export const defaultSettings: Required<Settings> = {
     "bold",
     "italic",
     "strike-through",
-    // "underline",
+    "underline",
     "|",
     "font-color",
     "background",
@@ -205,18 +206,18 @@ export const defaultSettings: Required<Settings> = {
     "horizontal-align",
     "vertical-align",
     "text-wrap",
-    // "text-rotation",
+    "text-rotation",
     "|",
-    // "freeze",
+    "freeze",
     "conditionFormat",
     "filter",
     "link",
     "image",
-    // "comment",
+    "comment",
     "quick-formula",
     "dataVerification",
-    // "splitColumn",
-    // "locationCondition",
+    "splitColumn",
+    "locationCondition",
     "screenshot",
     "search",
   ], // 自定义工具栏
@@ -244,6 +245,7 @@ export const defaultSettings: Required<Settings> = {
     "link", // 插入链接
     "data", // 数据验证
     "cell-format", // 设置单元格格式
+    "comment", // 添加注释
   ], // 自定义单元格右键菜单
   headerContextMenu: [
     "copy", // 复制
@@ -288,4 +290,5 @@ export const defaultSettings: Required<Settings> = {
   hooks: {},
   customToolbarItems: [],
   currency: "¥",
+  getCommentCellUI: null,
 };

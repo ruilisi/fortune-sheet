@@ -1700,7 +1700,7 @@ export class Canvas {
       renderCtx.moveTo(endX + offsetLeft - 1 - ps_w, startY + offsetTop);
       renderCtx.lineTo(endX + offsetLeft - 1, startY + offsetTop);
       renderCtx.lineTo(endX + offsetLeft - 1, startY + offsetTop + ps_h);
-      renderCtx.fillStyle = "#FC6666";
+      renderCtx.fillStyle = "#EFC703";
       renderCtx.fill();
       renderCtx.closePath();
     }
@@ -1898,7 +1898,7 @@ export class Canvas {
       renderCtx.moveTo(startX + offsetLeft, startY + offsetTop);
       renderCtx.lineTo(startX + offsetLeft + dv_w, startY + offsetTop);
       renderCtx.lineTo(startX + offsetLeft, startY + offsetTop + dv_h);
-      renderCtx.fillStyle = "#FC6666";
+      renderCtx.fillStyle = "#EFC703";
       renderCtx.fill();
       renderCtx.closePath();
     }
@@ -1912,7 +1912,7 @@ export class Canvas {
       renderCtx.moveTo(endX + offsetLeft - ps_w, startY + offsetTop);
       renderCtx.lineTo(endX + offsetLeft, startY + offsetTop);
       renderCtx.lineTo(endX + offsetLeft, startY + offsetTop + ps_h);
-      renderCtx.fillStyle = "#FC6666";
+      renderCtx.fillStyle = "#EFC703";
       renderCtx.fill();
       renderCtx.closePath();
     }

@@ -71,6 +71,7 @@ export function drawArrow(
   theta?: number,
   headlen?: number
 ) {
+  if (rc) return;
   const canvas = document.getElementById(
     `arrowCanvas-${rc}`
   ) as HTMLCanvasElement;
@@ -265,7 +266,7 @@ export function removeEditingComment(ctx: Context, globalCache: GlobalCache) {
 
 export function newComment(
   ctx: Context,
-  globalCache: GlobalCache,
+  globalCache: GlobalCache | undefined,
   r: number,
   c: number
 ) {
@@ -277,7 +278,9 @@ export function newComment(
   if (ctx.hooks.beforeInsertComment?.(r, c) === false) {
     return;
   }
-  removeEditingComment(ctx, globalCache);
+  if (globalCache) {
+    removeEditingComment(ctx, globalCache);
+  }
   const flowdata = getFlowdata(ctx);
   if (!flowdata) return;
 
@@ -445,6 +448,10 @@ export function showHideAllComments(ctx: Context) {
   }
 }
 
+export function removeOverShowComment(ctx: Context) {
+  ctx.hoveredCommentBox = undefined;
+}
+
 // show comment when mouse is over cell with comment
 export function overShowComment(
   ctx: Context,
@@ -500,6 +507,16 @@ export function overShowComment(
     [, , r] = margeset.row;
     [, , c] = margeset.column;
   }
+
+  const firstSelection = ctx.luckysheet_select_save?.[0];
+  const row_index = firstSelection?.row_focus!;
+  const col_index = firstSelection?.column_focus!;
+
+  if (r === row_index && c === col_index) {
+    ctx.hoveredCommentBox = undefined;
+    return;
+  }
+
   const rc = `${r}_${c}`;
 
   const comment = flowdata[r]?.[c]?.ps;

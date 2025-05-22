@@ -18,6 +18,7 @@ import {
   onImageResizeEnd,
   removeEditingComment,
   overShowComment,
+  removeOverShowComment,
   rangeDrag,
   onFormulaRangeDragEnd,
   createFormulaRangeSelect,
@@ -25,6 +26,7 @@ import {
   onCellsMoveEnd,
   onCellsMove,
   cellFocus,
+  editComment,
 } from "../modules";
 import {
   getFrozenHandleLeft,
@@ -291,6 +293,7 @@ export function handleCellAreaMouseDown(
 
   // //数据验证 单元格聚焦
   cellFocus(ctx, row_index, col_index, true);
+  editComment(ctx, globalCache, row_index, col_index);
 
   // 若点击单元格部分不在视图内
   if (!inHorizontalFreeze && !inVerticalFreeze) {
@@ -1229,6 +1232,7 @@ export function handleCellAreaDoubleClick(
   e: MouseEvent,
   container: HTMLElement
 ) {
+  console.log("handleCellAreaDoubleClick");
   // if ($(event.target).hasClass("luckysheet-mousedown-cancel")) {
   //   return;
   // }
@@ -1277,6 +1281,9 @@ export function handleCellAreaDoubleClick(
 
   const col_location = colLocation(x, ctx.visibledatacolumn);
   let col_index = col_location[2];
+
+  removeOverShowComment(ctx);
+  removeEditingComment(ctx, globalCache);
 
   // 如果当前单元格是复选框则取消双击事件不让编辑
   const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
@@ -3398,6 +3405,11 @@ export function handleOverlayMouseMove(
   if (onImageMove(ctx, globalCache, e)) return;
   if (onImageResize(ctx, globalCache, e)) return;
   onCellsMove(ctx, globalCache, e, scrollX, scrollY, container);
+  const inputBoxContainer = document.getElementsByClassName(
+    "luckysheet-input-box"
+  )[0];
+  // console.log(inputBoxContainer.style.zIndex, ctx, "--------------",cellInput, globalCache, 'lllll', ctx.luckysheet_cell_selected_move_index)
+
   overShowComment(ctx, e, scrollX, scrollY, container); // 有批注显示
   onSearchDialogMove(globalCache, e);
   onRangeSelectionModalMove(globalCache, e);
