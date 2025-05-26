@@ -40,7 +40,7 @@
     "babel-loader": "^9.1.0",
     "eslint": "^8.31.0",
     "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^27.1.7",
     "eslint-plugin-jsonc": "^2.6.0",
