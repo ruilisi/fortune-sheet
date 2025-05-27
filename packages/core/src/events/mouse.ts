@@ -83,6 +83,7 @@ export function handleGlobalWheel(
   scrollbarX: HTMLDivElement,
   scrollbarY: HTMLDivElement
 ) {
+  removeEditingComment(ctx, cache);
   if (cache.searchDialog?.mouseEnter && ctx.showSearch && ctx.showReplace)
     return;
   if (ctx.filterContextMenu != null) return;
@@ -3405,10 +3406,6 @@ export function handleOverlayMouseMove(
   if (onImageMove(ctx, globalCache, e)) return;
   if (onImageResize(ctx, globalCache, e)) return;
   onCellsMove(ctx, globalCache, e, scrollX, scrollY, container);
-  const inputBoxContainer = document.getElementsByClassName(
-    "luckysheet-input-box"
-  )[0];
-  // console.log(inputBoxContainer.style.zIndex, ctx, "--------------",cellInput, globalCache, 'lllll', ctx.luckysheet_cell_selected_move_index)
 
   overShowComment(ctx, e, scrollX, scrollY, container); // 有批注显示
   onSearchDialogMove(globalCache, e);

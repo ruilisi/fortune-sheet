@@ -1694,8 +1694,8 @@ export class Canvas {
 
     // 若单元格有批注
     if (flowdata?.[r]?.[c]?.ps) {
-      const ps_w = 8 * this.sheetCtx.zoomRatio;
-      const ps_h = 8 * this.sheetCtx.zoomRatio;
+      const ps_w = 12 * this.sheetCtx.zoomRatio;
+      const ps_h = 12 * this.sheetCtx.zoomRatio;
       renderCtx.beginPath();
       renderCtx.moveTo(endX + offsetLeft - 1 - ps_w, startY + offsetTop);
       renderCtx.lineTo(endX + offsetLeft - 1, startY + offsetTop);
@@ -1891,8 +1891,8 @@ export class Canvas {
       !validateCellData(this.sheetCtx, dataVerification[`${r}_${c}`], value)
     ) {
       // 单元格左上角红色小三角标示
-      const dv_w = 5 * this.sheetCtx.zoomRatio;
-      const dv_h = 5 * this.sheetCtx.zoomRatio; // 红色小三角宽高
+      const dv_w = 9 * this.sheetCtx.zoomRatio;
+      const dv_h = 9 * this.sheetCtx.zoomRatio; // 红色小三角宽高
 
       renderCtx.beginPath();
       renderCtx.moveTo(startX + offsetLeft, startY + offsetTop);
@@ -1905,8 +1905,8 @@ export class Canvas {
 
     // 若单元格有批注（单元格右上角红色小三角标示）
     if (cell?.ps) {
-      const ps_w = 8 * this.sheetCtx.zoomRatio;
-      const ps_h = 8 * this.sheetCtx.zoomRatio; // 红色小三角宽高
+      const ps_w = 12 * this.sheetCtx.zoomRatio;
+      const ps_h = 12 * this.sheetCtx.zoomRatio; // 红色小三角宽高
 
       renderCtx.beginPath();
       renderCtx.moveTo(endX + offsetLeft - ps_w, startY + offsetTop);
@@ -1919,8 +1919,8 @@ export class Canvas {
 
     // 若单元格强制为字符串，则显示绿色小三角
     if (cell?.qp === 1 && isRealNum(cell?.v)) {
-      const ps_w = 6 * this.sheetCtx.zoomRatio;
-      const ps_h = 6 * this.sheetCtx.zoomRatio; // 红色小三角宽高
+      const ps_w = 10 * this.sheetCtx.zoomRatio;
+      const ps_h = 10 * this.sheetCtx.zoomRatio; // 红色小三角宽高
 
       renderCtx.beginPath();
       renderCtx.moveTo(startX + offsetLeft + ps_w - 1, startY + offsetTop);

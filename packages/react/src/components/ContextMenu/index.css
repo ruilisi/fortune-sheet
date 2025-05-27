@@ -5,8 +5,8 @@
   box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.15);
   transition: opacity 0.218s;
   background: #fff;
-  border: 1px solid #ccc;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid #E8EBEC;
+  border: 1px solid #E8EBEC;
   cursor: default;
   font-size: 13px;
   margin: 0;
@@ -16,7 +16,20 @@
   z-index: 1004;
   box-sizing: border-box;
   user-select: none;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  max-width: 250px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1), 0px 1px 3px rgba(0, 0, 0, 0.08);
+  color: #363B3F;
+  line-height: 20px;
 }
+
+.context-item {
+  display: flex;
+  align-items: center;
+  height: 20px;
+}
+
 
 .fortune-context-menu input.luckysheet-mousedown-cancel {
   width: 35px;
@@ -60,7 +73,7 @@
   cursor: pointer;
   list-style: none;
   margin: 0;
-  padding: 6px 7em 6px 30px;
+  padding: 6px 10px 6px 10px !important;
   white-space: nowrap;
   user-select: none;
 }

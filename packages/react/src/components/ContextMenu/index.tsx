@@ -28,6 +28,7 @@ import Divider from "./Divider";
 import "./index.css";
 import Menu from "./Menu";
 import CustomSort from "../CustomSort";
+import SVGIcon from "../SVGIcon";
 
 const ContextMenu: React.FC = () => {
   const { showDialog } = useDialog();
@@ -58,7 +59,15 @@ const ContextMenu: React.FC = () => {
               });
             }}
           >
-            Comment
+            <div className="context-item">
+              <SVGIcon
+                name="comment-flv"
+                width={18}
+                height={18}
+                style={{ marginTop: "4px", marginRight: "4px" }}
+              />
+              <p>Comment</p>
+            </div>
           </Menu>
         );
       }
@@ -78,7 +87,15 @@ const ContextMenu: React.FC = () => {
               });
             }}
           >
-            {rightclick.copy}
+            <div className="context-item">
+              <SVGIcon
+                name="copy-flv"
+                width={22}
+                height={22}
+                style={{ marginTop: "4px" }}
+              />
+              <p>{rightclick.copy}</p>
+            </div>
           </Menu>
         );
       }
@@ -94,7 +111,15 @@ const ContextMenu: React.FC = () => {
               });
             }}
           >
-            {rightclick.paste}
+            <div className="context-item">
+              <SVGIcon
+                name="paste-flv"
+                width={16}
+                height={16}
+                style={{ marginRight: "8px" }}
+              />
+              <p>{rightclick.paste}</p>
+            </div>
           </Menu>
         );
       }
@@ -108,11 +133,12 @@ const ContextMenu: React.FC = () => {
                   const position =
                     context.luckysheet_select_save?.[0]?.column?.[0];
                   if (position == null) return;
-                  const countStr = (e.target as HTMLDivElement).querySelector(
-                    "input"
-                  )?.value;
-                  if (countStr == null) return;
-                  const count = parseInt(countStr, 10);
+                  // const countStr = (e.target as HTMLDivElement).querySelector(
+                  //   "input"
+                  // )?.value;
+                  // if (countStr == null) return;
+                  // const count = parseInt(countStr, 10);
+                  const count = 1;
                   if (count < 1) return;
                   const direction = dir === "left" ? "lefttop" : "rightbottom";
                   const insertRowColOp: SetContextOptions["insertRowColOp"] = {
@@ -145,6 +171,16 @@ const ContextMenu: React.FC = () => {
                 }}
               >
                 <>
+                  <SVGIcon
+                    name="insert-flv"
+                    width={18}
+                    height={18}
+                    style={{
+                      marginRight: "8px",
+                      position: "relative",
+                      top: "3px",
+                    }}
+                  />
                   {_.startsWith(context.lang ?? "", "zh") && (
                     <>
                       {rightclick.to}
@@ -154,17 +190,18 @@ const ContextMenu: React.FC = () => {
                     </>
                   )}
                   {`${rightclick.insert}  `}
-                  <input
-                    onClick={(e) => e.stopPropagation()}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    tabIndex={0}
-                    type="text"
-                    className="luckysheet-mousedown-cancel"
-                    placeholder={rightclick.number}
-                    defaultValue="1"
-                  />
+                  {/* <input
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  tabIndex={0}
+                  type="text"
+                  className="luckysheet-mousedown-cancel"
+                  placeholder={rightclick.number}
+                  defaultValue="1"
+                /> */}
+                  1
                   <span className="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">
-                    {`${rightclick.column}  `}
+                    {` ${rightclick.column}  `}
                   </span>
                   {!_.startsWith(context.lang ?? "", "zh") && (
                     <span className={`luckysheet-cols-rows-shift-${dir}`}>
@@ -185,9 +222,10 @@ const ContextMenu: React.FC = () => {
                   const position =
                     context.luckysheet_select_save?.[0]?.row?.[0];
                   if (position == null) return;
-                  const countStr = container.querySelector("input")?.value;
-                  if (countStr == null) return;
-                  const count = parseInt(countStr, 10);
+                  // const countStr = container.querySelector("input")?.value;
+                  // if (countStr == null) return;
+                  const count = 1;
+                  // const count = parseInt(countStr, 10);
                   if (count < 1) return;
                   const direction = dir === "top" ? "lefttop" : "rightbottom";
                   const insertRowColOp: SetContextOptions["insertRowColOp"] = {
@@ -215,6 +253,16 @@ const ContextMenu: React.FC = () => {
                 }}
               >
                 <>
+                  <SVGIcon
+                    name="insert-flv"
+                    width={18}
+                    height={18}
+                    style={{
+                      marginRight: "8px",
+                      position: "relative",
+                      top: "3px",
+                    }}
+                  />
                   {_.startsWith(context.lang ?? "", "zh") && (
                     <>
                       {rightclick.to}
@@ -223,18 +271,18 @@ const ContextMenu: React.FC = () => {
                       </span>
                     </>
                   )}
-                  {`${rightclick.insert}  `}
-                  <input
-                    onClick={(e) => e.stopPropagation()}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    tabIndex={0}
-                    type="text"
-                    className="luckysheet-mousedown-cancel"
-                    placeholder={rightclick.number}
-                    defaultValue="1"
-                  />
+                  {`${rightclick.insert}  `}1
+                  {/* <input
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  tabIndex={0}
+                  type="text"
+                  className="luckysheet-mousedown-cancel"
+                  placeholder={rightclick.number}
+                  defaultValue="1"
+                /> */}
                   <span className="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">
-                    {`${rightclick.row}  `}
+                    {` ${rightclick.row}  `}
                   </span>
                   {!_.startsWith(context.lang ?? "", "zh") && (
                     <span className={`luckysheet-cols-rows-shift-${dir}`}>
@@ -547,7 +595,15 @@ const ContextMenu: React.FC = () => {
               });
             }}
           >
-            {rightclick.clearContent}
+            <div className="context-item">
+              <SVGIcon
+                name="clear-flv"
+                width={18}
+                height={18}
+                style={{ marginRight: "8px" }}
+              />
+              <p>{rightclick.clearContent}</p>
+            </div>
           </Menu>
         );
       }
