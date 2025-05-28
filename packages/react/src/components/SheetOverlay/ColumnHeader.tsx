@@ -265,7 +265,7 @@ const ColumnHeader: React.FC = () => {
               }}
               tabIndex={0}
             >
-              <SVGIcon name="headDownArrow" width={12} />
+              <SVGIcon name="headDownArrow" width={12} style={{marginBottom: "3px"}}/>
             </span>
           )}
         </div>

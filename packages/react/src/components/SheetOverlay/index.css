@@ -197,7 +197,7 @@
   position: absolute;
   pointer-events: none;
   z-index: 15;
-  border: 1px solid #0188fb;
+  border: 2.5px solid #0188fb;
   margin: -1px 0 0 -1px;
   background: rgba(1, 136, 251, 0.15);
   display: none;

@@ -522,8 +522,8 @@ const SheetOverlay: React.FC = () => {
                       {
                         left: selection.left,
                         top: selection.top,
-                        width: selection.width,
-                        height: selection.height,
+                        width: selection.width ? selection.width - 1.5 : selection.width,
+                        height: selection.height ? selection.height - 1.5 : selection.height,
                         display: "block",
                       },
                       fixRowStyleOverflowInFreeze(
@@ -598,8 +598,8 @@ const SheetOverlay: React.FC = () => {
                     {
                       left: selection.left_move,
                       top: selection.top_move,
-                      width: selection.width_move,
-                      height: selection.height_move,
+                      width: selection.width_move ? selection.width_move - 1.5 : selection.width_move,
+                      height: selection.height_move ? selection.height_move - 1.5 : selection.height_move,
                       display: "block",
                     },
                     fixRowStyleOverflowInFreeze(
