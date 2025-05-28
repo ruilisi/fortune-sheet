@@ -13,7 +13,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "tsc": "tsc --noEmit",
-    "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx,.json ./packages",
+    "lint": "lerna run lint",
     "build:core": "lerna run build --scope=@jadinec/core-sheet",
     "build:react": "lerna run build --scope=@jadinec/react-sheet",
     "build:formula-parser": "lerna run build --scope=@jadinec/formula-parser",

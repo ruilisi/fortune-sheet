@@ -12,10 +12,7 @@
     "strict": true,
     "strictNullChecks": true,
     "skipLibCheck": true,
-    "lib": [
-      "es5",
-      "dom"
-    ],
+    "lib": ["es5", "dom"],
     "baseUrl": "./"
   },
   "include": [

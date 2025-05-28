@@ -1278,6 +1278,15 @@ export function handleCellAreaDoubleClick(
   const col_location = colLocation(x, ctx.visibledatacolumn);
   let col_index = col_location[2];
 
+  // 检查当前单元格是否可以编辑
+  if (ctx.cellEditable) {
+    // eslint-disable-next-line no-console
+    console.log("checking cell editability", row_index, col_index);
+    if (!ctx.cellEditable(row_index, col_index)) {
+      return;
+    }
+  }
+
   // 如果当前单元格是复选框则取消双击事件不让编辑
   const index = getSheetIndex(ctx, ctx.currentSheetId) as number;
   const { dataVerification } = ctx.luckysheetfile[index];
@@ -1304,17 +1313,17 @@ export function handleCellAreaDoubleClick(
           ) {
             return;
           }
-  
+
           // 数据透视表没有 数值数据
           if (pivotTable.values == null || pivotTable.values.length == 0) {
             return;
           }
-  
+
           // 点击位置不是 数值数据 所在区域
           if (row_index == 0 || col_index == 0) {
             return;
           }
-  
+
           if (pivotTable.column != null && pivotTable.column.length > 0) {
             if (
               pivotTable.values.length >= 2 &&
@@ -1336,7 +1345,7 @@ export function handleCellAreaDoubleClick(
               }
             }
           }
-  
+
           if (pivotTable.row != null && pivotTable.row.length > 0) {
             if (pivotTable.values.length >= 2 && pivotTable.showType == "row") {
               if (
@@ -1355,9 +1364,9 @@ export function handleCellAreaDoubleClick(
               }
             }
           }
-  
+
           sheetmanage.addNewSheet(event);
-  
+
           pivotTable.drillDown(row_index, col_index);
           return;
         }
@@ -2271,20 +2280,20 @@ function mouseRender(
   } else if (ctx.luckysheet_cell_selected_move) {
     /*
       const mouse = mouseposition(event.pageX, event.pageY);
-  
+
       const scrollLeft = $("#luckysheet-cell-main").scrollLeft();
       const scrollTop = $("#luckysheet-cell-main").scrollTop();
-  
+
       const x = mouse[0] + scrollLeft;
       const y = mouse[1] + scrollTop;
-  
+
       const winH =
         $(window).height() +
         scrollTop -
         ctx.sheetBarHeight -
         ctx.statisticBarHeight;
       const winW = $(window).width() + scrollLeft;
-  
+
       const row_location = rowLocation(y, ctx.visibledatarow);
       let row = row_location[1];
       let row_pre = row_location[0];
@@ -2293,34 +2302,34 @@ function mouseRender(
       let col = col_location[1];
       let col_pre = col_location[0];
       const col_index = col_location[2];
-  
+
       const row_index_original = ctx.luckysheet_cell_selected_move_index[0];
       const col_index_original = ctx.luckysheet_cell_selected_move_index[1];
-  
+
       let row_s =
         ctx.luckysheet_select_save[0].row[0] - row_index_original + row_index;
       let row_e =
         ctx.luckysheet_select_save[0].row[1] - row_index_original + row_index;
-  
+
       let col_s =
         ctx.luckysheet_select_save[0].column[0] - col_index_original + col_index;
       let col_e =
         ctx.luckysheet_select_save[0].column[1] - col_index_original + col_index;
-  
+
       if (row_s < 0 || y < 0) {
         row_s = 0;
         row_e =
           ctx.luckysheet_select_save[0].row[1] -
           ctx.luckysheet_select_save[0].row[0];
       }
-  
+
       if (col_s < 0 || x < 0) {
         col_s = 0;
         col_e =
           ctx.luckysheet_select_save[0].column[1] -
           ctx.luckysheet_select_save[0].column[0];
       }
-  
+
       if (
         row_e >= ctx.visibledatarow[ctx.visibledatarow.length - 1] ||
         y > winH
@@ -2332,7 +2341,7 @@ function mouseRender(
           ctx.luckysheet_select_save[0].row[0];
         row_e = ctx.visibledatarow.length - 1;
       }
-  
+
       if (
         col_e >= ctx.visibledatacolumn[ctx.visibledatacolumn.length - 1] ||
         x > winW
@@ -2344,12 +2353,12 @@ function mouseRender(
           ctx.luckysheet_select_save[0].column[0];
         col_e = ctx.visibledatacolumn.length - 1;
       }
-  
+
       col_pre = col_s - 1 == -1 ? 0 : ctx.visibledatacolumn[col_s - 1];
       col = ctx.visibledatacolumn[col_e];
       row_pre = row_s - 1 == -1 ? 0 : ctx.visibledatarow[row_s - 1];
       row = ctx.visibledatarow[row_e];
-  
+
       $(".fortune-cell-selected-move").css({
         left: col_pre,
         width: col - col_pre - 2,
@@ -2473,39 +2482,39 @@ function mouseRender(
       const mouse = mouseposition(event.pageX, event.pageY);
       const x = mouse[0] + $("#luckysheet-cell-main").scrollLeft();
       const y = mouse[1] + $("#luckysheet-cell-main").scrollTop();
-  
+
       const myh = ctx.chartparam.luckysheetCurrentChartMoveObj.height();
       const myw = ctx.chartparam.luckysheetCurrentChartMoveObj.width();
       let top = y - ctx.chartparam.luckysheetCurrentChartMoveXy[1];
       let left = x - ctx.chartparam.luckysheetCurrentChartMoveXy[0];
-  
+
       if (top < 0) {
         top = 0;
       }
-  
+
       if (top + myh + 42 + 6 > ctx.chartparam.luckysheetCurrentChartMoveWinH) {
         top = ctx.chartparam.luckysheetCurrentChartMoveWinH - myh - 42 - 6;
       }
-  
+
       if (left < 0) {
         left = 0;
       }
-  
+
       if (left + myw + 22 + 36 > ctx.chartparam.luckysheetCurrentChartMoveWinW) {
         left = ctx.chartparam.luckysheetCurrentChartMoveWinW - myw - 22 - 36;
       }
-  
+
       ctx.chartparam.luckysheetCurrentChartMoveObj.css({
         top,
         left,
       });
-  
+
       if (
         luckysheetFreezen.freezenhorizontaldata != null ||
         luckysheetFreezen.freezenverticaldata != null
       ) {
         luckysheetFreezen.scrollAdapt();
-  
+
         const toffset = ctx.chartparam.luckysheetCurrentChartMoveObj.offset();
         const tpsition = ctx.chartparam.luckysheetCurrentChartMoveObj.position();
         ctx.chartparam.luckysheetCurrentChartMoveXy = [
@@ -2525,21 +2534,21 @@ function mouseRender(
       const mouse = mouseposition(event.pageX, event.pageY);
       const x = mouse[0] + scrollLeft;
       const y = mouse[1] + scrollTop;
-  
+
       if (x < 0 || y < 0) {
         return false;
       }
-  
+
       const myh = ctx.chartparam.luckysheetCurrentChartResizeObj.height();
       const myw = ctx.chartparam.luckysheetCurrentChartResizeObj.width();
       const topchange = y - ctx.chartparam.luckysheetCurrentChartResizeXy[1];
       const leftchange = x - ctx.chartparam.luckysheetCurrentChartResizeXy[0];
-  
+
       let top = ctx.chartparam.luckysheetCurrentChartResizeXy[5];
       let height = ctx.chartparam.luckysheetCurrentChartResizeXy[3];
       let left = ctx.chartparam.luckysheetCurrentChartResizeXy[4];
       let width = ctx.chartparam.luckysheetCurrentChartResizeXy[2];
-  
+
       if (
         ctx.chartparam.luckysheetCurrentChartResize == "lm" ||
         ctx.chartparam.luckysheetCurrentChartResize == "lt" ||
@@ -2570,7 +2579,7 @@ function mouseRender(
             ctx.chartparam.luckysheetCurrentChartResizeXy[0];
         }
       }
-  
+
       if (
         ctx.chartparam.luckysheetCurrentChartResize == "rm" ||
         ctx.chartparam.luckysheetCurrentChartResize == "rt" ||
@@ -2593,7 +2602,7 @@ function mouseRender(
             36;
         }
       }
-  
+
       if (
         ctx.chartparam.luckysheetCurrentChartResize == "mt" ||
         ctx.chartparam.luckysheetCurrentChartResize == "lt" ||
@@ -2624,7 +2633,7 @@ function mouseRender(
             ctx.chartparam.luckysheetCurrentChartResizeXy[1];
         }
       }
-  
+
       if (
         ctx.chartparam.luckysheetCurrentChartResize == "mb" ||
         ctx.chartparam.luckysheetCurrentChartResize == "lb" ||
@@ -2647,7 +2656,7 @@ function mouseRender(
             6;
         }
       }
-  
+
       const resizedata = {
         top,
         left,
@@ -2661,27 +2670,27 @@ function mouseRender(
     // image move
     else if (imageCtrl.move) {
       const mouse = mouseposition(event.pageX, event.pageY);
-  
+
       let x = mouse[0] + $("#luckysheet-cell-main").scrollLeft();
       let y = mouse[1] + $("#luckysheet-cell-main").scrollTop();
-  
+
       const imgItem = imageCtrl.images[imageCtrl.currentImgId];
       if (imgItem.isFixedPos) {
         x = event.pageX;
         y = event.pageY;
       }
-  
+
       const myh = $("#luckysheet-modal-dialog-activeImage").height();
       const myw = $("#luckysheet-modal-dialog-activeImage").width();
-  
+
       let top = y - imageCtrl.moveXY[1];
       let left = x - imageCtrl.moveXY[0];
-  
+
       let minTop = 0;
       let maxTop = imageCtrl.currentWinH - myh - 42 - 6;
       let minLeft = 0;
       let maxLeft = imageCtrl.currentWinW - myw - 22 - 36;
-  
+
       if (imgItem.isFixedPos) {
         minTop =
           ctx.infobarHeight +
@@ -2692,23 +2701,23 @@ function mouseRender(
         minLeft = ctx.rowHeaderWidth;
         maxLeft = minLeft + ctx.cellmainWidth - ctx.cellMainSrollBarSize - myw;
       }
-  
+
       if (top < minTop) {
         top = minTop;
       }
-  
+
       if (top > maxTop) {
         top = maxTop;
       }
-  
+
       if (left < minLeft) {
         left = minLeft;
       }
-  
+
       if (left > maxLeft) {
         left = maxLeft;
       }
-  
+
       $("#luckysheet-modal-dialog-activeImage").css({ left, top });
     }
     // image resize
@@ -2718,24 +2727,24 @@ function mouseRender(
       const scrollTop = $("#luckysheet-cell-main").scrollTop();
       const x = mouse[0] + scrollLeft;
       const y = mouse[1] + scrollTop;
-  
+
       if (x < 0 || y < 0) {
         return false;
       }
-  
+
       const { resizeXY } = imageCtrl;
-  
+
       const topchange = y - resizeXY[1];
       const leftchange = x - resizeXY[0];
-  
+
       let top = resizeXY[5];
       let height = resizeXY[3];
       let left = resizeXY[4];
       let width = resizeXY[2];
-  
+
       const { resize } = imageCtrl;
       const imgItem = imageCtrl.images[imageCtrl.currentImgId];
-  
+
       if (imgItem.isFixedPos) {
         const minTop =
           ctx.infobarHeight +
@@ -2743,204 +2752,204 @@ function mouseRender(
           ctx.calculatebarHeight +
           ctx.columnHeaderHeight;
         const minLeft = ctx.rowHeaderWidth;
-  
+
         if (resize == "lt") {
           // 左上
           left = resizeXY[4] - resizeXY[6] + leftchange;
-  
+
           if (left < minLeft) {
             left = minLeft;
           }
-  
+
           if (left > resizeXY[4] - resizeXY[6] + resizeXY[2] - 1) {
             left = resizeXY[4] - resizeXY[6] + resizeXY[2] - 1;
           }
-  
+
           width = resizeXY[4] - resizeXY[6] + resizeXY[2] - left;
-  
+
           height = Math.round(width * (resizeXY[3] / resizeXY[2]));
           top = resizeXY[5] - resizeXY[7] + resizeXY[3] - height;
-  
+
           if (top < minTop) {
             top = minTop;
             height = resizeXY[5] - resizeXY[7] + resizeXY[3] - top;
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
             left = resizeXY[4] - resizeXY[6] + resizeXY[2] - width;
           }
-  
+
           if (top > resizeXY[5] - resizeXY[7] + resizeXY[3] - 1) {
             top = resizeXY[5] - resizeXY[7] + resizeXY[3] - 1;
             height = resizeXY[5] - resizeXY[7] + resizeXY[3] - top;
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
             left = resizeXY[4] - resizeXY[6] + resizeXY[2] - width;
           }
         } else if (resize == "lm") {
           // 左中
           left = resizeXY[4] - resizeXY[6] + leftchange;
-  
+
           if (left < minLeft) {
             left = minLeft;
           }
-  
+
           if (left > resizeXY[4] - resizeXY[6] + resizeXY[2] - 1) {
             left = resizeXY[4] - resizeXY[6] + resizeXY[2] - 1;
           }
-  
+
           width = resizeXY[4] - resizeXY[6] + resizeXY[2] - left;
-  
+
           top = resizeXY[5] - resizeXY[7];
           height = resizeXY[3];
         } else if (resize == "lb") {
           // 左下
           left = resizeXY[4] - resizeXY[6] + leftchange;
-  
+
           if (left < minLeft) {
             left = minLeft;
           }
-  
+
           if (left > resizeXY[4] - resizeXY[6] + resizeXY[2] - 1) {
             left = resizeXY[4] - resizeXY[6] + resizeXY[2] - 1;
           }
-  
+
           width = resizeXY[4] - resizeXY[6] + resizeXY[2] - left;
-  
+
           height = Math.round(width * (resizeXY[3] / resizeXY[2]));
-  
+
           top = resizeXY[5] - resizeXY[7];
-  
+
           if (height < 1) {
             height = 1;
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
             left = resizeXY[4] - resizeXY[6] + resizeXY[2] - width;
           }
-  
+
           if (
             height >
             minTop + ctx.cellmainHeight - ctx.cellMainSrollBarSize - top
           ) {
             height = minTop + ctx.cellmainHeight - ctx.cellMainSrollBarSize - top;
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
             left = resizeXY[4] - resizeXY[6] + resizeXY[2] - width;
           }
         } else if (resize == "rt") {
           // 右上
           left = resizeXY[4] - resizeXY[6];
-  
+
           width = resizeXY[2] + leftchange;
-  
+
           if (width < 1) {
             width = 1;
           }
-  
+
           if (
             width >
             minLeft + ctx.cellmainWidth - ctx.cellMainSrollBarSize - left
           ) {
             width = minLeft + ctx.cellmainWidth - ctx.cellMainSrollBarSize - left;
           }
-  
+
           height = Math.round(width * (resizeXY[3] / resizeXY[2]));
           top = resizeXY[5] - resizeXY[7] + resizeXY[3] - height;
-  
+
           if (top < minTop) {
             top = minTop;
             height = resizeXY[5] - resizeXY[7] + resizeXY[3] - top;
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
           }
-  
+
           if (top > resizeXY[5] - resizeXY[7] + resizeXY[3] - 1) {
             top = resizeXY[5] - resizeXY[7] + resizeXY[3] - 1;
             height = resizeXY[5] - resizeXY[7] + resizeXY[3] - top;
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
           }
         } else if (resize == "rm") {
           // 右中
           left = resizeXY[4] - resizeXY[6];
-  
+
           width = resizeXY[2] + leftchange;
-  
+
           if (width < 1) {
             width = 1;
           }
-  
+
           if (
             width >
             minLeft + ctx.cellmainWidth - ctx.cellMainSrollBarSize - left
           ) {
             width = minLeft + ctx.cellmainWidth - ctx.cellMainSrollBarSize - left;
           }
-  
+
           top = resizeXY[5] - resizeXY[7];
           height = resizeXY[3];
         } else if (resize == "rb") {
           // 右下
           left = resizeXY[4] - resizeXY[6];
-  
+
           width = resizeXY[2] + leftchange;
-  
+
           if (width < 1) {
             width = 1;
           }
-  
+
           if (
             width >
             minLeft + ctx.cellmainWidth - ctx.cellMainSrollBarSize - left
           ) {
             width = minLeft + ctx.cellmainWidth - ctx.cellMainSrollBarSize - left;
           }
-  
+
           height = Math.round(width * (resizeXY[3] / resizeXY[2]));
           top = resizeXY[5] - resizeXY[7];
-  
+
           if (height < 1) {
             height = 1;
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
           }
-  
+
           if (
             height >
             minTop + ctx.cellmainHeight - ctx.cellMainSrollBarSize - top
           ) {
             height = minTop + ctx.cellmainHeight - ctx.cellMainSrollBarSize - top;
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
           }
         } else if (resize == "mt") {
           // 中上
           left = resizeXY[4] - resizeXY[6];
           width = resizeXY[2];
-  
+
           top = resizeXY[5] - resizeXY[7] + topchange;
-  
+
           if (top < minTop) {
             top = minTop;
           }
-  
+
           if (top > resizeXY[5] - resizeXY[7] + resizeXY[3] - 1) {
             top = resizeXY[5] - resizeXY[7] + resizeXY[3] - 1;
           }
-  
+
           height = resizeXY[5] - resizeXY[7] + resizeXY[3] - top;
         } else if (resize == "mb") {
           // 中下
           left = resizeXY[4] - resizeXY[6];
           width = resizeXY[2];
-  
+
           top = resizeXY[5] - resizeXY[7];
-  
+
           height = resizeXY[3] + topchange;
-  
+
           if (height < 1) {
             height = 1;
           }
-  
+
           if (
             height >
             minTop + ctx.cellmainHeight - ctx.cellMainSrollBarSize - top
@@ -2953,7 +2962,7 @@ function mouseRender(
           // 左上
           left = x;
           width = resizeXY[2] - leftchange;
-  
+
           if (left > resizeXY[2] + resizeXY[4] - 1) {
             left = resizeXY[2] + resizeXY[4] - 1;
             width = resizeXY[2] + resizeXY[0] - (resizeXY[2] + resizeXY[4] - 1);
@@ -2961,20 +2970,20 @@ function mouseRender(
             left = 0;
             width = resizeXY[2] + resizeXY[0];
           }
-  
+
           height = Math.round(width * (resizeXY[3] / resizeXY[2]));
           top = resizeXY[3] + resizeXY[1] - height;
-  
+
           if (top > resizeXY[3] + resizeXY[5] - 1) {
             top = resizeXY[3] + resizeXY[5] - 1;
             height = resizeXY[3] + resizeXY[1] - (resizeXY[3] + resizeXY[5] - 1);
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
             left = resizeXY[2] + resizeXY[0] - width;
           } else if (top <= 0) {
             top = 0;
             height = resizeXY[3] + resizeXY[1];
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
             left = resizeXY[2] + resizeXY[0] - width;
           }
@@ -2982,7 +2991,7 @@ function mouseRender(
           // 左中
           left = x;
           width = resizeXY[2] - leftchange;
-  
+
           if (left > resizeXY[2] + resizeXY[4] - 1) {
             left = resizeXY[2] + resizeXY[4] - 1;
             width = resizeXY[2] + resizeXY[0] - (resizeXY[2] + resizeXY[4] - 1);
@@ -2994,7 +3003,7 @@ function mouseRender(
           // 左下
           left = x;
           width = resizeXY[2] - leftchange;
-  
+
           if (left > resizeXY[2] + resizeXY[4] - 1) {
             left = resizeXY[2] + resizeXY[4] - 1;
             width = resizeXY[2] + resizeXY[0] - (resizeXY[2] + resizeXY[4] - 1);
@@ -3002,48 +3011,48 @@ function mouseRender(
             left = 0;
             width = resizeXY[2] + resizeXY[0];
           }
-  
+
           height = Math.round(width * (resizeXY[3] / resizeXY[2]));
-  
+
           if (height < 1) {
             height = 1;
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
             left = resizeXY[2] + resizeXY[0] - width;
           } else if (height >= imageCtrl.currentWinH - resizeXY[5] - 42 - 6) {
             height = imageCtrl.currentWinH - resizeXY[5] - 42 - 6;
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
             left = resizeXY[2] + resizeXY[0] - width;
           }
         } else if (resize == "rt") {
           // 右上
           width = resizeXY[2] + leftchange;
-  
+
           if (width < 1) {
             width = 1;
           } else if (width >= imageCtrl.currentWinW - resizeXY[4] - 22 - 36) {
             width = imageCtrl.currentWinW - resizeXY[4] - 22 - 36;
           }
-  
+
           height = Math.round(width * (resizeXY[3] / resizeXY[2]));
           top = resizeXY[3] + resizeXY[1] - height;
-  
+
           if (top > resizeXY[3] + resizeXY[5] - 1) {
             top = resizeXY[3] + resizeXY[5] - 1;
             height = resizeXY[3] + resizeXY[1] - (resizeXY[3] + resizeXY[5] - 1);
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
           } else if (top <= 0) {
             top = 0;
             height = resizeXY[3] + resizeXY[1];
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
           }
         } else if (resize == "rm") {
           // 右中
           width = resizeXY[2] + leftchange;
-  
+
           if (width < 1) {
             width = 1;
           } else if (width >= imageCtrl.currentWinW - resizeXY[4] - 22 - 36) {
@@ -3052,29 +3061,29 @@ function mouseRender(
         } else if (resize == "rb") {
           // 右下
           width = resizeXY[2] + leftchange;
-  
+
           if (width < 1) {
             width = 1;
           } else if (width >= imageCtrl.currentWinW - resizeXY[4] - 22 - 36) {
             width = imageCtrl.currentWinW - resizeXY[4] - 22 - 36;
           }
-  
+
           height = Math.round(width * (resizeXY[3] / resizeXY[2]));
-  
+
           if (height < 1) {
             height = 1;
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
           } else if (height >= imageCtrl.currentWinH - resizeXY[5] - 42 - 6) {
             height = imageCtrl.currentWinH - resizeXY[5] - 42 - 6;
-  
+
             width = Math.round(height * (resizeXY[2] / resizeXY[3]));
           }
         } else if (resize == "mt") {
           // 中上
           top = y;
           height = resizeXY[3] - topchange;
-  
+
           if (top > resizeXY[3] + resizeXY[5] - 1) {
             top = resizeXY[3] + resizeXY[5] - 1;
             height = resizeXY[3] + resizeXY[1] - (resizeXY[3] + resizeXY[5] - 1);
@@ -3085,7 +3094,7 @@ function mouseRender(
         } else if (resize == "mb") {
           // 中下
           height = resizeXY[3] + topchange;
-  
+
           if (height < 1) {
             height = 1;
           } else if (height >= imageCtrl.currentWinH - resizeXY[5] - 42 - 6) {
@@ -3093,21 +3102,21 @@ function mouseRender(
           }
         }
       }
-  
+
       $("#luckysheet-modal-dialog-activeImage").css({
         width,
         height,
         left,
         top,
       });
-  
+
       const scaleX = width / imgItem.crop.width;
       const scaleY = height / imgItem.crop.height;
       const defaultWidth = Math.round(imgItem.default.width * scaleX);
       const defaultHeight = Math.round(imgItem.default.height * scaleY);
       const offsetLeft = Math.round(imgItem.crop.offsetLeft * scaleX);
       const offsetTop = Math.round(imgItem.crop.offsetTop * scaleY);
-  
+
       $(
         "#luckysheet-modal-dialog-activeImage .luckysheet-modal-dialog-content"
       ).css({
@@ -3120,152 +3129,152 @@ function mouseRender(
       const mouse = mouseposition(event.pageX, event.pageY);
       const x = mouse[0] + $("#luckysheet-cell-main").scrollLeft();
       const y = mouse[1] + $("#luckysheet-cell-main").scrollTop();
-  
+
       if (x < 0 || y < 0) {
         return false;
       }
-  
+
       const { cropChangeXY } = imageCtrl;
-  
+
       const topchange = y - cropChangeXY[1];
       const leftchange = x - cropChangeXY[0];
-  
+
       const imgItem = imageCtrl.images[imageCtrl.currentImgId];
       const { cropChange } = imageCtrl;
       let width;
       let height;
       let offsetLeft;
       let offsetTop;
-  
+
       if (cropChange == "lt") {
         // 左上
         offsetLeft = imgItem.crop.offsetLeft + leftchange;
-  
+
         if (offsetLeft < 0) {
           offsetLeft = 0;
         }
-  
+
         if (offsetLeft > imgItem.crop.width + imgItem.crop.offsetLeft - 1) {
           offsetLeft = imgItem.crop.width + imgItem.crop.offsetLeft - 1;
         }
-  
+
         width = imgItem.crop.width + imgItem.crop.offsetLeft - offsetLeft;
-  
+
         offsetTop = imgItem.crop.offsetTop + topchange;
-  
+
         if (offsetTop < 0) {
           offsetTop = 0;
         }
-  
+
         if (offsetTop > imgItem.crop.height + imgItem.crop.offsetTop - 1) {
           offsetTop = imgItem.crop.height + imgItem.crop.offsetTop - 1;
         }
-  
+
         height = imgItem.crop.height + imgItem.crop.offsetTop - offsetTop;
       } else if (cropChange == "lm") {
         // 左中
         offsetLeft = imgItem.crop.offsetLeft + leftchange;
-  
+
         if (offsetLeft < 0) {
           offsetLeft = 0;
         }
-  
+
         if (offsetLeft > imgItem.crop.width + imgItem.crop.offsetLeft - 1) {
           offsetLeft = imgItem.crop.width + imgItem.crop.offsetLeft - 1;
         }
-  
+
         width = imgItem.crop.width + imgItem.crop.offsetLeft - offsetLeft;
-  
+
         offsetTop = imgItem.crop.offsetTop;
         height = imgItem.crop.height;
       } else if (cropChange == "lb") {
         // 左下
         offsetLeft = imgItem.crop.offsetLeft + leftchange;
-  
+
         if (offsetLeft < 0) {
           offsetLeft = 0;
         }
-  
+
         if (offsetLeft > imgItem.crop.width + imgItem.crop.offsetLeft - 1) {
           offsetLeft = imgItem.crop.width + imgItem.crop.offsetLeft - 1;
         }
-  
+
         width = imgItem.crop.width + imgItem.crop.offsetLeft - offsetLeft;
-  
+
         offsetTop = imgItem.crop.offsetTop;
-  
+
         height = imgItem.crop.height + topchange;
-  
+
         if (height < 1) {
           height = 1;
         }
-  
+
         if (height > imgItem.default.height - offsetTop) {
           height = imgItem.default.height - offsetTop;
         }
       } else if (cropChange == "rt") {
         // 右上
         offsetLeft = imgItem.crop.offsetLeft;
-  
+
         width = imgItem.crop.width + leftchange;
-  
+
         if (width < 1) {
           width = 1;
         }
-  
+
         if (width > imgItem.default.width - offsetLeft) {
           width = imgItem.default.width - offsetLeft;
         }
-  
+
         offsetTop = imgItem.crop.offsetTop + topchange;
-  
+
         if (offsetTop < 0) {
           offsetTop = 0;
         }
-  
+
         if (offsetTop > imgItem.crop.height + imgItem.crop.offsetTop - 1) {
           offsetTop = imgItem.crop.height + imgItem.crop.offsetTop - 1;
         }
-  
+
         height = imgItem.crop.height + imgItem.crop.offsetTop - offsetTop;
       } else if (cropChange == "rm") {
         // 右中
         offsetLeft = imgItem.crop.offsetLeft;
-  
+
         width = imgItem.crop.width + leftchange;
-  
+
         if (width < 1) {
           width = 1;
         }
-  
+
         if (width > imgItem.default.width - offsetLeft) {
           width = imgItem.default.width - offsetLeft;
         }
-  
+
         offsetTop = imgItem.crop.offsetTop;
         height = imgItem.crop.height;
       } else if (cropChange == "rb") {
         // 右下
         offsetLeft = imgItem.crop.offsetLeft;
-  
+
         width = imgItem.crop.width + leftchange;
-  
+
         if (width < 1) {
           width = 1;
         }
-  
+
         if (width > imgItem.default.width - offsetLeft) {
           width = imgItem.default.width - offsetLeft;
         }
-  
+
         offsetTop = imgItem.crop.offsetTop;
-  
+
         height = imgItem.crop.height + topchange;
-  
+
         if (height < 1) {
           height = 1;
         }
-  
+
         if (height > imgItem.default.height - offsetTop) {
           height = imgItem.default.height - offsetTop;
         }
@@ -3273,58 +3282,58 @@ function mouseRender(
         // 中上
         offsetLeft = imgItem.crop.offsetLeft;
         width = imgItem.crop.width;
-  
+
         offsetTop = imgItem.crop.offsetTop + topchange;
-  
+
         if (offsetTop < 0) {
           offsetTop = 0;
         }
-  
+
         if (offsetTop > imgItem.crop.height + imgItem.crop.offsetTop - 1) {
           offsetTop = imgItem.crop.height + imgItem.crop.offsetTop - 1;
         }
-  
+
         height = imgItem.crop.height + imgItem.crop.offsetTop - offsetTop;
       } else if (cropChange == "mb") {
         // 中下
         offsetLeft = imgItem.crop.offsetLeft;
         width = imgItem.crop.width;
-  
+
         offsetTop = imgItem.crop.offsetTop;
-  
+
         height = imgItem.crop.height + topchange;
-  
+
         if (height < 1) {
           height = 1;
         }
-  
+
         if (height > imgItem.default.height - offsetTop) {
           height = imgItem.default.height - offsetTop;
         }
       }
-  
+
       let left = imgItem.default.left + offsetLeft;
       let top = imgItem.default.top + offsetTop;
-  
+
       if (imgItem.isFixedPos) {
         left = imgItem.fixedLeft + offsetLeft;
         top = imgItem.fixedTop + offsetTop;
       }
-  
+
       $("#luckysheet-modal-dialog-cropping").show().css({
         width,
         height,
         left,
         top,
       });
-  
+
       const imageUrlHandle =
         ctx.toJsonOptions && ctx.toJsonOptions.imageUrlHandle;
       const imgSrc =
         typeof imageUrlHandle === "function"
           ? imageUrlHandle(imgItem.src)
           : imgItem.src;
-  
+
       $("#luckysheet-modal-dialog-cropping .cropping-mask").css({
         width: imgItem.default.width,
         height: imgItem.default.height,
@@ -3332,13 +3341,13 @@ function mouseRender(
         left: -offsetLeft,
         top: -offsetTop,
       });
-  
+
       $("#luckysheet-modal-dialog-cropping .cropping-content").css({
         "background-image": `url(${imgSrc})`,
         "background-size": `${imgItem.default.width}px ${imgItem.default.height}px`,
         "background-position": `${-offsetLeft}px ${-offsetTop}px`,
       });
-  
+
       imageCtrl.cropChangeObj = {
         width,
         height,
@@ -3807,7 +3816,7 @@ export function handleOverlayMouseUp(
       formula.functionResizeStatus = false;
       $("#luckysheet-wa-calculate-size").removeAttr("style");
     }
-  
+
     if (luckysheetFreezen.horizontalmovestate) {
       luckysheetFreezen.horizontalmovestate = false;
       $("#luckysheet-freezebar-horizontal").removeClass(
@@ -3824,7 +3833,7 @@ export function handleOverlayMouseUp(
       luckysheetFreezen.createAssistCanvas();
       luckysheetrefreshgrid();
     }
-  
+
     if (luckysheetFreezen.verticalmovestate) {
       luckysheetFreezen.verticalmovestate = false;
       $("#luckysheet-freezebar-vertical").removeClass(
@@ -3839,7 +3848,7 @@ export function handleOverlayMouseUp(
       luckysheetFreezen.createAssistCanvas();
       luckysheetrefreshgrid();
     }
-  
+
     if (!!pivotTable && pivotTable.movestate) {
       $("#luckysheet-modal-dialog-slider-pivot-move").remove();
       pivotTable.movestate = false;
@@ -3860,7 +3869,7 @@ export function handleOverlayMouseUp(
           ) {
             pivotTable.resetOrderby(pivotTable.movesave.obj);
           }
-  
+
           pivotTable.movesave.obj.remove();
           pivotTable.showvaluecolrow();
           $("#luckysheet-modal-dialog-pivotTable-list")
@@ -3871,14 +3880,14 @@ export function handleOverlayMouseUp(
                 .find("i")
                 .remove();
             });
-  
+
           $(
             "#luckysheet-modal-dialog-config-filter, #luckysheet-modal-dialog-config-row, #luckysheet-modal-dialog-config-column, #luckysheet-modal-dialog-config-value"
           )
             .find(".luckysheet-modal-dialog-slider-config-item")
             .each(function () {
               const index = $(this).data("index");
-  
+
               $("#luckysheet-modal-dialog-pivotTable-list")
                 .find(".luckysheet-modal-dialog-slider-list-item")
                 .each(function () {
@@ -3895,12 +3904,12 @@ export function handleOverlayMouseUp(
                   }
                 });
             });
-  
+
           pivotTable.refreshPivotTable();
         }
       }
     }
-  
+
     if (ctx.luckysheet_sheet_move_status) {
       ctx.luckysheet_sheet_move_status = false;
       ctx.luckysheet_sheet_move_data.activeobject.insertBefore(
@@ -3912,10 +3921,10 @@ export function handleOverlayMouseUp(
       ctx.luckysheet_sheet_move_data = {};
       sheetmanage.reOrderAllSheet();
     }
-  
+
     // chart move debounce timer clear
     clearTimeout(ctx.chartparam.luckysheetCurrentChartMoveTimeout);
-  
+
     // 图表拖动 chartMix
     if (ctx.chartparam.luckysheetCurrentChartMove) {
       ctx.chartparam.luckysheetCurrentChartMove = false;
@@ -3925,18 +3934,18 @@ export function handleOverlayMouseUp(
         var myLeft = ctx.chartparam.luckysheetCurrentChartMoveObj.css("left");
         var scrollLeft = $("#luckysheet-cell-main").scrollLeft();
         var scrollTop = $("#luckysheet-cell-main").scrollTop();
-  
+
         // 点击时候存储的信息，即上一次操作结束的图表信息，x,y: chart框位置，scrollLeft1,scrollTop1: 滚动条位置
         var x = ctx.chartparam.luckysheetCurrentChartMoveXy[2];
         var y = ctx.chartparam.luckysheetCurrentChartMoveXy[3];
-  
+
         var scrollLeft1 = ctx.chartparam.luckysheetCurrentChartMoveXy[4];
         var scrollTop1 = ctx.chartparam.luckysheetCurrentChartMoveXy[5];
-  
+
         var chart_id = ctx.chartparam.luckysheetCurrentChartMoveObj
           .find(".luckysheet-modal-dialog-content")
           .attr("id");
-  
+
         // 去除chartobj,改用chart_id代替即可定位到此图表
         ctx.jfredo.push({
           type: "moveChart",
@@ -3951,13 +3960,13 @@ export function handleOverlayMouseUp(
           scrollTop1,
           scrollLeft1,
         });
-  
+
         // luckysheet.sheetmanage.saveChart({ "chart_id": chart_id, "sheetId": sheetId, "top": myTop, "left": myLeft });
         // 存储滚动条位置//协同编辑时可能影响用户操作，可以考虑不存储滚动条位置,或者滚动条信息仅仅保存到后台，但是不分发到其他设备（google sheet没有存储滚动条位置）
         // ctx.server.saveParam("c", sheetId, { "left":myLeft, "top":myTop,"scrollTop": scrollTop, "scrollLeft": scrollLeft }, { "op":"xy", "cid": chart_id});
       }
     }
-  
+
     // 图表改变大小 chartMix
     if (ctx.chartparam.luckysheetCurrentChartResize) {
       ctx.chartparam.luckysheetCurrentChartResize = null;
@@ -3967,21 +3976,21 @@ export function handleOverlayMouseUp(
         const myWidth = ctx.chartparam.luckysheetCurrentChartResizeObj.width();
         var scrollLeft = $("#luckysheet-cell-main").scrollLeft();
         var scrollTop = $("#luckysheet-cell-main").scrollTop();
-  
+
         var myTop = ctx.chartparam.luckysheetCurrentChartMoveObj.css("top");
         var myLeft = ctx.chartparam.luckysheetCurrentChartMoveObj.css("left");
-  
+
         var chart_id = ctx.chartparam.luckysheetCurrentChartResizeObj
           .find(".luckysheet-modal-dialog-content")
           .attr("id");
-  
+
         const myWidth1 = ctx.chartparam.luckysheetCurrentChartResizeXy[2];
         const myHeight1 = ctx.chartparam.luckysheetCurrentChartResizeXy[3];
         var x = ctx.chartparam.luckysheetCurrentChartResizeXy[4]; // 增加上一次的位置x，y
         var y = ctx.chartparam.luckysheetCurrentChartResizeXy[5];
         var scrollLeft1 = ctx.chartparam.luckysheetCurrentChartResizeXy[6];
         var scrollTop1 = ctx.chartparam.luckysheetCurrentChartResizeXy[7];
-  
+
         ctx.jfredo.push({
           type: "resizeChart",
           chart_id,
@@ -3999,14 +4008,14 @@ export function handleOverlayMouseUp(
           scrollTop1,
           scrollLeft1,
         });
-  
+
         // 加上滚动条的位置
         // luckysheet.sheetmanage.saveChart({ "chart_id": chart_id, "sheetId": sheetId, "height": myHeight, "width": myWidth, "top": myTop, "left": myLeft, "scrollTop": scrollTop, "scrollLeft": scrollLeft });
-  
+
         // ctx.server.saveParam("c", sheetId, { "width":myWidth, "height":myHeight, "top": myTop, "left": myLeft, "scrollTop": scrollTop, "scrollLeft": scrollLeft}, { "op":"wh", "cid": chart_id});
       }
     }
-  
+
     if (formula.rangeResize) {
       formula.rangeResizeDragged(
         event,
@@ -4017,7 +4026,7 @@ export function handleOverlayMouseUp(
         formula.rangeResizeWinH
       );
     }
-    
+
     // image cropChange
     if (imageCtrl.cropChange) {
       imageCtrl.cropChangeImgItem();
@@ -4345,7 +4354,7 @@ export function handleOverlayMouseUp(
     if (ctx.chart_selection.rangeMove) {
       ctx.chart_selection.rangeMoveDragged();
     }
-  
+
     // 图表选区拖拽拉伸
     if (ctx.chart_selection.rangeResize) {
       ctx.chart_selection.rangeResizeDragged();

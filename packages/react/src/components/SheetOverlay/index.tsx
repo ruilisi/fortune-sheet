@@ -827,6 +827,7 @@ const SheetOverlay: React.FC = () => {
               } = last;
               setListWidth(width);
               // 获取当前选中的单元格的行列索引
+              // eslint-disable-next-line no-console
               console.log("rowIndex, colIndex", rowIndex, colIndex);
               if (
                 !context.selectClick ||

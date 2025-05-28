@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "clean": "rimraf tmp coverage",
-    "lint": "eslint src test",
+    "lint1": "eslint src test",
     "check": "npm run lint && npm run test",
     "test": "cross-env BABEL_ENV=commonjs jest",
     "coverage": "cross-env BABEL_ENV=commonjs jest --coverage",

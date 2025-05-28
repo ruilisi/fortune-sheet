@@ -1,8 +1,9 @@
+
 <p align="center">
   <img align="center" src="logo.png" width="150px" height="150px" />
 </p>
 <h1 align="center">FortuneSheet</h1>
-<p align="center">FortuneSheet is a drop-in javascript spreadsheet library that provides rich features like Excel and Google Sheets</p>
+<p align="center">FortuneSheet是一款开箱即用的类似Excel和Google Sheets的javascript表格组件。</p>
 
 <div align="center">
 
@@ -13,103 +14,94 @@
 
 </div>
 
+简体中文 | [English](./README-en) 
 
-English | [简体中文](./README-zh.md)
+## 目的
 
-## Purpose
+`FortuneSheet`的目标是制造一个功能丰富，配置简单的在线表格组件，开箱即用。
 
-The goal of `FortuneSheet` is to make a feature-rich, easy-to-configure online spreadsheet that you can use out-of-the-box.
+本项目源于 [Luckysheet](https://github.com/mengshukeji/Luckysheet)，并继承了它的很多代码。我们为将其转换为typescript做了很多努力，并且解决了一些原项目设计层面的问题。
 
-This project is originated from [Luckysheet](https://github.com/mengshukeji/Luckysheet) and has inherited many code from it. Lots of efforts have done to translate the whole project to typescript (still in progress), and solved problems in the design of the original project.
+我们的目标是让`FortuneSheet`越来越强大，同时易于维护。
 
-We aim to make FortuneSheet powerful yet easy to maintain.
-
-## Communication
-* [Discord](https://discord.gg/vHGwMB77w5) English community 
-* [QQ](https://jq.qq.com/?_wv=1027&k=iHaSN47J) Chinese community
+## 交流
+* [Discord](https://discord.gg/vHGwMB77w5) 英文社群
+* [QQ](https://jq.qq.com/?_wv=1027&k=iHaSN47J) 中文社群
 * [Xiemala](https://xiemala.com/s/ctJmUn)
 
-## Live demo
-> Note: Some part of Storybook is outdated
+## 在线样例
 
-Take a look at the live demo at [online-sheet-demo](https://ruilisi.github.io/online-sheet-demo/).
+项目的在线Demo：[online-sheet-demo](https://ruilisi.github.io/online-sheet-demo/)
 
-<p>
-  <img align="center" src="screenshot.png" width="400px" />
-</p>
+## 注意
+在稳定版1.0发布之前，输入的数据结构和API可能会发生变动。如果你在升级版本后遇到了错误，可以查看[Changelog](./CHANGELOG.md) 和 [迁移指南](#迁移luckysheet数据).
 
-## Attention
-Before stable release of 1.0, input data structure and APIs may change during development. If you encounter errors after upgrading a version, check [Changelog](./CHANGELOG.md) and [Migration Guide](#migrating-data-from-luckysheet).
+## 对Luckysheet的改进
 
-## Improvements to Luckysheet
-
-- Written fully in typescript.
-- You can now use `import` / `require` to use the library.
+- 完全使用typescript编写。
+- 可以用 `import` / `require` 导入本库了。
   ```js
   import { Workbook } from '@online-sheet/react'
   ```
-- Multiple instance on the same page is supported.
-- Dropped `jQuery` dependency, uses native `React` / `Vue` + `immer` to manage the dom and state.
-- Changed to a forked [handsontable/formula-parser](https://github.com/handsontable/formula-parser) to handle formula calculations.
-- Optimized the dom structure.
-- Replaced icons from `iconfont` with SVGs, as `iconfont` icons are inconvenient to update for other maintainers.
-- No visible elements is created outside container.
-- Never stores data in the `window` object.
+- 同页面支持多个实例。
+- 去掉了 `jQuery` 的依赖, 用原生 `React` / `Vue` + `immer` 来管理Dom和状态。
+- 用一个forked [handsontable/formula-parser](https://github.com/handsontable/formula-parser) 来处理公式计算。
+- 优化dom结构。
+- 用SVG代替`iconfont`的图标，因为`iconfont`的图标对其他开发者而言很不方便改动。
+- 容器外面不创建可见的页面元素。
+- 避免在`window`对象上存储数据。
 
-## Features
+## 特性
 
-- Data structure is mostly compatible with Luckysheet (see [Migration Guide](#migrating-data-from-luckysheet)).
-- **Formatting**: style, text alignment and rotation, text truncation, overflow, automatic line wrapping, multiple data types, cell segmentation style, hyperlink
-- **Cells**: multiple selection, borders, fill, merge cells
-- **Row & column**: insert, delete, hide, sort and filter rows or columns
-- **Operation**: copy, paste, cut, hot keys
-- **Formulas & Functions**: Built-in formulas
-- **Import/export Excel**: [plugin](https://github.com/corbe30/fortuneexcel) for .xlsx import and export
-- **Additional features**: supports images, comments, data verification and custom tools
+- 数据结构总体兼容Luckysheet (见[迁移指南](#迁移luckysheet数据))。
+- **格式设置**：样式，文本对齐及旋转，文本截断、溢出、自动换行，多种数据类型，单元格内多样式
+- **单元格**：多选区，合并单元格
+- **行和列操作**：插入、删除行或列
+- **操作体验**：复制、粘贴、剪切，快捷键
+- **公式和函数**：内置公式
 
-## Roadmap
-- ✅ Support cooperative editing with backend storage.
-- ✅ Support undo/redo.
-- ✅ Mobile adaption.
-- ✅ Expose APIs.
-- ✅ Add tests.
-- More basic features:
-  - ✅ fill handle
-  - ✅fonts
-  - ✅ format painter
-  - ✅ comments
-  - ✅ insert images
-  - ✅ more toolbar buttons
-- ✅ [Excel import and export plugin](https://github.com/corbe30/fortuneexcel)
-- Support Vue
-- More features:
-  - ✅ sort
-  - ✅ filter
-  - ✅ hooks
-  - ✅ conditional formatting
-  - ✅ drag and drop
-  - ✅ find and replace
-  - ✅ data verification
-  - ✅ freeze
-  - ✅ hide, and split text
-  - location
-- More advanced features:
-  - ✅ screenshots
-  - pivot tables
-  - charts
-  
+## 开发路线
+- ✅ 支持协同编辑和后端存储.
+- ✅ 支持撤销/重做.
+- ✅ 手机端适配.
+- ✅ 开放API.
+- ✅ 增加测试代码.
+- 更多基础功能:
+  - ✅ 下拉填充
+  - ✅字体
+  - ✅ 格式刷
+  - ✅ 评论
+  - ✅ 插入图片
+  - ✅ 更多工具栏按钮
+- Excel 导入和导出.
+- 支持Vue.
+- 更多功能:
+  - ✅ 排序
+  - ✅ 筛选
+  - ✅ 事件钩子
+  - ✅ 条件格式
+  - ✅ 拖拽
+  - ✅ 查找和替换
+  - 定位
+  - ✅ 数据验证
+  - ✅ 冻结
+  - ✅ 隐藏、冻结，文本分列
+- 更多高级功能:
+  - 数据透视表
+  - 图表
+  - ✅ 截图
 
-## Documentation
-> Note: Some topics in documentation is outdated
 
-See detailed documentation at [online-sheet-doc](https://ruilisi.github.io/online-sheet-docs/).
+## 文档
 
-## Get started (react)
+请参考详细文档 [online-sheet-doc](https://ruilisi.github.io/online-sheet-docs/)
 
-### Download and install the library
+## 快速开始 (react)
+
+### 安装库
 
 <details open>
-<summary>Using npm</summary>
+<summary>使用 npm</summary>
 
 ```shell
 npm install @online-sheet/react
@@ -117,7 +109,7 @@ npm install @online-sheet/react
 </details>
 
 <details>
-<summary>Using pnpm</summary>
+<summary>使用 pnpm</summary>
 
 ```shell
 pnpm install @online-sheet/react
@@ -125,14 +117,14 @@ pnpm install @online-sheet/react
 </details>
 
 <details>
-<summary>Using yarn</summary>
+<summary>使用 yarn</summary>
 
 ```shell
 yarn add @online-sheet/react
 ```
 </details>
 
-### Create an HTML placeholder
+### 创建一个HTML容器
 ```html
 <style>
   html, body, #root {
@@ -143,9 +135,9 @@ yarn add @online-sheet/react
 <div id="root"></div>
 ```
 
-**NOTE**: `width` and `height` doesn't have to be 100%, but should at least have a value. If set to `auto`, table area may not show.
+**注意**: `width` 和 `height` 不是一定要设为 100%, 但要有值. 如果设为 `auto`, 表格区域有可能不显示.
 
-### Render the sheet
+### 渲染表格
 
 ```js
 import React from 'react';
@@ -159,9 +151,9 @@ ReactDOM.render(
 );
 ```
 
-### Backend storage and collabration
+### 后端存储和在线协同
 
-Each time a user operates on the sheet, an array of `Op` will be emiited through `onOp` callback. An op describes how to modify the current data to reach the new data after the user's operation. For example, here is an op when user sets the cell font to be bold on cell A2.
+每当用户在表格上做操作，一个`Op`列表会通过`onOp`回调发出。op描述了如何从当前数据修改为用户操作后的新数据的步骤。例如，当用户在A2单元格上设置了加粗，生成的op如下：
 
 ```json
 [
@@ -174,41 +166,41 @@ Each time a user operates on the sheet, an array of `Op` will be emiited through
 ]
 ```
 
-The op is useful for database modification and syncing state in online collabration.
+op对后端数据修改和同步在线协同数据非常有用。
 
-A working example with `Express` (backend server) and `MongoDB` (data persistence) is avaiable in `backend-demo` folder.
+我们在 `backend-demo` 目录中展示了一个例子，使用 `Express` (后端) and `MongoDB` (数据库) 实现。
 
-Run it with `node index.js` and visit [Collabration example](https://ruilisi.github.io/online-sheet-demo/?path=/story/collabration--example) (initialize data by visiting http://localhost:8081/init)
+通过 `node index.js` 运行后端服务器，然后访问 [Collabration example](https://ruilisi.github.io/online-sheet-demo/?path=/story/collabration--example) 即可体验。(可通过 http://localhost:8081/init 初始化数据)
 
-For detailed doc about `Op`, refer to [online-sheet-doc](./docs/guide/op.md)
+详细的 `Op` 文档, 请参考 [online-sheet-doc](./docs/zh/guide/op.md)
 
-## Migrating data from Luckysheet
-The overall data structure of FortuneSheet is the same as Luckysheet, with some naming differences:
+## 迁移Luckysheet数据
+FortuneSheet的总体数据结构与Luckysheet相同，只有几处命名的区别：
 
 1. sheet.index -> sheet.id
 2. sheet.calcChain[].id -> sheet.calcChain[].id
 
-## Contributing
-Expected workflow is: Fork -> Patch -> Push -> Pull Request
+## 贡献
+期望的工作流程为: Fork -> Patch -> Push -> Pull Request
 
-Please make sure to read the [Contributing Guide](./docs/guide/contribute.md) before making a pull request.
+请确保仔细阅读 [贡献指南](./docs/zh/guide/contribute.md)。
 
 
-## Development
-### Installation
+## 开发
+### 安装
 ```shell
 yarn
 ```
 
-### Development
+### 开发
 ```shell
 yarn dev
 ```
 
-### Packaging
+### 打包
 ```shell
 yarn build
 ```
 
-## License
-This project is licensed under the MIT License. See [MIT](http://opensource.org/licenses/MIT) for the full license text.
+## 许可
+本项目使用MIT许可. 在 [MIT](http://opensource.org/licenses/MIT) 查看完整文本。

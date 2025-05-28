@@ -24,7 +24,15 @@ const Template: StoryFn<typeof Workbook> = ({
   }, []);
   return (
     <div style={{ width: "100%", height: "100vh" }}>
-      <Workbook {...args} data={data} onChange={onChange} />
+      <Workbook
+        {...args}
+        data={data}
+        onChange={onChange}
+        cellEditable={(row, column) => {
+          // Example: Prevent editing of the first row and first column
+          return !(row === 0 || column === 0);
+        }}
+      />
     </div>
   );
 };

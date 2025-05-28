@@ -228,6 +228,8 @@ export type Context = {
     row: number,
     column: number
   ) => Promise<{ label: string; value: string }[]>;
+  // 单元格是否可编辑回调事件
+  cellEditable?: (row: number, column: number) => boolean;
 };
 
 export function defaultContext(refs: RefValues): Context {

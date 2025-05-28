@@ -63,6 +63,7 @@ type AdditionalProps = {
     row: number,
     column: number
   ) => Promise<{ label: string; value: string }[]>;
+  cellEditable?: (row: number, column: number) => boolean;
 };
 
 const triggerGroupValuesRefresh = (ctx: Context) => {
@@ -80,7 +81,10 @@ const concatProducer = (...producers: ((ctx: Context) => void)[]) => {
 };
 
 const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
-  ({ onChange, onOp, selectClick, data: originalData, ...props }, ref) => {
+  (
+    { onChange, onOp, selectClick, cellEditable, data: originalData, ...props },
+    ref
+  ) => {
     const globalCache = useRef<GlobalCache>({ undoList: [], redoList: [] });
     const cellInput = useRef<HTMLDivElement>(null);
     const fxInput = useRef<HTMLDivElement>(null);
@@ -461,6 +465,14 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
         });
       }
     }, [selectClick, setContextWithProduce]);
+
+    useEffect(() => {
+      if (cellEditable) {
+        setContextWithProduce((draftCtx) => {
+          draftCtx.cellEditable = cellEditable;
+        });
+      }
+    }, [cellEditable, setContextWithProduce]);
 
     useEffect(() => {
       setContextWithProduce(
