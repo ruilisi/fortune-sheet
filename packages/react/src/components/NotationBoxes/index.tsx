@@ -1,13 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   getFlowdata,
   onCommentBoxMoveStart,
-  onCommentBoxResizeStart,
   setEditingComment,
   showComments,
 } from "@fileverse-dev/fortune-core";
 import _ from "lodash";
-import ContentEditable from "../SheetOverlay/ContentEditable";
 import WorkbookContext from "../../context";
 
 const NotationBoxes: React.FC = () => {
@@ -39,7 +37,7 @@ const NotationBoxes: React.FC = () => {
         [context.editingCommentBox, context.hoveredCommentBox]
       ).map((commentBox, index) => {
         if (!commentBox) return null;
-        const { r, c, rc, left, top, width, height, value, autoFocus, size } =
+        const { r, c, rc, left, top, width, height, size } =
           commentBox;
         const isEditing = context.editingCommentBox?.rc === rc;
         const commentId = `comment-box-${rc}`;

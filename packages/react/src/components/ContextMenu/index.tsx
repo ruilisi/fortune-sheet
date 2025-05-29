@@ -129,7 +129,7 @@ const ContextMenu: React.FC = () => {
           : ["left", "right"].map((dir) => (
               <Menu
                 key={`add-col-${dir}`}
-                onClick={(e) => {
+                onClick={() => {
                   const position =
                     context.luckysheet_select_save?.[0]?.column?.[0];
                   if (position == null) return;
@@ -218,7 +218,7 @@ const ContextMenu: React.FC = () => {
           : ["top", "bottom"].map((dir) => (
               <Menu
                 key={`add-row-${dir}`}
-                onClick={(e, container) => {
+                onClick={() => {
                   const position =
                     context.luckysheet_select_save?.[0]?.row?.[0];
                   if (position == null) return;

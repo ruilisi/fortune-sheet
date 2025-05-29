@@ -1047,9 +1047,13 @@ export function updateCell(
         currentRowLen = textInfo.textHeightAll + 2;
       }
 
-     const previousRowHeight = getRowHeight(ctx, [r])[r];
+      const previousRowHeight = getRowHeight(ctx, [r])[r];
 
-      if (currentRowLen > defaultrowlen && !cfg.customHeight?.[r] && previousRowHeight < currentRowLen) {
+      if (
+        currentRowLen > defaultrowlen &&
+        !cfg.customHeight?.[r] &&
+        previousRowHeight < currentRowLen
+      ) {
         if (_.isNil(cfg.rowlen)) cfg.rowlen = {};
         cfg.rowlen[r] = currentRowLen;
       }
