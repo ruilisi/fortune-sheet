@@ -5,6 +5,7 @@ import { getSheetIndex, indexToColumnChar, rgbToHex } from "../utils";
 import { checkCF, getComputeMap } from "./ConditionFormat";
 import { getFailureText, validateCellData } from "./dataVerification";
 import { genarate, update } from "./format";
+import { getRowHeight } from "../api";
 import {
   delFunctionGroup,
   execfunction,
@@ -1046,7 +1047,9 @@ export function updateCell(
         currentRowLen = textInfo.textHeightAll + 2;
       }
 
-      if (currentRowLen > defaultrowlen && !cfg.customHeight?.[r]) {
+     const previousRowHeight = getRowHeight(ctx, [r])[r];
+
+      if (currentRowLen > defaultrowlen && !cfg.customHeight?.[r] && previousRowHeight < currentRowLen) {
         if (_.isNil(cfg.rowlen)) cfg.rowlen = {};
         cfg.rowlen[r] = currentRowLen;
       }
