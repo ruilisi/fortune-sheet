@@ -168,6 +168,9 @@ const RowHeader: React.FC = () => {
 
   useEffect(() => {
     const s = context.luckysheet_select_save || [];
+    if (_.isNil(s)) return;
+    setSelectedLocation([]);
+    if (s[0]?.column_select) return;
     let rowTitleMap: Record<number, number> = {};
     for (let i = 0; i < s.length; i += 1) {
       const r1 = s[i].row[0];
@@ -249,7 +252,8 @@ const RowHeader: React.FC = () => {
               top: row_pre,
               height: row - row_pre - 1,
               display: "block",
-              backgroundColor: "rgba(76, 76, 76, 0.1)",
+              backgroundColor: "#EFC703",
+              mixBlendMode: "multiply" as any,
             },
             fixRowStyleOverflowInFreeze(
               context,
