@@ -1,6 +1,6 @@
 {
   "name": "@fileverse-dev/formula-parser",
-  "version": "0.2.13-mod-3",
+  "version": "0.2.13-mod-4",
   "description": "Formula parser",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -48,7 +48,7 @@
     "webpack-cli": "^4.2.0"
   },
   "dependencies": {
-    "@fileverse-dev/formulajs": "^4.4.11-mod-6",
+    "@fileverse-dev/formulajs": "^4.4.11-mod-11",
     "tiny-emitter": "^2.1.0"
   },
   "jest": {
