@@ -165,3 +165,27 @@
 .find-replace-table-cell {
   min-width: 154px;
 }
+
+/* Add scrollbar styles */
+#fortune-search-replace .table-container {
+  scrollbar-width: thin;
+  scrollbar-color: #babac0 transparent;
+}
+
+#fortune-search-replace .table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+#fortune-search-replace .table-container::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+#fortune-search-replace .table-container::-webkit-scrollbar-thumb {
+  background-color: #babac0;
+  border-radius: 16px;
+}
+
+#fortune-search-replace .table-container::-webkit-scrollbar-button {
+  display: none;
+}

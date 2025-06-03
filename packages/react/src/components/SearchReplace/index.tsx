@@ -12,6 +12,7 @@ import {
 import {
   Button,
   Checkbox,
+  cn,
   Divider,
   IconButton,
   Table,
@@ -33,7 +34,7 @@ const SearchReplace: React.FC<{
   getContainer: () => HTMLDivElement;
 }> = ({ getContainer }) => {
   const { context, setContext, refs } = useContext(WorkbookContext);
-  const { findAndReplace, button } = locale(context);
+  const { findAndReplace } = locale(context);
   const [searchText, setSearchText] = useState("");
   const [replaceText, setReplaceText] = useState("");
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
@@ -91,7 +92,7 @@ const SearchReplace: React.FC<{
         e.stopPropagation();
       }}
     >
-      <div className="">
+      <div>
         <div className="flex items-center justify-between border-b color-border-default py-3 px-6">
           <h3 className="text-heading-sm">Find and replace</h3>
           <IconButton
@@ -126,7 +127,12 @@ const SearchReplace: React.FC<{
                     }
                   }}
                   value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
+                  onChange={(e) => {
+                    if (e.target.value.length === 0) {
+                      setSearchResult([]);
+                    }
+                    setSearchText(e.target.value);
+                  }}
                 />
               </div>
               <div
@@ -196,15 +202,15 @@ const SearchReplace: React.FC<{
               </div>
             </div>
             <Divider className="w-full border-t-[1px]" />
-            <div className="flex flex-row gap-2 justify-center items-center">
-              <Button
+            <div className="flex flex-row gap-2 justify-center items-center mb-4">
+              {/* <Button
                 variant="secondary"
                 className="min-w-fit"
                 onClick={closeDialog}
                 tabIndex={0}
               >
                 {button.close}
-              </Button>
+              </Button> */}
               <Button
                 id="replaceAllBtn"
                 variant="secondary"
@@ -222,6 +228,7 @@ const SearchReplace: React.FC<{
                   });
                 }}
                 tabIndex={0}
+                disabled={searchText.length === 0 || replaceText.length === 0}
               >
                 {findAndReplace.allReplaceBtn}
               </Button>
@@ -244,6 +251,7 @@ const SearchReplace: React.FC<{
                   })
                 }
                 tabIndex={0}
+                disabled={searchText.length === 0 || replaceText.length === 0}
               >
                 {findAndReplace.replaceBtn}
               </Button>
@@ -261,12 +269,13 @@ const SearchReplace: React.FC<{
                   })
                 }
                 tabIndex={0}
+                disabled={searchText.length === 0}
               >
                 {findAndReplace.allFindBtn}
               </Button>
               <Button
                 id="searchNextBtn"
-                variant="secondary"
+                variant="default"
                 className="min-w-fit"
                 onClick={() =>
                   setContext((draftCtx) => {
@@ -280,76 +289,94 @@ const SearchReplace: React.FC<{
                   })
                 }
                 tabIndex={0}
+                disabled={searchText.length === 0}
               >
                 {findAndReplace.findBtn}
               </Button>
             </div>
           </div>
-        </div>
 
-        {searchResult.length > 0 && (
-          <div
-            ref={tableContainerRef}
-            className="px-6 pb-6 max-h-[300px] overflow-y-auto"
-            onMouseDown={(e) => {
-              if (
-                e.target === tableContainerRef.current ||
-                tableContainerRef.current?.contains(e.target as Node)
-              ) {
-                e.stopPropagation();
-                tableContainerRef.current?.focus();
-              }
-            }}
-            tabIndex={0}
-          >
-            <Table id="searchAllbox">
-              <TableHeader className="color-bg-secondary">
-                <TableRow>
-                  <TableHead>{findAndReplace.searchTargetSheet}</TableHead>
-                  <TableHead>{findAndReplace.searchTargetCell}</TableHead>
-                  <TableHead>{findAndReplace.searchTargetValue}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {searchResult.map((v) => {
-                  return (
-                    <TableRow
-                      className={`${_.isEqual(selectedCell, { r: v.r, c: v.c }) ? "on" : ""
-                        }`}
-                      key={v.cellPosition}
-                      onClick={() => {
-                        setContext((draftCtx) => {
-                          draftCtx.luckysheet_select_save = normalizeSelection(
-                            draftCtx,
-                            [
-                              {
-                                row: [v.r, v.r],
-                                column: [v.c, v.c],
-                              },
-                            ]
-                          );
-                          scrollToHighlightCell(draftCtx, v.r, v.c);
-                        });
-                        setSelectedCell({ r: v.r, c: v.c });
-                      }}
-                      tabIndex={0}
-                    >
-                      <TableCell className="find-replace-table-cell">
-                        {v.sheetName}
-                      </TableCell>
-                      <TableCell className="find-replace-table-cell">
-                        {v.cellPosition}
-                      </TableCell>
-                      <TableCell className="find-replace-table-cell">
-                        {v.value}
-                      </TableCell>
+          {searchResult.length > 0 && (
+            <>
+              <Divider className="w-full border-t-[1px] mb-4" />
+              <div
+                ref={tableContainerRef}
+                className="mb-6 table-container max-h-[300px] overflow-y-auto"
+                onMouseDown={(e) => {
+                  if (
+                    e.target === tableContainerRef.current ||
+                    tableContainerRef.current?.contains(e.target as Node)
+                  ) {
+                    e.stopPropagation();
+                    tableContainerRef.current?.focus();
+                  }
+                }}
+                onWheel={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (tableContainerRef.current) {
+                    tableContainerRef.current.scrollTop += e.deltaY;
+                  }
+                }}
+                onTouchStart={(e) => {
+                  e.stopPropagation();
+                }}
+                onTouchMove={(e) => {
+                  e.stopPropagation();
+                }}
+                tabIndex={0}
+              >
+                <Table id="searchAllbox">
+                  <TableHeader className="color-bg-secondary">
+                    <TableRow>
+                      <TableHead>{findAndReplace.searchTargetSheet}</TableHead>
+                      <TableHead>{findAndReplace.searchTargetCell}</TableHead>
+                      <TableHead>{findAndReplace.searchTargetValue}</TableHead>
                     </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+                  </TableHeader>
+                  <TableBody>
+                    {searchResult.map((v) => {
+                      return (
+                        <TableRow
+                          className={cn(
+                            _.isEqual(selectedCell, { r: v.r, c: v.c })
+                              ? "color-bg-default-selected"
+                              : ""
+                          )}
+                          key={v.cellPosition}
+                          onClick={() => {
+                            setContext((draftCtx) => {
+                              draftCtx.luckysheet_select_save =
+                                normalizeSelection(draftCtx, [
+                                  {
+                                    row: [v.r, v.r],
+                                    column: [v.c, v.c],
+                                  },
+                                ]);
+                              scrollToHighlightCell(draftCtx, v.r, v.c);
+                            });
+                            setSelectedCell({ r: v.r, c: v.c });
+                          }}
+                          tabIndex={0}
+                        >
+                          <TableCell className="find-replace-table-cell">
+                            {v.sheetName}
+                          </TableCell>
+                          <TableCell className="find-replace-table-cell">
+                            {v.cellPosition}
+                          </TableCell>
+                          <TableCell className="find-replace-table-cell">
+                            {v.value}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
