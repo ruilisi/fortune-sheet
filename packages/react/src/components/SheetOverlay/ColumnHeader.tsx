@@ -178,6 +178,8 @@ const ColumnHeader: React.FC = () => {
   useEffect(() => {
     const s = context.luckysheet_select_save;
     if (_.isNil(s)) return;
+    setSelectedLocation([]);
+    if (s[0].row_select) return;
 
     let columnTitleMap = {};
     for (let i = 0; i < s.length; i += 1) {
@@ -283,7 +285,8 @@ const ColumnHeader: React.FC = () => {
               left: col_pre,
               width: col - col_pre - 1,
               display: "block",
-              backgroundColor: "rgba(76, 76, 76, 0.1)",
+              backgroundColor: "#EFC703",
+              mixBlendMode: "multiply" as any,
             },
             fixColumnStyleOverflowInFreeze(
               context,
