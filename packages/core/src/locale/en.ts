@@ -11619,17 +11619,17 @@ export default {
     lessTwoRowTip: "Please select at least two rows",
     lessTwoColumnTip: "Please select at least two columns",
 
-    findTextbox: "Find Content",
-    replaceTextbox: "Replace Content",
+    findTextbox: "Find",
+    replaceTextbox: "Replace with",
 
     regexTextbox: "Regular Expression",
     wholeTextbox: "Whole word",
     distinguishTextbox: "Case sensitive",
 
-    allReplaceBtn: "Replace All",
+    allReplaceBtn: "Replace all",
     replaceBtn: "Replace",
-    allFindBtn: "Find All",
-    findBtn: "Find next",
+    allFindBtn: "Find all",
+    findBtn: "Find",
 
     noFindTip: "The content was not found",
     modeTip: "This operation is not available in this mode",

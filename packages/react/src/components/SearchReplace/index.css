@@ -1,7 +1,8 @@
+@import "@fileverse/ui/styles";
 /*查找替换弹出框样式*/
 #fortune-search-replace {
   position: absolute;
-  padding: 30px 42px;
+  min-width: 504px;
   z-index: 1002;
 }
 
@@ -83,10 +84,7 @@
 }
 
 #fortune-search-replace #searchAllbox {
-  height: 210px;
-  border: 1px solid #d4d4d4;
-  margin-top: 10px;
-  overflow-y: auto;
+  overflow-y: scroll;
   position: relative;
 }
 
@@ -158,4 +156,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.find-replace-label {
+  min-width: 100px;
+}
+
+.find-replace-table-cell {
+  min-width: 154px;
 }

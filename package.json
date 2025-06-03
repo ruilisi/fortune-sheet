@@ -76,7 +76,8 @@
   },
   "resolutions": {
     "react": "^18.2.0",
-    "eslint": "^8.31.0"
+    "eslint": "^8.31.0",
+    "string-width": "^4.2.3"
   },
   "peerDependencies": {
     "react": ">= 18.2.0"
