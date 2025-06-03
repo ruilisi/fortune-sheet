@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@fileverse-dev/fortune-core": "^1.0.2-mod-20",
+    "@fileverse/ui": "^4.1.7-patch-11",
     "@types/regenerator-runtime": "^0.13.6",
     "immer": "^9.0.12",
     "lodash": "^4.17.21",

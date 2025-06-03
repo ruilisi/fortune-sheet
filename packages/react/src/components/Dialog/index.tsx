@@ -1,7 +1,7 @@
 import { locale } from "@fileverse-dev/fortune-core";
+import { Button, IconButton } from "@fileverse/ui";
 import React, { useContext } from "react";
 import WorkbookContext from "../../context";
-import SVGIcon from "../SVGIcon";
 import "./index.css";
 
 type Props = {
@@ -25,44 +25,47 @@ const Dialog: React.FC<Props> = ({
   const { button } = locale(context);
   return (
     <div className="fortune-dialog" style={containerStyle}>
-      <div className="fortune-modal-dialog-header">
-        <div
-          className="fortune-modal-dialog-icon-close"
-          onClick={onCancel}
-          tabIndex={0}
-        >
-          <SVGIcon name="close" style={{ padding: 7, cursor: "pointer" }} />
-        </div>
+      <div className="flex items-center justify-end border-b color-border-default py-3 px-6">
+        <IconButton icon="X" variant="ghost" onClick={onCancel} tabIndex={0} />
       </div>
-      <div className="fortune-dialog-box-content" style={contentStyle}>
+      <div className="px-6 pb-6 pt-4 text-body-sm" style={contentStyle}>
         {children}
       </div>
       {type != null && (
-        <div className="fortune-dialog-box-button-container">
+        <div className="px-6 pb-6 flex flex-row gap-2 justify-end">
           {type === "ok" ? (
-            <div
-              className="fortune-message-box-button button-default"
+            <Button
+              variant="default"
+              style={{
+                minWidth: "80px",
+              }}
               onClick={onOk}
               tabIndex={0}
             >
               {button.confirm}
-            </div>
+            </Button>
           ) : (
             <>
-              <div
-                className="fortune-message-box-button button-primary"
-                onClick={onOk}
-                tabIndex={0}
-              >
-                {button.confirm}
-              </div>
-              <div
-                className="fortune-message-box-button button-default"
+              <Button
+                variant="secondary"
+                style={{
+                  minWidth: "80px",
+                }}
                 onClick={onCancel}
                 tabIndex={0}
               >
                 {button.cancel}
-              </div>
+              </Button>
+              <Button
+                variant="default"
+                style={{
+                  minWidth: "80px",
+                }}
+                onClick={onOk}
+                tabIndex={0}
+              >
+                {button.confirm}
+              </Button>
             </>
           )}
         </div>

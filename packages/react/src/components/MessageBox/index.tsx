@@ -19,14 +19,14 @@ const MessageBox: React.FC<Props> = ({
       type={type}
       onOk={onOk}
       onCancel={onCancel}
-      contentStyle={{
-        width: 300,
-        paddingTop: 20,
-        paddingBottom: 30,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+      // contentStyle={{
+      //   width: 300,
+      //   paddingTop: 20,
+      //   paddingBottom: 30,
+      //   display: "flex",
+      //   justifyContent: "center",
+      //   alignItems: "center",
+      // }}
     >
       {children}
     </Dialog>
