@@ -3777,7 +3777,7 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@storybook/addon-actions@7.3.2", "@storybook/addon-actions@^7.3.2":
+"@storybook/addon-actions@7.3.2":
   version "7.3.2"
   resolved "https://registry.yarnpkg.com/@storybook/addon-actions/-/addon-actions-7.3.2.tgz#36b8e15a851a12a6fff543d9785307ae02934a8f"
   integrity sha512-TsTOHGmwBHRsWS9kaG/bu6haP2dMeiETeGwOgfB5qmukodenXlmi1RujtUdJCNwW3APa0utEFYFKtZVEu9f7WQ==
@@ -3798,6 +3798,11 @@
     telejson "^7.0.3"
     ts-dedent "^2.0.0"
     uuid "^9.0.0"
+
+"@storybook/addon-actions@^9.0.6":
+  version "9.0.6"
+  resolved "https://registry.yarnpkg.com/@storybook/addon-actions/-/addon-actions-9.0.6.tgz#4af0c9ef82a058476b9b084d791ce835c20bba12"
+  integrity sha512-LV03ii5fVp5nfoAN4cMH2VyH5KRs6rIbaK1ojpOS+OcAzxL3gs95StBHWklPgKKz+QS6k2S4tzo6HZaWBYq8Ew==
 
 "@storybook/addon-backgrounds@7.3.2":
   version "7.3.2"
