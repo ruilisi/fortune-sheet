@@ -13582,7 +13582,7 @@ export default {
       value: 'Ω',
     },
   ],
-  defaultFmt: function defaultFmt(currency) {
+  defaultFmt: (currency: string) => {
     return [
       {
         text: 'Автоматически',
