@@ -1,20 +1,17 @@
 import en from "./en";
-import zh from "./zh";
-import es from "./es";
-import hi from "./hi";
+// import zh from "./zh";
+// import es from "./es";
+// import hi from "./hi";
 import ru from "./ru";
-import zh_tw from "./zh_tw";
+// import zh_tw from "./zh_tw";
 import { Context } from "..";
 
-const localeObj: Record<
-  string,
-  typeof en | typeof zh | typeof es | typeof zh_tw | typeof hi | typeof ru
-> = {
+const localeObj: Record<string, typeof en> = {
   en,
-  zh,
-  es,
-  "zh-TW": zh_tw,
-  hi,
+  // zh,
+  // es,
+  // "zh-TW": zh_tw,
+  // hi,
   ru,
 };
 
