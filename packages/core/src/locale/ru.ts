@@ -11844,6 +11844,7 @@ export default {
     between: "Between",
     equal: "Equal",
     in: "In",
+    to: "To",
     between2: "",
     contain: "Contain",
     textContains: "Text contains",
