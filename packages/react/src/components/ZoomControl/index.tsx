@@ -57,7 +57,7 @@ const ZoomControl: React.FC = () => {
   const { info } = locale(context);
 
   useOutsideClick(
-    menuRef,
+    menuRef as React.RefObject<HTMLDivElement>,
     () => {
       setRadioMenuOpen(false);
     },

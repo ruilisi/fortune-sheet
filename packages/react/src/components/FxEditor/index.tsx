@@ -36,7 +36,7 @@ import usePrevious from "../../hooks/usePrevious";
 const FxEditor: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const [focused, setFocused] = useState(false);
-  const lastKeyDownEventRef = useRef<KeyboardEvent>();
+  const lastKeyDownEventRef = useRef<KeyboardEvent>({} as KeyboardEvent);
   const inputContainerRef = useRef<HTMLDivElement>(null);
   const [isHidenRC, setIsHidenRC] = useState<boolean>(false);
   const firstSelection = context.luckysheet_select_save?.[0];

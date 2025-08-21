@@ -36,7 +36,7 @@ import usePrevious from "../../hooks/usePrevious";
 const InputBox: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const inputRef = useRef<HTMLDivElement>(null);
-  const lastKeyDownEventRef = useRef<KeyboardEvent>();
+  const lastKeyDownEventRef = useRef<KeyboardEvent>(null);
   const prevCellUpdate = usePrevious<any[]>(context.luckysheetCellUpdate);
   const prevSheetId = usePrevious<string>(context.currentSheetId);
   const [isHidenRC, setIsHidenRC] = useState<boolean>(false);
