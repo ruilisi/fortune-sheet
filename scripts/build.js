@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { spawnSync } = require("child_process");
+const spawn = require('cross-spawn');
 
 const tsconfig = JSON.parse(fs.readFileSync("tsconfig.json"));
 
@@ -17,7 +17,7 @@ const tsconfigJson = JSON.stringify(tsconfig);
 fs.writeFileSync("packages/core/tsconfig.json", tsconfigJson);
 fs.writeFileSync("packages/react/tsconfig.json", tsconfigJson);
 
-spawnSync("father-build", { stdio: "inherit" });
+spawn.sync("father-build", { stdio: "inherit" });
 
 fs.rmSync("packages/core/tsconfig.json");
 fs.rmSync("packages/react/tsconfig.json");
