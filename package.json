@@ -51,7 +51,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-storybook": "^0.6.13",
     "express": "^4.17.3",
-    "father-build": "^1.21.2",
+    "father-build": "^1.22.5",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.3.1",
     "jest-canvas-mock": "^2.4.0",
