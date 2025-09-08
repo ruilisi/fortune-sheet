@@ -7,7 +7,7 @@ jobs:
   deprecate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: "20.x"
           registry-url: "https://registry.npmjs.org"
