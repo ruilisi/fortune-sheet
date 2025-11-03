@@ -6,13 +6,17 @@ import ru from "./ru";
 import zh_tw from "./zh_tw";
 import { Context } from "..";
 
-// @ts-ignore
 const localeObj: Record<string, typeof zh> = {
+  // @ts-ignore
   en,
   zh,
+  // @ts-ignore
   es,
+  // @ts-ignore
   "zh-TW": zh_tw,
+  // @ts-ignore
   hi,
+  // @ts-ignore
   ru,
 };
 
