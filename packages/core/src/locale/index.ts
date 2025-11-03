@@ -2,11 +2,12 @@ import en from "./en";
 import zh from "./zh";
 import es from "./es";
 import hi from "./hi";
+import ru from "./ru";
 import zh_tw from "./zh_tw";
 import { Context } from "..";
 
 // @ts-ignore
-const localeObj: Record<string, typeof zh> = { en, zh, es, "zh-TW": zh_tw, hi };
+const localeObj: Record<string, typeof zh> = { en, zh, es, "zh-TW": zh_tw, hi, ru };
 
 function locale(ctx: Context) {
   const langsToTry = [ctx.lang || "", ctx.lang?.split("-")[0] || ""];

@@ -62,6 +62,7 @@ export type Context = {
     optionLabel_zh_tw: any; // 中文提示消息
     optionLabel_es: any; // 中文提示消息
     optionLabel_hi: any;
+    optionLabel_ru: any;
     dataRegulation?: DataRegulationProps; // 数据验证规则
   };
   // 数据验证下拉列表
@@ -271,6 +272,27 @@ export function defaultContext(refs: RefValues): Context {
         noLaterThan: "not later than",
         identificationNumber: "identification number",
         phoneNumber: "phone number",
+      },
+      optionLabel_ru: {
+        number: "числовое",
+        number_integer: "целое число",
+        number_decimal: "десятичное число",
+        between: "между",
+        notBetween: "не между",
+        equal: "равно",
+        notEqualTo: "не равно",
+        moreThanThe: "больше",
+        lessThan: "меньше",
+        greaterOrEqualTo: "больше или равно",
+        lessThanOrEqualTo: "меньше или равно",
+        include: "содержит",
+        exclude: "не содержит",
+        earlierThan: "раньше",
+        noEarlierThan: "не раньше",
+        laterThan: "позже",
+        noLaterThan: "не позже",
+        identificationNumber: "идентификационный номер",
+        phoneNumber: "номер телефона",
       },
       optionLabel_hi: {
         number: "संख्यात्मक",

@@ -518,6 +518,48 @@ export function getFailureText(ctx: Context, item: any) {
         optionLabel_hi[item.type2]
       } नहीं है।`;
     }
+  } else if (lang === "ru") {
+    const optionLabel_ru = ctx.dataVerification?.optionLabel_ru;
+    if (type === "dropdown") {
+      failureText += "выбранный вами вариант отсутствует в выпадающем списке";
+    } else if (type === "checkbox") {
+    } else if (
+      type === "number" ||
+      type === "number_integer" ||
+      type === "number_decimal"
+    ) {
+      failureText += `введённое значение не является ${
+        optionLabel_ru[item.type]
+      } ${optionLabel_ru[item.type2]} ${item.value1}`;
+
+      if (item.type2 === "between" || item.type2 === "notBetween") {
+        failureText += ` и ${item.value2}`;
+      }
+    } else if (type === "text_content") {
+      failureText += `введённый текст не соответствует условию: ${
+        optionLabel_ru[item.type2]
+      } ${item.value1}`;
+    } else if (type === "text_length") {
+      failureText += `длина введённого текста не ${
+        optionLabel_ru[item.type2]
+      } ${item.value1} `;
+
+      if (item.type2 === "between" || item.type2 === "notBetween") {
+        failureText += `и ${item.value2}`;
+      }
+    } else if (type === "date") {
+      failureText += `введённая дата не ${
+        optionLabel_ru[item.type2][item.type2]
+      } ${item.value1} `;
+
+      if (type2 === "between" || type2 === "notBetween") {
+        failureText += `и ${item.value2}`;
+      }
+    } else if (type === "validity") {
+      failureText += `введённое значение некорректно: ${
+        optionLabel_ru[item.type2][item.type2]
+      } `;
+    }
   } else {
     // default language english (en, en-US, en-GB, etc.)
     const optionLabel_en = ctx.dataVerification?.optionLabel_en;
@@ -712,7 +754,35 @@ export function getHintText(ctx: Context, item: any) {
       } else if (type === "validity") {
         hintValue += `Por favor, introduzca lo correcto.${optionLabel_es[type2]}`;
       }
+    } else if (lang === "ru") {
+      const optionLabel_ru = ctx.dataVerification?.optionLabel_ru;
+
+      if (type === "dropdown") {
+        hintValue += "пожалуйста, выберите вариант из выпадающего списка";
+      } else if (type === "checkbox") {
+      } else if (
+        type === "number" ||
+        type === "number_integer" ||
+        type === "number_decimal"
+      ) {
+        hintValue += `пожалуйста, введите ${optionLabel_ru[type]} значение, которое ${optionLabel_ru[type2]} ${item.value1}`;
+
+        if (type2 === "between" || type2 === "notBetween") {
+          hintValue += ` и ${value2}`;
+        }
+      } else if (type === "text_content") {
+        hintValue += `пожалуйста, введите текст, который ${optionLabel_ru[type2]} ${value1}`;
+      } else if (type === "date") {
+        hintValue += `пожалуйста, введите дату, которая ${optionLabel_ru[type2]} ${value1}`;
+
+        if (type2 === "between" || type2 === "notBetween") {
+          hintValue += ` и ${value2}`;
+        }
+      } else if (type === "validity") {
+        hintValue += `пожалуйста, введите корректный ${optionLabel_ru[type2]}`;
+      }
     }
+
   }
 
   return hintValue;
@@ -775,6 +845,8 @@ export function cellFocus(
     const { lang } = ctx;
     if (lang === "en") {
       hintText = '<span style="color:#f5a623;">Hint: </span>';
+    } else if (lang === "ru") {
+      hintText = '<span style="color:#f5a623;">Подсказка: </span>';
     } else if (lang === "zh" || lang === "zh-CN") {
       hintText = '<span style="color:#f5a623;">提示：</span>';
     } else if (lang === "zh-TW") {
@@ -802,6 +874,8 @@ export function cellFocus(
     const { lang } = ctx;
     if (lang === "en") {
       failureText = '<span style="color:#f72626;">Failure: </span>';
+    } else if (lang === "ru") {
+      failureText = '<span style="color:#f72626;">Ошибка: </span>';
     } else if (lang === "zh" || lang === "zh-CN") {
       failureText = '<span style="color:#f72626;">失效：</span>';
     } else if (lang === "zh-TW") {
