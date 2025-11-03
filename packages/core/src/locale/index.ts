@@ -7,7 +7,14 @@ import zh_tw from "./zh_tw";
 import { Context } from "..";
 
 // @ts-ignore
-const localeObj: Record<string, typeof zh> = { en, zh, es, "zh-TW": zh_tw, hi, ru };
+const localeObj: Record<string, typeof zh> = {
+  en,
+  zh,
+  es,
+  "zh-TW": zh_tw,
+  hi,
+  ru,
+};
 
 function locale(ctx: Context) {
   const langsToTry = [ctx.lang || "", ctx.lang?.split("-")[0] || ""];

@@ -782,7 +782,6 @@ export function getHintText(ctx: Context, item: any) {
         hintValue += `пожалуйста, введите корректный ${optionLabel_ru[type2]}`;
       }
     }
-
   }
 
   return hintValue;
