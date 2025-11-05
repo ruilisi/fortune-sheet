@@ -22,7 +22,7 @@ jobs:
       - run: cd packages/core && npm pack
       - run: cd packages/react && npm pack
       - run: cd packages/formula-parser && npm pack
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: packages
           path: |
