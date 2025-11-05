@@ -12,10 +12,10 @@ jobs:
           node-version: "20.x"
           registry-url: "https://registry.npmjs.org"
 
-      - run: npm deprecate @fortune-sheet/react@1.0.0 "license conflict due to hyperformula"
+      - run: npm deprecate @fortune-sheet/react@1.0.3 "yarn build issues"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - run: npm deprecate @fortune-sheet/core@1.0.0 "license conflict due to hyperformula"
+      - run: npm deprecate @fortune-sheet/core@1.0.3 "yarn build issues"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
