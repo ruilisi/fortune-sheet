@@ -18,9 +18,9 @@ export default {
 const Template: StoryFn<typeof Workbook> = ({ ...args }) => {
   const [data, setData] = useState<Sheet[]>();
   const [error, setError] = useState(false);
-  const wsRef = useRef<WebSocket>();
+  const wsRef = useRef<WebSocket>(null);
   const workbookRef = useRef<WorkbookInstance>(null);
-  const lastSelection = useRef<any>();
+  const lastSelection = useRef<any>(null);
   const { username, userId } = useMemo(() => {
     const _userId = uuidv4();
     return { username: `User-${_userId.slice(0, 3)}`, userId: _userId };

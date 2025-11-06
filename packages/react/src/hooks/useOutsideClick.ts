@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 export function useOutsideClick(
-  containerRef: React.RefObject<HTMLElement>,
+  containerRef: React.RefObject<HTMLElement | null>,
   handler: () => void,
   deps?: React.DependencyList
 ) {

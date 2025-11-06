@@ -21,6 +21,12 @@ module.exports = {
   },
   plugins: ["react", "@typescript-eslint", "react-hooks", "jest"],
   rules: {
+    "prettier/prettier": [
+      "error",
+      {
+        endOfLine: "auto",
+      },
+    ],
     quotes: 0,
     camelcase: 0,
     "class-methods-use-this": 0,
