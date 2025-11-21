@@ -6,6 +6,7 @@ import {
   mergeBorder,
   setDropcownValue,
 } from "@fortune-sheet/core";
+
 import React, {
   useCallback,
   useContext,
@@ -13,10 +14,10 @@ import React, {
   useRef,
   useState,
 } from "react";
+
 import WorkbookContext from "../../context";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 import SVGIcon from "../SVGIcon";
-
 import "./index.css";
 
 const DropDownList: React.FC = () => {
@@ -26,15 +27,15 @@ const DropDownList: React.FC = () => {
   const [isMul, setIsMul] = useState<boolean>(false);
   const [position, setPosition] = useState<{ left: number; top: number }>();
   const [selected, setSelected] = useState<any[]>([]);
-
+  
   const close = useCallback(() => {
     setContext((ctx) => {
       ctx.dataVerificationDropDownList = false;
     });
   }, [setContext]);
-
+  
   useOutsideClick(containerRef, close, [close]);
-
+  
   // 初始化
   useEffect(() => {
     if (!context.luckysheet_select_save) return;
@@ -58,7 +59,7 @@ const DropDownList: React.FC = () => {
     const dropdownList = getDropdownList(context, item.value1);
     // 初始化多选的下拉列表
     const cellValue = getCellValue(rowIndex, colIndex, d);
-
+    
     if (cellValue) {
       setSelected(cellValue.toString().split(","));
     }
@@ -70,7 +71,7 @@ const DropDownList: React.FC = () => {
     setIsMul(item.type2 === "true");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  
   // 设置下拉列表的值
   useEffect(() => {
     if (!context.luckysheet_select_save) return;
@@ -89,10 +90,10 @@ const DropDownList: React.FC = () => {
     if (cellValue) {
       setSelected(cellValue.toString().split(","));
     }
-
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [context.luckysheetfile]);
-
+  
   return (
     <div
       id="luckysheet-dataVerification-dropdown-List"
@@ -111,15 +112,20 @@ const DropDownList: React.FC = () => {
           key={i}
           onClick={() => {
             setContext((ctx) => {
-              const arr = selected;
+              const arr = [...selected];
               const index = arr.indexOf(v);
               if (index < 0) {
                 arr.push(v);
               } else {
                 arr.splice(index, 1);
               }
-              setSelected(arr);
+              // setSelected(arr); // REMOVED: Redundant update causing race condition
               setDropcownValue(ctx, v, arr);
+              
+              // ADDED: Auto-close for single select
+              if (!isMul) {
+                ctx.dataVerificationDropDownList = false;
+              }
             });
           }}
           tabIndex={0}
