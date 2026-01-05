@@ -1,4 +1,4 @@
-import { Canvas, defaultStyle } from "../canvas";
+import { Canvas } from "../canvas";
 import { Context } from "../context";
 // import { locale } from "../locale";
 import { hasPartMC } from "./validation";
@@ -69,21 +69,22 @@ export function handleScreenShot(ctx: Context) {
   let scrollHeight;
   let rh_height;
   if (st_r - 1 < 0) {
-    scrollHeight = 0;
-    rh_height = ctx.visibledatarow[ed_r];
+    scrollHeight = -1.5;
+    rh_height = ctx.visibledatarow[ed_r] + 1.5;
   } else {
-    scrollHeight = ctx.visibledatarow[st_r - 1];
-    rh_height = ctx.visibledatarow[ed_r] - ctx.visibledatarow[st_r - 1];
+    scrollHeight = ctx.visibledatarow[st_r - 1] - 1.5;
+    rh_height = ctx.visibledatarow[ed_r] - ctx.visibledatarow[st_r - 1] + 1.5;
   }
 
   let scrollWidth;
   let ch_width;
   if (st_c - 1 < 0) {
-    scrollWidth = 0;
-    ch_width = ctx.visibledatacolumn[ed_c];
+    scrollWidth = -1.5;
+    ch_width = ctx.visibledatacolumn[ed_c] + 1.5;
   } else {
-    scrollWidth = ctx.visibledatacolumn[st_c - 1];
-    ch_width = ctx.visibledatacolumn[ed_c] - ctx.visibledatacolumn[st_c - 1];
+    scrollWidth = ctx.visibledatacolumn[st_c - 1] - 1.5;
+    ch_width =
+      ctx.visibledatacolumn[ed_c] - ctx.visibledatacolumn[st_c - 1] + 1.5;
   }
   const newCanvasElement = document.createElement("canvas");
   newCanvasElement.width = Math.ceil(ch_width * devicePixelRatio);
@@ -103,23 +104,6 @@ export function handleScreenShot(ctx: Context) {
   });
   const ctx_newCanvas = newCanvasElement.getContext("2d");
   if (ctx_newCanvas == null) return undefined;
-
-  // 补上 左边框和上边框
-  ctx_newCanvas.beginPath();
-  ctx_newCanvas.moveTo(0, 0);
-  ctx_newCanvas.lineTo(0, ctx.devicePixelRatio * rh_height);
-  ctx_newCanvas.lineWidth = ctx.devicePixelRatio * 2;
-  ctx_newCanvas.strokeStyle = defaultStyle.strokeStyle;
-  ctx_newCanvas.stroke();
-  ctx_newCanvas.closePath();
-
-  ctx_newCanvas.beginPath();
-  ctx_newCanvas.moveTo(0, 0);
-  ctx_newCanvas.lineTo(ctx.devicePixelRatio * ch_width, 0);
-  ctx_newCanvas.lineWidth = ctx.devicePixelRatio * 2;
-  ctx_newCanvas.strokeStyle = defaultStyle.strokeStyle;
-  ctx_newCanvas.stroke();
-  ctx_newCanvas.closePath();
 
   const image = new Image();
   const url = newCanvasElement.toDataURL("image/png");
