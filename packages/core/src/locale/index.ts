@@ -4,6 +4,7 @@ import es from "./es";
 import hi from "./hi";
 import ru from "./ru";
 import zh_tw from "./zh_tw";
+import de from "./de";
 import { Context } from "..";
 
 const localeObj: Record<string, typeof zh> = {
@@ -18,6 +19,8 @@ const localeObj: Record<string, typeof zh> = {
   hi,
   // @ts-ignore
   ru,
+  // @ts-ignore,
+  de,
 };
 
 function locale(ctx: Context) {
