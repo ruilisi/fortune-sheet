@@ -11,6 +11,7 @@ import {
 } from "./cell";
 import clipboard from "./clipboard";
 import { getBorderInfoCompute } from "./border";
+import { cellFocus } from "./dataVerification";
 import {
   escapeHTMLTag,
   getSheetIndex,
@@ -917,6 +918,8 @@ export function moveHighlightCell(
     // TODO pivotTable.pivotclick(row_index, col_index);
     // TODO formula.fucntionboxshow(row_index, col_index);
     scrollToHighlightCell(ctx, row_index, col_index);
+    // Show dropdown button if cell has data verification
+    cellFocus(ctx, row_index, col_index, false);
   } else if (type === "rangeOfFormula") {
     const last = ctx.formulaCache.func_selectedrange;
     if (!last) return;

@@ -16,6 +16,7 @@ import {
   escapeHTMLTag,
   isAllowEdit,
   getrangeseleciton,
+  updateCell,
 } from "@fortune-sheet/core";
 import React, {
   useContext,
@@ -36,7 +37,7 @@ import usePrevious from "../../hooks/usePrevious";
 const InputBox: React.FC = () => {
   const { context, setContext, refs } = useContext(WorkbookContext);
   const inputRef = useRef<HTMLDivElement>(null);
-  const lastKeyDownEventRef = useRef<KeyboardEvent>(null);
+  const lastKeyDownEventRef = useRef<KeyboardEvent | null>(null);
   const prevCellUpdate = usePrevious<any[]>(context.luckysheetCellUpdate);
   const prevSheetId = usePrevious<string>(context.currentSheetId);
   const [isHidenRC, setIsHidenRC] = useState<boolean>(false);
@@ -244,8 +245,32 @@ const InputBox: React.FC = () => {
           e.stopPropagation();
         } else selectActiveFormula(e);
       } else if (e.key === "Tab" && context.luckysheetCellUpdate.length > 0) {
-        selectActiveFormula(e);
+        // Save current cell and move to the right cell
+        setContext((draftCtx) => {
+          const lastCellUpdate = _.clone(draftCtx.luckysheetCellUpdate);
+          updateCell(
+            draftCtx,
+            draftCtx.luckysheetCellUpdate[0],
+            draftCtx.luckysheetCellUpdate[1],
+            refs.cellInput.current!
+          );
+          draftCtx.luckysheet_select_save = [
+            {
+              row: [lastCellUpdate[0], lastCellUpdate[0]],
+              column: [lastCellUpdate[1], lastCellUpdate[1]],
+              row_focus: lastCellUpdate[0],
+              column_focus: lastCellUpdate[1],
+            },
+          ];
+          moveHighlightCell(
+            draftCtx,
+            "right",
+            e.shiftKey ? -1 : 1,
+            "rangeOfSelect"
+          );
+        });
         e.preventDefault();
+        e.stopPropagation();
       } else if (e.key === "F4" && context.luckysheetCellUpdate.length > 0) {
         // formula.setfreezonFuc(event);
         e.preventDefault();
@@ -312,6 +337,7 @@ const InputBox: React.FC = () => {
       //   formulaMoveEvent("right", ctrlKey, shiftKey, event);
       // }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       clearSearchItemActiveClass,
       context.luckysheetCellUpdate.length,
@@ -322,7 +348,6 @@ const InputBox: React.FC = () => {
 
   const onChange = useCallback(
     (__: any, isBlur?: boolean) => {
-      // setInputHTML(html);
       const e = lastKeyDownEventRef.current;
       if (!e) return;
       const kcode = e.keyCode;
@@ -330,19 +355,14 @@ const InputBox: React.FC = () => {
 
       if (
         !(
-          (
-            (kcode >= 112 && kcode <= 123) ||
-            kcode <= 46 ||
-            kcode === 144 ||
-            kcode === 108 ||
-            e.ctrlKey ||
-            e.altKey ||
-            (e.shiftKey &&
-              (kcode === 37 || kcode === 38 || kcode === 39 || kcode === 40))
-          )
-          // kcode === keycode.WIN ||
-          // kcode === keycode.WIN_R ||
-          // kcode === keycode.MENU))
+          (kcode >= 112 && kcode <= 123) ||
+          kcode <= 46 ||
+          kcode === 144 ||
+          kcode === 108 ||
+          e.ctrlKey ||
+          e.altKey ||
+          (e.shiftKey &&
+            (kcode === 37 || kcode === 38 || kcode === 39 || kcode === 40))
         ) ||
         kcode === 8 ||
         kcode === 32 ||
@@ -361,7 +381,6 @@ const InputBox: React.FC = () => {
           if (!isAllowEdit(draftCtx, draftCtx.luckysheet_select_save)) {
             return;
           }
-          // if(event.target.id!="luckysheet-input-box" && event.target.id!="luckysheet-rich-text-editor"){
           handleFormulaInput(
             draftCtx,
             refs.fxInput.current,
@@ -369,18 +388,8 @@ const InputBox: React.FC = () => {
             kcode,
             preText.current
           );
-          // clearSearchItemActiveClass();
-          // formula.functionInputHanddler(
-          //   $("#luckysheet-functionbox-cell"),
-          //   $("#luckysheet-rich-text-editor"),
-          //   kcode
-          // );
-          // setCenterInputPosition(
-          //   draftCtx.luckysheetCellUpdate[0],
-          //   draftCtx.luckysheetCellUpdate[1],
-          //   draftCtx.flowdata
-          // );
-          // }
+          // Show dropdown when typing in cell
+          draftCtx.dataVerificationDropDownList = true;
         });
       }
     },

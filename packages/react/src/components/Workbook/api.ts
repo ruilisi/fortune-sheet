@@ -98,8 +98,43 @@ export function generateAPIs(
           }
           createFilterOptions(ctx_, ctx_.luckysheet_filter_save, ops[0]?.id);
           if (patches.length === 0) return;
+
+          // Filter out patches that would fail due to null/undefined intermediate paths
+          const validPatches = patches.filter((patch) => {
+            try {
+              if (patch.path.length < 2) return true;
+
+              let current: any = ctx_;
+              // Check all intermediate paths except the last one
+              for (let i = 0; i < patch.path.length - 1; i += 1) {
+                const key = patch.path[i];
+                if (current[key] === null || current[key] === undefined) {
+                  // For "add" operations, we might need to create the path
+                  if (patch.op === "add") {
+                    // Initialize missing intermediate objects/arrays
+                    const nextKey = patch.path[i + 1];
+                    current[key] = typeof nextKey === "number" ? [] : {};
+                  } else {
+                    console.warn(
+                      "Skipping patch due to null/undefined path:",
+                      patch
+                    );
+                    return false;
+                  }
+                }
+                current = current[key];
+              }
+              return true;
+            } catch (e) {
+              console.warn("Skipping invalid patch:", patch, e);
+              return false;
+            }
+          });
+
+          if (validPatches.length === 0) return;
+
           try {
-            applyPatches(ctx_, patches);
+            applyPatches(ctx_, validPatches);
           } catch (e) {
             console.error(e);
           }

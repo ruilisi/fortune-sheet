@@ -51,6 +51,7 @@ import RangeDialog from "../DataVerification/RangeDialog";
 import { useDialog } from "../../hooks/useDialog";
 import SVGIcon from "../SVGIcon";
 import DropDownList from "../DataVerification/DropdownList";
+import AutocompleteList from "./AutocompleteList";
 
 const SheetOverlay: React.FC = () => {
   const { context, setContext, settings, refs } = useContext(WorkbookContext);
@@ -447,7 +448,7 @@ const SheetOverlay: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [context.currentSheetId, context.luckysheet_select_save]);
 
-  const cellValue = () => {
+  const cellValue = useCallback(() => {
     if ((context.luckysheet_select_save?.length ?? 0) > 0) {
       const selection =
         context.luckysheet_select_save?.[
@@ -464,7 +465,12 @@ const SheetOverlay: React.FC = () => {
       return cellVal;
     }
     return "";
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    context.currentSheetId,
+    context.luckysheet_select_save,
+    context.luckysheetfile,
+  ]);
 
   const computedCellValue = cellValue();
 
@@ -473,7 +479,7 @@ const SheetOverlay: React.FC = () => {
       setLastRangeText(String(rangeText));
       setLastCellValue(String(cellValue()));
     }
-  }, [context.sheetFocused]); // Runs only when sheet focus toggles
+  }, [cellValue, context.sheetFocused, rangeText]); // Runs only when sheet focus toggles
 
   return (
     <main
@@ -798,8 +804,9 @@ const SheetOverlay: React.FC = () => {
             <LinkEditCard {...context.linkCard} />
           )}
           {context.rangeDialog?.show && <RangeDialog />}
-          <FilterOptions getContainer={() => containerRef.current!} />
+          <FilterOptions />
           <InputBox />
+          <AutocompleteList />
           <NotationBoxes />
           <div id="luckysheet-multipleRange-show" />
           <div id="luckysheet-dynamicArray-hightShow" />
