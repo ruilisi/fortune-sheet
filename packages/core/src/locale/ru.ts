@@ -12975,6 +12975,12 @@ export default {
       "Подтвердить редактирование ячейки и перейти вниз: Enter.",
     moveRightShortcut: "Перейти вправо: Tab.",
     moveLeftShortcut: "Перейти влево: Shift, Tab.",
+    contextMenuShortcut:
+      "Открыть контекстное меню: Control или Meta, Shift, M.",
+    rowContextMenuShortcut:
+      "Открыть контекстное меню заголовка строки: Control или Meta, Shift, R.",
+    columnContextMenuShortcut:
+      "Открыть контекстное меню заголовка столбца: Control или Meta, Shift, L.",
     shortcuts: "Горячие клавиши",
   },
   currencyDetail: [

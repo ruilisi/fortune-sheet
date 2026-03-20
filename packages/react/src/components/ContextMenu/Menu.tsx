@@ -35,6 +35,19 @@ const Menu: React.FC<Props> = ({
       ref={containerRef}
       className="luckysheet-cols-menuitem luckysheet-mousedown-cancel"
       onClick={(e) => onClick?.(e, containerRef.current!)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          if (e.repeat) return;
+          e.preventDefault();
+          e.stopPropagation();
+          containerRef.current?.dispatchEvent(
+            new MouseEvent("click", {
+              bubbles: true,
+              cancelable: true,
+            })
+          );
+        }
+      }}
       onMouseLeave={(e) => onMouseLeave?.(e, containerRef.current!)}
       onMouseEnter={(e) => onMouseEnter?.(e, containerRef.current!)}
       tabIndex={0}

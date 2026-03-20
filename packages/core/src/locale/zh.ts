@@ -11075,6 +11075,11 @@ export default {
     confirmCellEditShortcut: "确认编辑并向下移动: Enter。",
     moveRightShortcut: "向右移动: Tab。",
     moveLeftShortcut: "向左移动: Shift, Tab。",
+    contextMenuShortcut: "打开上下文菜单: Control 或 Meta 键, Shift, M。",
+    rowContextMenuShortcut:
+      "打开行标题上下文菜单: Control 或 Meta 键, Shift, R。",
+    columnContextMenuShortcut:
+      "打开列标题上下文菜单: Control 或 Meta 键, Shift, L。",
     shortcuts: "键盘快捷键",
   },
   currencyDetail: [

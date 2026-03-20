@@ -11042,6 +11042,11 @@ export default {
     confirmCellEditShortcut: "確認編輯並向下移動: Enter。",
     moveRightShortcut: "向右移動: Tab。",
     moveLeftShortcut: "向左移動: Shift, Tab。",
+    contextMenuShortcut: "開啟內容選單: Control 或 Meta 鍵, Shift, M。",
+    rowContextMenuShortcut:
+      "開啟列標題內容選單: Control 或 Meta 鍵, Shift, R。",
+    columnContextMenuShortcut:
+      "開啟欄標題內容選單: Control 或 Meta 鍵, Shift, L。",
     shortcuts: "鍵盤快速鍵",
   },
   currencyDetail: {

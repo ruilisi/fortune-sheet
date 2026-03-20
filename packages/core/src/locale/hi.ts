@@ -11099,6 +11099,11 @@ export default {
       "Confirmar edición de celda y mover hacia abajo: Enter.",
     moveRightShortcut: "Mover a la derecha: Tab.",
     moveLeftShortcut: "Mover a la izquierda: Shift, Tab.",
+    contextMenuShortcut: "Open context menu: Control or Meta, Shift, M.",
+    rowContextMenuShortcut:
+      "Open row header context menu: Control or Meta, Shift, R.",
+    columnContextMenuShortcut:
+      "Open column header context menu: Control or Meta, Shift, L.",
     shortcuts: "कुंजीपटल अल्प मार्ग",
   },
   currencyDetail: [

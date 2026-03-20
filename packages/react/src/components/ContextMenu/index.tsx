@@ -96,13 +96,11 @@ const ContextMenu: React.FC = () => {
           : ["left", "right"].map((dir) => (
               <Menu
                 key={`add-col-${dir}`}
-                onClick={(e) => {
+                onClick={(_e, container) => {
                   const position =
                     context.luckysheet_select_save?.[0]?.column?.[0];
                   if (position == null) return;
-                  const countStr = (e.target as HTMLDivElement).querySelector(
-                    "input"
-                  )?.value;
+                  const countStr = container.querySelector("input")?.value;
                   if (countStr == null) return;
                   const count = parseInt(countStr, 10);
                   if (count < 1) return;

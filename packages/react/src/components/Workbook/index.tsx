@@ -10,6 +10,7 @@ import {
   handleGlobalKeyDown,
   getSheetIndex,
   handlePaste,
+  handleContextMenu,
   filterPatch,
   patchToOp,
   Op,
@@ -604,6 +605,112 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
 
     const onKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
+        const isContextMenuShortcut =
+          (e.ctrlKey || e.metaKey) && e.shiftKey && e.code === "KeyM";
+        const isRowContextMenuShortcut =
+          (e.ctrlKey || e.metaKey) && e.shiftKey && e.code === "KeyR";
+        const isColumnContextMenuShortcut =
+          (e.ctrlKey || e.metaKey) && e.shiftKey && e.code === "KeyL";
+        if (
+          (isContextMenuShortcut ||
+            isRowContextMenuShortcut ||
+            isColumnContextMenuShortcut) &&
+          context.allowEdit
+        ) {
+          const selected =
+            context.luckysheet_select_save?.[
+              context.luckysheet_select_save.length - 1
+            ];
+          if (selected && workbookContainer.current && cellArea.current) {
+            const workbookRect =
+              workbookContainer.current.getBoundingClientRect();
+            const cellAreaRect = cellArea.current.getBoundingClientRect();
+            const selectionLeft = selected.left ?? 0;
+            const selectionTop = selected.top ?? 0;
+            let area: "cell" | "rowHeader" | "columnHeader" = "cell";
+            let pageX =
+              window.scrollX + workbookRect.left + context.rowHeaderWidth;
+            let pageY =
+              window.scrollY + workbookRect.top + context.columnHeaderHeight;
+            if (isRowContextMenuShortcut) {
+              area = "rowHeader";
+              pageX =
+                window.scrollX + workbookRect.left + context.rowHeaderWidth / 2;
+              pageY =
+                window.scrollY +
+                cellAreaRect.top +
+                selectionTop -
+                context.scrollTop +
+                1;
+            } else if (isColumnContextMenuShortcut) {
+              area = "columnHeader";
+              pageX =
+                window.scrollX +
+                cellAreaRect.left +
+                selectionLeft -
+                context.scrollLeft +
+                1;
+              pageY =
+                window.scrollY +
+                workbookRect.top +
+                context.columnHeaderHeight / 2;
+            } else if (selected.row_select) {
+              area = "rowHeader";
+              pageX =
+                window.scrollX + workbookRect.left + context.rowHeaderWidth / 2;
+              pageY =
+                window.scrollY +
+                cellAreaRect.top +
+                selectionTop -
+                context.scrollTop +
+                1;
+            } else if (selected.column_select) {
+              area = "columnHeader";
+              pageX =
+                window.scrollX +
+                cellAreaRect.left +
+                selectionLeft -
+                context.scrollLeft +
+                1;
+              pageY =
+                window.scrollY +
+                workbookRect.top +
+                context.columnHeaderHeight / 2;
+            } else {
+              pageX =
+                window.scrollX +
+                cellAreaRect.left +
+                selectionLeft -
+                context.scrollLeft +
+                1;
+              pageY =
+                window.scrollY +
+                cellAreaRect.top +
+                selectionTop -
+                context.scrollTop +
+                1;
+            }
+            const syntheticContextEvent = new MouseEvent("contextmenu", {
+              bubbles: true,
+              cancelable: true,
+              clientX: pageX - window.scrollX,
+              clientY: pageY - window.scrollY,
+            });
+            setContextWithProduce((draftCtx) => {
+              handleContextMenu(
+                draftCtx,
+                mergedSettings,
+                syntheticContextEvent,
+                workbookContainer.current!,
+                cellArea.current!,
+                area
+              );
+            });
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+        }
         const { nativeEvent } = e;
         // handling undo and redo ahead because handleUndo and handleRedo
         // themselves are calling setContext, and should not be nested
@@ -636,7 +743,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           );
         });
       },
-      [handleRedo, handleUndo, setContextWithProduce]
+      [context, handleRedo, handleUndo, mergedSettings, setContextWithProduce]
     );
 
     const onPaste = useCallback(
@@ -773,6 +880,9 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
                 <li>{info.confirmCellEditShortcut}</li>
                 <li>{info.moveRightShortcut}</li>
                 <li>{info.moveLeftShortcut}</li>
+                <li>{info.contextMenuShortcut}</li>
+                <li>{info.rowContextMenuShortcut}</li>
+                <li>{info.columnContextMenuShortcut}</li>
               </ul>
             </section>
             <SVGDefines currency={mergedSettings.currency} />

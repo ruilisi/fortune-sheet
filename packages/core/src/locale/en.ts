@@ -11094,6 +11094,11 @@ export default {
     confirmCellEditShortcut: "Confirm cell edit and move down: Enter.",
     moveRightShortcut: "Move right: Tab.",
     moveLeftShortcut: "Move left: Shift, Tab.",
+    contextMenuShortcut: "Open context menu: Control or Meta key, Shift, M.",
+    rowContextMenuShortcut:
+      "Open row header context menu: Control or Meta key, Shift, R.",
+    columnContextMenuShortcut:
+      "Open column header context menu: Control or Meta key, Shift, L.",
     shortcuts: "Keyboard Shortcuts",
   },
   currencyDetail: [
@@ -11419,7 +11424,7 @@ export default {
     sortBy: "Sort by",
     addOthers: "Add another sort column",
     close: "close",
-    confirm: "sort",
+    confirm: "Sort",
 
     columnOperation: "Column",
     secondaryTitle: "then by",

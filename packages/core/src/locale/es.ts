@@ -11069,6 +11069,11 @@ export default {
       "Confirmar edición de celda y mover hacia abajo: Enter.",
     moveRightShortcut: "Mover a la derecha: Tab.",
     moveLeftShortcut: "Mover a la izquierda: Shift, Tab.",
+    contextMenuShortcut: "Abrir menú contextual: Control o Meta, Shift, M.",
+    rowContextMenuShortcut:
+      "Abrir menú contextual de fila: Control o Meta, Shift, R.",
+    columnContextMenuShortcut:
+      "Abrir menú contextual de columna: Control o Meta, Shift, L.",
     shortcuts: "Atajos de teclado",
   },
   currencyDetail: {
@@ -11385,7 +11390,7 @@ export default {
     sortBy: "Ordenar por",
     addOthers: "Añadir otra columna de ordenación",
     close: "cerrar",
-    confirm: "ordenar",
+    confirm: "Ordenar",
 
     columnOperation: "Columna",
     secondaryTitle: "y después por",

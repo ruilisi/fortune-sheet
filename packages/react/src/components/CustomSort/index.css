@@ -8,6 +8,10 @@
   margin: 0 0 16px;
 }
 
+.fortune-sort-title-range {
+  margin: 0 4px;
+}
+
 .fortune-sort-modal > div {
   margin-bottom: 10px;
 }
@@ -15,6 +19,10 @@
 .fortune-sort-tablec td {
   padding: 5px;
   white-space: nowrap;
+}
+
+.fortune-sort-by-select {
+  margin-left: 8px;
 }
 
 .fortune-sort-button {
