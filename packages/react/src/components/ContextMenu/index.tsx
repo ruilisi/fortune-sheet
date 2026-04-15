@@ -439,7 +439,16 @@ const ContextMenu: React.FC = () => {
             {rightclick.height}
             <input
               onClick={(e) => e.stopPropagation()}
-              onKeyDown={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === "Enter") {
+                  (
+                    e.currentTarget.closest(
+                      ".luckysheet-cols-menuitem"
+                    ) as HTMLElement
+                  )?.click();
+                }
+              }}
               tabIndex={0}
               type="number"
               min={1}
@@ -500,7 +509,16 @@ const ContextMenu: React.FC = () => {
             {rightclick.width}
             <input
               onClick={(e) => e.stopPropagation()}
-              onKeyDown={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === "Enter") {
+                  (
+                    e.currentTarget.closest(
+                      ".luckysheet-cols-menuitem"
+                    ) as HTMLElement
+                  )?.click();
+                }
+              }}
               tabIndex={0}
               type="number"
               min={1}
