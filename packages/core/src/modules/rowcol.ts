@@ -818,7 +818,7 @@ export function insertRowCol(
 
     const arr = [];
     for (let r = 0; r < count; r += 1) {
-      arr.push(JSON.stringify(row));
+      arr.push(JSON.parse(JSON.stringify(row)));
       // 同步拷贝 type 为 cell 类型的边框
       if (cellBorderConfig.length) {
         const cellBorderConfigCopy = _.cloneDeep(cellBorderConfig);
@@ -837,14 +837,12 @@ export function insertRowCol(
 
     if (direction === "lefttop") {
       if (index === 0) {
-        new Function("d", `return d.unshift(${arr.join(",")})`)(d);
+        d.unshift(...arr);
       } else {
-        new Function("d", `return d.splice(${index}, 0, ${arr.join(",")})`)(d);
+        d.splice(index, 0, ...arr);
       }
     } else {
-      new Function("d", `return d.splice(${index + 1}, 0, ${arr.join(",")})`)(
-        d
-      );
+      d.splice(index + 1, 0, ...arr);
     }
   } else {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

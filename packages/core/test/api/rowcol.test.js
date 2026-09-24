@@ -72,6 +72,56 @@ describe("rowcol", () => {
     });
   });
 
+  test("insertRowOrColumn without string code evaluation", () => {
+    // Simulates a Content-Security-Policy without 'unsafe-eval'
+    const OriginalFunction = global.Function;
+    global.Function = function Function() {
+      throw new EvalError("Code generation from strings disallowed");
+    };
+    const mergedTmpl = { bg: "#ff0000", mc: { r: 0, c: 0 } };
+    const insert = (index, direction) => {
+      const ctx = getContext();
+      const { data } = ctx.luckysheetfile[0];
+      // column A is one merged cell spanning all four rows
+      data.forEach((r) => {
+        r[0] = { ...mergedTmpl, mc: { ...mergedTmpl.mc } };
+      });
+      data[0][0] = { v: "a", bg: "#ff0000", mc: { r: 0, c: 0, rs: 4 } };
+      data[index][1] = { v: "x" };
+      const original = data.slice();
+      insertRowOrColumn(ctx, "row", index, 2, direction, { id: "id_1" });
+      return { original, newData: ctx.luckysheetfile[0].data };
+    };
+    try {
+      [
+        { i: 0, d: "lefttop", start: 0, tmpl: null },
+        { i: 2, d: "lefttop", start: 2, tmpl: mergedTmpl },
+        { i: 2, d: "rightbottom", start: 3, tmpl: mergedTmpl },
+      ].forEach((k) => {
+        const { original, newData } = insert(k.i, k.d);
+        expect(newData.length).toBe(original.length + 2);
+        expect(newData.slice(k.start, k.start + 2)).toEqual([
+          [k.tmpl, null, null, null],
+          [k.tmpl, null, null, null],
+        ]);
+        // existing rows keep their order around the inserted block
+        expect([
+          ...newData.slice(0, k.start),
+          ...newData.slice(k.start + 2),
+        ]).toEqual(original);
+      });
+
+      // every inserted row is an independent copy
+      const { newData } = insert(2, "rightbottom");
+      expect(newData[3]).not.toBe(newData[4]);
+      expect(newData[3][0]).not.toBe(newData[4][0]);
+      newData[3][0].bg = "#00ff00";
+      expect(newData[4][0].bg).toBe("#ff0000");
+    } finally {
+      global.Function = OriginalFunction;
+    }
+  });
+
   test("deleteRowOrColumn", () => {
     const ctx = getContext();
     const rawDataFirst = () => [
