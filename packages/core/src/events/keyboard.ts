@@ -1,13 +1,20 @@
 import _ from "lodash";
 import { hideCRCount, removeActiveImage } from "..";
 import { Context, getFlowdata } from "../context";
-import { updateCell, cancelNormalSelected } from "../modules/cell";
-import { handleFormulaInput } from "../modules/formula";
+import { updateCell, cancelNormalSelected, mergeBorder } from "../modules/cell";
+import {
+  enterPointModeAt,
+  formulaTextAfterCaret,
+  handleFormulaInput,
+  israngeseleciton,
+} from "../modules/formula";
+import { colLocationByIndex, rowLocationByIndex } from "../modules/location";
 import {
   copy,
   deleteSelectedCellText,
   moveHighlightCell,
   moveHighlightRange,
+  scrollToHighlightCell,
   selectAll,
   selectionCache,
 } from "../modules/selection";
@@ -673,6 +680,222 @@ export function handleArrowKey(ctx: Context, e: KeyboardEvent) {
   }
 }
 
+/**
+ * The next visible index one step from `from`, skipping hidden rows/columns,
+ * or null when the step leaves the sheet.
+ */
+function stepToVisibleIndex(
+  from: number,
+  delta: number,
+  limit: number,
+  hidden: Record<string, any>
+) {
+  let index = from + delta;
+  while (index >= 0 && index < limit && !_.isNil(hidden[index])) {
+    index += delta;
+  }
+  if (!Number.isFinite(index) || index < 0 || index >= limit) return null;
+  return index;
+}
+
+/**
+ * Whether an arrow key should pick a cell reference instead of moving the
+ * caret: a formula is being edited, no modifier is held, and the caret sits in
+ * an empty operand slot (after "=", "(", ",", "&" or an operator, with nothing
+ * but ")" or "," ahead of it). Once picking has started, further arrows keep
+ * moving the picked reference.
+ */
+export function canEnterPointMode(ctx: Context, e: KeyboardEvent) {
+  if (e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) return false;
+  if (ctx.luckysheetCellUpdate.length === 0) return false;
+  if (ctx.formulaCache.rangestart) return true;
+  // Also records rangeSetValueTo, the node rangeSetValue inserts after.
+  if (!israngeseleciton(ctx)) return false;
+  // `=(B2-|$E2)` already has its operand: there the arrow edits the formula
+  // text rather than splicing in a second reference.
+  return /^\s*($|[),])/.test(formulaTextAfterCaret());
+}
+
+/**
+ * A null `target` means the arrow belongs to reference picking but there is
+ * no cell to step to, so the reference stays where it is.
+ */
+export type PointModeStep = {
+  target: { row: number; column: number } | null;
+};
+
+/**
+ * Work out which cell an arrow key picks, without changing anything. Returns
+ * null when the arrow should keep its usual meaning.
+ *
+ * Kept separate from applyPointModeStep so a caller (the formula bar) can
+ * decide whether to preventDefault while the event is still being dispatched,
+ * and then apply that same decision inside setContext.
+ */
+export function resolvePointModeStep(
+  ctx: Context,
+  e: KeyboardEvent
+): PointModeStep | null {
+  if (!canEnterPointMode(ctx, e)) return null;
+
+  const flowdata = getFlowdata(ctx);
+  if (!flowdata) return null;
+  const rowCount = flowdata.length;
+  const colCount = flowdata[0]?.length ?? 0;
+  if (rowCount === 0 || colCount === 0) return null;
+
+  const inPointMode = !!ctx.formulaCache.rangestart;
+
+  // Step from the reference already picked or, on the first arrow, from the
+  // cell being edited, so a formula does not start by referencing itself.
+  let startRow;
+  let endRow;
+  let startCol;
+  let endCol;
+  const picked = ctx.formulaCache.func_selectedrange;
+  if (inPointMode && picked) {
+    [startRow, endRow] = picked.row;
+    [startCol, endCol] = picked.column;
+    if (
+      _.isNil(startRow) ||
+      _.isNil(endRow) ||
+      _.isNil(startCol) ||
+      _.isNil(endCol)
+    ) {
+      return null;
+    }
+  } else {
+    const [editRow, editCol] = ctx.luckysheetCellUpdate;
+    if (!Number.isFinite(editRow) || !Number.isFinite(editCol)) return null;
+    const merged = mergeBorder(ctx, flowdata, editRow, editCol);
+    [, , startRow, endRow] = merged ? merged.row : [0, 0, editRow, editRow];
+    [, , startCol, endCol] = merged ? merged.column : [0, 0, editCol, editCol];
+  }
+
+  // Step off the edge the arrow points away from, so a merged cell is stepped
+  // over rather than re-entered.
+  let axis: "row" | "column";
+  let next: number | null;
+  switch (e.key) {
+    case "ArrowUp":
+      axis = "row";
+      next = stepToVisibleIndex(
+        startRow,
+        -1,
+        rowCount,
+        ctx.config.rowhidden ?? {}
+      );
+      break;
+    case "ArrowDown":
+      axis = "row";
+      next = stepToVisibleIndex(
+        endRow,
+        1,
+        rowCount,
+        ctx.config.rowhidden ?? {}
+      );
+      break;
+    case "ArrowLeft":
+      axis = "column";
+      next = stepToVisibleIndex(
+        startCol,
+        -1,
+        colCount,
+        ctx.config.colhidden ?? {}
+      );
+      break;
+    case "ArrowRight":
+      axis = "column";
+      next = stepToVisibleIndex(
+        endCol,
+        1,
+        colCount,
+        ctx.config.colhidden ?? {}
+      );
+      break;
+    default:
+      return null;
+  }
+
+  if (next == null) {
+    // At the edge of the sheet: an existing pick stays put, and an arrow that
+    // would have started one moves the caret as usual.
+    return inPointMode ? { target: null } : null;
+  }
+
+  return {
+    target:
+      axis === "row"
+        ? { row: next, column: startCol }
+        : { row: startRow, column: next },
+  };
+}
+
+/**
+ * Pick the cell a resolved step names, through the same path a mouse click
+ * uses. Safe to run twice (React StrictMode): the second pass replaces the
+ * reference the first one wrote.
+ */
+export function applyPointModeStep(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  fxInput: HTMLDivElement | null | undefined,
+  step: PointModeStep
+) {
+  if (!step.target) return;
+  const flowdata = getFlowdata(ctx);
+  if (!flowdata) return;
+  const { row: targetRow, column: targetCol } = step.target;
+
+  const merged = mergeBorder(ctx, flowdata, targetRow, targetCol);
+  const [top, bottom] = merged
+    ? merged.row
+    : rowLocationByIndex(targetRow, ctx.visibledatarow);
+  const [left, right] = merged
+    ? merged.column
+    : colLocationByIndex(targetCol, ctx.visibledatacolumn);
+  const rowStart = merged ? merged.row[2] : targetRow;
+  const rowEnd = merged ? merged.row[3] : targetRow;
+  const colStart = merged ? merged.column[2] : targetCol;
+  const colEnd = merged ? merged.column[3] : targetCol;
+
+  enterPointModeAt(
+    ctx,
+    cellInput,
+    fxInput,
+    {
+      row: [rowStart, rowEnd],
+      column: [colStart, colEnd],
+      row_focus: rowStart,
+      column_focus: colStart,
+    },
+    {
+      left,
+      top,
+      width: right - left - 1,
+      height: bottom - top - 1,
+    }
+  );
+
+  scrollToHighlightCell(ctx, rowStart, colStart);
+}
+
+/**
+ * While a formula is being edited, let the arrow keys pick a cell reference,
+ * as in Excel and Google Sheets. Returns true when the key was used.
+ */
+export function handleFormulaArrowKey(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  fxInput: HTMLDivElement | null | undefined,
+  e: KeyboardEvent
+) {
+  const step = resolvePointModeStep(ctx, e);
+  if (!step) return false;
+  applyPointModeStep(ctx, cellInput, fxInput, step);
+  return true;
+}
+
 export function handleGlobalKeyDown(
   ctx: Context,
   cellInput: HTMLDivElement,
@@ -894,6 +1117,13 @@ export function handleGlobalKeyDown(
       kstr === "ArrowLeft" ||
       kstr === "ArrowRight"
     ) {
+      // Return rather than fall through: the end of this handler moves focus
+      // to the cell editor, which would pull it out of the formula bar.
+      if (handleFormulaArrowKey(ctx, cellInput, fxInput, e)) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
       handleArrowKey(ctx, e);
     } else if (
       !(

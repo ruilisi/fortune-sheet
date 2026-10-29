@@ -2473,6 +2473,31 @@ function functionStrChange_range(
   return "";
 }
 
+/**
+ * The text between the caret and the end of the formula editor holding it, or
+ * "" when the caret is not in one. israngeseleciton looks at the character
+ * behind the caret; this looks ahead, so callers can tell whether the operand
+ * slot at the caret is actually empty.
+ *
+ * Reads the live selection, so call it before the browser moves the caret.
+ */
+export function formulaTextAfterCaret(): string {
+  const sel = window.getSelection();
+  if (sel == null || sel.rangeCount === 0 || sel.anchorNode == null) return "";
+  const el =
+    sel.anchorNode.nodeType === Node.ELEMENT_NODE
+      ? (sel.anchorNode as HTMLElement)
+      : sel.anchorNode.parentElement;
+  const editor = el?.closest(
+    "#luckysheet-rich-text-editor, #luckysheet-functionbox-cell"
+  );
+  if (editor == null) return "";
+  const after = sel.getRangeAt(0).cloneRange();
+  after.collapse(true);
+  after.setEnd(editor, editor.childNodes.length);
+  return after.toString();
+}
+
 export function israngeseleciton(ctx: Context, istooltip?: boolean) {
   if (istooltip == null) {
     istooltip = false;
@@ -2495,10 +2520,16 @@ export function israngeseleciton(ctx: Context, istooltip?: boolean) {
     if (txt.length === 0 && anchor.parentNode.previousSibling) {
       const ahr = anchor.parentNode.previousSibling;
       txt = _.trim(ahr.textContent || "");
-      lasttxt = txt.substring(txt.length - 1, 1);
+      lasttxt = txt.slice(-1);
       ctx.formulaCache.rangeSetValueTo = anchor.parentNode;
     } else {
-      lasttxt = txt.substring(anchorOffset - 1, 1);
+      // Commas and operators inside a string literal ("yes, high") are text,
+      // not a place for a reference.
+      lasttxt = parentElement.classList.contains(
+        "luckysheet-formula-text-string"
+      )
+        ? ""
+        : (anchor.textContent ?? "").charAt(anchorOffset - 1);
       ctx.formulaCache.rangeSetValueTo = anchor.parentNode;
     }
 
@@ -2531,7 +2562,7 @@ export function israngeseleciton(ctx: Context, istooltip?: boolean) {
       ctx.formulaCache.rangeSetValueTo = ahr;
     }
 
-    const lasttxt = txt.substring(txt.length - 1, 1);
+    const lasttxt = txt.slice(-1);
 
     if (
       (istooltip && (lasttxt === "(" || lasttxt === ",")) ||
@@ -2556,7 +2587,7 @@ export function israngeseleciton(ctx: Context, istooltip?: boolean) {
     if (anchor.previousSibling?.textContent == null) return false;
     if (anchor.previousSibling) {
       const txt = _.trim(anchor.previousSibling.textContent);
-      const lasttxt = txt.substring(txt.length - 1, 1);
+      const lasttxt = txt.slice(-1);
 
       ctx.formulaCache.rangeSetValueTo = anchor.previousSibling;
 
@@ -2922,6 +2953,76 @@ export function rangeSetValue(
   }
 
   if ($copyTo) $copyTo.innerHTML = $editor.innerHTML;
+}
+
+/**
+ * Write the selection's reference into the formula at the caret and highlight
+ * it. `ctx.formulaCache.func_selectedrange` must already describe the
+ * selection.
+ */
+export function applyPointModeSelection(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  fxInput: HTMLDivElement | null | undefined,
+  selected: Pick<Selection, "row" | "column">,
+  geometry: Rect
+) {
+  rangeSetValue(
+    ctx,
+    cellInput,
+    {
+      row: selected.row,
+      column: selected.column,
+    },
+    fxInput
+  );
+
+  ctx.formulaCache.rangestart = true;
+  ctx.formulaCache.rangedrag_column_start = false;
+  ctx.formulaCache.rangedrag_row_start = false;
+
+  ctx.formulaCache.selectingRangeIndex = ctx.formulaCache.rangechangeindex!;
+  if (ctx.formulaCache.rangechangeindex! > ctx.formulaRangeHighlight.length) {
+    createRangeHightlight(
+      ctx,
+      cellInput.innerHTML,
+      ctx.formulaCache.rangechangeindex!
+    );
+  }
+  createFormulaRangeSelect(ctx, {
+    rangeIndex: ctx.formulaCache.rangechangeindex || 0,
+    ...geometry,
+  });
+}
+
+/**
+ * Pick `selected` as a formula reference, the way clicking a cell does while a
+ * formula is being edited. Shared by the mouse and arrow-key paths.
+ */
+export function enterPointModeAt(
+  ctx: Context,
+  cellInput: HTMLDivElement,
+  fxInput: HTMLDivElement | null | undefined,
+  selected: Selection,
+  geometry: Rect
+) {
+  const { left, top, width, height } = geometry;
+  ctx.formulaCache.func_selectedrange = {
+    left,
+    width,
+    top,
+    height,
+    left_move: left,
+    width_move: width,
+    top_move: top,
+    height_move: height,
+    row: selected.row,
+    column: selected.column,
+    row_focus: selected.row_focus,
+    column_focus: selected.column_focus,
+  };
+
+  applyPointModeSelection(ctx, cellInput, fxInput, selected, geometry);
 }
 
 export function onFormulaRangeDragEnd(ctx: Context) {

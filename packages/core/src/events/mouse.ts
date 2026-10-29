@@ -22,6 +22,8 @@ import {
   onFormulaRangeDragEnd,
   createFormulaRangeSelect,
   createRangeHightlight,
+  applyPointModeSelection,
+  enterPointModeAt,
   onCellsMoveEnd,
   onCellsMove,
   cellFocus,
@@ -360,6 +362,7 @@ export function handleCellAreaMouseDown(
       // 公式选区
       let rowseleted = [row_index, row_index_ed];
       let columnseleted = [col_index, col_index_ed];
+      let isShiftExtend = false;
 
       let left = col_pre;
       let width = col - col_pre - 1;
@@ -467,6 +470,7 @@ export function handleCellAreaMouseDown(
         last.height_move = height;
 
         ctx.formulaCache.func_selectedrange = last;
+        isShiftExtend = true;
       } else if (
         e.ctrlKey &&
         _.last(cellInput.querySelectorAll("span"))?.innerText !== ","
@@ -523,68 +527,23 @@ export function handleCellAreaMouseDown(
 
         // 再进行 选区的选择
         israngeseleciton(ctx);
-        ctx.formulaCache.func_selectedrange = {
-          left,
-          width,
-          top,
-          height,
-          left_move: left,
-          width_move: width,
-          top_move: top,
-          height_move: height,
-          row: rowseleted,
-          column: columnseleted,
-          row_focus: row_index,
-          column_focus: col_index,
-        };
+      }
+
+      const selected = {
+        row: rowseleted,
+        column: columnseleted,
+        row_focus: row_index,
+        column_focus: col_index,
+      };
+      const geometry = { left, top, width, height };
+
+      // The shift-extend branch above builds the phantom selection by mutating
+      // the previous one, so it keeps it; every other path replaces it.
+      if (isShiftExtend) {
+        applyPointModeSelection(ctx, cellInput, fxInput, selected, geometry);
       } else {
-        ctx.formulaCache.func_selectedrange = {
-          left,
-          width,
-          top,
-          height,
-          left_move: left,
-          width_move: width,
-          top_move: top,
-          height_move: height,
-          row: rowseleted,
-          column: columnseleted,
-          row_focus: row_index,
-          column_focus: col_index,
-        };
+        enterPointModeAt(ctx, cellInput, fxInput, selected, geometry);
       }
-
-      rangeSetValue(
-        ctx,
-        cellInput,
-        {
-          row: rowseleted,
-          column: columnseleted,
-        },
-        fxInput
-      );
-
-      ctx.formulaCache.rangestart = true;
-      ctx.formulaCache.rangedrag_column_start = false;
-      ctx.formulaCache.rangedrag_row_start = false;
-
-      ctx.formulaCache.selectingRangeIndex = ctx.formulaCache.rangechangeindex!;
-      if (
-        ctx.formulaCache.rangechangeindex! > ctx.formulaRangeHighlight.length
-      ) {
-        createRangeHightlight(
-          ctx,
-          cellInput.innerHTML,
-          ctx.formulaCache.rangechangeindex!
-        );
-      }
-      createFormulaRangeSelect(ctx, {
-        rangeIndex: ctx.formulaCache.rangechangeindex || 0,
-        left,
-        top,
-        width,
-        height,
-      });
       e.preventDefault();
       // $("#fortune-formula-functionrange-select")
       //   .css({

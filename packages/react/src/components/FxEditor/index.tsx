@@ -8,6 +8,8 @@ import {
   isInlineStringCell,
   escapeScriptTag,
   moveHighlightCell,
+  resolvePointModeStep,
+  applyPointModeStep,
   handleFormulaInput,
   rangeHightlightselected,
   valueShowEs,
@@ -128,6 +130,21 @@ const FxEditor: React.FC = () => {
       if (key === "ArrowLeft" || key === "ArrowRight") {
         e.stopPropagation();
       }
+      // Decided here, not inside setContext: preventDefault has to happen
+      // while the event is dispatched, and resolving reads the caret before
+      // the browser moves it.
+      const pointModeStep =
+        (key === "ArrowUp" ||
+          key === "ArrowDown" ||
+          key === "ArrowLeft" ||
+          key === "ArrowRight") &&
+        refs.cellInput.current
+          ? resolvePointModeStep(context, e.nativeEvent)
+          : null;
+      if (pointModeStep) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       setContext((draftCtx) => {
         if (context.luckysheetCellUpdate.length > 0) {
           switch (key) {
@@ -219,12 +236,22 @@ const FxEditor: React.FC = () => {
                 break;
               }
               */
-            case "ArrowLeft": {
-              rangeHightlightselected(draftCtx, refs.fxInput.current!);
-              break;
-            }
+            case "ArrowUp":
+            case "ArrowDown":
+            case "ArrowLeft":
             case "ArrowRight": {
-              rangeHightlightselected(draftCtx, refs.fxInput.current!);
+              if (pointModeStep) {
+                applyPointModeStep(
+                  draftCtx,
+                  refs.cellInput.current!,
+                  refs.fxInput.current,
+                  pointModeStep
+                );
+                break;
+              }
+              if (key === "ArrowLeft" || key === "ArrowRight") {
+                rangeHightlightselected(draftCtx, refs.fxInput.current!);
+              }
               break;
             }
             default:
@@ -233,12 +260,7 @@ const FxEditor: React.FC = () => {
         }
       });
     },
-    [
-      context.allowEdit,
-      context.luckysheetCellUpdate.length,
-      refs.fxInput,
-      setContext,
-    ]
+    [context, refs.cellInput, refs.fxInput, setContext]
   );
 
   const onChange = useCallback(() => {
