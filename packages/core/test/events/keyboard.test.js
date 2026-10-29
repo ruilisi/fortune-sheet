@@ -255,4 +255,74 @@ describe("keyboard", () => {
       expect(getFlowdata(ctx)[0][3].v).toBe(item.v4);
     });
   });
+
+  describe("tab while editing a cell", () => {
+    const editing = (ctx, row, col, text) => {
+      const cellInput = document.createElement("div");
+      cellInput.innerText = text;
+      ctx.sheetFocused = true;
+      ctx.luckysheetCellUpdate = [row, col];
+      return cellInput;
+    };
+    const tab = (shiftKey = false) =>
+      new KeyboardEvent("keydown", { key: "Tab", shiftKey, cancelable: true });
+    const press = (ctx, cellInput, event) =>
+      handleGlobalKeyDown(
+        ctx,
+        cellInput,
+        document.createElement("div"),
+        event,
+        { undoList: [], redoList: [] },
+        () => {},
+        () => {}
+      );
+
+    test("commits the edit and moves right", () => {
+      const ctx = getContext();
+      const cellInput = editing(ctx, 0, 0, "Hello world");
+      const event = tab();
+
+      press(ctx, cellInput, event);
+
+      expect(getFlowdata(ctx)[0][0].v).toBe("Hello world");
+      expect(ctx.luckysheet_select_save[0].row_focus).toBe(0);
+      expect(ctx.luckysheet_select_save[0].column_focus).toBe(1);
+      expect(ctx.luckysheetCellUpdate).toEqual([]);
+      expect(event.defaultPrevented).toBe(true);
+    });
+
+    test("shift+tab commits the edit and moves left", () => {
+      const ctx = getContext();
+      const cellInput = editing(ctx, 0, 1, "Hello world");
+
+      press(ctx, cellInput, tab(true));
+
+      expect(getFlowdata(ctx)[0][1].v).toBe("Hello world");
+      expect(ctx.luckysheet_select_save[0].column_focus).toBe(0);
+    });
+
+    test("stores the same value as enter", () => {
+      const viaTab = getContext();
+      press(viaTab, editing(viaTab, 0, 0, "42"), tab());
+
+      const viaEnter = getContext();
+      handleGlobalEnter(
+        viaEnter,
+        editing(viaEnter, 0, 0, "42"),
+        new KeyboardEvent("keydown", { key: "Enter" })
+      );
+
+      expect(getFlowdata(viaTab)[0][0]).toEqual(getFlowdata(viaEnter)[0][0]);
+    });
+
+    test("does not commit when editing is not allowed", () => {
+      const ctx = getContext();
+      ctx.allowEdit = false;
+      const cellInput = editing(ctx, 0, 0, "changed");
+
+      press(ctx, cellInput, tab());
+
+      expect(getFlowdata(ctx)[0][0].v).toBe("abc");
+    });
+  });
 });

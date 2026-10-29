@@ -244,8 +244,10 @@ const InputBox: React.FC = () => {
           e.stopPropagation();
         } else selectActiveFormula(e);
       } else if (e.key === "Tab" && context.luckysheetCellUpdate.length > 0) {
+        // Tab only belongs to the editor when it accepts a formula suggestion,
+        // and selectActiveFormula consumes the event itself in that case.
+        // Otherwise it reaches the grid, which commits the edit and moves on.
         selectActiveFormula(e);
-        e.preventDefault();
       } else if (e.key === "F4" && context.luckysheetCellUpdate.length > 0) {
         // formula.setfreezonFuc(event);
         e.preventDefault();

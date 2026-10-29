@@ -809,8 +809,20 @@ export function handleGlobalKeyDown(
     if (!allowEdit) return;
     handleGlobalEnter(ctx, cellInput, e, canvas);
   } else if (kstr === "Tab") {
+    // Like Enter, Tab commits an edit in progress before moving, but steps
+    // sideways instead of down.
     if (ctx.luckysheetCellUpdate.length > 0) {
-      return;
+      if (!allowEdit) return;
+      const [row, col] = ctx.luckysheetCellUpdate;
+      updateCell(ctx, row, col, cellInput, undefined, canvas);
+      ctx.luckysheet_select_save = [
+        {
+          row: [row, row],
+          column: [col, col],
+          row_focus: row,
+          column_focus: col,
+        },
+      ];
     }
 
     if (e.shiftKey) {
