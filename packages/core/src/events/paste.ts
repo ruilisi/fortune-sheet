@@ -1683,12 +1683,12 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
       // imageCtrl.pasteImgItem();
     } else {
       if (txtdata.indexOf("table") > -1) {
-        const ele = document.createElement("div");
-        ele.innerHTML = txtdata;
+        // DOMParser builds an inert document: unlike innerHTML on a detached
+        // element, it doesn't load resources or fire event handlers
+        const ele = new DOMParser().parseFromString(txtdata, "text/html");
 
         const trList = ele.querySelectorAll("table tr");
         if (trList.length === 0) {
-          ele.remove();
           return;
         }
 
@@ -2000,7 +2000,6 @@ export function handlePaste(ctx: Context, e: ClipboardEvent) {
         ctx.luckysheet_selection_range = [];
         pasteHandler(ctx, data, borderInfo);
         // $("#fortune-copy-content").empty();
-        ele.remove();
       }
       // 复制的是图片
       else if (

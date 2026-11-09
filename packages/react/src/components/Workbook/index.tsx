@@ -655,8 +655,7 @@ const Workbook = React.forwardRef<WorkbookInstance, Settings & AdditionalProps>(
           const txtdata =
             clipboardData!.getData("text/html") ||
             clipboardData!.getData("text/plain");
-          const ele = document.createElement("div");
-          ele.innerHTML = txtdata;
+          const ele = new DOMParser().parseFromString(txtdata, "text/html");
 
           const trList = ele.querySelectorAll("table tr");
           const maxRow =

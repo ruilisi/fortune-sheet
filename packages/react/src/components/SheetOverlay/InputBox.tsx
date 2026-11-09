@@ -8,7 +8,6 @@ import {
   getFlowdata,
   handleFormulaInput,
   moveHighlightCell,
-  escapeScriptTag,
   valueShowEs,
   createRangeHightlight,
   isShowHidenCR,
@@ -103,11 +102,12 @@ const InputBox: React.FC = () => {
           if (Number(cell.qp) === 1) {
             value = value ? `${value}` : value;
           }
+          value = escapeHTMLTag(value);
         }
       }
       refs.globalCache.overwriteCell = false;
       if (!refs.globalCache.ignoreWriteCell)
-        inputRef.current!.innerHTML = escapeHTMLTag(escapeScriptTag(value));
+        inputRef.current!.innerHTML = value;
       refs.globalCache.ignoreWriteCell = false;
       if (!refs.globalCache.doNotFocus) {
         setTimeout(() => {

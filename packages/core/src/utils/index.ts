@@ -99,10 +99,22 @@ export function escapeScriptTag(str: string) {
 
 export function escapeHTMLTag(str: string) {
   if (typeof str !== "string") return str;
-  if (str.substr(0, 5) === "<span" || _.startsWith(str, "=")) {
-    return str;
-  }
-  return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+export function unescapeHTMLTag(str: string) {
+  if (typeof str !== "string") return str;
+  return str
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&gt;/g, ">")
+    .replace(/&lt;/g, "<")
+    .replace(/&amp;/g, "&");
 }
 
 export function getSheetIndex(ctx: Context, id: string) {
