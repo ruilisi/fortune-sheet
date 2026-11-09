@@ -8,7 +8,12 @@ import {
   Selection,
   SingleRange,
 } from "../types";
-import { getSheetIndex, indexToColumnChar, rgbToHex } from "../utils";
+import {
+  escapeHTMLTag,
+  getSheetIndex,
+  indexToColumnChar,
+  rgbToHex,
+} from "../utils";
 import { checkCF, getComputeMap } from "./ConditionFormat";
 import { getFailureText, validateCellData } from "./dataVerification";
 import { genarate, update } from "./format";
@@ -1425,7 +1430,9 @@ export function getInlineStringHTML(r: number, c: number, data: CellMatrix) {
         const styleStr = _.map(style, (v, key) => {
           return `${_.kebabCase(key)}:${_.isNumber(v) ? `${v}px` : v};`;
         }).join("");
-        value += `<span class="luckysheet-input-span" index='${i}' style='${styleStr}'>${strObj.v}</span>`;
+        value += `<span class="luckysheet-input-span" index='${i}' style='${escapeHTMLTag(
+          styleStr
+        )}'>${escapeHTMLTag(strObj.v)}</span>`;
       }
     }
     return value;
