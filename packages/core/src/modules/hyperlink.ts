@@ -154,7 +154,7 @@ export function goToLink(
     if (!/^http[s]?:\/\//.test(linkAddress)) {
       linkAddress = `https://${linkAddress}`;
     }
-    window.open(linkAddress);
+    window.open(linkAddress, "_blank", "noopener,noreferrer");
   } else if (linkType === "sheet") {
     let sheetId;
     _.forEach(ctx.luckysheetfile, (f) => {
