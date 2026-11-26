@@ -191,12 +191,9 @@ export function isLinkValid(
     if (!/^http[s]?:\/\//.test(linkAddress)) {
       linkAddress = `https://${linkAddress}`;
     }
-    if (
-      // eslint-disable-next-line no-useless-escape
-      !/^http[s]?:\/\/([\w\-\.]+)+[\w-]*([\w\-\.\/\?%&=]+)?$/gi.test(
-        linkAddress
-      )
-    )
+    // No nested quantifier: ([\w.-]+)+ backtracked exponentially on addresses
+    // with a character outside these classes, freezing the page for minutes.
+    if (!/^https?:\/\/[\w.-]+[\w./?%&=-]*$/i.test(linkAddress))
       return { isValid: false, tooltip: insertLink.tooltipInfo1 };
   }
   if (linkType === "cellrange" && !iscelldata(linkAddress)) {
